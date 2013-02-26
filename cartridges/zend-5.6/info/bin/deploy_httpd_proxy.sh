@@ -24,4 +24,5 @@ oo-frontend-connect \
     --with-container-uuid "$uuid" \
     --with-container-name "$application" \
     --with-namespace "$namespace" \
-    --path "" --target "$IP:8080"
+    --path "" --target "$IP:8080" \
+    --path "/ZendServer" --target "$IP:16081/ZendServer"

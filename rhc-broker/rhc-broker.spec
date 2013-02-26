@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.5.4
+Version: 1.5.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -144,6 +144,51 @@ if [ ! -f %{_var}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Tue Feb 26 2013 Adam Miller <admiller@redhat.com> 1.5.6-1
+- update migration to current release (dmcphers@redhat.com)
+- Merge pull request #925 from smarterclayton/session_auth_support_2
+  (dmcphers+openshiftbot@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Tweak the log change so that is optional for developers running Rails
+  directly, has same behavior on devenv, and allows more control over the path
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Add the read scope.  Curl insecure doesn't create extra storage test.
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Merge branch 'isolate_api_behavior_from_base_controller' into
+  session_auth_support_2 (ccoleman@redhat.com)
+- Move configuration parsing to a separate class (ccoleman@redhat.com)
+- Config changes for scope support (ccoleman@redhat.com)
+- Streamline auth tests pass (ccoleman@redhat.com)
+- Changes to the broker to match session auth support in the origin
+  (ccoleman@redhat.com)
+
+* Mon Feb 25 2013 Adam Miller <admiller@redhat.com> 1.5.5-2
+- bump Release for fixed build target rebuild (admiller@redhat.com)
+
+* Mon Feb 25 2013 Adam Miller <admiller@redhat.com> 1.5.5-1
+- Revert to original RAILS_LOG_PATH behavior (ccoleman@redhat.com)
+- Merge pull request #920 from
+  smarterclayton/bug_913816_work_around_bad_logtailer
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 913816 - Fix log tailer to pick up the correct config
+  (ccoleman@redhat.com)
+- Merge pull request #918 from
+  smarterclayton/bug_912286_cleanup_robots_misc_for_split
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 912286 - Cleanup robots.txt and others for split (ccoleman@redhat.com)
+- Tweak the log change so that is optional for developers running Rails
+  directly, has same behavior on devenv, and allows more control over the path
+  (ccoleman@redhat.com)
+
 * Wed Feb 20 2013 Adam Miller <admiller@redhat.com> 1.5.4-1
 - open source rhc-admin-clear-pending-ops to oo-admin-clear-pending-ops
   (rchopra@redhat.com)

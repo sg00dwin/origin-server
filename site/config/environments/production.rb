@@ -113,8 +113,5 @@ RedHatCloud::Application.configure do
   # Account Support contact
   config.acct_help_mail_to = 'os.accounts@redhat.com'
 
-  Console.configure do |c|
-    c.api = :local
-    c.community_url = 'https://www.openshift.com'
-  end
+  Console.configure(ENV['CONSOLE_CONFIG_FILE'] || '/etc/openshift/console.conf')
 end

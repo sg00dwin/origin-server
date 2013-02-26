@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.5.4
+Version: 1.5.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -277,6 +277,10 @@ gem install kramdown --no-rdoc --no-ri
 gem install rspec --version 1.3.0 --no-rdoc --no-ri
 gem install fakefs --no-rdoc --no-ri
 gem install httpclient --version 2.3.2 --no-rdoc --no-ri
+
+# Work around issue with mongoid not being tagged into devenv yet,
+# REMOVE ME
+gem install mongoid --version 3.0.19 --no-rdoc --no-ri
 
 # Move over all configs and scripts
 /bin/cp -rf %{devenvdir}/etc/* %{_sysconfdir}
@@ -617,7 +621,7 @@ done
 # This must be done before the deployment of application templates!
 cd /var/www/openshift/broker
 echo "Creating named test user"
-bundle exec rails runner "u=CloudUser.new(login: 'user_with_multiple_gear_sizes@test.com'); u.save; Lock.create_lock(u)"
+curl -k https://localhost/broker/rest/user -u user_with_multiple_gear_sizes@test.com:pass
 if [ $? -eq 0 ]
 then
   echo "Adding medium gear size to user"
@@ -628,7 +632,7 @@ fi
 
 # Create a test user with additional storage capabilities
 echo "Creating test user:  user_with_extra_storage@test.com"
-bundle exec rails runner "u=CloudUser.new(login: 'user_with_extra_storage@test.com'); u.save; Lock.create_lock(u)"
+curl -k https://localhost/broker/rest/user -u user_with_extra_storage@test.com:pass
 if [ $? -eq 0 ]
 then
   echo "Adding additional storage to user"
@@ -675,6 +679,48 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Tue Feb 26 2013 Adam Miller <admiller@redhat.com> 1.5.6-1
+- Add a crontab line to purge expired authorizations. (ccoleman@redhat.com)
+- Merge pull request #925 from smarterclayton/session_auth_support_2
+  (dmcphers+openshiftbot@redhat.com)
+- Temporarily add mongoid to devenv (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Tweak the log change so that is optional for developers running Rails
+  directly, has same behavior on devenv, and allows more control over the path
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Add the read scope.  Curl insecure doesn't create extra storage test.
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Merge branch 'isolate_api_behavior_from_base_controller' into
+  session_auth_support_2 (ccoleman@redhat.com)
+- Changes to the broker to match session auth support in the origin
+  (ccoleman@redhat.com)
+
+* Mon Feb 25 2013 Adam Miller <admiller@redhat.com> 1.5.5-2
+- bump Release for fixed build target rebuild (admiller@redhat.com)
+
+* Mon Feb 25 2013 Adam Miller <admiller@redhat.com> 1.5.5-1
+- Devenv logs not getting output correctly (ccoleman@redhat.com)
+- Merge pull request #918 from
+  smarterclayton/bug_912286_cleanup_robots_misc_for_split
+  (dmcphers+openshiftbot@redhat.com)
+- Use a more generic redirect to old content, integrate new URL
+  (ccoleman@redhat.com)
+- Bug 912286 - Cleanup robots.txt and others for split (ccoleman@redhat.com)
+- new brew tag and dist-tag (admiller@redhat.com)
+- setup-devenv-repos.sh move to 6.4 (admiller@redhat.com)
+- Tweak the log change so that is optional for developers running Rails
+  directly, has same behavior on devenv, and allows more control over the path
+  (ccoleman@redhat.com)
+
 * Wed Feb 20 2013 Adam Miller <admiller@redhat.com> 1.5.4-1
 - add action required prop (dmcphers@redhat.com)
 

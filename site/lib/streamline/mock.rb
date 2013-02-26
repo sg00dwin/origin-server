@@ -184,5 +184,9 @@ module Streamline
         end
       end
   end
+
+  class MockContext < SimpleDelegator
+    include Streamline::Mock
+  end
 end
 

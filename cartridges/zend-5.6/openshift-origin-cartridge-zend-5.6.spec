@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      openshift-origin-cartridge-zend-5.6
-Version: 1.5.2
+Version: 1.5.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -104,6 +104,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Feb 26 2013 Adam Miller <admiller@redhat.com> 1.5.3-1
+- Missed ZendServer URL. (rmillner@redhat.com)
+
 * Tue Feb 19 2013 Adam Miller <admiller@redhat.com> 1.5.2-1
 - Switch from VirtualHosts to mod_rewrite based routing to support high
   density. (rmillner@redhat.com)

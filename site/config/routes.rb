@@ -101,8 +101,7 @@ RedHatCloud::Application.routes.draw do
   end
 
   scope 'account' do
-    resource :domain, :only => [:new, :create, :edit, :update]
-    resources :keys, :only => [:new, :create, :destroy]
+    openshift_account_resource_routes
   end
 
   match 'account/help' => 'account#help', :via => [:get]

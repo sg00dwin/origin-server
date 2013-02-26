@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.5.2
+Version: 1.5.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -237,6 +237,20 @@ fi
 
 
 %changelog
+* Tue Feb 26 2013 Adam Miller <admiller@redhat.com> 1.5.4-1
+- Merge pull request #926 from rmillner/US3143
+  (dmcphers+openshiftbot@redhat.com)
+- update migration to current release (dmcphers@redhat.com)
+- Put aliases after the hook calls, and was calling the wrong hook.
+  (rmillner@redhat.com)
+- Migration function. (rmillner@redhat.com)
+
+* Mon Feb 25 2013 Adam Miller <admiller@redhat.com> 1.5.3-2
+- bump Release for fixed build target rebuild (admiller@redhat.com)
+
+* Mon Feb 25 2013 Adam Miller <admiller@redhat.com> 1.5.3-1
+- Add default NodeLogger configuration (ironcladlou@gmail.com)
+
 * Tue Feb 19 2013 Adam Miller <admiller@redhat.com> 1.5.2-1
 - No more vhosts, so no more rhc-vhost-choke. (rmillner@redhat.com)
 - Switch from VirtualHosts to mod_rewrite based routing to support high

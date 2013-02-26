@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.5.4
-Release:   2%{?dist}
+Version: 1.5.6
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -107,6 +107,7 @@ bundle install --local
 
 RAILS_ENV=production RAILS_RELATIVE_URL_ROOT=/app \
   RAILS_LOG_PATH=%{buildroot}%{_var}/log/openshift/site/httpd/production.log \
+  CONSOLE_CONFIG_FILE=conf/console.conf \
   bundle exec rake assets:precompile assets:public_pages
 
 rm -rf tmp
@@ -121,6 +122,7 @@ mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{sitedir}
 mkdir -p %{buildroot}%{sitedir}/run
 mkdir -p %{buildroot}%{sitedir}/tmp/cache/assets
+mkdir -p %{buildroot}/etc/openshift/
 
 mkdir -p %{buildroot}%{_var}/log/openshift/site/
 mkdir -m 770 %{buildroot}%{_var}/log/openshift/site/httpd/
@@ -131,6 +133,8 @@ mkdir -p %{buildroot}%{sitedir}/httpd/run
 cp -r . %{buildroot}%{sitedir}
 ln -s %{sitedir}/public %{buildroot}%{htmldir}/app
 ln -sf /etc/httpd/conf/magic %{buildroot}%{sitedir}/httpd/conf/magic
+
+cp conf/console.conf %{buildroot}/etc/openshift/
 
 %clean
 rm -rf %{buildroot}
@@ -165,6 +169,7 @@ fi
 %{htmldir}/app
 %config(noreplace) %{sitedir}/config/environments/production.rb
 %config(noreplace) %{sitedir}/app/subsites/status/config/hosts.yml
+%config(noreplace) /etc/openshift/console.conf
 %exclude %{sitedir}/public
 
 %files static
@@ -172,6 +177,70 @@ fi
 %{sitedir}/public
 
 %changelog
+* Tue Feb 26 2013 Adam Miller <admiller@redhat.com> 1.5.6-1
+- Bug 915602 - Unable to signup (ccoleman@redhat.com)
+- Merge pull request #924 from smarterclayton/community_url_not_available
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #925 from smarterclayton/session_auth_support_2
+  (dmcphers+openshiftbot@redhat.com)
+- The community URL is not available for some operations - use the default
+  config if that is true (ccoleman@redhat.com)
+- Bug 915253 - Eagerly load referenced model classes in development mode
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Cleanup auth token pages (ccoleman@redhat.com)
+- Tweak the log change so that is optional for developers running Rails
+  directly, has same behavior on devenv, and allows more control over the path
+  (ccoleman@redhat.com)
+- Improvements to authorization pages and the extended dashboard
+  (ccoleman@redhat.com)
+- Allow auth token access from site console, show specific message when
+  expired. (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Support console authorization management (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Merge branch 'isolate_api_behavior_from_base_controller' into
+  session_auth_support_2 (ccoleman@redhat.com)
+- Changes to the broker to match session auth support in the origin
+  (ccoleman@redhat.com)
+
+* Mon Feb 25 2013 Adam Miller <admiller@redhat.com> 1.5.5-1
+- Merge pull request #922 from smarterclayton/bug_909992_more_community_fixes
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 909992 - Fix login errors outside of login (ccoleman@redhat.com)
+- Revert to original RAILS_LOG_PATH behavior (ccoleman@redhat.com)
+- Merge pull request #920 from
+  smarterclayton/bug_913816_work_around_bad_logtailer
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 913816 - Fix log tailer to pick up the correct config
+  (ccoleman@redhat.com)
+- Merge pull request #918 from
+  smarterclayton/bug_912286_cleanup_robots_misc_for_split
+  (dmcphers+openshiftbot@redhat.com)
+- Asset pages need community_aware (ccoleman@redhat.com)
+- Use a more generic redirect to old content, integrate new URL
+  (ccoleman@redhat.com)
+- Set icon sizes class names to correspond to pixels. I believe this is the
+  most sensible path for the time being. (sgoodwin@redhat.com)
+- rename OSicon to openshift-icon (sgoodwin@redhat.com)
+- Bug 912286 - Cleanup robots.txt and others for split (ccoleman@redhat.com)
+- Introduction of OSicon font set includes: - Four font type files -
+  OSicon.dev.svg master file generated from http://icomoon.io/app which will be
+  used for further modifications to the set. - OSicon.css contains core styles
+  - iconfont.css custom styles - inclusion of css within _stylesheets.html.haml
+  for both console and site - New styleguide file for showing entire set
+  (sgoodwin@redhat.com)
+- Tweak the log change so that is optional for developers running Rails
+  directly, has same behavior on devenv, and allows more control over the path
+  (ccoleman@redhat.com)
+
 * Wed Feb 20 2013 Adam Miller <admiller@redhat.com> 1.5.4-2
 - Bump spec for rebuild
 

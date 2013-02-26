@@ -807,7 +807,7 @@ popd
                 cmd += "rm -rf /root/#{repo_name}; rm -rf /root/#{repo_name}-bare;"
               end
             else
-              puts "Performing clean install with the latest code..."
+              puts "Performing clean install with the last published rpms..."
               cmd += "yum -y install rhc-devenv;"
             end
             cmd += 'sed -i "/nameserver 127.0.0.1/d" /etc/resolv.conf;'

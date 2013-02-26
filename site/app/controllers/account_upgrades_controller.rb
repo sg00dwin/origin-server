@@ -1,7 +1,5 @@
-class AccountUpgradesController < ApplicationController
+class AccountUpgradesController < ConsoleController
   include BillingAware
-
-  layout 'account'
 
   before_filter :authenticate_user!, :except => :show
   before_filter :authenticate_user_for_upgrade!, :only => :show
