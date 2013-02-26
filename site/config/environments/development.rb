@@ -74,7 +74,5 @@ RedHatCloud::Application.configure do
   config.assets.debug = true
   config.assets.logger = false
 
-  Console.configure do |c|
-    c.api = (ENV['CONSOLE_API_MODE'] || 'local').to_sym
-  end
+  Console.configure(ENV['CONSOLE_CONFIG_FILE'] || '/etc/openshift/console.conf')
 end
