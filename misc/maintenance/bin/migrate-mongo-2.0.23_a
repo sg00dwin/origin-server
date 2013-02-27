@@ -1,0 +1,49 @@
+#!/usr/bin/env oo-ruby
+require 'rubygems'
+require 'mongo'
+$:.unshift('/var/www/openshift/broker')
+require 'config/environment'
+
+
+def mongo_connect
+  db = OpenShift::DataStore.db
+  $coll = db.collection('applications')
+end
+
+def migrate_gears
+  query = {"group_instances.gears.0" => {"$exists" => true}}
+  selection = {:fields => ["name",
+                         "group_instances.gears.uuid",
+                         "group_instances.gears.name",
+                         "group_instances.gears._id",
+                         "group_instances.gears.server_identity"], :timeout => false}
+
+  total = 0
+  $coll.find(query, selection) do |cursor| 
+    cursor.each do |app|
+    gi_counter = 0
+    app["group_instances"].each do |gi|
+      gear_counter = 0
+      gi["gears"].each do |gear|
+        id = gear["_id"].to_s
+        if gear["name"]==id[0..9] and id!=gear["uuid"]
+          total += 1
+          print "."
+          $coll.update({ "group_instances.#{gi_counter}.gears.#{gear_counter}.uuid" => gear["uuid"] }, { "$set" => { "group_instances.#{gi_counter}.gears.#{gear_counter}.name" => gear["uuid"][0..9] } } )
+        end
+        gear_counter += 1
+      end
+      gi_counter += 1
+    end
+    end
+  end
+  puts
+  puts "Mongo migrated #{total} gears"
+end
+
+puts "Starting migration"
+mongo_connect
+migrate_gears
+puts "Done!"
+
+
