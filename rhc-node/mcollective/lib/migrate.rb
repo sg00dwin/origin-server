@@ -5,6 +5,7 @@ require 'socket'
 require 'parseconfig'
 require 'pp'
 require File.dirname(__FILE__) + "/migrate-util"
+require File.dirname(__FILE__) + "/migrate-frontend"
 
 module OpenShiftMigration
 
@@ -60,6 +61,14 @@ module OpenShiftMigration
     env_echos.each do |env_echo|
       echo_output, echo_exitcode = Util.execute_script(env_echo)
       output += echo_output
+    end
+
+    # Migrate the Frontend Connection
+    o, r = FrontendHttpServerMigration.migrate(uuid, gear_name, namespace)
+    output << o
+    if r !=0
+      output << "ERROR: Failed to migrate frontend for #{uuid}\n"
+      exitcode = r
     end
       
     total_time = (Time.now.to_f * 1000).to_i - start_time
