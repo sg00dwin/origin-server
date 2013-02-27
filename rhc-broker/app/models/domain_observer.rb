@@ -1,17 +1,10 @@
 class DomainObserver < ActiveModel::Observer
   observe Domain
-  def after_domain_create(domain)
-    Rails.logger.debug "In after domain create"
+  def domain_create_success(domain)
     send_data_to_analytics(domain)
   end
 
-  def after_domain_update(domain)
-    Rails.logger.debug "In after domain update"
-    send_data_to_analytics(domain)
-  end
-
-  def after_domain_destroy(domain)
-    Rails.logger.debug "In after domain destroy"
+  def domain_update_success(domain)
     send_data_to_analytics(domain)
   end
 
