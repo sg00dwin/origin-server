@@ -146,7 +146,7 @@ Broker::Application.configure do
       :default_plan => :freeshift,
       :plans => {
         :freeshift => {
-          :plan_no => 10044929,
+          :plan_no => conf.get("FREESHIFT_PLAN_NO", 10044929).to_i,
           :name => "FreeShift",
           :capabilities => {
             'subaccounts' => false,
@@ -155,7 +155,7 @@ Broker::Application.configure do
           }
         },
         :megashift => {
-          :plan_no => 10044931,
+          :plan_no => conf.get("MEGASHIFT_PLAN_NO", 10044931).to_i,
           :name => "MegaShift",
           :capabilities => {
             'subaccounts' => false,

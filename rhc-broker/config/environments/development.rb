@@ -119,24 +119,24 @@ Broker::Application.configure do
       :default_plan => :freeshift,
       :plans => {
         :freeshift => {
-          :plan_no => 10044929,
+          :plan_no => conf.get("FREESHIFT_PLAN_NO", 10044929).to_i,
           :name => "FreeShift",
           :capabilities => {
             'subaccounts' => false,
             'max_gears' => 3,
             'gear_sizes' => ["small"],
-            'plan_upgrade_enabled' => true,
+            'plan_upgrade_enabled' => true
           }
         },
         :megashift => {
-          :plan_no => 10044931,
+          :plan_no => conf.get("MEGASHIFT_PLAN_NO", 10044931).to_i,
           :name => "MegaShift",
           :capabilities => {
             'subaccounts' => false,
             'max_gears' => 16,
             'gear_sizes' => ["small", "medium"],
             'max_storage_per_gear' => 30, # 30GB
-            'plan_upgrade_enabled' => true,
+            'plan_upgrade_enabled' => true
           },
           :usage_rates => {
             :gear => { 
