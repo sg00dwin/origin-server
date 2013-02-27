@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.5.6
+Version: 1.5.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -144,6 +144,14 @@ if [ ! -f %{_var}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Wed Feb 27 2013 Adam Miller <admiller@redhat.com> 1.5.7-1
+- Merge pull request #934 from lnader/master (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #935 from smarterclayton/scope_changes_to_production.rb
+  (dmcphers+openshiftbot@redhat.com)
+- Default values missing for scopes in production.rb (ccoleman@redhat.com)
+- US2448 (lnader@redhat.com)
+- send domain creates and updates to nuture (dmcphers@redhat.com)
+
 * Tue Feb 26 2013 Adam Miller <admiller@redhat.com> 1.5.6-1
 - update migration to current release (dmcphers@redhat.com)
 - Merge pull request #925 from smarterclayton/session_auth_support_2
