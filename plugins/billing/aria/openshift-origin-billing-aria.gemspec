@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency('openshift-origin-controller')
+  s.add_dependency('pony')  
   s.add_dependency('json')  
   s.add_development_dependency('rake')  
   s.add_development_dependency('rspec')

@@ -15,7 +15,7 @@ module OpenShift
       end
       @url = access_info[:config][:url]
       @usage_type = access_info[:usage_type]
-      @ah = OpenShift::AriaBilling::ApiHelper.instance(access_info)
+      @ah = OpenShift::AriaApiHelper.instance(access_info)
       @plans = access_info[:plans]
     end
 
@@ -244,7 +244,7 @@ module OpenShift
       begin
         result = get_response(@ah.get_usage_history(*args), __method__)
         usage_history = result.data["usage_history_records"]
-      rescue OpenShift::AriaBilling::ErrorCodeException => e
+      rescue OpenShift::AriaErrorCodeException => e
         return usage_history if e.error_code.to_s == "1008"
         Rails.logger.error e.message
         Rails.logger.error e.backtrace.inspect
@@ -266,7 +266,7 @@ module OpenShift
     def update_master_plan(*args)
       begin
         get_response(@ah.update_master_plan(*args), __method__)
-      rescue OpenShift::AriaBilling::ErrorCodeException => e
+      rescue OpenShift::AriaErrorCodeException => e
         raise if e.error_code.to_s != "1034"
       end
       return true
@@ -294,17 +294,17 @@ module OpenShift
       begin
         return request.execute
       rescue RestClient::RequestTimeout, RestClient::ServerBrokeConnection, RestClient::SSLCertificateNotVerified => e
-        raise OpenShift::AriaBilling::Exception.new "Failed to access resource: #{e.message}"
+        raise OpenShift::AriaException.new "Failed to access resource: #{e.message}"
       rescue RestClient::ExceptionWithResponse => e
-        raise OpenShift::AriaBilling::Exception.new "Exception: #{e.response}, #{e.message}"
+        raise OpenShift::AriaException.new "Exception: #{e.response}, #{e.message}"
       rescue Exception => e
-        raise OpenShift::AriaBilling::Exception.new "Failed to access resource: #{e.message}"
+        raise OpenShift::AriaException.new "Failed to access resource: #{e.message}"
       end
       return nil
     end
 
     def convert_to_get_params(hash)
-      raise OpenShift::AriaBilling::Exception.new "Param input is NOT a hash" unless hash.kind_of?(Hash)
+      raise OpenShift::AriaException.new "Param input is NOT a hash" unless hash.kind_of?(Hash)
       param_str = ""
       hash.each do |k, v|
         param_str += "&" if param_str != ""
@@ -322,7 +322,7 @@ module OpenShift
       response = WDDX.load(wddx_response)
       Rails.logger.debug "Aria Billing api response: #{response.inspect}"
       if response.error_code != 0 && ret_output
-        raise OpenShift::AriaBilling::ErrorCodeException.new("#{method_name} failed with error message: #{response.error_msg}", response.error_code)
+        raise OpenShift::AriaErrorCodeException.new("#{method_name} failed with error message: #{response.error_msg}", response.error_code)
       end
       if ret_output
         return response

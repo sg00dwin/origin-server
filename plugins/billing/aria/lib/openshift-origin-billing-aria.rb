@@ -7,8 +7,8 @@ module OpenShift
 end
 
 require "openshift/aria_plugin.rb"
-require "openshift/api_helper.rb"
-require "openshift/event.rb"
-require "openshift/notification.rb"
-require "openshift/exception.rb"
+require "openshift/aria_api_helper.rb"
+require "openshift/aria_event.rb"
+require "openshift/aria_notification.rb"
+require "openshift/aria_exception.rb"
 OpenShift::BillingService.provider=OpenShift::AriaPlugin
