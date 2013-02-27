@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.5.4
+Version: 1.5.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -237,6 +237,9 @@ fi
 
 
 %changelog
+* Wed Feb 27 2013 Adam Miller <admiller@redhat.com> 1.5.5-1
+- Use our own custom format log. (rmillner@redhat.com)
+
 * Tue Feb 26 2013 Adam Miller <admiller@redhat.com> 1.5.4-1
 - Merge pull request #926 from rmillner/US3143
   (dmcphers+openshiftbot@redhat.com)
