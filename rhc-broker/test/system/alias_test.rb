@@ -22,7 +22,10 @@ class AliasTest < ActionDispatch::IntegrationTest
   
   def teardown
     # delete the domain
-    request_via_redirect(:delete, DOMAIN_COLLECTION_URL + "/ns#{@random}", {:force => true}, @headers)
+    begin
+      request_via_redirect(:delete, DOMAIN_COLLECTION_URL + "/ns#{@random}", {:force => true}, @headers)
+    rescue
+    end
   end
   
   #In the interest of time instead of testing index, show, create, update and destroy individually
