@@ -1,22 +1,23 @@
 .font-icon {
   display: inline-block;
+  position: absolute;
 }
 .font-icon-link {
   color: inherit !important;
 }
-.number { 
+.gear-number { 
   color: white;
   position: absolute;
 }
-.number.gear-lg {
-  left: 69%;
+.gear-number.gear-lg {
+  left: 47%;
   top: 51%;
   font-size: 0.36em;
   line-height: 1.35em;
 }
 
-.number.gear-sm {
-  left: 68%;
+.gear-number.gear-sm {
+  left: 46%;
   top: 50%;
   font-size: 0.36em;
   line-height: 1.45em;
@@ -29,11 +30,13 @@
 .font-icon-grey         {color:#8a8b8c;}
 .font-icon-white        {color:#fefefe;}
 
-.font-icon-size-10      {font-size: 10px}
-.font-icon-size-12      {font-size: 12px}
-.font-icon-size-16      {font-size: 16px}
-.font-icon-size-18      {font-size: 18px}
-.font-icon-size-24      {font-size: 24px}
-.font-icon-size-34      {font-size: 34px}
+.font-icon-size-10      {font-size: 10px;}
+.font-icon-size-12      {font-size: 12px;}
+.font-icon-size-16      {font-size: 16px;}
+.font-icon-size-18      {font-size: 18px;}
+.font-icon-size-24      {font-size: 24px;}
+.font-icon-size-34      {font-size: 34px;}
 
+[class*="icon-"]:before {;margin-right: .5em;}
 
+ 
