@@ -114,7 +114,10 @@ function application_quickstarts_page() {
   $content .= '<div class="row-fluid"><div class="span6"><h2>Top Quickstarts</h2>';
   $content .= '</h2>';
   $content .= views_embed_view('application_quickstarts_content', 'block_1');
-  $content .= '</div><section class="span6"><h2>Recent Quickstarts</h2>';
+  $content .= '</div><section class="span6">';
+  $content .= '<h2>Partner Quickstarts</h2>';
+  $content .= views_embed_view('application_quickstarts_content', 'block_2');
+  $content .= '<h2>Recent Quickstarts</h2>';
   $content .= views_embed_view('application_quickstarts_content', 'block_3');
   $content .= '</section></div>';
   $content .= '<section>';
