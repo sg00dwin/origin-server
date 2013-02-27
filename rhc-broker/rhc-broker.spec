@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.4.13
+Version: 1.4.14
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -146,6 +146,9 @@ if [ ! -f %{_var}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Wed Feb 27 2013 Dan McPherson <dmcphers@redhat.com> 1.4.14-1
+- send domain creates and updates to nuture (dmcphers@redhat.com)
+
 * Thu Feb 21 2013 Adam Miller <admiller@redhat.com> 1.4.13-1
 - make the clear pending ops script report what its doing (rchopra@redhat.com)
 
