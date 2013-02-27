@@ -399,7 +399,7 @@ class Release < Thor
         puts "### Tagging the following packages into #{target_brew_tag}:"
         puts pkgs_need_tagging
         puts "######### BEGIN: Brew Tag Output #########"
-        puts `brew tag-pkg #{target_brew_tag} #{pkgs_need_tagging.join(" ")}`
+        puts `brew move-pkg #{src_brew_tag} #{target_brew_tag} #{pkgs_need_tagging.join(" ")}`
         puts "######### END: Brew Tag Output #########"
       end
     ensure
@@ -604,7 +604,7 @@ class Release < Thor
           end
   
           puts "Tagging package #{package}..."
-          puts `brew tag-pkg #{mash_config} #{package}.#{pkg_suffix}`
+          puts `brew move-pkg #{tag_base}-candidate #{tag_base}-stage #{package}.#{pkg_suffix}`
         end
       end
   
