@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.5.6
+Version: 1.5.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -177,6 +177,16 @@ fi
 %{sitedir}/public
 
 %changelog
+* Wed Feb 27 2013 Adam Miller <admiller@redhat.com> 1.5.7-1
+- Merge pull request #886 from nhr/BZ910091_enable_streamline_user_retrieval
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #930 from smarterclayton/aria_direct_post_tweaks
+  (dmcphers+openshiftbot@redhat.com)
+- Tweak direct post production.rb example (ccoleman@redhat.com)
+- Additional check to ensure persistant account upgrade (hripps@redhat.com)
+- Bug 910091 - Users that exist in streamline are now populated from the
+  streamline API (hripps@redhat.com)
+
 * Tue Feb 26 2013 Adam Miller <admiller@redhat.com> 1.5.6-1
 - Bug 915602 - Unable to signup (ccoleman@redhat.com)
 - Merge pull request #924 from smarterclayton/community_url_not_available
