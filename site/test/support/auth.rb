@@ -25,7 +25,7 @@ class ActionController::TestCase
   def user_to_session(user, ses={})
     ses[:login] = user.login
     ses[:ticket] = user.ticket
-    ses[:api_ticket] = user.api_ticket
+    ses[:api_ticket] = user.api_ticket if user.respond_to? :api_ticket
     ses[:streamline_type] = user.streamline_type if user.respond_to? :streamline_type
     ses
   end

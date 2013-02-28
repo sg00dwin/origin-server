@@ -1,14 +1,13 @@
 class AccountUpgradePaymentMethodController < PaymentMethodsController
   def show
-    @user = current_user
-    @user.extend Aria::User
+    @user = Aria::UserContext.new(current_user)
     @payment_method = @user.payment_method
     redirect_to url_for(:action => :new) and return unless @payment_method.persisted?
     redirect_to next_path
   end
 
   def new
-    @user = current_user.extend Aria::User
+    @user = Aria::UserContext.new(current_user)
     @payment_method = @user.payment_method || Aria::PaymentMethod.new
 
     @payment_method = Aria::PaymentMethod.test if Rails.env.development?
