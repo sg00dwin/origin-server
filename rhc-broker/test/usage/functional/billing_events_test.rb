@@ -3,13 +3,13 @@ require 'test_helper'
 
 class BillingEventsTest < ActiveSupport::TestCase
   def setup
-    @api = Online::AriaBilling::Api.instance
+    @api = OpenShift::BillingService.instance
   end
 
   test "billing events" do
-    aria_config = Rails.application.config.billing[:aria][:config]
-    if aria_config[:enable_event_notification]
-      userid = "aria_testuser_" + gen_uuid[0..9]
+    billing_config = Rails.application.config.billing[:config]
+    if billing_config[:enable_event_notification]
+      userid = "billing_testuser_" + gen_uuid[0..9]
       # event: 101
       acct_no = @api.create_fake_acct(userid, :freeshift)
 

@@ -2,7 +2,7 @@ class CloudUser
   include UtilHelper
   #alias :initialize_old :initialize
 
-  field :plan_id, type: String, pre_processed: true, default: ->{ Rails.configuration.billing[:aria][:default_plan] }
+  field :plan_id, type: String, pre_processed: true, default: ->{ Rails.configuration.billing[:default_plan] }
 
   #
   # Capability keys that should be preserved when a user's plan changes.
@@ -15,7 +15,7 @@ class CloudUser
 
   def get_plan_info(plan_id)
     plan_id = plan_id.to_s.downcase.to_sym if plan_id
-    Online::AriaBilling::Plan.instance.plans[plan_id] or
+    OpenShift::BillingService.instance.get_plans[plan_id] or
       raise OpenShift::UserException.new("A plan with specified id does not exist", 150, "plan_id")
   end
 
@@ -93,7 +93,7 @@ class CloudUser
     if self.usage_account_id
       return self.usage_account_id
     else
-      billing_api = Online::AriaBilling::Api.instance
+      billing_api = OpenShift::BillingService.instance
       billing_user_id = Digest::MD5::hexdigest(self.login)
       account_no = nil
       begin
@@ -108,7 +108,7 @@ class CloudUser
 
   def get_billing_details
     begin
-      billing_api = Online::AriaBilling::Api.instance
+      billing_api = OpenShift::BillingService.instance
       return billing_api.get_acct_details_all(self.get_billing_account_no)
     rescue Exception => ex
       raise OpenShift::UserException.new("Could not get billing account info for user #{self.login} : #{ex.message}", 155)
@@ -130,7 +130,7 @@ class CloudUser
     self.usage_account_id = self.get_billing_account_no unless self.usage_account_id
     account = self.get_billing_details
 
-    default_plan_id = Rails.application.config.billing[:aria][:default_plan].to_s
+    default_plan_id = Rails.application.config.billing[:default_plan].to_s
     #allow user to downgrade to default plan if the a/c status is not active. 
     raise OpenShift::UserException.new("Billing account status not active", 152) if account["status_cd"].to_i <= 0 and plan_id != default_plan_id
 
@@ -144,9 +144,9 @@ class CloudUser
     self.assign_plan(default_plan_id) if old_plan_id && (old_plan_id != default_plan_id)
     self.save!
 
-    billing_api = Online::AriaBilling::Api.instance
+    billing_api = OpenShift::BillingService.instance
     begin
-      #update plan in aria
+      #update plan in billing vendor
       billing_api.update_master_plan(self.usage_account_id, plan_id.to_sym) unless plan_info[:plan_no] == account["plan_no"]
     rescue Exception => e
       self.pending_plan_id = nil

@@ -66,7 +66,8 @@ Broker::Application.configure do
 
   config.usage_tracking = {
     :datastore_enabled => true,
-    :syslog_enabled => false
+    :audit_log_enabled => true,
+    :audit_log_filepath => "/var/log/openshift/broker/usage.log"
   }
 
   config.analytics = {
@@ -89,75 +90,73 @@ Broker::Application.configure do
 
   config.user_action_logging = {
     :logging_enabled => true,
-    :log_filepath => "/var/log/openshift/user_action.log"
+    :log_filepath => "/var/log/openshift/broker/user_action.log"
   }
 
   config.billing = {
-    :aria => {
-      :config => {
-        :url => "https://streamline-proxy1.ops.rhcloud.com/api/ws/api_ws_class_dispatcher.php",
-        :auth_key => "sRvjFqjSadu3AFB8jRAR3tqeH5Qf6XjW",
-        :client_no => 3754655,
-        :enable_event_notification => false,
-        :event_remote_ipaddr_begin => "64.238.195.110", 
-        :event_remote_ipaddr_end => "64.238.195.125",
-        :event_orders_team_email => "ariatesting@redhat.com",
-        :event_peoples_team_email => "ariatesting@redhat.com"
+    :config => {
+      :url => "https://streamline-proxy1.ops.rhcloud.com/api/ws/api_ws_class_dispatcher.php",
+      :auth_key => "sRvjFqjSadu3AFB8jRAR3tqeH5Qf6XjW",
+      :client_no => 3754655,
+      :enable_event_notification => false,
+      :event_remote_ipaddr_begin => "64.238.195.110", 
+      :event_remote_ipaddr_end => "64.238.195.125",
+      :event_orders_team_email => "ariatesting@redhat.com",
+      :event_peoples_team_email => "ariatesting@redhat.com"
+    },
+    :usage_type => {
+      :gear => {:small => 10014123,
+                :medium => 10014125,
+                :large => 10014127,
+                :xlarge => 10014151},
+      :storage => {:gigabyte => 10037755},
+      :cartridge => {:"jbosseap-6.0" => 10041319}
+    },
+    :default_plan => :freeshift,
+    :plans => {
+      :freeshift => {
+        :plan_no => 10044929,
+        :name => "FreeShift",
+        :capabilities => {
+          'subaccounts' => false,
+          'max_gears' => 3,
+          'gear_sizes' => ["small"],
+          'plan_upgrade_enabled' => true,
+        }
       },
-      :usage_type => {
-        :gear => {:small => 10014123,
-                  :medium => 10014125,
-                  :large => 10014127,
-                  :xlarge => 10014151},
-        :storage => {:gigabyte => 10037755},
-        :cartridge => {:"jbosseap-6.0" => 10041319}
-      },
-      :default_plan => :freeshift,
-      :plans => {
-        :freeshift => {
-          :plan_no => 10044929,
-          :name => "FreeShift",
-          :capabilities => {
-            'subaccounts' => false,
-            'max_gears' => 3,
-            'gear_sizes' => ["small"],
-            'plan_upgrade_enabled' => true
-          }
+      :megashift => {
+        :plan_no => 10044931,
+        :name => "MegaShift",
+        :capabilities => {
+          'subaccounts' => false,
+          'max_gears' => 16,
+          'gear_sizes' => ["small", "medium"],
+          'max_storage_per_gear' => 30, # 30GB
+          'plan_upgrade_enabled' => true,
         },
-        :megashift => {
-          :plan_no => 10044931,
-          :name => "MegaShift",
-          :capabilities => {
-            'subaccounts' => false,
-            'max_gears' => 16,
-            'gear_sizes' => ["small", "medium"],
-            'max_storage_per_gear' => 30, # 30GB
-            'plan_upgrade_enabled' => true
-          },
-          :usage_rates => {
-            :gear => { 
-                      :small => { 
-                                 :usd => 0.05, #$/hr
-                                 :duration => :hour
-                                },
-                      :medium => {
-                                  :usd => 0.12, #$/hr
-                                  :duration => :hour
-                                 }
-                     },
-            :storage => {
-                         :gigabyte => {
-                                       :usd => 1.00, #$/month
-                                       :duration => :month
-                                      }
-                        },
-            :cartridge => {
-                           :'jbosseap-6.0' => {
-                                               :usd => 0.03, #$/hr
-                                               :duration => :hour
-                                              }
-                          }
-          }
+        :usage_rates => {
+          :gear => { 
+                    :small => { 
+                               :usd => 0.05, #$/hr
+                               :duration => :hour
+                              },
+                    :medium => {
+                                :usd => 0.12, #$/hr
+                                :duration => :hour
+                               }
+                   },
+          :storage => {
+                       :gigabyte => {
+                                     :usd => 1.00, #$/month
+                                     :duration => :month
+                                    }
+                      },
+          :cartridge => {
+                         :'jbosseap-6.0' => {
+                                             :usd => 0.03, #$/hr
+                                             :duration => :hour
+                                            }
+                        }
         }
       }
     }
