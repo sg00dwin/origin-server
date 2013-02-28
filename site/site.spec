@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.5.7
+Version: 1.5.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -177,6 +177,10 @@ fi
 %{sitedir}/public
 
 %changelog
+* Thu Feb 28 2013 Adam Miller <admiller@redhat.com> 1.5.8-1
+- Add a test case for upgrading a user, allow session state to be reset during
+  promotion (ccoleman@redhat.com)
+
 * Wed Feb 27 2013 Adam Miller <admiller@redhat.com> 1.5.7-1
 - Merge pull request #886 from nhr/BZ910091_enable_streamline_user_retrieval
   (dmcphers+openshiftbot@redhat.com)
