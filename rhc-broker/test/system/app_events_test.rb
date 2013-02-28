@@ -162,20 +162,8 @@ class AppEventsTest < ActionDispatch::IntegrationTest
   end
 
   def test_app_alias_events
-    
-    #Alias events are only available in API versions <= 1.3
-    #Only run these tests if 1.3 is still supported
-    request_via_redirect(:get, "/rest/api", {}, @headers)
-    assert_response :ok
-    body = JSON.parse(@response.body)
-    if body["supported_api_versions"].include? 1.3
-      @headers["HTTP_ACCEPT"] = "application/json; version=1.3"
-    else
-      #skip these tests if 1.3 is no longer supported
-      return
-    end
-    
     ns = "ns#{@random}"
+
     # create domain
     request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns}, @headers)
     assert_response :created
