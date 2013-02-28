@@ -63,7 +63,7 @@ RedHatCloud::Application.configure do
   config.captcha_types = [:recaptcha,:picatcha]
 
   # Aria API information
-  config.aria_enabled = false
+  config.aria_enabled = true
   config.aria_uri = "https://secure.current.stage.ariasystems.net/api/ws/api_ws_class_dispatcher.php"
   config.aria_direct_post_uri = "https://secure.current.stage.ariasystems.net/api/direct_post.php"
   config.aria_auth_key = "sRvjFqjSadu3AFB8jRAR3tqeH5Qf6XjW"
@@ -73,7 +73,7 @@ RedHatCloud::Application.configure do
   # Aria direct post configuration
   config.aria_direct_post_uri = "https://secure.current.stage.ariasystems.net/api/direct_post.php"
   config.aria_direct_post_name = 'website_new_payment'
-  config.aria_direct_post_redirect_base = 'https://openshift.redhat.com'
+  config.aria_direct_post_redirect_base = 'https://openshift.redhat.com/app'
 
   # Promo code Email notification setup
   config.email_from = 'OpenShift <noreply@openshift.redhat.com>'
@@ -110,8 +110,5 @@ RedHatCloud::Application.configure do
                                  overpass.css
                                 )
 
-  Console.configure do |c|
-    c.api = :local
-    c.community_url = 'https://www.openshift.com'
-  end
+  Console.configure(ENV['CONSOLE_CONFIG_FILE'] || '/etc/openshift/console.conf')
 end

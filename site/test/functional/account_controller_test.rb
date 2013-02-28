@@ -99,7 +99,7 @@ class AccountControllerTest < ActionController::TestCase
   end
 
 	test "should get success on post and choosing Express" do
-		post(:create, {:web_user => get_post_form.merge({:cloud_access_choice => CloudAccess::EXPRESS})})
+		post(:create, {:web_user => get_post_form})
 
 		assert_equal 'openshift', assigns(:product)
     assert_redirected_to complete_account_path

@@ -35,7 +35,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
   
   def test_user_upgrade
-    api = Online::AriaBilling::Api.instance
+    api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :freeshift)
     api.update_acct_status(acct_no, 1)
@@ -52,7 +52,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     user = CloudUser.find_by(login: @login)
     assert_equal(user.pending_plan_id, nil)
     assert_equal(user.pending_plan_uptime, nil)
-    #assert plan changed in aria
+    #assert plan changed in billing provider
     plans = api.get_acct_plans_all(acct_no)
     assert(plans.length == 1)
     current_plan = plans[0]
@@ -60,7 +60,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
 
   def test_user_downgrade
-    api = Online::AriaBilling::Api.instance
+    api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :megashift)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :freeshift}, @headers)
@@ -76,7 +76,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     user = CloudUser.find_by(login: @login)
     assert_equal(user.pending_plan_id, nil)
     assert_equal(user.pending_plan_uptime, nil)
-    #assert plan changed in aria
+    #assert plan changed in billing provider
     plans = api.get_acct_plans_all(acct_no)
     assert(plans.length == 1)
     current_plan = plans[0]
@@ -120,7 +120,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
 
   def test_user_downgrade_with_additional_storage
-    api = Online::AriaBilling::Api.instance
+    api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :freeshift)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :megashift}, @headers)
@@ -142,7 +142,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
 
   def test_user_upgrade_with_inactive_user
-    api = Online::AriaBilling::Api.instance
+    api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :freeshift)
     api.update_acct_status(acct_no, 0)
@@ -151,14 +151,14 @@ class UserApiTest < ActionDispatch::IntegrationTest
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 152)
 
-    #assert plan  did not change in aria
+    #assert plan  did not change in billing provider
     plans = api.get_acct_plans_all(acct_no)
     assert(plans.length == 1)
     current_plan = plans[0]
     assert_equal(current_plan["plan_name"], "FreeShift", "Current plan name #{current_plan["plan_name"]} expected FreeShift")
   end
   
-  def test_aria_account_not_found
+  def test_billing_account_not_found
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :megashift}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
@@ -166,7 +166,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
   
   def test_invalid_plan_id
-    api = Online::AriaBilling::Api.instance
+    api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :freeshift)
     api.update_acct_status(acct_no, 1)
@@ -177,7 +177,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
 
   def test_plan_upgrade_free_to_mega_recovery
-    api = Online::AriaBilling::Api.instance
+    api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :freeshift)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :freeshift}, @headers)
@@ -213,7 +213,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
  
   def test_plan_upgrade_mega_to_free_recovery
-    api = Online::AriaBilling::Api.instance
+    api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :megashift)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :megashift}, @headers)
@@ -249,7 +249,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
  
   def test_plan_upgrade_noplan_to_mega_recovery_success
-    api = Online::AriaBilling::Api.instance
+    api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :freeshift)
     request_via_redirect(:get, USER_COLLECTION_URL, {}, @headers)
@@ -286,7 +286,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
 
   def test_plan_upgrade_noplan_to_mega_recovery_failure
-    api = Online::AriaBilling::Api.instance
+    api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :megashift)
     request_via_redirect(:get, USER_COLLECTION_URL, {}, @headers)
@@ -326,7 +326,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
 
   def test_fix_user_plan_capabilities_success
-    api = Online::AriaBilling::Api.instance
+    api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :freeshift)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :freeshift}, @headers)
@@ -349,7 +349,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
 
   def test_fix_user_plan_capabilities_failure
-    api = Online::AriaBilling::Api.instance
+    api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :freeshift)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :freeshift}, @headers)

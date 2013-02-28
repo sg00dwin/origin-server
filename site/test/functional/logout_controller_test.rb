@@ -29,6 +29,34 @@ class LogoutControllerTest < ActionController::TestCase
     assert_not_nil cookies['keep']
   end
 
+  test "should reset a streamline user" do
+    set_user(new_user :login => 'foo', :ticket => 'bar')
+    WebUser::Mock.any_instance.expects(:logout).returns(true)
+
+    # Hit logout with some session data as well
+    get(:show, {}, user_to_session(@user))
+    assert_redirected_to root_path
+
+    # Make sure the cookie is gone and the session is empty
+    assert session.empty?
+  end
+
+  test "should delete an active authorization" do
+    set_user(new_user :login => 'foo', :ticket => 'bar')
+    auth = Authorization.create(:scope => 'session', :as => @user)
+    @user.api_ticket = auth.token
+
+    # Hit logout with some session data as well
+    get(:show, {}, user_to_session(@user))
+    assert_redirected_to root_path
+
+    @user.api_ticket = nil
+
+    # Make sure the cookie is gone and the session is empty
+    assert session.empty?
+    assert_raise(RestApi::ResourceNotFound){ Authorization.find(auth.token, :as => @user) }
+  end
+
   test 'should recover from exceptions' do
     @controller.expects(:reset_sso).raises(AccessDeniedException)
     get :show
@@ -53,6 +81,15 @@ class LogoutControllerTest < ActionController::TestCase
     assert_response :success
     assert_template :change_account
     assert_select 'a', 'Continue to a different account' do |el|
+      assert_equal getting_started_path, el.first['href']
+    end
+  end
+
+  test 'should show the expired page' do
+    get :show, {:cause => 'expired', :then => getting_started_path}
+    assert_response :success
+    assert_template :expired
+    assert_select 'a', 'Continue working' do |el|
       assert_equal getting_started_path, el.first['href']
     end
   end

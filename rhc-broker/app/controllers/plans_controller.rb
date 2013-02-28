@@ -1,10 +1,10 @@
 class PlansController < BaseController
 
-  skip_before_filter :authenticate
+  skip_before_filter :authenticate_user!
 
   def index
     plans = []
-    Online::AriaBilling::Plan.instance.plans.each do |key, value|
+    OpenShift::BillingService.instance.get_plans.each do |key, value|
       plan = RestPlan.new(key, value[:name], value[:plan_no], value[:capabilities], value[:usage_rates])
       plans.push(plan)
     end
@@ -13,7 +13,7 @@ class PlansController < BaseController
 
   def show
     id = params[:id]
-    Online::AriaBilling::Plan.instance.plans.each do |key, value|
+    OpenShift::BillingService.instance.get_plans.each do |key, value|
       return render_success(:ok, "plan",
                             RestPlan.new(key, value[:name], value[:plan_no], value[:capabilities], value[:usage_rates]),
                             "SHOW_PLAN") if key == id.to_sym

@@ -9,7 +9,7 @@
 
 Summary:        OpenShift plugin for streamline auth service
 Name:           rubygem-%{gem_name}
-Version: 1.3.2
+Version: 1.3.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -81,6 +81,16 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-auth-streamline-dev.conf
 
 %changelog
+* Tue Feb 26 2013 Adam Miller <admiller@redhat.com> 1.3.3-1
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Merge branch 'isolate_api_behavior_from_base_controller' into
+  session_auth_support_2 (ccoleman@redhat.com)
+- In test mode streamline should use default settings with INTEGRATED=false,
+  other code errors (ccoleman@redhat.com)
+- Changes to the broker to match session auth support in the origin
+  (ccoleman@redhat.com)
+
 * Fri Feb 08 2013 Adam Miller <admiller@redhat.com> 1.3.2-1
 - Merge remote-tracking branch 'origin/master' into
   isolate_api_behavior_from_base_controller (ccoleman@redhat.com)

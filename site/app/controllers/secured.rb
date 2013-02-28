@@ -6,6 +6,7 @@ module Secured
 
   included do
     helper_method :current_user, :user_signed_in?, :previously_signed_in?
+    rescue_from ActiveResource::UnauthorizedAccess, :with => :api_rejected_authentication
   end
 
   ##
@@ -50,40 +51,6 @@ module Secured
     #
 
     #
-    # Verify that the rh_sso cookie matches the ticket, and that the ticket is still valid.
-    # Refresh the ticket if possible, otherwise raise AccessDeniedException.
-    #
-    def validate_ticket
-      sso_cookie = cookies[:rh_sso]
-      ticket = session[:ticket]
-
-      if sso_cookie && sso_cookie != ticket
-        raise AccessDeniedException, "Session ticket #{ticket} does not match rh_sso cookie #{sso_cookie}"
-      end
-
-      login = session[:login]
-      reverify_interval = Rails.configuration.sso_verify_interval
-
-      if login && reverify_interval > 0
-        ts = session[:ticket_verified] || 0
-        diff = Time.now.to_i - ts
-
-        if (diff > reverify_interval)
-          logger.debug "ticket_verified timestamp has expired, checking ticket: #{session[:ticket]}"
-
-          user = WebUser.find_by_ticket(ticket)
-          if !user || login != user.login
-            raise AccessDeniedException, "SSO ticket user #{user.login} does not match active session #{login}"
-          end
-
-          # ticket is valid, set a new timestamp
-          session[:ticket_verified] = Time.now.to_i
-        end
-      end
-      true
-    end
-
-    #
     # Return true if the user can access OpenShift resources.  Otherwise, the user is redirected or
     # sees an error page.  Callers should not call redirect_to or render if false is returned.
     #
@@ -91,7 +58,34 @@ module Secured
       user = current_user
 
       if session[:terms] # terms are only checked once per session
-        true
+        if user.api_ticket
+          true
+        else
+          auth = begin
+                   Authorization.create({
+                    :scope => 'session',
+                    :note => "OpenShift Console (from #{request.remote_ip} on #{user_browser})",
+                    :reuse => true,
+                    :as => user
+                  })
+                 rescue => e
+                   logger.error "Unable to create an authorization: #{e.message} (#{e.class})\n  #{e.backtrace.join("\n  ")}"
+                   Authorization.new.tap{ |a| a.errors[:base] = e.message }
+                 end
+          if auth.persisted?
+            logger.debug "Authorization succeeded for #{user.login}, expires in #{distance_of_time_in_words(auth.expires_at, Time.now)}"
+            user.api_ticket = auth.token
+            user_to_session(user)
+            true
+          else
+            logger.debug "Authorization failed for #{user.login}, #{auth.errors.full_messages.join(', ')}"
+            redirect_to logout_path(
+              :cause => :expired,
+              :then => url_for({:only_path => true}.merge(params))
+            )
+            false
+          end
+        end
       elsif user.accepted_terms?
         if user.entitled?
           session[:terms] = true
@@ -142,12 +136,10 @@ module Secured
     #   before_filter :authenticate_user!
     #
     def authenticate_user!
-      logger.debug '  Login required'
-      logger.debug "  Session contents: #{session.inspect}"
+      logger.debug "Session contents: #{session.inspect}"
 
       return redirect_to login_path(:redirectUrl => after_login_redirect) unless user_signed_in?
 
-      validate_ticket
       validate_user
     end
     # Legacy
@@ -167,12 +159,18 @@ module Secured
       end
     end
 
+    def api_rejected_authentication
+      redirect_to logout_path(
+        :cause => :expired,
+        :then => url_for({:only_path => true}.merge(params))
+      )
+    end
 
     ##
     # Methods to manage the Streamline single sign-on (SSO) cookie.
     #
 
-    # Ensure that the single sign on cookie is removed
+    # Ensure that the user is logged out
     def reset_sso
       current_user.logout if user_signed_in?
       logger.debug "  Removing current SSO cookie value of '#{cookies[:rh_sso]}'"
@@ -226,10 +224,18 @@ module Secured
     #
     def user_to_session(user)
       session[:ticket] = user.ticket
+      session[:api_ticket] = user.api_ticket
       session[:login] = user.login
       session[:streamline_type] = user.streamline_type if user.respond_to?(:streamline_type)
-      session[:ticket_verified] ||= Time.now.to_i
       @authenticated_user = user
+    end
+
+    #
+    # Notify the controller that the user has been altered and should be created from
+    # cache
+    #
+    def current_user_changed!
+      user_to_session(current_user)
     end
 
   private
@@ -238,11 +244,35 @@ module Secured
     #
     def user_from_session
       if session[:login]
-        WebUser.new(:login => session[:login], :ticket => session[:ticket], :streamline_type => session[:streamline_type])
-      elsif cookies[:rh_sso]
-        user_to_session(WebUser.find_by_ticket(cookies[:rh_sso])) rescue nil
+        WebUser.new(
+          :login => session[:login],
+          :ticket => session[:ticket],
+          :api_ticket => session[:api_ticket],
+          :streamline_type => session[:streamline_type],
+        )
       else
         nil
+      end
+    end
+
+    def user_browser
+      agent = (request.user_agent || "").downcase
+      case agent
+      when /safari/
+          case agent
+          when /mobile/
+            'Safari Mobile'
+          else
+            'Safari'
+          end
+      when /firefox/
+        'Firefox'
+      when /opera/
+        'Opera'
+      when /MSIE/
+        'Internet Explorer'
+      else
+        'browser'
       end
     end
 end

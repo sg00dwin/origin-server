@@ -240,7 +240,7 @@ class Release < Thor
             
           chain_set.each do | pkg |
             working_dir = File.expand_path("../#{full_pkg_set[pkg][0]}", File.dirname(__FILE__))
-            inside(working_dir)
+            inside(working_dir) do
               if push_failures.empty? && run(tito_cmd, :verbose => options.verbose?)
                 puts "Done"
               else
@@ -281,12 +281,12 @@ class Release < Thor
               chain_build_failures += "# pushd #{working_dir} > /dev/null; #{tito_cmd}; popd > /dev/null;"
             end
             chain_build_failures += "# for i in #{failed_set.join(" ")} ; do scm+=\"\$(printf \"%s \" \"\$(printf \"%s : \" \"git://pkgs.devel.redhat.com/rpms/$i/?#\$(git ls-remote git://pkgs.devel.redhat.com/rpms/$i refs/heads/libra-rhel-6 | awk '{print $1}')\")\")\"; done;"
-            chain_build_failures += "# brew chain-build libra-rhel-6-dirty-build $\{scm%:*\}"
+            chain_build_failures += "# brew chain-build --nowait libra-rhel-6-dirty $\{scm%:*\}"
 
           end
 
           unless chain_scm_urls.empty?
-            cmd = "brew chain-build libra-rhel-6-dirty-build #{chain_scm_urls.join(" : ")}"
+            cmd = "brew chain-build --nowait libra-rhel-6-dirty #{chain_scm_urls.join(" : ")}"
             if push_failures.empty? && run(cmd, :verbose => options.verbose?)
               puts "Done"
             else
@@ -340,6 +340,7 @@ class Release < Thor
         end
       end
     end
+  end
 
   desc "sync", "Download a build from Brew (using Mash) and sync it to the OpenShift repos"
   method_option :stage, :type => :string, :desc => "Comma-delimited list of packages to sync.  Exclude NVR for latest versions.  (e.g. --stage='rhc, rhc-site-0.73.3-1')"
@@ -398,7 +399,7 @@ class Release < Thor
         puts "### Tagging the following packages into #{target_brew_tag}:"
         puts pkgs_need_tagging
         puts "######### BEGIN: Brew Tag Output #########"
-        puts `brew tag-pkg #{target_brew_tag} #{pkgs_need_tagging.join(" ")}`
+        puts `brew move-pkg #{src_brew_tag} #{target_brew_tag} #{pkgs_need_tagging.join(" ")}`
         puts "######### END: Brew Tag Output #########"
       end
     ensure
@@ -603,7 +604,7 @@ class Release < Thor
           end
   
           puts "Tagging package #{package}..."
-          puts `brew tag-pkg #{mash_config} #{package}.#{pkg_suffix}`
+          puts `brew move-pkg #{tag_base}-candidate #{tag_base}-stage #{package}.#{pkg_suffix}`
         end
       end
   

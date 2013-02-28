@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.5.4
+Version: 1.5.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -27,6 +27,7 @@ Requires:  ruby193-rubygem-bson_ext
 Requires:  ruby193-rubygem-rest-client
 Requires:  rubygem-openshift-origin-auth-streamline
 Requires:  rubygem-openshift-origin-dns-dynect
+Requires:  rubygem-openshift-origin-billing-aria
 Requires:  rubygem-openshift-origin-msg-broker-mcollective
 Requires:  ruby193-rubygem-mongo_mapper
 Requires:  ruby193-rubygem-mongoid
@@ -83,7 +84,6 @@ mkdir -p -m 770 %{buildroot}%{brokerdir}/tmp/sessions
 mkdir -p -m 770 %{buildroot}%{brokerdir}/tmp/sockets
 
 mv %{buildroot}%{brokerdir}/script/rhc-admin-migrate %{buildroot}/%{_bindir}
-mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-usage %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-plan %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-stale-dns %{buildroot}/%{_bindir}
 
@@ -110,10 +110,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0770,root,libra_user) %{_var}/log/openshift/broker/
 %ghost %attr(0660,root,libra_user) %{_var}/log/openshift/broker/production.log
 %ghost %attr(0660,root,libra_user) %{_var}/log/openshift/broker/development.log
+%ghost %attr(0660,root,libra_user) %{_var}/log/openshift/broker/usage.log
+%ghost %attr(0660,root,libra_user) %{_var}/log/openshift/broker/user_action.log
 %{brokerdir}
 %{htmldir}/broker
 %attr(0750,-,-) %{_bindir}/rhc-admin-migrate
-%attr(0750,-,-) %{_bindir}/rhc-admin-ctl-usage
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-plan
 %attr(0750,-,-) %{_bindir}/rhc-admin-stale-dns
 
@@ -136,14 +137,107 @@ if [ ! -f %{_var}/log/openshift/broker/development.log ]; then
   chmod 660 %{_var}/log/openshift/broker/development.log
 fi
 
+if [ ! -f %{_var}/log/openshift/broker/user_action.log ]; then
+  /bin/touch %{_var}/log/openshift/broker/user_action.log
+  chown root:libra_user %{_var}/log/openshift/broker/user_action.log
+  chmod 660 %{_var}/log/openshift/broker/user_action.log
+fi
 
-if [ ! -f %{_var}/log/openshift/user_action.log ]; then
-  /bin/touch %{_var}/log/openshift/user_action.log
-  chown root:libra_user %{_var}/log/openshift/user_action.log
-  chmod 660 %{_var}/log/openshift/user_action.log
+if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
+  /bin/touch %{_var}/log/openshift/broker/usage.log
+  chown root:libra_user %{_var}/log/openshift/broker/usage.log
+  chmod 660 %{_var}/log/openshift/broker/usage.log
 fi
 
 %changelog
+* Thu Feb 28 2013 Adam Miller <admiller@redhat.com> 1.5.8-1
+- Merge pull request #919 from pravisankar/dev/ravi/us3409
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #943 from
+  smarterclayton/bug_916093_restore_broker_controller (dmcphers@redhat.com)
+- reverted US2448 (lnader@redhat.com)
+- ignore errors in teardown (lnader@redhat.com)
+- Bug 916093 - Restore broker_controller (ccoleman@redhat.com)
+- More than 80%% of the code is rewritten to improve rhc-admin-ctl-usage script
+  Added bulk_record_usage to billing api. Used light weight Moped session
+  instead of Mongoid model for read/write to mongo. Leverages
+  bulk_record_usage() aria api to report usage in bulk that reduces #calls to
+  aria. Query cloud_users collection for billing account# instead of aria api
+  (mongo op is cheaper than external aria api). Process users by 'login'
+  (created index on this field in UsageRecord model) and cache user->billing
+  account# After some experimentation, setting chunk size for bulk_record_usage
+  as 30 (conservative). We can go upto 50, anything above 50 records we may run
+  into URL too long error. Set/Unset sync_time in one mongo call. If
+  bulk_record_usage fails, we don't know which records has failed and so we
+  can't unset sync_time. This should happen rarely and if it happens, try
+  processing the records again one at a time. Added option 'enable-logger' to
+  log errors and warning to /var/broker/openshift/usage.log file which helps
+  during investigation in prod environment. Handle incorrect records that can
+  ariase due to some hidden bug in broker. Try to fix the records or delete the
+  records that are no longer needed. Fix and add ctl_usage test cases Use
+  account# in record_usage/bulk_record_usage, we don't need to compute billing
+  user id. Make list/sync/remove-sync-lock to be used in conjunction. For users
+  with no aria a/c, sync option will delete ended records from usage_records
+  collection. Check usage and usage_record collection consistency only during
+  usage record deletion. Handle exceptions gracefully. Enable usage tracking in
+  production mode. (rpenta@redhat.com)
+- Merge pull request #938 from rmillner/US3143 (dmcphers@redhat.com)
+- Migrate all cart types. (rmillner@redhat.com)
+- Bug 916335 Split out config (dmcphers@redhat.com)
+
+* Wed Feb 27 2013 Adam Miller <admiller@redhat.com> 1.5.7-1
+- Merge pull request #934 from lnader/master (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #935 from smarterclayton/scope_changes_to_production.rb
+  (dmcphers+openshiftbot@redhat.com)
+- Default values missing for scopes in production.rb (ccoleman@redhat.com)
+- US2448 (lnader@redhat.com)
+- send domain creates and updates to nuture (dmcphers@redhat.com)
+
+* Tue Feb 26 2013 Adam Miller <admiller@redhat.com> 1.5.6-1
+- update migration to current release (dmcphers@redhat.com)
+- Merge pull request #925 from smarterclayton/session_auth_support_2
+  (dmcphers+openshiftbot@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Tweak the log change so that is optional for developers running Rails
+  directly, has same behavior on devenv, and allows more control over the path
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Add the read scope.  Curl insecure doesn't create extra storage test.
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Merge branch 'isolate_api_behavior_from_base_controller' into
+  session_auth_support_2 (ccoleman@redhat.com)
+- Move configuration parsing to a separate class (ccoleman@redhat.com)
+- Config changes for scope support (ccoleman@redhat.com)
+- Streamline auth tests pass (ccoleman@redhat.com)
+- Changes to the broker to match session auth support in the origin
+  (ccoleman@redhat.com)
+
+* Mon Feb 25 2013 Adam Miller <admiller@redhat.com> 1.5.5-2
+- bump Release for fixed build target rebuild (admiller@redhat.com)
+
+* Mon Feb 25 2013 Adam Miller <admiller@redhat.com> 1.5.5-1
+- Revert to original RAILS_LOG_PATH behavior (ccoleman@redhat.com)
+- Merge pull request #920 from
+  smarterclayton/bug_913816_work_around_bad_logtailer
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 913816 - Fix log tailer to pick up the correct config
+  (ccoleman@redhat.com)
+- Merge pull request #918 from
+  smarterclayton/bug_912286_cleanup_robots_misc_for_split
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 912286 - Cleanup robots.txt and others for split (ccoleman@redhat.com)
+- Tweak the log change so that is optional for developers running Rails
+  directly, has same behavior on devenv, and allows more control over the path
+  (ccoleman@redhat.com)
+
 * Wed Feb 20 2013 Adam Miller <admiller@redhat.com> 1.5.4-1
 - open source rhc-admin-clear-pending-ops to oo-admin-clear-pending-ops
   (rchopra@redhat.com)

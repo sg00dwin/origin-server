@@ -5,7 +5,7 @@ class BillingEventsController < BillingController
     retval = "FAILED"
     #Rails.logger.info("Request params: #{params.inspect}")
     begin
-      aria_config = Rails.application.config.billing[:aria][:config]
+      aria_config = Rails.application.config.billing[:config]
       if aria_config[:enable_event_notification]
         event_list = params[:event_id]
         if (event_list - Online::AriaBilling::Event::EVENTS.keys()).empty?

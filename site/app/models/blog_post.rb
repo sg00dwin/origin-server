@@ -2,8 +2,8 @@ class BlogPost < RestApi::Base
   include RestApi::Cacheable
   allow_anonymous
 
-  self.site = 'https://openshift.redhat.com'
-  self.prefix = '/community/blogs/'
+  self.site = Console.config.community_url
+  self.prefix = '/blogs/'
 
   schema do
     string :title, :summary, :href

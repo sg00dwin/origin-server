@@ -164,6 +164,7 @@ module OpenShift
     end
 
     def dyn_do(method, retries=2)
+      start_time = Time.new
       i = 0
       while true
         begin
@@ -175,6 +176,7 @@ module OpenShift
           i += 1
         end
       end
+      logger.debug "DEBUG: Dynect Response Time (#{method}): #{Time.new - start_time}s  (Request ID: #{Thread.current[:user_action_log_uuid]})"
     end
   
     def dyn_logout(auth_token, retries=0)

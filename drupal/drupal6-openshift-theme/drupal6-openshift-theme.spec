@@ -5,8 +5,8 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.13.2
-Release:        2%{?dist}
+Version: 3.13.3
+Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
 Group:          Applications/Publishing
@@ -44,6 +44,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Feb 25 2013 Adam Miller <admiller@redhat.com> 3.13.3-1
+- Bug 909992 - Fix login errors outside of login (ccoleman@redhat.com)
+- Bug 912286 - Cleanup robots.txt and others for split (ccoleman@redhat.com)
+
 * Mon Feb 18 2013 Adam Miller <admiller@redhat.com> 3.13.2-2
 - Bump spec for mass drupal rebuild
 

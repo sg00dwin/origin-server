@@ -17,16 +17,6 @@ class WebUserTest < ActiveSupport::TestCase
     assert WebUser.new.respond_to?(:register)
   end
 
-  test "find by ticket" do
-    assert u = WebUser.find_by_ticket("1234")
-    assert u.mock?
-  end
-
-  test "find by ticket throws" do
-    WebUser::Mock.any_instance.stubs(:establish) { self.rhlogin = nil }
-    assert_raise(AccessDeniedException) { WebUser.find_by_ticket("1234") }
-  end
-
   test "login and rhlogin are identical" do
     user = WebUser.new(:rhlogin => 'bob')
     assert_equal user.rhlogin, user.login
@@ -92,5 +82,22 @@ class WebUserTest < ActiveSupport::TestCase
     assert_equal 1, identities.length
     assert_equal :red_hat, identities[0].type
     assert_equal user.login, identities[0].id
+  end
+
+  test 'logout should delete the token' do
+    assert user = WebUser.new
+    assert_nil user.api_ticket
+    user.api_ticket = 'foo'
+    Authorization.expects(:destroy).with('foo', :as => user).returns(true)
+    user.logout
+  end
+
+  test 'logout should eat exceptions' do
+    assert user = WebUser.new
+    assert_nil user.api_ticket
+    user.api_ticket = 'foo'
+    Authorization.expects(:destroy).with('foo', :as => user).raises(StandardError)
+    Rails.logger.expects(:warn)
+    user.logout
   end
 end
