@@ -46,7 +46,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%ghost %attr(-,-,libra_user) %{_sysconfdir}/mcollective/client.cfg
+%ghost %attr(0640,-,libra_user) %{_sysconfdir}/mcollective/client.cfg
 %{_libexecdir}/mcollective/mcollective/connector/amqp.rb
 %attr(0640,-,-) %{mco_agent_root}*
 
