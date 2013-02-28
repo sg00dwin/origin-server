@@ -230,6 +230,14 @@ module Secured
       @authenticated_user = user
     end
 
+    #
+    # Notify the controller that the user has been altered and should be created from
+    # cache
+    #
+    def current_user_changed!
+      user_to_session(current_user)
+    end
+
   private
     #
     # Retrieve a user object from the session.
