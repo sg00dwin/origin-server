@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.3.3
+Version: 1.3.4
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,9 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Thu Feb 28 2013 Adam Miller <admiller@redhat.com> 1.3.4-1
+- Fixing tags from merge of new package
+
 * Wed Feb 27 2013 Ravi Sankar <rpenta@redhat.com> 1.3.3-1
 - Re-organize aria plugin files (rpenta@redhat.com)
 - Automatic commit of package [rubygem-openshift-origin-billing-aria] release
