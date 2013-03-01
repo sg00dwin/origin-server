@@ -408,26 +408,32 @@ module Streamline
     def promote(streamline_hash)
       streamline_hash[:login] = self.login
 
-      http_post(promote_user_url, streamline_hash, true, false) do |response|
-        if response.has_key? 'errors'
-          Streamline::FullUser.errors_to_attributes(self.errors, response['errors'])
-        else
-          Rails.logger.warn "Promote user #{response['login']} different than active #{rhlogin}" if rhlogin != response['login']
-          self.roles = response['roles']
+      if self.mock?
+        self.roles = ['authenticated','mock_user']
+      else
+        http_post(promote_user_url, streamline_hash, true, false) do |response|
+          if response.has_key? 'errors'
+            Streamline::FullUser.errors_to_attributes(self.errors, response['errors'])
+          else
+            Rails.logger.warn "Promote user #{response['login']} different than active #{rhlogin}" if rhlogin != response['login']
+            self.roles = response['roles']
+          end
         end
-      end
 
-      return false unless self.errors.empty?
+        return false unless self.errors.empty?
+      end
 
       self.full_user?
     end
 
     def user_info!
       user_info_args = {
-        'login' => @rhlogin,
+        'login' => self.rhlogin,
         'secretKey' => Rails.configuration.streamline[:user_info_secret]
       }
-      http_post(user_info_url, user_info_args)
+      http_post(user_info_url, user_info_args) do |json|
+        json
+      end
     end
 
     protected

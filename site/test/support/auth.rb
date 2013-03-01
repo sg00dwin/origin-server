@@ -1,7 +1,13 @@
 class ActiveSupport::TestCase
+  class TestWebUser < Streamline::Base
+    def mock?
+      false
+    end
+  end
+
   def new_streamline_user
     id = ::SecureRandom.base64(10).gsub(/[^a-zA-Z0-9_\-]/, '_')
-    Streamline::UserContext.new(Streamline::Base.new(
+    Streamline::UserContext.new(TestWebUser.new(
       :email_address => "os_#{id}@mailinator.com",
       :password => ::SecureRandom.base64(20)
     ))
