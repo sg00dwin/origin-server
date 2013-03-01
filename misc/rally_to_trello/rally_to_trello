@@ -81,6 +81,7 @@ command :run do |c|
 
   c.option "--dry-run" , "Check what would happen if you actually ran it"
   c.option "--delete-all-from-trello" , "Delete everything from the target boards"
+  c.option "--move-story ID" , "Move just 1 story"
 
   c.description = "Run available reports"
   c.action do |args, options|
@@ -139,6 +140,7 @@ command :run do |c|
       end
 
       stories.each do |story|
+        if !options.move_story || story.formatted_i_d == options.move_story
         begin
           if story.project.to_s.chomp.strip == team_name
             puts "*************************************"
@@ -230,7 +232,7 @@ command :run do |c|
 
 Copied from #{story.formatted_i_d}"
         
-            unless options.dry_run
+            unless options.dry_run || (options.move_story && story.formatted_i_d != options.move_story)
 
               card = Trello::Card.create({:name => name, :list_id => list_id, :description => description})
               tags.each do |tag|
@@ -260,13 +262,13 @@ Copied from #{story.formatted_i_d}"
             end
       
             count += 1
-#            break if count >= 4
 
           end
         rescue Exception => e
           puts e.message
           puts e.backtrace
           failures << story.formatted_i_d
+        end
         end
       end
     end
