@@ -48,10 +48,25 @@ class PlansControllerTest < ActionController::TestCase
     get :show
     assert_response :success
     user = assigns(:user)
+    current_plan = assigns(:current_plan)
+    smaller_plans = assigns(:smaller_plans)
+    bigger_plans = assigns(:bigger_plans)
+
     assert_equal user.plan_id, user.plan.id
-    validate_plan(assigns(:current_plan))
-    validate_plan_list(assigns(:plans))
-    validate_plan_list(assigns(:smaller_plans))
-    validate_plan_list(assigns(:bigger_plans))
+    validate_plan(current_plan)
+
+    [assigns(:plans), smaller_plans, bigger_plans].each do |plans|
+      validate_plan_list plans
+    end
+
+    # Ensure we have a div for the right number of plans
+    assert_select "#current_plan .plan", 1
+    assert_select "#upgrade .plan", bigger_plans.length
+    assert_select "#downgrade .plan", smaller_plans.length
+
+    # Ensure the current plan does not have any buttons
+    assert_select "#current_plan .plan .btn", :count => 0
+    # Ensure that the Upgrade buttons are primary
+    assert_select ".plan .btn-primary", :text => "Upgrade"
   end
 end
