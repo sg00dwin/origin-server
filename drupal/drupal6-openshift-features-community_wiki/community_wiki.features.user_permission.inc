@@ -12,6 +12,7 @@ function community_wiki_user_default_permissions() {
     'roles' => array(
       '0' => 'authenticated user',
       '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 

@@ -492,10 +492,8 @@ function user_profile_user_default_permissions() {
     'name' => 'create document content',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'authenticated user',
-      '2' => 'blogger',
-      '3' => 'doc content owner',
-      '4' => 'moderator',
+      '1' => 'doc content owner',
+      '2' => 'moderator',
     ),
   );
 
@@ -1236,7 +1234,8 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_kb_applies_to'] = array(
     'name' => 'edit field_kb_applies_to',
     'roles' => array(
-      '0' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'moderator',
     ),
   );
 
@@ -1254,7 +1253,8 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_kb_code'] = array(
     'name' => 'edit field_kb_code',
     'roles' => array(
-      '0' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'moderator',
     ),
   );
 
@@ -1811,7 +1811,10 @@ function user_profile_user_default_permissions() {
     'name' => 'upload files',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'doc content owner',
+      '1' => 'blogger',
+      '2' => 'doc content owner',
+      '3' => 'moderator',
+      '4' => 'page author',
     ),
   );
 
@@ -2269,6 +2272,8 @@ function user_profile_user_default_permissions() {
     'name' => 'view imagecache blog_author_image_30x30',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
     ),
   );
 
@@ -2277,6 +2282,8 @@ function user_profile_user_default_permissions() {
     'name' => 'view imagecache blog_author_image_80x80',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
     ),
   );
 
@@ -2285,6 +2292,8 @@ function user_profile_user_default_permissions() {
     'name' => 'view imagecache blog_insert_image',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
     ),
   );
 
@@ -2293,6 +2302,8 @@ function user_profile_user_default_permissions() {
     'name' => 'view imagecache user_image_large_80x80',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
     ),
   );
 
@@ -2301,6 +2312,8 @@ function user_profile_user_default_permissions() {
     'name' => 'view imagecache user_image_medium_40x40',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
     ),
   );
 
@@ -2309,6 +2322,8 @@ function user_profile_user_default_permissions() {
     'name' => 'view imagecache user_image_small_20x20',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
     ),
   );
 
@@ -2345,7 +2360,10 @@ function user_profile_user_default_permissions() {
     'name' => 'view uploaded files',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'doc content owner',
+      '1' => 'blogger',
+      '2' => 'doc content owner',
+      '3' => 'moderator',
+      '4' => 'page author',
     ),
   );
 
