@@ -33,7 +33,6 @@ Requires:  ruby193-rubygem-mongo_mapper
 Requires:  ruby193-rubygem-mongoid
 Requires:  ruby193-rubygem-wddx
 Requires:  ruby193-rubygem-pony
-Requires:  mcollective-qpid-plugin
 # As broker admin scripts are opensourced they are placed into this package
 Requires:  openshift-origin-broker-util
 Provides:  openshift-origin-broker
