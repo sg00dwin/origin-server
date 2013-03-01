@@ -108,7 +108,7 @@ def migrate_gear(login, app_name, gear_uuid, version)
                     end
                   end unless restart
                   if restart
-                    component = gear.group_instance.all_component_instances.find { |ci| ci.cartridge_name==gear_cart }
+                    component = gear.group_instance.all_component_instances.to_a.find { |ci| ci.cartridge_name==gear_cart }
                     restart_component(gear, component, out)
                   end
                 end
