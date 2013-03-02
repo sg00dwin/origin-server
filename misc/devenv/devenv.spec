@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.5.6
+Version: 1.5.7
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -680,6 +680,9 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Fri Mar 01 2013 Adam Miller <admiller@redhat.com> 1.5.7-1
+- Add mock-plugin to devenv.spec (pmorie@gmail.com)
+
 * Tue Feb 26 2013 Adam Miller <admiller@redhat.com> 1.5.6-1
 - Add a crontab line to purge expired authorizations. (ccoleman@redhat.com)
 - Merge pull request #925 from smarterclayton/session_auth_support_2
