@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.5.8
+Version: 1.5.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -177,6 +177,22 @@ fi
 %{sitedir}/public
 
 %changelog
+* Fri Mar 01 2013 Adam Miller <admiller@redhat.com> 1.5.9-1
+- Merge pull request #936 from sg00dwin/iconfont
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #911 from fotioslindiakos/plan_upgrade
+  (dmcphers+openshiftbot@redhat.com)
+- Merge branch 'master' of github.com:openshift/li into blog-img
+  (sgoodwin@redhat.com)
+- Fix Bug 915523 - blog teaser img (sgoodwin@redhat.com)
+- addition of openshift-icon.css to config (sgoodwin@redhat.com)
+- Plan stuff (fotios@redhat.com)
+- include note for implementation (sgoodwin@redhat.com)
+- moving font files (sgoodwin@redhat.com)
+- change icon name in svg metadata (sgoodwin@redhat.com)
+- Iconfont modifications for styleguide and correct font name
+  (sgoodwin@redhat.com)
+
 * Thu Feb 28 2013 Adam Miller <admiller@redhat.com> 1.5.8-1
 - Add a test case for upgrading a user, allow session state to be reset during
   promotion (ccoleman@redhat.com)
