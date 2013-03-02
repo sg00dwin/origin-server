@@ -5,8 +5,8 @@
 %global modname             community_wiki
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.4.2
-Release: 2%{?dist}
+Version: 1.4.3
+Release: 1%{?dist}
 Summary: Openshift Red Hat Community Wiki Feature for Drupal6
 Group:   Applications/Publishing
 License: GPLv2+
@@ -41,6 +41,10 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Fri Mar 01 2013 Adam Miller <admiller@redhat.com> 1.4.3-1
+- Backport Drupal permission changes - allow bloggers to upload files
+  (ccoleman@redhat.com)
+
 * Mon Feb 18 2013 Adam Miller <admiller@redhat.com> 1.4.2-2
 - Bump spec for mass drupal rebuild
 
