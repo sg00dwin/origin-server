@@ -349,6 +349,8 @@ module Online
         scp_from(hostname, "/root/openshift-test/site/log/*", "rhc/log/site")
         scp_from(hostname, "/root/openshift-test/site/test/coverage/*", "rhc/log/site/test/coverage")
         scp_from(hostname, "/var/log/openshift/broker/*", "rhc/log/broker")
+        scp_from(hostname, "/var/log/openshift/node/*", "rhc/log/node")
+        scp_from(hostname, "/var/log/node-web-proxy/*", "rhc/log/node-web-proxy")
         scp_from(hostname, "/root/openshift-test/rhc-broker/log/*", "rhc/log/broker")
         scp_from(hostname, "/root/openshift-test/rhc-broker/test/coverage/*", "rhc/log/broker/test/coverage")
         scp_from(hostname, "/root/openshift-test/broker/log/*", "rhc/log/origin-broker")
