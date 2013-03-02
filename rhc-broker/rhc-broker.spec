@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.5.8
+Version: 1.5.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -149,6 +149,10 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Fri Mar 01 2013 Adam Miller <admiller@redhat.com> 1.5.9-1
+- Removing mcollective qpid plugin and adding some doc (dmcphers@redhat.com)
+- fix rhc-admin-migrate so that it restarts jenkins (rchopra@redhat.com)
+
 * Thu Feb 28 2013 Adam Miller <admiller@redhat.com> 1.5.8-1
 - Merge pull request #919 from pravisankar/dev/ravi/us3409
   (dmcphers+openshiftbot@redhat.com)
