@@ -140,7 +140,7 @@ def restart_component(gear, component, out)
   if component
     leave_stopped = false
     reply = gear.status(component)
-    result.properties["attributes"][gear.uuid].each do |key, value|
+    reply.properties["attributes"][gear.uuid].each do |key, value|
       if key == 'status'
         case value
         when "ALREADY_STOPPED"
