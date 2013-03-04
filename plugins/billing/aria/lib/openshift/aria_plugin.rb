@@ -104,7 +104,7 @@ module OpenShift
         next if srec['usage'] == 0
         if srec['time'].month != srec['end_time'].month
            month_begin_time = Time.new(srec['end_time'].year, srec['end_time'].month)
-           acct_nos << get_billing_acct_no(srec['login'])
+           acct_nos << srec['acct_no']
            usage_types << get_billing_usage_type(srec)
            usage_units << (month_begin_time - srec['time']) / 3600
            usage_dates << srec['time'].strftime("%Y-%m-%d %H:%M:%S")
@@ -112,7 +112,7 @@ module OpenShift
            app_names << srec['app_name'] 
            srec['usage'] = (srec['end_time'] - month_begin_time) / 3600 
         end
-        acct_nos << get_billing_acct_no(srec['login'])
+        acct_nos << srec['acct_no']
         usage_types << get_billing_usage_type(srec)
         usage_units << srec['usage']
         usage_dates << srec['end_time'].strftime("%Y-%m-%d %H:%M:%S")
@@ -164,10 +164,9 @@ module OpenShift
         user_srecs += new_srecs
 
         user_srecs.each do |srec|
-          acct_no = get_billing_acct_no(srec['login'])
           usage_type = get_billing_usage_type(srec)
           if (srec['usage'] == 0) or
-             record_usage(acct_no, usage_type, srec['usage'], srec['gear_id'], srec['app_name'], sync_time, srec['usage_date'])
+             record_usage(srec['acct_no'], usage_type, srec['usage'], srec['gear_id'], srec['app_name'], sync_time, srec['usage_date'])
             unless srec['ended']
               continue_user_ids << srec['_id']
             else
