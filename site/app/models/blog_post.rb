@@ -3,7 +3,7 @@ class BlogPost < RestApi::Base
   allow_anonymous
 
   self.site = Console.config.community_url
-  self.prefix = '/blogs/'
+  self.prefix = URI.join(Console.config.community_url, 'blogs/').path
 
   schema do
     string :title, :summary, :href
