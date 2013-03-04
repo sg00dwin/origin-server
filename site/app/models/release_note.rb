@@ -4,7 +4,7 @@ class ReleaseNote < RestApi::Base
   singleton
 
   self.site = Console.config.community_url
-  self.prefix = '/releases/'
+  self.prefix = URI.join(Console.config.community_url, 'releases/').path
 
   schema do
     string :title, :summary, :href
