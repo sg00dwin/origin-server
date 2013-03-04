@@ -1,7 +1,9 @@
 class ActiveSupport::TestCase
   class TestWebUser < Streamline::Base
-    def mock?
-      false
+    def promote(streamline_hash)
+      streamline_hash[:login] = self.login
+      self.roles = ['authenticated','mock_user']
+      self.full_user?
     end
   end
 

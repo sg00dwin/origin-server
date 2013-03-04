@@ -408,20 +408,16 @@ module Streamline
     def promote(streamline_hash)
       streamline_hash[:login] = self.login
 
-      if self.mock?
-        self.roles = ['authenticated','mock_user']
-      else
-        http_post(promote_user_url, streamline_hash, true, false) do |response|
-          if response.has_key? 'errors'
-            Streamline::FullUser.errors_to_attributes(self.errors, response['errors'])
-          else
-            Rails.logger.warn "Promote user #{response['login']} different than active #{rhlogin}" if rhlogin != response['login']
-            self.roles = response['roles']
-          end
+      http_post(promote_user_url, streamline_hash, true, false) do |response|
+        if response.has_key? 'errors'
+          Streamline::FullUser.errors_to_attributes(self.errors, response['errors'])
+        else
+          Rails.logger.warn "Promote user #{response['login']} different than active #{rhlogin}" if rhlogin != response['login']
+          self.roles = response['roles']
         end
-
-        return false unless self.errors.empty?
       end
+
+      return false unless self.errors.empty?
 
       self.full_user?
     end
