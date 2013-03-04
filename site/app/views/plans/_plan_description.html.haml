@@ -3,9 +3,10 @@
   plan_items = Hash[plan.features.map{|x| [x.name,x.value] }]
   price = plan_items.delete('Price')
 .plan{:id => plan.name.downcase}
-  %h3
+  %h4
     = plan.name
-    %span.pull-right= price
+    -#%span.pull-right= price
+    %span{:style => "font-size: 14px; margin-left: 15px;"}= price
   %p
     %em= plan.description
   - if plan.respond_to?(:summary)
@@ -15,5 +16,6 @@
       - next if feature.name == "Price"
       %li= "#{feature.name}: #{feature.value}"
   - if select_button != ''
-    = link_to "Details", pricing_url(:anchor => plan.name.downcase), :class => 'btn'
+    %p
+      = link_to "Plan details", pricing_url(:anchor => plan.name.downcase)
     = link_to select_button, account_plan_upgrade_path(plan), :class => 'btn btn-primary'
