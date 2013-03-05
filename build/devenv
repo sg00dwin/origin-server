@@ -755,6 +755,7 @@ rm -rf /tmp/tito; mkdir -p /root/.source_build;
               end
             elsif options.install_required_packages?
               puts "Installing bootstrap packages..."
+
               output, exit_code = ssh(hostname, "yum -y install git tito ruby rubygems rubygem-thor rubygem-parseconfig rubygem-json rubygem-aws-sdk ruby193-rubygem-thor ruby193-rubygem-parseconfig ruby193-rubygem-json ruby193-rubygem-aws-sdk scl-utils-build createrepo yum-priorities", 600, true)
               print_highlighted_output('Install Bootstrap Packages Output', output)
               exit 1 unless exit_code == 0
@@ -801,6 +802,9 @@ yum -y install java-1.7.0-openjdk.i686 java-1.7.0-openjdk-devel.i686
 pushd #{DEV_TOOLS_EXT_REPO}
   build/devenv install_required_packages 2>&1
 popd
+
+# Extras
+yum install rubygem-commander rubygem-highline rubygem-httpclient rubygem-net-ssh rubygem-open4 rubygem-archive-tar-minitar haproxy jenkins js mcollective mms-agent bind rubygem-test-unit
 
 # Update the Virus Definitions
 /usr/bin/freshclam
