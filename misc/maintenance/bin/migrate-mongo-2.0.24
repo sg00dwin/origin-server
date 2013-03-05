@@ -17,6 +17,7 @@ $valid_gear_sizes = Rails.configuration.openshift[:gear_sizes]
 $usage_recs = []
 $cur_rec_count = 0
 $failure_count = 0
+$total_rec_count = 0
 $domain_hash = {}
       
 def get_mongo_session
@@ -52,12 +53,15 @@ def write_usage_records
     # Write bulk records to usage_records collection
     begin
       $session.with(safe: true)[:usage_records].insert($usage_recs)
+      $total_rec_count += $cur_rec_count
     rescue Moped::Errors::OperationFailure => e
+      $total_rec_count -= $cur_rec_count
       # There can be duplicate key error index, try one at a time
       # This happens when usage record already exists for the gear
       $usage_recs.each do |urec|
         begin
           $session.with(safe: true)[:usage_records].insert(urec)
+          $total_rec_count += 1
         rescue Moped::Errors::OperationFailure => e
           #Ignore
         end
@@ -211,15 +215,15 @@ rescue Exception => e
   exit 1
 ensure
   if $session
-    $session[:usage_records].indexes.drop(usage_index_fields)
+    $session.with(safe: true)[:usage_records].indexes.drop(usage_index_fields)
     release_mongo_session($session)
   end
 end
 
 puts "***************************"
 if $failure_count == 0
-  puts "Migration Done! - No failures"
+  puts "Migration Done! - No failures, created #{$total_rec_count} usage records"
 else
-  puts "Migration Done! - #{$failure_count} failures"
+  puts "Migration Done! - #{$failure_count} failures, created #{$total_rec_count} usage records"
 end
 puts "***************************"
