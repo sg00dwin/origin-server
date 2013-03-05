@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.5.7
+Version: 1.5.8
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -679,6 +679,10 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Tue Mar 05 2013 Adam Miller <admiller@redhat.com> 1.5.8-1
+- remove temp mongoid gem patch (dmcphers@redhat.com)
+- Security - add mod_security for Apache (tkramer@redhat.com)
+
 * Fri Mar 01 2013 Adam Miller <admiller@redhat.com> 1.5.7-1
 - Add mock-plugin to devenv.spec (pmorie@gmail.com)
 
