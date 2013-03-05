@@ -282,10 +282,6 @@ gem install rspec --version 1.3.0 --no-rdoc --no-ri
 gem install fakefs --no-rdoc --no-ri
 gem install httpclient --version 2.3.2 --no-rdoc --no-ri
 
-# Work around issue with mongoid not being tagged into devenv yet,
-# REMOVE ME
-gem install mongoid --version 3.0.19 --no-rdoc --no-ri
-
 # Move over all configs and scripts
 /bin/cp -rf %{devenvdir}/etc/* %{_sysconfdir}
 /bin/cp -rf %{devenvdir}/bin/* %{_bindir}
