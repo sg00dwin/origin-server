@@ -49,7 +49,6 @@ class ActionDispatch::IntegrationTest
         open_session do |sess|
           sess.https!
           sess.extend(CustomAssertions)
-          binding.pry
           sess.post login_path, :web_user => {:login => user.login, :password => user.password}
           sess.assert_response expected if expected
         end
