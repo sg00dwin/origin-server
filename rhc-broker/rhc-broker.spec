@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.5.10
+Version: 1.5.11
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -149,6 +149,17 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Tue Mar 05 2013 Adam Miller <admiller@redhat.com> 1.5.11-1
+- Merge pull request #956 from pravisankar/dev/ravi/us3409-migration
+  (dmcphers+openshiftbot@redhat.com)
+- Migrate script: Add 'begin' usage records for all existing apps.
+  (rpenta@redhat.com)
+- usage rates unit test (rchopra@redhat.com)
+- Merge pull request #961 from rajatchopra/master
+  (dmcphers+openshiftbot@redhat.com)
+- remove redundant observer - coverage tests for rhc-broker
+  (rchopra@redhat.com)
+
 * Mon Mar 04 2013 Adam Miller <admiller@redhat.com> 1.5.10-1
 - Fix restart for migrate (dmcphers@redhat.com)
 
