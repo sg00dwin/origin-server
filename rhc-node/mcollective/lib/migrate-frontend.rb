@@ -76,7 +76,7 @@ module OpenShiftMigration
           File.rename(cfg_dir, cfg_dir + ".migrated")
 
         rescue => e
-          output << "ERROR: Problem migrating #{uuid}: #{e.inspect}\n"
+          output << "ERROR: Problem migrating #{container_uuid}: #{e.inspect}\n"
           output << "#{e.backtrace}\n"
           return output, 127
         end
