@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.5.7
+Version: 1.5.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -236,6 +236,9 @@ fi
 
 
 %changelog
+* Tue Mar 05 2013 Adam Miller <admiller@redhat.com> 1.5.8-1
+- Fix incorrect variable name. (rmillner@redhat.com)
+
 * Fri Mar 01 2013 Adam Miller <admiller@redhat.com> 1.5.7-1
 - Removing mcollective qpid plugin and adding some doc (dmcphers@redhat.com)
 - Use direct API calls, and set up the results of the proxy hook calls rather
