@@ -41,14 +41,6 @@ module OpenShift
       billing_usage_type
     end
 
-    def get_billing_acct_no(user)
-      billing_user_id = Digest::MD5::hexdigest(user)
-      if userid_exists(billing_user_id)
-        acct_no = get_acct_no_from_user_id(billing_user_id)
-      end
-      acct_no
-    end
-
     # Compute Usage time, if needed query aria to get partial synced usage
     def get_usage_time(billing_acct_no, urec, begin_time, end_time)
       billing_usage_type = get_billing_usage_type(urec)
@@ -60,7 +52,7 @@ module OpenShift
           app_name = usage["qualifier_2"]
           sync_time = usage["qualifier_3"]
           if (urec['sync_time'].to_i == sync_time.to_i) &&
-             (urec['gear_id'] == gear_id) && (urec['app_name'] == app_name)
+             (urec['gear_id'].to_s == gear_id) && (urec['app_name'] == app_name)
             found = true
             break
           end
@@ -84,7 +76,7 @@ module OpenShift
      
       # Saving sync time before sending usage data to billing vendor
       user_ids = user_srecs.map { |rec| rec['_id'] }
-      session[:usage_records].find({_id: {"$in" => user_ids}}).update_all({"$set" => {sync_time: sync_time}})
+      session.with(safe:true)[:usage_records].find({_id: {"$in" => user_ids}}).update_all({"$set" => {sync_time: sync_time}})
 
       # Prepare for bulk usage reporting
       acct_nos = []
@@ -108,7 +100,7 @@ module OpenShift
            usage_types << get_billing_usage_type(srec)
            usage_units << (month_begin_time - srec['time']) / 3600
            usage_dates << srec['time'].strftime("%Y-%m-%d %H:%M:%S")
-           gear_ids << srec['gear_id']
+           gear_ids << srec['gear_id'].to_s
            app_names << srec['app_name'] 
            srec['usage'] = (srec['end_time'] - month_begin_time) / 3600 
         end
@@ -116,14 +108,14 @@ module OpenShift
         usage_types << get_billing_usage_type(srec)
         usage_units << srec['usage']
         usage_dates << srec['end_time'].strftime("%Y-%m-%d %H:%M:%S")
-        gear_ids << srec['gear_id']
+        gear_ids << srec['gear_id'].to_s
         app_names << srec['app_name']
       end
       # Send usage in bulk to billing vendor
       update_query = {"$set" => {event: UsageRecord::EVENTS[:continue], time: sync_time, sync_time: nil}}
       if bulk_record_usage(acct_nos, usage_types, usage_units, gear_ids, app_names, sync_time, usage_dates)
         # For non-ended usage records: set event to 'continue'
-        session[:usage_records].find({_id: {"$in" => continue_user_ids}}).update_all(update_query) unless continue_user_ids.empty?
+        session.with(safe:true)[:usage_records].find({_id: {"$in" => continue_user_ids}}).update_all(update_query) unless continue_user_ids.empty?
         # For ended usage records: delete from mongo
         delete_ended_urecs(session, ended_srecs)
       else 
@@ -138,7 +130,8 @@ module OpenShift
         user_srecs.each do |srec|
           if srec['usage'] != 0
             begin
-              srec['usage'] = get_usage_time(billing_acct_no, billing_usage_type, srec, srec['time'], srec['end_time'])
+              usage_type = get_billing_usage_type(srec)
+              srec['usage'] = get_usage_time(srec['acct_no'], usage_type, srec, srec['time'], srec['end_time'])
             rescue Exception => e
               print_error(e.message, srec)
               Rails.logger.error e.backtrace.inspect
@@ -166,7 +159,7 @@ module OpenShift
         user_srecs.each do |srec|
           usage_type = get_billing_usage_type(srec)
           if (srec['usage'] == 0) or
-             record_usage(srec['acct_no'], usage_type, srec['usage'], srec['gear_id'], srec['app_name'], sync_time, srec['usage_date'])
+             record_usage(srec['acct_no'], usage_type, srec['usage'], srec['gear_id'].to_s, srec['app_name'], sync_time, srec['usage_date'])
             unless srec['ended']
               continue_user_ids << srec['_id']
             else
@@ -178,7 +171,7 @@ module OpenShift
         end
         # For non-ended usage records: set event to 'continue'
         continue_user_ids.uniq!
-        session[:usage_records].find({_id: {"$in" => continue_user_ids}}).update_all(update_query) unless continue_user_ids.empty?
+        session.with(safe:true)[:usage_records].find({_id: {"$in" => continue_user_ids}}).update_all(update_query) unless continue_user_ids.empty?
         # For ended usage records: delete from mongo        
         delete_ended_urecs(session, ended_srecs)
       end
