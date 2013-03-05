@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.5.9
+Version: 1.5.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -177,6 +177,22 @@ fi
 %{sitedir}/public
 
 %changelog
+* Tue Mar 05 2013 Adam Miller <admiller@redhat.com> 1.5.10-1
+- Merge pull request #958 from sg00dwin/general-dev
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #953 from nhr/BZ910091_enable_streamline_user_retrieval
+  (dmcphers@redhat.com)
+- Merge pull request #959 from
+  smarterclayton/bug_916495_relative_urls_in_community_still
+  (dmcphers@redhat.com)
+- Revised mock web user to better override the promote behavior
+  (hripps@redhat.com)
+- Bug 916495 - Fix more broken relative URLs (ccoleman@redhat.com)
+- revert link change (sgoodwin@redhat.com)
+- fix Bug 916564 content layout changes, minor (sgoodwin@redhat.com)
+- Bug 910091 - Corrected http_post call that was not returning JSON response
+  (hripps@redhat.com)
+
 * Fri Mar 01 2013 Adam Miller <admiller@redhat.com> 1.5.9-1
 - Merge pull request #936 from sg00dwin/iconfont
   (dmcphers+openshiftbot@redhat.com)
