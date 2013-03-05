@@ -303,9 +303,9 @@ function redhat_events_views_default_views() {
   ));
   $handler->override_option('title', 'Calendar');
   $handler->override_option('header', '<!--<div class="pull-right" style="margin-top:10px;">
-      <a href="/community/events/ics" style="margin-right:10px;font-size:90%;">iCalendar feed</a>
-      <a href="/community/events/feed">
-        <img title="Subscribe to the events RSS feed" alt="RSS" src="/community/misc/feed.png" />
+      <a href="/events/ics" style="margin-right:10px;font-size:90%;">iCalendar feed</a>
+      <a href="/events/feed">
+        <img title="Subscribe to the events RSS feed" alt="RSS" src="/misc/feed.png" />
       </a>
     </div>-->
     <ul class="nav nav-tabs">

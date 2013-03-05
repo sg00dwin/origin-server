@@ -11,6 +11,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     @appname = "usageapp" + gen_uuid[0..9]
 
     cu = CloudUser.new(login: @login)
+    @user_id = cu._id
     cu.plan_id = "megashift"
     user_capabilities = cu.get_capabilities
     user_capabilities['max_storage_per_gear'] = 20
@@ -34,11 +35,11 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     Domain.where(canonical_namespace: @namespace).delete
     
     # delete the user
-    CloudUser.where(login: @login).delete
+    CloudUser.where(_id: @user_id).delete
     
     # delete the usage records
-    UsageRecord.where(login: @login).delete
-    Usage.where(login: @login).delete
+    UsageRecord.where(user_id: @user_id).delete
+    Usage.where(user_id: @user_id).delete
   end
 
   def test_gear_storage_usage_sync
@@ -48,12 +49,12 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
       Rails.configuration.msg_broker[:districts][:enabled] = @districts_enabled
     end
     acct_no = @billing_api.create_fake_acct(@billing_user_id, :megashift)
-    cu = CloudUser.find_by(login: @login)
+    cu = CloudUser.find_by(_id: @user_id)
     cu.usage_account_id = acct_no
     cu.save!
     
     usage_records = []
-    UsageRecord.where(login: @login).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).each { |rec| usage_records << rec }
     assert_equal(1, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[0].usage_type)
     assert_equal('small', usage_records[0].gear_size)
@@ -67,7 +68,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
       sync_usage
   
       usage_records = []
-      UsageRecord.where(login: @login).each { |rec| usage_records << rec }
+      UsageRecord.where(user_id: @user_id).each { |rec| usage_records << rec }
       assert_equal(1, usage_records.length)
       assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[0].usage_type)
       assert_equal('small', usage_records[0].gear_size)
@@ -82,7 +83,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     assert_equal(5, group_instance.addtl_fs_gb)
 
     usage_records = []
-    UsageRecord.where(login: @login).asc(:usage_type).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).each { |rec| usage_records << rec }
     assert_equal(2, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:begin], usage_records[0].event)
@@ -93,7 +94,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     sync_usage
 
     usage_records = []
-    UsageRecord.where(login: @login).asc(:usage_type).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).each { |rec| usage_records << rec }
     assert_equal(2, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:continue], usage_records[0].event)
@@ -108,7 +109,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     assert_equal(0, group_instance.addtl_fs_gb)
 
     usage_records = []
-    UsageRecord.where(login: @login).asc(:usage_type).asc(:time).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).asc(:time).each { |rec| usage_records << rec }
     assert_equal(3, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:continue], usage_records[0].event)
@@ -121,7 +122,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     sync_usage
 
     usage_records = []
-    UsageRecord.where(login: @login).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).each { |rec| usage_records << rec }
     assert_equal(1, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:continue], usage_records[0].event)
@@ -134,7 +135,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     assert_equal(5, group_instance.addtl_fs_gb)
     
     usage_records = []
-    UsageRecord.where(login: @login).asc(:usage_type).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).each { |rec| usage_records << rec }
     assert_equal(2, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:begin], usage_records[0].event)
@@ -146,7 +147,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     app.destroy_app
 
     usage_records = []
-    UsageRecord.where(login: @login).asc(:usage_type).asc(:time).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).asc(:time).each { |rec| usage_records << rec }
     assert_equal(4, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:begin], usage_records[0].event)
@@ -161,7 +162,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     sync_usage
 
     usage_records = []
-    UsageRecord.where(login: @login).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).each { |rec| usage_records << rec }
     assert_equal(0, usage_records.length)
   end
  
@@ -173,12 +174,12 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
       Rails.configuration.msg_broker[:districts][:enabled] = @districts_enabled
     end
     acct_no = @billing_api.create_fake_acct(@billing_user_id, :megashift)
-    cu = CloudUser.find_by(login: @login)
+    cu = CloudUser.find_by(_id: @user_id)
     cu.usage_account_id = acct_no
     cu.save!
 
     usage_records = []
-    UsageRecord.where(login: @login).asc(:usage_type).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).each { |rec| usage_records << rec }
     assert_equal(2, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[0].usage_type)
     assert_equal('small', usage_records[0].gear_size)
@@ -192,7 +193,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     sync_usage
   
     usage_records = []
-    UsageRecord.where(login: @login).asc(:usage_type).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).each { |rec| usage_records << rec }
     assert_equal(2, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[0].usage_type)
     assert_equal('small', usage_records[0].gear_size)
@@ -206,7 +207,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     app.destroy_app
 
     usage_records = []
-    UsageRecord.where(login: @login).asc(:usage_type).asc(:time).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).asc(:time).each { |rec| usage_records << rec }
     assert_equal(4, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:continue], usage_records[0].event)
@@ -221,7 +222,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     sync_usage
 
     usage_records = []
-    UsageRecord.where(login: @login).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).each { |rec| usage_records << rec }
     assert_equal(0, usage_records.length)
   end
 
@@ -233,7 +234,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
       Rails.configuration.msg_broker[:districts][:enabled] = @districts_enabled
     end
     usage_records = []
-    UsageRecord.where(login: @login).asc(:usage_type).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).each { |rec| usage_records << rec }
     assert_equal(2, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[0].usage_type)
     assert_equal('small', usage_records[0].gear_size)
@@ -247,7 +248,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     app.destroy_app
 
     usage_records = []
-    UsageRecord.where(login: @login).asc(:usage_type).asc(:time).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).asc(:time).each { |rec| usage_records << rec }
     assert_equal(4, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:begin], usage_records[0].event)
@@ -262,7 +263,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     sync_usage
 
     usage_records = []
-    UsageRecord.where(login: @login).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).each { |rec| usage_records << rec }
     assert_equal(0, usage_records.length)
   end
 

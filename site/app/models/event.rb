@@ -3,7 +3,7 @@ class Event < RestApi::Base
   allow_anonymous
 
   self.site = Console.config.community_url 
-  self.prefix = '/events/'
+  self.prefix = URI.join(Console.config.community_url, 'events/').path
 
   schema do
     string :title, :href

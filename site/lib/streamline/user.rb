@@ -424,10 +424,12 @@ module Streamline
 
     def user_info!
       user_info_args = {
-        'login' => @rhlogin,
+        'login' => self.rhlogin,
         'secretKey' => Rails.configuration.streamline[:user_info_secret]
       }
-      http_post(user_info_url, user_info_args)
+      http_post(user_info_url, user_info_args) do |json|
+        json
+      end
     end
 
     protected

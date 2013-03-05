@@ -86,7 +86,7 @@ class AccountUpgradesControllerTest < ActionController::TestCase
   end
 
   test "should make a copy of billing info for editing" do
-    user = with_user(full)
+    user = with_confirmed_user
     @controller.edit
     assert_not_nil assigns[:full_user]
     assert_not_nil assigns[:billing_info]

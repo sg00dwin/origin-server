@@ -1,4 +1,4 @@
-ApplicationObserver.instance
+#ApplicationObserver.instance
 CloudUserObserver.instance
 DomainObserver.instance
 #customizations to models
