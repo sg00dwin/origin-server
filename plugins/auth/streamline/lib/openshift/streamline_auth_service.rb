@@ -36,7 +36,6 @@ module OpenShift
     def check_login(ticket, user, password)
       rhlogin = nil
       is_cached = false
-
       begin
         json, ticket = http_post(@roles_url, {}, ticket)
 
@@ -63,7 +62,6 @@ module OpenShift
           rhlogin = login
         end
       end
-
       {:username => rhlogin}
     end
 
