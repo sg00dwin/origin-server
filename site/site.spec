@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.5.10
+Version: 1.5.11
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -177,6 +177,30 @@ fi
 %{sitedir}/public
 
 %changelog
+* Wed Mar 06 2013 Adam Miller <admiller@redhat.com> 1.5.11-1
+- Merge pull request #978 from spurtell/spurtell/analytics
+  (dmcphers+openshiftbot@redhat.com)
+- Tracking updates for domain split and enterprise (spurtell@redhat.com)
+- Merge pull request #975 from smarterclayton/bug_917946_do_not_rh_sso_on_login
+  (dmcphers@redhat.com)
+- Merge pull request #966 from sg00dwin/icon-changes
+  (dmcphers+openshiftbot@redhat.com)
+- Revert "Tracking code updates for domain split and enterprise"
+  (spurtell@redhat.com)
+- Tracking code updates for domain split and enterprise (spurtell@redhat.com)
+- Bug 917946 - Do not set rh_sso during login (ccoleman@redhat.com)
+- Merge pull request #972 from liggitt/alt_text (dmcphers@redhat.com)
+- Merge pull request #970 from smarterclayton/remove_old_pry_reference
+  (dmcphers+openshiftbot@redhat.com)
+- Add alt text to styleguide and twitter avatars (jliggitt@redhat.com)
+- Merge pull request #968 from smarterclayton/update_to_robots
+  (dmcphers+openshiftbot@redhat.com)
+- Remove old pry reference (ccoleman@redhat.com)
+- Update to robots (ccoleman@redhat.com)
+- Merge branch 'master' of github.com:openshift/li into icon-changes
+  (sgoodwin@redhat.com)
+- Add usage scenarios to icon styleguide (sgoodwin@redhat.com)
+
 * Tue Mar 05 2013 Adam Miller <admiller@redhat.com> 1.5.10-1
 - Merge pull request #958 from sg00dwin/general-dev
   (dmcphers+openshiftbot@redhat.com)
