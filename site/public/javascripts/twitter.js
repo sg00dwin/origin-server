@@ -68,7 +68,7 @@
       index_adjustment += entity.replacement.length + entity.indices[0] - entity.indices[1];
     }
     if (include_image) {
-      avatar = "<a href=\"http://twitter.com/#!/" + tweet.user.screen_name + "\" title=\"" + tweet.user.name + "\" target=\"_blank\">\n  <img class='avatar' src='" + tweet.user.profile_image_url_https + "'>\n</a>";
+      avatar = "<a href=\"http://twitter.com/#!/" + tweet.user.screen_name + "\" title=\"" + tweet.user.name + "\" target=\"_blank\">\n  <img class='avatar' src='" + tweet.user.profile_image_url_https + "' alt='" + tweet.user.name + "'>\n</a>";
     } else {
       avatar = '';
     }
