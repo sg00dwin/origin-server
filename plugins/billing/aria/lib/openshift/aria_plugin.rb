@@ -42,17 +42,17 @@ module OpenShift
     end
 
     # Compute Usage time, if needed query aria to get partial synced usage
-    def get_usage_time(billing_acct_no, urec, begin_time, end_time)
+    def get_usage_time(urec)
       billing_usage_type = get_billing_usage_type(urec)
-      if billing_acct_no and billing_usage_type and urec['sync_time']
+      if urec['acct_no'] and billing_usage_type and urec['sync_time']
         found = false
-        usages = get_usage_history(billing_acct_no, billing_usage_type)
+        usages = get_usage_history(urec['acct_no'], billing_usage_type)
         usages.each do |usage|
           gear_id = usage["qualifier_1"]
-          app_name = usage["qualifier_2"]
+          created_at = usage["qualifier_2"]
           sync_time = usage["qualifier_3"]
           if (urec['sync_time'].to_i == sync_time.to_i) &&
-             (urec['gear_id'].to_s == gear_id) && (urec['app_name'] == app_name)
+             (urec['gear_id'].to_s == gear_id) && (urec['created_at'].to_i == created_at.to_i)
             found = true
             break
           end
@@ -61,19 +61,41 @@ module OpenShift
           print_warning "Usage already posted to billing vendor but not removed from mongo datastore."\
                         "Resetting begin_time to previous sync_time.", urec
           urec['time'] = urec['sync_time']
-          begin_time = urec['time']
         end
       end
       total_time = 0
-      if end_time > begin_time
-        total_time = (end_time - begin_time) / 3600 #hours
+      if urec['end_time'] > urec['time']
+        total_time = (urec['end_time'] - urec['time']) / 3600 #hours
       end
       total_time
     end
 
+    def preprocess_user_srecs(user_srecs)
+      new_srecs = []
+      user_srecs.each do |srec|
+        if srec['time'].month != srec['end_time'].month
+          month_begin_time = Time.new(srec['end_time'].year, srec['end_time'].month)
+          new_srec = srec.dup
+          srec['end_time'] = month_begin_time
+          srec['usage_date'] = srec['time'].strftime("%Y-%m-%d %H:%M:%S")
+
+          new_srec['time'] = month_begin_time
+          new_srec['usage_date'] = new_srec['end_time'].strftime("%Y-%m-%d %H:%M:%S")
+          new_srec['created_at'] += 1 # Make it different from orig. rec
+          new_srec['no_update'] = true
+          new_srecs << new_srec
+        else
+          srec['usage_date'] = srec['end_time'].strftime("%Y-%m-%d %H:%M:%S")
+        end
+        new_srecs << srec
+      end
+      user_srecs = new_srecs
+    end
+
     def sync_usage(session, user_srecs, sync_time)
       return if user_srecs.empty?
-     
+    
+      preprocess_user_srecs(user_srecs) 
       # Saving sync time before sending usage data to billing vendor
       user_ids = user_srecs.map { |rec| rec['_id'] }
       session.with(safe:true)[:usage_records].find({_id: {"$in" => user_ids}}).update_all({"$set" => {sync_time: sync_time}})
@@ -84,36 +106,28 @@ module OpenShift
       usage_units = []
       usage_dates = []
       gear_ids = []
-      app_names = []
+      created_times = []
       continue_user_ids = []
       ended_srecs = []
       user_srecs.each do |srec|
-        unless srec['ended']
+        if srec['no_update']
+          # Ignore
+        elsif !srec['ended']
           continue_user_ids << srec['_id']
         else
           ended_srecs << srec
         end
         next if srec['usage'] == 0
-        if srec['time'].month != srec['end_time'].month
-           month_begin_time = Time.new(srec['end_time'].year, srec['end_time'].month)
-           acct_nos << srec['acct_no']
-           usage_types << get_billing_usage_type(srec)
-           usage_units << (month_begin_time - srec['time']) / 3600
-           usage_dates << srec['time'].strftime("%Y-%m-%d %H:%M:%S")
-           gear_ids << srec['gear_id'].to_s
-           app_names << srec['app_name'] 
-           srec['usage'] = (srec['end_time'] - month_begin_time) / 3600 
-        end
         acct_nos << srec['acct_no']
         usage_types << get_billing_usage_type(srec)
         usage_units << srec['usage']
-        usage_dates << srec['end_time'].strftime("%Y-%m-%d %H:%M:%S")
+        usage_dates << srec['usage_date']
         gear_ids << srec['gear_id'].to_s
-        app_names << srec['app_name']
+        created_times << srec['created_at'].to_i
       end
       # Send usage in bulk to billing vendor
       update_query = {"$set" => {event: UsageRecord::EVENTS[:continue], time: sync_time, sync_time: nil}}
-      if bulk_record_usage(acct_nos, usage_types, usage_units, gear_ids, app_names, sync_time, usage_dates)
+      if bulk_record_usage(acct_nos, usage_types, usage_units, gear_ids, created_times, sync_time, usage_dates)
         # For non-ended usage records: set event to 'continue'
         session.with(safe:true)[:usage_records].find({_id: {"$in" => continue_user_ids}}).update_all(update_query) unless continue_user_ids.empty?
         # For ended usage records: delete from mongo
@@ -125,13 +139,11 @@ module OpenShift
         continue_user_ids = []
         ended_srecs = []
         ignore_srecs = []
-        new_srecs = []
         # Recalculate usage
         user_srecs.each do |srec|
           if srec['usage'] != 0
             begin
-              usage_type = get_billing_usage_type(srec)
-              srec['usage'] = get_usage_time(srec['acct_no'], usage_type, srec, srec['time'], srec['end_time'])
+              srec['usage'] = get_usage_time(srec)
             rescue Exception => e
               print_error(e.message, srec)
               Rails.logger.error e.backtrace.inspect
@@ -140,27 +152,17 @@ module OpenShift
               next
             end
           end
-          if srec['time'].month != srec['end_time'].month
-             new_srec = deep_copy(srec)
-             month_begin_time = Time.new(srec['end_time'].year, srec['end_time'].month)
-             new_srec['usage'] = (month_begin_time - srec['time']) / 3600
-             new_srec['usage_date'] = srec['time'].strftime("%Y-%m-%d %H:%M:%S")
-             new_srecs << new_srec
-
-             srec['usage'] = (srec['end_time'] - month_begin_time) / 3600 
-             srec['usage_date'] = srec['end_time'].strftime("%Y-%m-%d %H:%M:%S")
-          else
-             srec['usage_date'] = srec['end_time'].strftime("%Y-%m-%d %H:%M:%S")
-          end
         end
         user_srecs -= ignore_srecs
-        user_srecs += new_srecs
 
         user_srecs.each do |srec|
           usage_type = get_billing_usage_type(srec)
           if (srec['usage'] == 0) or
-             record_usage(srec['acct_no'], usage_type, srec['usage'], srec['gear_id'].to_s, srec['app_name'], sync_time, srec['usage_date'])
-            unless srec['ended']
+             record_usage(srec['acct_no'], usage_type, srec['usage'], srec['gear_id'].to_s,
+                          srec['created_at'].to_i, sync_time, srec['usage_date'])
+            if srec['no_update']
+              # Ignore
+            elsif !srec['ended']
               continue_user_ids << srec['_id']
             else
               ended_srecs << srec
@@ -170,7 +172,6 @@ module OpenShift
           end
         end
         # For non-ended usage records: set event to 'continue'
-        continue_user_ids.uniq!
         session.with(safe:true)[:usage_records].find({_id: {"$in" => continue_user_ids}}).update_all(update_query) unless continue_user_ids.empty?
         # For ended usage records: delete from mongo        
         delete_ended_urecs(session, ended_srecs)
