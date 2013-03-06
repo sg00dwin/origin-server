@@ -26,6 +26,10 @@ module Aria
       super.plans_basic
     end
 
+    def get_client_plan_services(plan_no)
+      super(:plan_no => plan_no).plan_services
+    end
+
     def get_acct_no_from_user_id(user_id)
       super(:user_id => user_id).acct_no
     end
@@ -75,6 +79,26 @@ module Aria
         end
         super(:set_name => set, :param_name => names.join('|'), :param_val => values.join('|'))
       end
+    end
+
+    def get_usage_history(acct_no, opts)
+      opts[:acct_no] = acct_no
+      Array(super(opts).usage_history_records)
+    end
+
+    def get_acct_invoice_history(acct_no)
+      Array(super(:acct_no => acct_no).invoice_history)
+    end
+
+    def get_unbilled_usage_summary(acct_no)
+      super(:acct_no => acct_no)
+    end
+
+    def record_usage(acct_no, usage_type, usage_units, opts={})
+      opts[:acct_no] = acct_no
+      opts[:usage_type] = usage_type
+      opts[:usage_units] = usage_units
+      super(opts).usage_rec_no
     end
 
     private

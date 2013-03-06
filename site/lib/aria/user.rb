@@ -70,6 +70,29 @@ module Aria
       false
     end
 
+    def unbilled_usage
+      @unbilled_usage ||= Aria.get_usage_history(acct_no, :date_range_start => account_details.next_bill_date)
+    end
+
+    def unbilled_balance
+      @unbilled_balance ||= Aria.get_unbilled_usage_summary(acct_no)
+    end
+
+    def unpaid_invoices
+      invoices.select{ |i| i.paid_date.blank? }
+    end
+
+    #
+    # In order of bill date
+    #
+    def paid_invoices
+      invoices.select{ |i| i.paid_date.present? }
+    end
+
+    def invoices
+      @invoices ||= Aria.get_acct_invoice_history(acct_no)
+    end
+
     def create_account(opts=nil)
       params = default_account_params
       validates = true

@@ -129,4 +129,22 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     assert plan.gear_sizes.kind_of? Array
     assert plan.gear_sizes.length > 0
   end
+
+  test "should record usage" do
+    u = record_usage_for_user(with_megashift_user)
+    assert r = Aria.get_usage_history(u.acct_no, :date_range_start => u.account_details.next_bill_date)
+    assert_equal 2, r.length
+    assert usage = Aria.get_unbilled_usage_summary(u.acct_no)
+    assert usage.ptd_balance_amount > 0
+    assert_equal 'usd', usage.currency_cd
+
+    assert_equal r, u.unbilled_usage
+    assert_equal usage, u.unbilled_balance
+  end
+
+  test "should get past invoices" do
+    u = record_usage_for_user(with_account_holder)
+    assert invoices = u.invoices
+    assert invoices.length > 0
+  end
 end
