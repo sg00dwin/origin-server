@@ -6,11 +6,13 @@
   }
 
 #picatcha_widget.control-group{:class => (errors ? 'error' : '')}
-  %label.control-label{ :for => :picatcha} Captcha Question
+  -#%label.control-label{ :for => :picatcha_images}
+    Are you a spam bot?
   .controls
+    %input#picatcha_images{:name => :picatcha_images, :type => :hidden}
     .help-inline.picatcha_errors= errors ? "Incorrect, please try again" : ""
 
-  = picatcha_tag(:challenge, options).html_safe
+    = picatcha_tag(:challenge, options).html_safe
 
 -# This CSS needs to be loaded here so that it will always come after the CSS loaded by
 -# the picatcha helpers
@@ -27,6 +29,10 @@
 
   @media (max-width: 479px) { 
     #picatcha_widget #picatcha {width: auto !important}
+  }
+
+  #picatcha_mini_top_link {
+    display: none !important;
   }
 
   #picatcha_widget #picatcha a#picatcha_mini_top_link {
@@ -65,3 +71,10 @@
     background-color: #7FC3E1;
     color: #000;
   }
+
+  .control-group.error.error-client .picatcha_question {
+    color: #cd1e25
+  }
+
+- content_for :javascripts do
+  = javascript_include_tag "site/picatcha"
