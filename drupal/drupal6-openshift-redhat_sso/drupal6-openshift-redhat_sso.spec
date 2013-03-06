@@ -6,7 +6,7 @@
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
 Version: 1.5.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Openshift Red Hat Custom SSO Module for Drupal6
 Group:   Applications/Publishing
 License: GPLv2+
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Mar 06 2013 Adam Miller 1.5.3-2
+- Bump spec for mass drupal rebuild
+
 * Mon Feb 25 2013 Adam Miller <admiller@redhat.com> 1.5.3-1
 - Bug 909992 - Fix login errors outside of login (ccoleman@redhat.com)
 
