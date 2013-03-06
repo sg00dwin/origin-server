@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.5.11
+Version: 1.5.12
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -177,6 +177,14 @@ fi
 %{sitedir}/public
 
 %changelog
+* Wed Mar 06 2013 Adam Miller <admiller@redhat.com> 1.5.12-1
+- Merge pull request #981 from maxamillion/dev/admiller/fix_site_gemfile
+  (admiller@redhat.com)
+- Merge pull request #979 from smarterclayton/fix_default_config
+  (dmcphers@redhat.com)
+- modify site Gemfile to not require specific version (admiller@redhat.com)
+- Add a trailing slash to the default COMMUNITY_URL (ccoleman@redhat.com)
+
 * Wed Mar 06 2013 Adam Miller <admiller@redhat.com> 1.5.11-1
 - Merge pull request #978 from spurtell/spurtell/analytics
   (dmcphers+openshiftbot@redhat.com)
