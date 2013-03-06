@@ -96,6 +96,8 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
     body = JSON.parse(@response.body)
     assert_equal(body["data"]["name"], "mysql-5.1")
     assert_equal(body["data"]["type"], "embedded")
+    
+    check_mysql_properties(body["data"])
   end
 
   def test_app_cartridge_create
@@ -136,6 +138,12 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
     body = JSON.parse(@response.body)
     assert_equal(body["data"]["name"], "mysql-5.1")
     assert_equal(body["data"]["type"], "embedded")
+
+    # query the non-scalable application to verify the properties of the embedded cartridge
+    request_via_redirect(:get, APP_URL_FORMAT % [ns, "appnoscale"], {}, @headers)
+    assert_response :ok
+    body = JSON.parse(@response.body)
+    check_embedded_mysql_properties(body["data"])
 
     # embed mysql cartridge AGAIN into the non-scalable app
     request_via_redirect(:post, APP_CARTRIDGES_URL_FORMAT % [ns, "appnoscale"], {:name => "mysql-5.1"}, @headers)
@@ -190,6 +198,12 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
     assert_response :ok
     body = JSON.parse(@response.body)
     assert_equal(body["data"]["consumed_gears"], 3)
+
+    # query the scalable application to verify the properties of the embedded cartridge
+    request_via_redirect(:get, APP_URL_FORMAT % [ns, "appscale"], {}, @headers)
+    assert_response :ok
+    body = JSON.parse(@response.body)
+    check_embedded_mysql_properties(body["data"])
   end
 
   def test_app_cartridge_delete
@@ -232,4 +246,33 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
     assert(!body["data"]["embedded"].key?("mysql-5.1"))
   end
   
+  private 
+  
+  def check_embedded_mysql_properties(app_data)
+    # add steps here to check for embedded cartridge properties in the application rest response
+    assert(app_data["embedded"].key?("mysql-5.1"), "mysql-5.1 not embedded within application")
+    mysql_props = app_data["embedded"]["mysql-5.1"]
+
+    expected_properties = ["username", "password", "database_name", "connection_url", "info"]
+    expected_properties.each do |prop|
+      assert(mysql_props.key?(prop), "Property #{prop} not present")
+      assert(!mysql_props[prop].to_s.empty?, "Property #{prop} is empty")
+    end
+  end
+
+  def check_mysql_properties(cart_data)
+    # add steps here to check for cartridge properties in the cartridge rest response
+    expected_properties = ["username", "password", "database_name", "connection_url"]
+    property_attributes = ["name", "value", "type", "description"]
+    
+    assert_equal(cart_data["properties"].length, expected_properties.length)
+    cart_data["properties"].each do |property|
+      property_attributes.each do |attribute|
+        assert(!property.key?([attribute]), "Property does not have an attribute of #{attribute}")
+        assert(!property[attribute].to_s.empty?, "Property has an empty value for attribute #{attribute}")
+      end
+      assert(expected_properties.include?(property["name"]), "Property #{property['name']} found but not expected")
+      expected_properties.delete_if {|prop| prop == property["name"]}
+    end
+  end
 end
