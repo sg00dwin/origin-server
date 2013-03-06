@@ -1,146 +1,124 @@
 // Tracking code
+
+function trackAdWordsConversion(f, b, e) {
+    var c = new Image();
+    var g = location.protocol + "//www.googleadservices.com/pagead/conversion/" + f + "/?";
+    var d = document.getElementsByTagName("script")[0];
+    c.height = "1";
+    c.width = "1";
+    c.display = "none";
+    c.style.borderStyle = "none";
+    c.alt = "";
+    if (e > 0) {
+        g += "value=" + e + "&";
+    }
+    g += "label=" + b + "&guid=ON&script=0";
+    g += "&url=" + encodeURIComponent(location.href);
+    c.src = g;
+    d.parentNode.insertBefore(c, d);
+}
+
+function getParameterByName(name) {
+  name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+  var regexS = "[\\?&]" + name + "=([^&#]*)";
+  var regex = new RegExp(regexS);
+  var results = regex.exec(window.location.search);
+  if(results == null)
+    return "";
+  else
+    return decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+function getInputByName(name) {
+  var inputName = "input[name="+name+"]"
+  return $(inputName).val();
+}
+
+function customGATracker() {
+    var url = location.pathname + location.search, promoCode, firstLogin, omniCode;
+    if(typeof getParameterByName == "function"){
+        promoCode = getParameterByName("promo_code");
+        firstLogin = getParameterByName("confirm_signup");
+        omniCode = getParameterByName("sc_cid");
+    }
+    _gaq.push(['_setAccount', 'UA-30752912-1']);
+    _gaq.push(['_setDomainName', 'redhat.com']);
+    _gaq.push(['_setCustomVar', 3 ,'Omni', omniCode , 1]);
+    _gaq.push(['_setSiteSpeedSampleRate', 10]);
+
+    if(/app\/account\/complete/.test(url) && typeof trackAdWordsConversion == "function"){
+        trackAdWordsConversion('1007064360', '3qfsCMjw0gIQqKqa4AM');
+    }
+    if(/app\/account/.test(url)){
+      if(typeof getInputByName == "function"){
+        // We're using the inputs here because we are mixing GET and POST pages
+        captchaType = getInputByName('captcha_type');
+        captchaStatus = getInputByName('captcha_status');
+      }
+      if(captchaType && captchaStatus){
+        _gaq.push(['_trackEvent','Captcha',captchaType,captchaStatus]);
+      }
+    }
+    if(/community\/pricing/.test(url)){
+      _gaq.push(['_setCustomVar', 4 ,'Viewed Pricing Page', 'Viewed Page', 1]);
+    }
+    if(/community\/open-source\/download-origin/.test(url)){
+      try{
+        $('.action-call').live('click',function(e){
+          var url = $(this).attr("href");
+          category = 'Downloads';
+          _gat._getTrackerByName()._trackEvent(category, 'Origin', url, 0);
+          e.preventDefault();
+          setTimeout('document.location = "' + url + '"', 250);  
+        });
+      }catch(err){}
+    }
+    if(firstLogin && firstLogin == "true"){
+      _gaq.push(['_setCampaignTrack', false]);
+    }
+    if(/prev_login=true/.test(document.cookie)){
+      _gaq.push(['_setCustomVar', 1 ,'User Type', 'Previous Login', 1]);
+    } else{
+      _gaq.push(['_setCustomVar', 1 ,'User Type', 'No Login', 1]);
+    }
+    if(promoCode && promoCode != ""){
+      _gaq.push(['_setCustomVar', 2 ,'Promo Code', promoCode , 3]);
+    }
+    if (/\/search\/node\//.test(url)){
+      var newurl = url.replace("/node/", "?node=");
+      _gaq.push(['_trackPageview', newurl]);
+    }
+    else{
+      _gaq.push(['_trackPageview']);
+    }
+}
+
 var _gaq = _gaq || [];
-
-(function() {
-	
-	var getParameterByName = function(name) {
-		name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-		var regexS = "[\\?&]" + name + "=([^&#]*)";
-		var regex = new RegExp(regexS);
-		var results = regex.exec(window.location.search);
-		if(results == null) {
-			return "";
-		} else {
-			return decodeURIComponent(results[1].replace(/\+/g, " "));
-		}
-	}
-
-	var getInputByName = function(name) {
-		var inputName = "input[name="+name+"]"
-		return $(inputName).val();
-	}
-	
-	var promoCode = getParameterByName("promo_code");
-	var firstLogin = getParameterByName("confirm_signup");
-	var omniCode = getParameterByName("sc_cid");
-	
-	// Google Analytics tracking configuration
-	_gaq.push(['_require', 'inpage_linkid', '//www.google-analytics.com/plugins/ga/inpage_linkid.js']);
-	
-	if(/openshift\.com$/.test(location.hostname) || /^\/(app\/)?account\/(new|create)/.test(location.pathname)) {
-		_gaq.push(['_setAccount', 'UA-30752912-5']); // drupal account
-		$("a[href*='openshift.redhat.com']").on('click', function(event){
-			event.preventDefault();
-			var url = $(this).attr("href");
-			_gaq.push(['_link', url]);
-		});	
-	} else {
-		_gaq.push(['_setAccount', 'UA-30752912-6']); // app account
-	}
-	
-	if(/redhat\.com/.test(location.hostname)) {
-		_gaq.push(['_setDomainName', 'redhat.com']);
-	} else {
-		_gaq.push(['_setDomainName', 'openshift.com']);
-	}
-	
-	_gaq.push(['_setAllowLinker', true]);
-	_gaq.push(['_addIgnoredRef', 'openshift.com']);
-	_gaq.push(['_addIgnoredRef', 'www.openshift.com']);
-	_gaq.push(['_addIgnoredRef', 'openshift.redhat.com']);
-	_gaq.push(['_setCustomVar', 3, 'Omni', omniCode, 1]);
-	_gaq.push(['_setSiteSpeedSampleRate', 10]);
-
-	// Track captcha usage
-	if(/^\/(app\/)?account/.test(location.pathname)) {
-		// We're using the inputs here because we are mixing GET and POST pages
-		captchaType = getInputByName('captcha_type');
-		captchaStatus = getInputByName('captcha_status');
-		
-		if(captchaType && captchaStatus) {
-			_gaq.push(['_trackEvent', 'Captcha', captchaType, captchaStatus]);
-		}
-	}
-	
-	// Viewed pricing page
-	if(/^\/pricing/.test(location.pathname)) {
-		_gaq.push(['_setCustomVar', 4, 'Viewed Pricing Page', 'Viewed Page', 1]);
-	}
-	
-	// Track origin downloads
-	if(/^\/open-source\/download-origin/.test(location.pathname)) {
-		$('.action-call').on('click', function(event){
-			event.preventDefault();
-			var url = $(this).attr("href");
-			_gaq.push(['_trackEvent', 'Downloads', 'Origin', url]);
-			setTimeout('document.location = "' + url + '"', 300);
-		});
-	}
-	
-	// Disable campaign tracking for users returning from email validation
-	if(firstLogin && firstLogin == "true") {
-		_gaq.push(['_setCampaignTrack', false]);
-	}
-	
-	// Send promo code info to GA as events
-	if(promoCode && promoCode != "") {
-		_gaq.push(['_trackEvent', 'Promo Code', 'Evangelist Event', promoCode]);
-	}
-	
-	// Enterprise form links
-	$('a[href*="engage.redhat.com"],a[href*="inexpo.com"]').on("click", function(event){
-		event.preventDefault();
-		
-		var url = $(this).attr("href");
-		_gaq.push(['_trackEvent', 'Outbound Links', 'OpenShift Enterprise', url]);
-		
-		var pixel = new Image;
-		var pixel_src = '//www.googleadservices.com/pagead/conversion/997127018/?value=0&amp;label=SomnCJaDrwQQ6ua72wM&amp;guid=ON';
-		pixel_src += "&amp;url=" + url.substring(0, 256);
-		pixel.src = pixel_src;
-		pixel.onload = function() {};
-		
-		setTimeout('document.location = "' + url + '"', 300);  
-	});
-	
-	// PDF Tracking
-	$("a[href*='.pdf']").on("click", function(event){
-		event.preventDefault();
-		var url = $(this).attr("href");
-		_gaq.push(['_trackEvent', 'Downloads', 'PDF Whitepaper', url]);
-		setTimeout('document.location = "' + url + '"', 300);  
-	});
-	
-	// Site search tracking
-	if (/\/search\/node\//.test(location.href)) {
-		var newurl = location.href.replace("/node/", "?node=");
-		_gaq.push(['_trackPageview', newurl]);
-	} else {
-		_gaq.push(['_trackPageview']);
-	}
-})();
+if (typeof customGATracker == "function"){
+  customGATracker();
+}
 
 (function () {
-	var ga = document.createElement('script');
-	ga.type = 'text/javascript';
-	ga.async = true;
-	ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-	var s = document.getElementsByTagName('script')[0];
-	s.parentNode.insertBefore(ga, s);
+  var ga = document.createElement('script');
+  ga.type = 'text/javascript';
+  ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0];
+  s.parentNode.insertBefore(ga, s);
 })();
 
-// KissInsights
-try {
-	if(!(navigator.userAgent.match(/iphone|android/i))){
-		var _kiq = _kiq || [];
+//KissInsights
+try{
+  if(!(navigator.userAgent.match(/iphone|android/i))){
+    var _kiq = _kiq || [];
 
-		(function () {
-			var ki = document.createElement('script');
-			ki.type = 'text/javascript';
-			ki.async = true;
-			ki.src = '//s3.amazonaws.com/ki.js/35352/7LV.js';
-			var s = document.getElementsByTagName('script')[0];
-			s.parentNode.insertBefore(ki, s);
-		})();
-	}
-} catch(err){}
+    (function () {
+      var ki = document.createElement('script');
+      ki.type = 'text/javascript';
+      ki.async = true;
+      ki.src = '//s3.amazonaws.com/ki.js/35352/7LV.js';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(ki, s);
+    })();
+  }
+}catch(err){}
