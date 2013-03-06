@@ -9,7 +9,7 @@ class ActiveSupport::TestCase
   def assert_session_user(user)
     assert_equal user.login, session[:login]
     assert_equal user.ticket, session[:ticket]
-    assert_equal user.ticket, cookies['rh_sso']
+    assert_nil cookies['rh_sso']
     assert_equal user.streamline_type, session[:streamline_type]
   end
 

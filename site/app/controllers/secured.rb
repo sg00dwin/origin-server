@@ -118,13 +118,6 @@ module Secured
     def current_user=(user)
       reset_session
       cookies.permanent[:prev_login] = true
-      cookies[:rh_sso] = {
-        :value => user.ticket,
-        :secure => true,
-        :httponly => true,
-        :path => '/',
-        :domain => sso_cookie_domain,
-      }
       user_to_session(user)
     end
 
