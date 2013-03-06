@@ -6,7 +6,7 @@
 
 Name:           drupal6-%{drupal_themename}
 Version: 3.13.4
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
 Group:          Applications/Publishing
@@ -44,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Mar 06 2013 Adam Miller 3.13.4-2
+- Bump spec for mass drupal rebuild
+
 * Tue Mar 05 2013 Adam Miller <admiller@redhat.com> 3.13.4-1
 - Merge pull request #960 from smarterclayton/bug_916536_link_author_names
   (dmcphers@redhat.com)
