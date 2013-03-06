@@ -6,7 +6,7 @@
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
 Version: 1.6.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Openshift Red Hat Custom Forums Feature for Drupal6
 Group:   Applications/Publishing
 License: GPLv2+
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Mar 06 2013 Adam Miller 1.6.3-2
+- Bump spec for mass drupal rebuild
+
 * Mon Mar 04 2013 Adam Miller <admiller@redhat.com> 1.6.3-1
 - Drupal Forums Feature Bug 908456 Added Sort Criteria by desc to
   thread_by_popularity https://bugzilla.redhat.com/show_bug.cgi?id=908456
