@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.5.12
+Version: 1.5.13
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -149,6 +149,12 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Wed Mar 06 2013 Adam Miller <admiller@redhat.com> 1.5.13-1
+- Merge pull request #980 from abhgupta/abhgupta-dev
+  (dmcphers+openshiftbot@redhat.com)
+- Add testing for cartridge properties in application and cartridge rest
+  response (abhgupta@redhat.com)
+
 * Wed Mar 06 2013 Adam Miller <admiller@redhat.com> 1.5.12-1
 - Merge pull request #971 from smarterclayton/stop_caching_rh_sso_ticket
   (dmcphers@redhat.com)
