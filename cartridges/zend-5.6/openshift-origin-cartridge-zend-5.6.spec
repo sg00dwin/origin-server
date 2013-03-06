@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      openshift-origin-cartridge-zend-5.6
-Version: 1.5.4
+Version: 1.5.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -109,6 +109,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Mar 06 2013 Adam Miller <admiller@redhat.com> 1.5.5-1
+- Add some missing Zend Server PHP extensions (vvitek@redhat.com)
+
 * Tue Mar 05 2013 Vojtech Vitek (V-Teq) <vvitek@redhat.com> 1.5.4-1
 - Add PHP extensions that were not enabled by default:
   Mongo driver, ImageMagick, Upload Progress
