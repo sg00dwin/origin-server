@@ -12,6 +12,8 @@ $ ->
   # /app/account/new
   # /app/account
   $('form#new_user_form').validate
+    # This is needed so we can hide the Picatcha error placeholder
+    ignore: ""
     rules:
       # Require email for new users
       "web_user[email_address]":
@@ -26,6 +28,11 @@ $ ->
       "web_user[password_confirmation]":
         required:   true
         equalTo:    "#web_user_password"
+      # Validate that the user has submitted captcha input
+      "picatcha_images":
+        picatcha:   true
+      "recaptcha_response_field":
+        required:   true
 
   # /app/login
   $('form#login_form').validate
