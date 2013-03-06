@@ -22,7 +22,7 @@ class LoginController < ApplicationController
       self.current_user = @user
 
       if validate_user
-        logger.debug "  Authenticated with ticket #{cookies[:rh_sso]}, redirecting"
+        logger.debug "  Authenticated with user #{@user.login}, redirecting"
         redirect_to after_login_redirect
       end
 
