@@ -8,7 +8,7 @@ module OpenShift
       Pony.mail(:to => to, 
                 :from => from, 
                 :subject => subject,
-                :html_body => body,
+                :body => body,
                 :via => :smtp,
                 :via_options => {
                   :address => 'smtp.gmail.com',
@@ -31,7 +31,7 @@ module OpenShift
       else
         body = ""
         response.each do |k, v|
-      body += "#{k} = #{v}\n"
+        body += "#{k} = #{v}\n"
         end if response
       end
       send_email(email_to, subject, body, email_from, password)
