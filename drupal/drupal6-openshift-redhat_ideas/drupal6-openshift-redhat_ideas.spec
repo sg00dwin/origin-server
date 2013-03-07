@@ -5,7 +5,7 @@
 %global modname             redhat_ideas
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.5.2
+Version: 1.6.0
 Release: 3%{?dist}
 Summary: Openshift Red Hat Ideas Custom Module for Drupal6
 Group:   Applications/Publishing

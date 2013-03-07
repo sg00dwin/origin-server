@@ -5,7 +5,7 @@
 %global modname             redhat_events
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.6.3
+Version: 1.7.0
 Release: 2%{?dist}
 Summary: Openshift Red Hat Events Custom Module for Drupal6
 Group:   Applications/Publishing

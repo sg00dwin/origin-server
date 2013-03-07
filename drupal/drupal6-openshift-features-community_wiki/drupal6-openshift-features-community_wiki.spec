@@ -5,7 +5,7 @@
 %global modname             community_wiki
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.4.3
+Version: 1.5.0
 Release: 2%{?dist}
 Summary: Openshift Red Hat Community Wiki Feature for Drupal6
 Group:   Applications/Publishing

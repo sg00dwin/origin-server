@@ -5,7 +5,7 @@
 %global modname             redhat_acquia
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.3.2
+Version: 1.4.0
 Release: 3%{?dist}
 Summary: Openshift Red Hat Overrides for Forum for Drupal6
 Group:   Applications/Publishing

@@ -5,7 +5,7 @@
 %global modname             application_quickstarts
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.3.2
+Version: 1.4.0
 Release: 3%{?dist}
 Summary: Openshift Application Quickstarts Feature for Drupal6
 Group:   Applications/Publishing

@@ -5,7 +5,7 @@
 %global modname             forums
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.6.3
+Version: 1.7.0
 Release: 2%{?dist}
 Summary: Openshift Red Hat Custom Forums Feature for Drupal6
 Group:   Applications/Publishing

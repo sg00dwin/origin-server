@@ -5,7 +5,7 @@
 %global modname             recent_activity_report
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.3.2
+Version: 1.4.0
 Release: 3%{?dist}
 Summary: Openshift Red Hat Custom Recent Activity Report Feature for Drupal6
 Group:   Applications/Publishing

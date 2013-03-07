@@ -5,7 +5,7 @@
 %global modname             rules_by_category
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.4.2
+Version: 1.5.0
 Release: 3%{?dist}
 Summary: Openshift Red Hat Custom Rules by Category Feature for Drupal6
 Group:   Applications/Publishing
