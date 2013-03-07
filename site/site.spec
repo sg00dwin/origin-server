@@ -9,7 +9,7 @@
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
 Version: 1.5.12
-Release:   1%{?dist}
+Release:   2%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -177,6 +177,9 @@ fi
 %{sitedir}/public
 
 %changelog
+* Thu Mar 07 2013 Adam Miller 1.5.12-2
+- Bump spec for mass drupal rebuild
+
 * Wed Mar 06 2013 Adam Miller <admiller@redhat.com> 1.5.12-1
 - Merge pull request #981 from maxamillion/dev/admiller/fix_site_gemfile
   (admiller@redhat.com)
