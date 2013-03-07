@@ -2727,7 +2727,19 @@ print $data->node_comment_statistics_last_comment_uid;
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('sorts', array());
+  $handler->override_option('sorts', array(
+    'created' => array(
+      'order' => 'DESC',
+      'granularity' => 'second',
+      'id' => 'created',
+      'table' => 'node',
+      'field' => 'created',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
   $handler->override_option('arguments', array(
     'uid' => array(
       'default_action' => 'not found',

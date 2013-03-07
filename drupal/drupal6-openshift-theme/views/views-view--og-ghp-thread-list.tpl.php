@@ -36,7 +36,7 @@ if(module_exists('og_comment_perms')) {
 ?>
 
 
-<form action="/community/search/node" method="post" class="form-search custom-form-search">
+<form action="/search/node" method="post" class="form-search custom-form-search">
 <input class="span6" placeholder="Search forums..." type="text" value="" name="keys" />
 <input type="submit" value="" name="op" class="btn btn-primary" title="Search OpenShift forums" alt="Search OpenShift forums" />
 <input type="hidden" value="<?php print drupal_get_token('search_form'); ?>" name="form_token" />

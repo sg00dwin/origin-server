@@ -31,6 +31,44 @@ class AccountUpgradesControllerTest < ActionController::TestCase
     assert_template :unchanged
   end
 
+  test "should upgrade a full user in streamline" do
+    with_confirmed_user
+    put :update,
+      :plan_id => 'megashift',
+      :streamline_full_user => {
+        :streamline_full_user => {
+          :first_name => 'Bob',
+          :last_name => 'Smith',
+          :email_subscribe => false,
+          :phone_number => '9191110000',
+          :greeting => 'Mr.',
+          :title => 'Engineer',
+          :company => 'Red Hat Test',
+          :password => 'aoeuaoeu',
+          :password_confirmation => 'aoeuaoeu',
+        },
+        :aria_billing_info => {
+          :city => 'Happyville',
+          :state => 'TX',
+          :country => 'US',
+          :address1 => '12345 Test str',
+          :zip => '10001'
+        }
+      }
+
+    assert full_user = assigns[:full_user]
+    assert billing_info = assigns[:billing_info]
+    assert !billing_info.persisted? # Existing behavior
+
+    aria_user = Aria::UserContext.new(@user)
+    assert aria_user.has_valid_account?
+    assert aria_user.has_complete_account?
+    assert aria_user.billing_info.persisted?
+
+    assert_equal :full, session[:streamline_type]
+    assert_redirected_to account_plan_upgrade_payment_method_path
+  end
+
   test "should redirect if the user lacks capabilities" do
     user = with_user(full)
     OnlineCapabilities.any_instance.expects(:plan_upgrade_enabled?).returns(false)
@@ -48,7 +86,7 @@ class AccountUpgradesControllerTest < ActionController::TestCase
   end
 
   test "should make a copy of billing info for editing" do
-    user = with_user(full)
+    user = with_confirmed_user
     @controller.edit
     assert_not_nil assigns[:full_user]
     assert_not_nil assigns[:billing_info]

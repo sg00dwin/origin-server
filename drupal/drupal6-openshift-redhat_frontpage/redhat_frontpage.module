@@ -91,14 +91,16 @@ function redhat_page_community(){
   if ($user->uid) {
     $content .= "Welcome to the OpenShift Community! This is the place to learn and engage with other OpenShift users and developers.<br />";
   } else {
-    $content .= "Join the OpenShift Community by signing up. This is the place to learn and engage with OpenShift users and developers. <br />";
+    $content .= "<a href=\"/user\">Sign in</a> or <a href=\"";
+    $content .= redhat_sso_register_url();
+    $content .= "\">sign up</a> to participate in the community. This is the place to learn and engage with OpenShift users and developers. <br />";
   } 
 
   if ($user->uid && $num_rows > 0) {
     $content .= "<br /><h3>My Threads</h3>";
     $content .= views_embed_view('forum_views', 'block_1', $user->uid);
   }
-  else { 
+  else {
     $content .= "<br /><h3>Recent Threads</h3>";
     $content .= views_embed_view('threads_by_popularity', 'block_6');
   }

@@ -17,14 +17,18 @@ module Streamline
       attr_streamline attr, :as => attr.to_s.camelize(:lower).to_sym
     end
 
-    def initialize(opts=nil)
+    def initialize(opts=nil, persisted=false)
       @attributes = {}
       opts.each_pair do |k,v|
         if respond_to?("#{k}=")
           send("#{k}=", v)
         end
       end if opts
-      @persisted = false
+      @persisted = persisted
+    end
+
+    def id
+      @attributes[:login]
     end
 
     def errors

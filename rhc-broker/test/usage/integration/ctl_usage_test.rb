@@ -11,6 +11,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     @appname = "usageapp" + gen_uuid[0..9]
 
     cu = CloudUser.new(login: @login)
+    @user_id = cu._id
     cu.plan_id = "megashift"
     user_capabilities = cu.get_capabilities
     user_capabilities['max_storage_per_gear'] = 20
@@ -22,6 +23,8 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     @domain.save!
     @districts_enabled = Rails.configuration.msg_broker[:districts][:enabled] 
     Rails.configuration.msg_broker[:districts][:enabled] = false
+    @billing_api = OpenShift::BillingService.instance
+    @billing_user_id = Digest::MD5::hexdigest(@login)
   end
   
   def teardown
@@ -32,21 +35,26 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     Domain.where(canonical_namespace: @namespace).delete
     
     # delete the user
-    CloudUser.where(login: @login).delete
+    CloudUser.where(_id: @user_id).delete
     
     # delete the usage records
-    UsageRecord.where(login: @login).delete
+    UsageRecord.where(user_id: @user_id).delete
+    Usage.where(user_id: @user_id).delete
   end
 
-  test "gear_storage_usage_sync" do
+  def test_gear_storage_usage_sync
     begin
       app = Application.create_app(@appname, ['php-5.3'], @domain)
     ensure
       Rails.configuration.msg_broker[:districts][:enabled] = @districts_enabled
     end
+    acct_no = @billing_api.create_fake_acct(@billing_user_id, :megashift)
+    cu = CloudUser.find_by(_id: @user_id)
+    cu.usage_account_id = acct_no
+    cu.save!
     
     usage_records = []
-    UsageRecord.where(login: @login).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).each { |rec| usage_records << rec }
     assert_equal(1, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[0].usage_type)
     assert_equal('small', usage_records[0].gear_size)
@@ -60,7 +68,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
       sync_usage
   
       usage_records = []
-      UsageRecord.where(login: @login).each { |rec| usage_records << rec }
+      UsageRecord.where(user_id: @user_id).each { |rec| usage_records << rec }
       assert_equal(1, usage_records.length)
       assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[0].usage_type)
       assert_equal('small', usage_records[0].gear_size)
@@ -75,7 +83,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     assert_equal(5, group_instance.addtl_fs_gb)
 
     usage_records = []
-    UsageRecord.where(login: @login).asc(:usage_type).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).each { |rec| usage_records << rec }
     assert_equal(2, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:begin], usage_records[0].event)
@@ -86,7 +94,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     sync_usage
 
     usage_records = []
-    UsageRecord.where(login: @login).asc(:usage_type).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).each { |rec| usage_records << rec }
     assert_equal(2, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:continue], usage_records[0].event)
@@ -101,7 +109,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     assert_equal(0, group_instance.addtl_fs_gb)
 
     usage_records = []
-    UsageRecord.where(login: @login).asc(:usage_type).asc(:time).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).asc(:time).each { |rec| usage_records << rec }
     assert_equal(3, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:continue], usage_records[0].event)
@@ -114,7 +122,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     sync_usage
 
     usage_records = []
-    UsageRecord.where(login: @login).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).each { |rec| usage_records << rec }
     assert_equal(1, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:continue], usage_records[0].event)
@@ -127,7 +135,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     assert_equal(5, group_instance.addtl_fs_gb)
     
     usage_records = []
-    UsageRecord.where(login: @login).asc(:usage_type).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).each { |rec| usage_records << rec }
     assert_equal(2, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:begin], usage_records[0].event)
@@ -139,7 +147,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     app.destroy_app
 
     usage_records = []
-    UsageRecord.where(login: @login).asc(:usage_type).asc(:time).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).asc(:time).each { |rec| usage_records << rec }
     assert_equal(4, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:begin], usage_records[0].event)
@@ -154,20 +162,24 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     sync_usage
 
     usage_records = []
-    UsageRecord.where(login: @login).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).each { |rec| usage_records << rec }
     assert_equal(0, usage_records.length)
   end
  
-  test "cartridge_usage_sync" do
+  def test_cartridge_usage_sync
     # Create app with premium cart
     begin
       app = Application.create_app(@appname, ['jbosseap-6.0'], @domain)
     ensure
       Rails.configuration.msg_broker[:districts][:enabled] = @districts_enabled
     end
+    acct_no = @billing_api.create_fake_acct(@billing_user_id, :megashift)
+    cu = CloudUser.find_by(_id: @user_id)
+    cu.usage_account_id = acct_no
+    cu.save!
 
     usage_records = []
-    UsageRecord.where(login: @login).asc(:usage_type).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).each { |rec| usage_records << rec }
     assert_equal(2, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[0].usage_type)
     assert_equal('small', usage_records[0].gear_size)
@@ -181,7 +193,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     sync_usage
   
     usage_records = []
-    UsageRecord.where(login: @login).asc(:usage_type).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).each { |rec| usage_records << rec }
     assert_equal(2, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[0].usage_type)
     assert_equal('small', usage_records[0].gear_size)
@@ -195,7 +207,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     app.destroy_app
 
     usage_records = []
-    UsageRecord.where(login: @login).asc(:usage_type).asc(:time).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).asc(:time).each { |rec| usage_records << rec }
     assert_equal(4, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:continue], usage_records[0].event)
@@ -210,19 +222,60 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     sync_usage
 
     usage_records = []
-    UsageRecord.where(login: @login).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).each { |rec| usage_records << rec }
+    assert_equal(0, usage_records.length)
+  end
+
+  def test_usage_sync_no_billing_account
+    # Create app with premium cart
+    begin
+      app = Application.create_app(@appname, ['jbosseap-6.0'], @domain)
+    ensure
+      Rails.configuration.msg_broker[:districts][:enabled] = @districts_enabled
+    end
+    usage_records = []
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).each { |rec| usage_records << rec }
+    assert_equal(2, usage_records.length)
+    assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[0].usage_type)
+    assert_equal('small', usage_records[0].gear_size)
+    assert_equal(UsageRecord::EVENTS[:begin], usage_records[0].event)
+    assert_equal(UsageRecord::USAGE_TYPES[:premium_cart], usage_records[1].usage_type)
+    assert_equal('jbosseap-6.0', usage_records[1].cart_name)
+    assert_equal(UsageRecord::EVENTS[:begin], usage_records[1].event)
+
+    # Delete current app
+    app = Application.find_by(name: @appname, domain: @domain)
+    app.destroy_app
+
+    usage_records = []
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).asc(:time).each { |rec| usage_records << rec }
+    assert_equal(4, usage_records.length)
+    assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[0].usage_type)
+    assert_equal(UsageRecord::EVENTS[:begin], usage_records[0].event)
+    assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[1].usage_type)
+    assert_equal(UsageRecord::EVENTS[:end], usage_records[1].event)
+    assert_equal(UsageRecord::USAGE_TYPES[:premium_cart], usage_records[2].usage_type)
+    assert_equal(UsageRecord::EVENTS[:begin], usage_records[2].event)
+    assert_equal(UsageRecord::USAGE_TYPES[:premium_cart], usage_records[3].usage_type)
+    assert_equal(UsageRecord::EVENTS[:end], usage_records[3].event)
+
+    # Sync usage again
+    sync_usage
+
+    usage_records = []
+    UsageRecord.where(user_id: @user_id).each { |rec| usage_records << rec }
     assert_equal(0, usage_records.length)
   end
 
   def sync_usage
-    output = `export RAILS_ENV=test; rhc-admin-ctl-usage --sync 2>&1` 
+    output = `export RAILS_ENV=test; oo-admin-ctl-usage --sync 2>&1` 
     exit_code = $?.exitstatus
     puts output if exit_code != 0
     assert_equal(0, exit_code)
   end
   
   def list_usage
-    output = `export RAILS_ENV=test; rhc-admin-ctl-usage --list 2>&1` 
+    output = `export RAILS_ENV=test; oo-admin-ctl-usage --list 2>&1` 
     exit_code = $?.exitstatus
     puts output if exit_code != 0
     assert_equal(0, exit_code)

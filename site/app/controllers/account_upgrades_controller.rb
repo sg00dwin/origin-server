@@ -86,20 +86,17 @@ class AccountUpgradesController < ConsoleController
     # Attempt to promote the streamline user to a full streamline user
     # if they aren't already
     unless @full_user.persisted?
-      # Collect args for the streamline API
-      full_user_params = user_params[:streamline_full_user]
-      [:address1,:address2,:address3,:city,:state,:country].each do |field|
-        full_user_params[field] = user_params[:aria_billing_info][field]
-      end
-      # ZIP is a funny case; Aria uses :zip but FullUser is more worldly and uses
-      # :postal_code
-      full_user_params[:postal_code] = user_params[:aria_billing_info][:zip]
 
-      @full_user = Streamline::FullUser.new(full_user_params)
+      @full_user = Streamline::FullUser.new(
+        {:postal_code => user_params[:aria_billing_info][:zip]}.
+        merge!(user_params[:streamline_full_user]).
+        merge!(user_params[:aria_billing_info].slice(:address1, :address2, :address3, :city, :state, :country))
+      )
 
-      # Attempt to promote
       render :edit and return unless @full_user.promote(user)
     end
+
+    current_user_changed!
 
     user = Aria::UserContext.new(user)
     begin

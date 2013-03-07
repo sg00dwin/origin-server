@@ -27,6 +27,7 @@ gem 'systemu'
 gem 'rest-client'
 
 gem 'openshift-origin-dns-dynect'
+gem 'openshift-origin-billing-aria'
 gem 'openshift-origin-auth-streamline'
 
 gem 'openshift-origin-msg-broker-mcollective', :require => "openshift-origin-msg-broker-mcollective"

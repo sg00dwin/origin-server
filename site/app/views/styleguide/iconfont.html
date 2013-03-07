@@ -1,52 +1,57 @@
 <!doctype html>
 <html>
 <head>
-<title>Your Font/Glyphs</title>
+<title>OpenShift Font/Glyphs</title>
 <!--[if lte IE 7]><script src="lte-ie7.js"></script><![endif]-->
 <style>
-body {color: #ddd; margin: 2em;}
+body {color: #ddd; margin: 2em;background-color: #111;}
 section, header, footer {display: block;}
 section {margin-bottom: 3em;}
 .box1 {
   display: inline-block;
   width: 15em;
   padding: .25em .5em;
-  margin: .5em 1em .5em 0;
+  margin: .5em 1em .5em 0; 
 }
-.font-icon {
-  color: #FFFFFF;
-  position: absolute;
-  font-size: 34px;
-}
-
+h1,h2,h3,h4,h5,h6 {margin-bottom:10px;}
 .glyph input {
   background-color: transparent;
     border: 0 none;
     bottom: 0;
-    color: #888888;
+    color: #767676;
     left: 0;
     padding: 2px;
     position: absolute;
     width: 100%;
 		text-align: center;
 		font-family: consolas, monospace;
+		box-shadow: none;
+}
+.glyph input[readonly] {
+  border: 0 !important;
+  padding: 0;
 }
 .glyph input, .mtm {
 		margin-top: .75em;
 	}
 .glyph {
   position: relative;
-  background-color: #282828;
-  padding: 2.68em;
+  background-color: #222;
+  padding: 2em 1em 1em 1em;
   box-shadow: none;
-  margin-right: 0;
   float: left;
   text-align: center;
-  margin: 0em .5em 0.75em;
-  width: 3em;
-  height: 3em;
+  margin: 1px;
+  width: 2em;
+  height: 2em;
+  font-size: 34px;
+  color: #eee;
   }
-  
+footer {display: none;}
+/*.glyph:hover {background-color: #eee;}
+.glyph:hover>.font-icon {color: #111;}
+.glyph:hover .font-icon+[class*="font-icon-"] {color: inherit;}
+*/
 	
 </style>
 <link type="text/css" href="/app/assets/console.css" rel="stylesheet" />
@@ -57,219 +62,221 @@ section {margin-bottom: 3em;}
 	<div class="w-main centered">
 	<section class="mtm clearfix" id="glyphs">
 	<header>
-		<h1>Your font contains the following glyphs</h1>
-		<p>The generated SVG font can be imported back to <a href="http://icomoon.io/app">IcoMoon</a> for modification.</p>
+		<h1>OpenShift icon font set</h1>
 	</header>
+	
 	<p>
-	 <pre>&lt;div aria-hidden="true" data-icon="&amp;#xe000;"&gt; &lt;/div&gt;</pre>
+	 <strong>Code example</strong>
+	 <pre>&lt;span aria-hidden="true" data-icon="&amp;#xe000;"&gt; &lt;/span&gt;<br />note: &lt;div class="glyph"&gt; is only for styleguide presentation</pre>
+
 	</p>
 	
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe000;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe000;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe000;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe001;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe001;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe001;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe002;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe002;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe002;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe003;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe003;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe003;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe004;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe004;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe004;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe005;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe005;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe005;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe006;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe006;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe006;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe007;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe007;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe007;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe008;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe008;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe008;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe009;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe009;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe009;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe010;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe010;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe010;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe011;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe011;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe011;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe012;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe012;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe012;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe013;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe013;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe013;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe014;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe014;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe014;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe015;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe015;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe015;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe016;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe016;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe016;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe017;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe017;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe017;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe018;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe018;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe018;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe019;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe019;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe019;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe020;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe020;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe020;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe021;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe021;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe021;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe022;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe022;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe022;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe023;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe023;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe023;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe024;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe024;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe024;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe025;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe025;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe025;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe026;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe026;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe026;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe027;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe027;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe027;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe028;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe028;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe028;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe029;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe029;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe029;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe030;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe030;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe030;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe031;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe031;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe031;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xee00;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xee00;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xee00;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xee01;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xee01;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xee01;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xee02;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xee02;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xee02;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xee03;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xee03;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xee03;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xee04;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xee04;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xee04;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xee05;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xee05;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xee05;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xee06;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xee06;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xee06;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xee07;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xee07;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xee07;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xee08;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xee08;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xee08;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xee09;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xee09;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xee09;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xee10;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xee10;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xee10;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xee11;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xee11;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xee11;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xee12;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xee12;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xee12;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xee13;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xee13;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xee13;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xee14;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xee14;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xee14;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xee15;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xee15;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xee15;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xee16;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xee16;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xee16;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xee17;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xee17;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xee17;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe032;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe032;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe032;" />
 	</div>
 	<div class="glyph">
-		<div class="font-icon" aria-hidden="true" data-icon="&#xe033;"></div>
+		<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe033;"></span>
 		<input type="text" readonly="readonly" value="&amp;#xe033;" />
 	</div>
 	</section>
@@ -278,118 +285,174 @@ section {margin-bottom: 3em;}
 	<header>
     <h2>Glyph combinations</h2>
   </header>
+	<p>
+	 <strong>Code example</strong>
+	 <pre>&lt;span class="font-icon-block"><br />&lt;span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&amp;#xe018;">&lt;/span><br />&lt;span class="font-icon font-icon-size-34 font-icon-red" aria-hidden="true" data-icon="&amp;#xe016;">&lt;/span><br />&lt;/span></pre>
+	</p>
 	<section class="mtm clearfix" id="glyphs">
     <div class="glyph">
-  	  <div class="font-icon" aria-hidden="true" data-icon="&#xe018;"></div>
-  	  <div class="font-icon red" aria-hidden="true" data-icon="&#xe016;"><div class="number gear-sm">8</div></div>
+    <div class="font-icon-block">
+  	  <span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe018;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-red" aria-hidden="true" data-icon="&#xe016;"><span class="gear-number gear-sm">8</span></span>
+    </div>
   	</div>
   	<div class="glyph">
-  	  <div class="font-icon" aria-hidden="true" data-icon="&#xe015;"></div>
-  	  <div class="font-icon red" aria-hidden="true" data-icon="&#xe016;"><div class="number gear-lg">8</div></div>
+  	<div class="font-icon-block">
+  	  <span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe015;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-red" aria-hidden="true" data-icon="&#xe016;"><span class="gear-number gear-lg">8</span></span>
+  	</div>
   	</div>
   	<div class="glyph">
-      <div class="font-icon" aria-hidden="true" data-icon="&#xe023;"></div>
-      <div class="font-icon green" aria-hidden="true" data-icon="&#xe025;"></div>
+  	<div class="font-icon-block">
+      <span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe023;"></span>
+      <span class="font-icon font-icon-size-34 font-icon-green" aria-hidden="true" data-icon="&#xe025;"></span>
+  	</div>
   	</div>
   	<div class="glyph">
-      <div class="font-icon" aria-hidden="true" data-icon="&#xe023;"></div>
-      <div class="font-icon red" aria-hidden="true" data-icon="&#xe024;"></div>
+  	<div class="font-icon-block">
+      <span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe023;"></span>
+      <span class="font-icon font-icon-size-34 font-icon-red" aria-hidden="true" data-icon="&#xe024;"></span>
   	</div>
-  	<div class="glyph">  	
-    	<div class="font-icon" aria-hidden="true" data-icon="&#xe012;"></div>
-  	  <div class="font-icon grey" aria-hidden="true" data-icon="&#xe013;"></div>
   	</div>
-  	<div class="glyph">  	
-    	<div class="font-icon" aria-hidden="true" data-icon="&#xe010;"></div>
-  	  <div class="font-icon grey" aria-hidden="true" data-icon="&#xe011;"></div>
+  	<div class="glyph">
+  	<div class="font-icon-block">	
+    	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe012;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-grey" aria-hidden="true" data-icon="&#xe013;"></span>
+  	</div>
+  	</div>
+  	<div class="glyph">
+  	<div class="font-icon-block"> 	
+    	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe010;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-grey" aria-hidden="true" data-icon="&#xe011;"></span>
+  	</div>
+  	</div>
+  	
+  	<div class="clear"></div>
+  	<div class="glyph"> 
+  	<div class="font-icon-block">	
+    	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe021;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-grey" aria-hidden="true" data-icon="&#xe022;"></span>
+  	</div>
+  	</div>
+  	<div class="glyph">  
+  	<div class="font-icon-block">	
+    	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe021;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-red" aria-hidden="true" data-icon="&#xe022;"></span>
+  	</div>
+  	</div>
+  	<div class="glyph">  
+  	<div class="font-icon-block">	
+    	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe021;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-blue" aria-hidden="true" data-icon="&#xe022;"></span>
+  	</div>
+  	</div>
+  	<div class="glyph">  
+  	<div class="font-icon-block">	
+    	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe021;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-green" aria-hidden="true" data-icon="&#xe022;"></span>
+  	</div>
+  	</div>
+  	<div class="glyph">  
+  	<div class="font-icon-block">	
+    	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe021;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-orange" aria-hidden="true" data-icon="&#xe022;"></span>
+  	</div>
   	</div>
   	
   	<div class="clear"></div>
   	<div class="glyph">  	
-    	<div class="font-icon" aria-hidden="true" data-icon="&#xe021;"></div>
-  	  <div class="font-icon grey" aria-hidden="true" data-icon="&#xe022;"></div>
+  	<div class="font-icon-block">
+    	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe027;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-grey" aria-hidden="true" data-icon="&#xe028;"></span>
+  	</div>
   	</div>
   	<div class="glyph">  	
-    	<div class="font-icon" aria-hidden="true" data-icon="&#xe021;"></div>
-  	  <div class="font-icon red" aria-hidden="true" data-icon="&#xe022;"></div>
+  	<div class="font-icon-block">
+    	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe027;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-red" aria-hidden="true" data-icon="&#xe028;"></span>
+  	</div>
+  	</div>
+  	<div class="glyph">  
+  	<div class="font-icon-block">	
+    	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe027;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-blue" aria-hidden="true" data-icon="&#xe028;"></span>
+  	</div>
   	</div>
   	<div class="glyph">  	
-    	<div class="font-icon" aria-hidden="true" data-icon="&#xe021;"></div>
-  	  <div class="font-icon blue" aria-hidden="true" data-icon="&#xe022;"></div>
+  	<div class="font-icon-block">
+    	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe027;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-green" aria-hidden="true" data-icon="&#xe028;"></span>
+  	</div>
   	</div>
   	<div class="glyph">  	
-    	<div class="font-icon" aria-hidden="true" data-icon="&#xe021;"></div>
-  	  <div class="font-icon green" aria-hidden="true" data-icon="&#xe022;"></div>
+  	<div class="font-icon-block">
+    	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe027;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-orange" aria-hidden="true" data-icon="&#xe028;"></span>
   	</div>
-  	<div class="glyph">  	
-    	<div class="font-icon" aria-hidden="true" data-icon="&#xe021;"></div>
-  	  <div class="font-icon orange" aria-hidden="true" data-icon="&#xe022;"></div>
-  	</div>
-  	
-  	<div class="clear"></div>
-  	<div class="glyph">  	
-    	<div class="font-icon" aria-hidden="true" data-icon="&#xe027;"></div>
-  	  <div class="font-icon grey" aria-hidden="true" data-icon="&#xe028;"></div>
-  	</div>
-  	<div class="glyph">  	
-    	<div class="font-icon" aria-hidden="true" data-icon="&#xe027;"></div>
-  	  <div class="font-icon red" aria-hidden="true" data-icon="&#xe028;"></div>
-  	</div>
-  	<div class="glyph">  	
-    	<div class="font-icon" aria-hidden="true" data-icon="&#xe027;"></div>
-  	  <div class="font-icon blue" aria-hidden="true" data-icon="&#xe028;"></div>
-  	</div>
-  	<div class="glyph">  	
-    	<div class="font-icon" aria-hidden="true" data-icon="&#xe027;"></div>
-  	  <div class="font-icon green" aria-hidden="true" data-icon="&#xe028;"></div>
-  	</div>
-  	<div class="glyph">  	
-    	<div class="font-icon" aria-hidden="true" data-icon="&#xe027;"></div>
-  	  <div class="font-icon orange" aria-hidden="true" data-icon="&#xe028;"></div>
   	</div>
   	
   	<div class="clear"></div>
   	<div class="glyph">  	
-    	<div class="font-icon" aria-hidden="true" data-icon="&#xe008;"></div>
-  	  <div class="font-icon grey" aria-hidden="true" data-icon="&#xe009;"></div>
+  	<div class="font-icon-block">
+    	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe008;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-grey" aria-hidden="true" data-icon="&#xe009;"></span>
+  	</div>
   	</div>
   	<div class="glyph">  	
-    	<div class="font-icon" aria-hidden="true" data-icon="&#xe008;"></div>
-  	  <div class="font-icon red" aria-hidden="true" data-icon="&#xe009;"></div>
+  	<div class="font-icon-block">
+    	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe008;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-red" aria-hidden="true" data-icon="&#xe009;"></span>
+  	</div>
   	</div>
   	<div class="glyph">  	
-    	<div class="font-icon" aria-hidden="true" data-icon="&#xe008;"></div>
-  	  <div class="font-icon blue" aria-hidden="true" data-icon="&#xe009;"></div>
+  	<div class="font-icon-block">
+    	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe008;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-blue" aria-hidden="true" data-icon="&#xe009;"></span>
+  	</div>
   	</div>
   	<div class="glyph">  	
-    	<div class="font-icon" aria-hidden="true" data-icon="&#xe008;"></div>
-  	  <div class="font-icon green" aria-hidden="true" data-icon="&#xe009;"></div>
+  	<div class="font-icon-block">
+    	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe008;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-green" aria-hidden="true" data-icon="&#xe009;"></span>
+  	</div>
   	</div>
   	<div class="glyph">  	
-    	<div class="font-icon" aria-hidden="true" data-icon="&#xe008;"></div>
-  	  <div class="font-icon orange" aria-hidden="true" data-icon="&#xe009;"></div>
+  	<div class="font-icon-block">
+    	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe008;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-orange" aria-hidden="true" data-icon="&#xe009;"></span>
+  	</div>
   	</div>
   	
   	<div class="clear"></div>
-  	<div class="glyph">  	
-    	<div class="font-icon grey" aria-hidden="true" data-icon="&#xe032;"></div>
-  	  <div class="font-icon" aria-hidden="true" data-icon="&#xe033;"></div>
+  	<div class="glyph">
+  	<div class="font-icon-block">
+    	<span class="font-icon font-icon-size-34 font-icon-grey" aria-hidden="true" data-icon="&#xe032;"></span>
+  	  <span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe033;"></span>
+  	</div>
   	</div>
   	<div class="glyph">  	
-    	<div class="font-icon red" aria-hidden="true" data-icon="&#xe032;"></div>
-  	  <div class="font-icon" aria-hidden="true" data-icon="&#xe033;"></div>
+  	<div class="font-icon-block">
+    	<span class="font-icon font-icon-size-34 font-icon-red" aria-hidden="true" data-icon="&#xe032;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon" aria-hidden="true" data-icon="&#xe033;"></span>
+  	</div>
   	</div>
   	<div class="glyph">  	
-    	<div class="font-icon blue" aria-hidden="true" data-icon="&#xe032;"></div>
-  	  <div class="font-icon" aria-hidden="true" data-icon="&#xe033;"></div>
+  	<div class="font-icon-block">
+    	<span class="font-icon font-icon-size-34 font-icon-blue" aria-hidden="true" data-icon="&#xe032;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon" aria-hidden="true" data-icon="&#xe033;"></span>
+  	</div>
   	</div>
   	<div class="glyph">  	
-    	<div class="font-icon green" aria-hidden="true" data-icon="&#xe032;"></div>
-  	  <div class="font-icon" aria-hidden="true" data-icon="&#xe033;"></div>
+  	<div class="font-icon-block">
+    	<span class="font-icon font-icon-size-34 font-icon-green" aria-hidden="true" data-icon="&#xe032;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon" aria-hidden="true" data-icon="&#xe033;"></span>
   	</div>
-  	<div class="glyph">  	
-    	<div class="font-icon orange" aria-hidden="true" data-icon="&#xe032;"></div>
-  	  <div class="font-icon" aria-hidden="true" data-icon="&#xe033;"></div>
+  	</div>
+  	<div class="glyph">
+  	<div class="font-icon-block">  	
+    	<span class="font-icon font-icon-size-34 font-icon-orange" aria-hidden="true" data-icon="&#xe032;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon" aria-hidden="true" data-icon="&#xe033;"></span>
+  	</div>
   	</div>
 	</section>
 
@@ -401,221 +464,264 @@ section {margin-bottom: 3em;}
 		<p>Option to display icon using class selectors.</p>
 	</header>
 	<p>
-	<pre>&lt;span aria-hidden="true" class="icon-class"&gt; &lt;/span&gt; </pre>
+	<strong>Code example</strong>
+	<pre>&lt;span aria-hidden="true" class="icon-class"&gt; &lt;/span&gt;<br />note: &lt;span class="box1"&gt; is only for styleguide presentation</pre>
 	</p>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-lock"></span>
-		&nbsp;icon-lock
+		icon-lock
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-unlock"></span>
-		&nbsp;icon-unlock
+		icon-unlock
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-outgoing-link"></span>
-		&nbsp;icon-outgoing-link
+		icon-outgoing-link
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-arrow-sm-right"></span>
-		&nbsp;icon-arrow-sm-right
+		icon-arrow-sm-right
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-arrow-sm-left"></span>
-		&nbsp;icon-arrow-sm-left
+		icon-arrow-sm-left
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-arrow-sm-down"></span>
-		&nbsp;icon-arrow-sm-down
+		icon-arrow-sm-down
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-arrow-sm-up"></span>
-		&nbsp;icon-arrow-sm-up
+		icon-arrow-sm-up
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-arrow-lg-right"></span>
-		&nbsp;icon-arrow-lg-right
+		icon-arrow-lg-right
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-data-store-part1"></span>
-		&nbsp;icon-data-store-part1
+		icon-data-store-part1
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-data-store-part2"></span>
-		&nbsp;icon-data-store-part2
+		icon-data-store-part2
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-non-scalable-part1"></span>
-		&nbsp;icon-non-scalable-part1
+		icon-non-scalable-part1
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-non-scalable-part2"></span>
-		&nbsp;icon-non-scalable-part2
+		icon-non-scalable-part2
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-scalable-part1"></span>
-		&nbsp;icon-scalable-part1
+		icon-scalable-part1
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-scalable-part2"></span>
-		&nbsp;icon-scalable-part2
+		icon-scalable-part2
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-gear-lg"></span>
-		&nbsp;icon-gear-lg
+		icon-gear-lg
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-gear-lg-sans-circle"></span>
-		&nbsp;icon-gear-lg-sans-circle
+		icon-gear-lg-sans-circle
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-gear-number-circle"></span>
-		&nbsp;icon-gear-number-circle
+		icon-gear-number-circle
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-gear-sm"></span>
-		&nbsp;icon-gear-sm
+		icon-gear-sm
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-gear-sm-sans-circle"></span>
-		&nbsp;icon-gear-sm-sans-circle
+		icon-gear-sm-sans-circle
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-web-stack-lg"></span>
-		&nbsp;icon-web-stack-lg
+		icon-web-stack-lg
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-restart"></span>
-		&nbsp;icon-restart
+		icon-restart
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-cartridge-part1"></span>
-		&nbsp;icon-cartridge-part1
+		icon-cartridge-part1
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-cartridge-part2"></span>
-		&nbsp;icon-cartridge-part2
+		icon-cartridge-part2
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-ci-arrows"></span>
-		&nbsp;icon-ci-arrows
+		icon-ci-arrows
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-ci-x"></span>
-		&nbsp;icon-ci-x
+		icon-ci-x
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-ci-check"></span>
-		&nbsp;icon-ci-check
+		icon-ci-check
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-ci-disabled"></span>
-		&nbsp;icon-ci-disabled
+		icon-ci-disabled
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-management-part2"></span>
-		&nbsp;icon-management-part2
+		icon-management-part2
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-management-part1"></span>
-		&nbsp;icon-management-part1
+		icon-management-part1
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-quickstart"></span>
-		&nbsp;icon-quickstart
+		icon-quickstart
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-start"></span>
-		&nbsp;icon-start
+		icon-start
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-stop"></span>
-		&nbsp;icon-stop
+		icon-stop
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-calendar"></span>
-		&nbsp;icon-calendar
+		icon-calendar
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-warning-sign"></span>
-		&nbsp;icon-warning-sign
+		icon-warning-sign
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-question-sign"></span>
-		&nbsp;icon-question-sign
+		icon-question-sign
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-search"></span>
-		&nbsp;icon-search
+		icon-search
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-twitter"></span>
-		&nbsp;icon-twitter
+		icon-twitter
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-facebook"></span>
-		&nbsp;icon-facebook
+		icon-facebook
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-google-plus"></span>
-		&nbsp;icon-google-plus
+		icon-google-plus
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-info-sign"></span>
-		&nbsp;icon-info-sign
+		icon-info-sign
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-bubbles"></span>
-		&nbsp;icon-bubbles
+		icon-bubbles
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-stackoverflow"></span>
-		&nbsp;icon-stackoverflow
+		icon-stackoverflow
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-code"></span>
-		&nbsp;icon-code
+		icon-code
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-github"></span>
-		&nbsp;icon-github
+		icon-github
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-angle-down"></span>
-		&nbsp;icon-angle-down
+		icon-angle-down
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-angle-up"></span>
-		&nbsp;icon-angle-up
+		icon-angle-up
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-angle-right"></span>
-		&nbsp;icon-angle-right
+		icon-angle-right
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-angle-left"></span>
-		&nbsp;icon-angle-left
+		icon-angle-left
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-plus"></span>
-		&nbsp;icon-plus
+		icon-plus
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-minus"></span>
-		&nbsp;icon-minus
+		icon-minus
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-system-signal-lg"></span>
-		&nbsp;icon-system-signal-lg
+		icon-system-signal-lg
 	</span>
 	<span class="box1">
 		<span aria-hidden="true" class="icon-system-lg"></span>
-		&nbsp;icon-system-lg
+		icon-system-lg
 	</span>
 	</section>
+	
 	<footer>
 		<p>Generated by <a href="http://icomoon.io">IcoMoon.io</a></p>
 	</footer>
 	</div>
+	
+<!--
+  End icomoon generated 
+  ---------------------------------------------------------------------
+  --------------------------------------------------------------------->
+	<h1>Usage scenarios</h1>
+	<section>
+	<h2 class="icon-calendar">Heading with icon</h2>
+	<h4 class="icon-calendar">Heading with icon</h4>
+	<h5 class="icon-calendar">Heading with icon</h5>
+	<p>Icon inline within <span aria-hidden='true' class='font-icon font-icon-inline font-icon-size-12' data-icon='&#xe014;'></span> a sentence.</p>
+	<ul class="unstyled spaced-items">
+	 <li><span class="icon-unlock" aria-hidden="true"></span>List item</li>
+	 <li><span class="icon-warning-sign" aria-hidden="true"></span>List item</li>
+	</li>
+	</section>
+	
+	<section>
+	<p>Multiple icons in a row</p>
+  	<div class="font-icon-block">	
+    	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe021;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-blue" aria-hidden="true" data-icon="&#xe022;"></span>
+  	</div>
+    <div class="font-icon-block">
+  	  <span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe018;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-red" aria-hidden="true" data-icon="&#xe016;"><span class="gear-number gear-sm">8</span></span>
+    </div>
+  	
+  	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe000;"></span>
+  	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xee00;"></span>
+  	
+  	<div class="font-icon-block">
+  	  <span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xe015;"></span>
+  	  <span class="font-icon font-icon-size-34 font-icon-red" aria-hidden="true" data-icon="&#xe016;"><span class="gear-number gear-lg">8</span></span>
+  	</div>
+  	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xee07;"></span>
+  	<span class="font-icon font-icon-size-34" aria-hidden="true" data-icon="&#xee09;"></span>
+	</section>
+	
+	
+	
 	<script>
 	document.getElementById("glyphs").addEventListener("click", function(e) {
 		var target = e.target;

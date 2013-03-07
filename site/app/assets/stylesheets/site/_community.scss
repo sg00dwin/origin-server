@@ -74,6 +74,11 @@
   
   > .teaser {
   	margin: 0px 20px 20px;
+  	overflow: hidden;
+  	
+  	img {
+    	max-width: 250px;
+  	}
   	
   	> h1 { 
   		font-size: 18px;

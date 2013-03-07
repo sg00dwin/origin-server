@@ -5,8 +5,8 @@
 %global modname             user_profile
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.10.3
-Release: 1%{?dist}
+Version: 1.10.4
+Release: 2%{?dist}
 Summary: Openshift Red Hat Custom User Profile Feature for Drupal6
 Group:   Applications/Publishing
 License: GPLv2+
@@ -41,6 +41,13 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Mar 06 2013 Adam Miller 1.10.4-2
+- Bump spec for mass drupal rebuild
+
+* Fri Mar 01 2013 Adam Miller <admiller@redhat.com> 1.10.4-1
+- Backport Drupal permission changes - allow bloggers to upload files
+  (ccoleman@redhat.com)
+
 * Mon Feb 25 2013 Adam Miller <admiller@redhat.com> 1.10.3-1
 - Bug 909992 - Fix login errors outside of login (ccoleman@redhat.com)
 
