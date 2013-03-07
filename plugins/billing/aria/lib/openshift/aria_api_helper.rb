@@ -13,7 +13,7 @@ module OpenShift
       @auth_key = access_info[:config][:auth_key]
       @client_no = access_info[:config][:client_no]
       @plans = access_info[:plans]
-      @supp_plans = access_info[:supp_plans]
+      @supp_plans = access_info[:supp_plans] || []
       @usage_type = access_info[:usage_type]
     end
 
