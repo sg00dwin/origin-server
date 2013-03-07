@@ -3,23 +3,23 @@
   %div
     %input{:type => 'text', :class => 'span8', :placeholder => 'Search frequently asked questions', 'ng-model' => 'searchTerm', 'ng-change' => 'filter()'}
 
-  %div
-    %ul{'ng-init' => "topten = #{topten.to_json}; questions = topten",
-        'ng-show' => 'true',
-        :style => 'display: none;'}
-      %li{'ng-repeat' => 'q in questions'}
-        %h3
-          %a{:href => '{{ q.href }}', 'ng-bind-html-unsafe' => 'q.name'}
-        %p{'ng-bind-html-unsafe' => 'q.body'}
+  %div{'ng-init' => "topten = #{topten.to_json}; questions = topten",
+      'ng-show' => 'true',
+      :style => 'display: none;'}
+    %dl{'ng-repeat' => 'q in questions'}
+      %dt
+        %a{:href => '{{ q.href }}', 'ng-bind-html-unsafe' => 'q.name'}
+      %dd{'ng-bind-html-unsafe' => 'q.body'}
 
-    -# If javascript is not enabled, this will be the only rendered content
-    %ul{'ng-hide' => 'true'}
-      - topten.each do |faq|
-        %li
-          %h3
-            %a{:href => faq.href, :rel => 'tooltip'}
-              = raw faq.name
-          %p
-            = raw faq.body
+
+  -# If javascript is not enabled, this will be the only rendered content
+  %ul{'ng-hide' => 'true'}
+    - topten.each do |faq|
+      %li
+        %h3
+          %a{:href => faq.href, :rel => 'tooltip'}
+            = raw faq.name
+        %p
+          = raw faq.body
 
 
