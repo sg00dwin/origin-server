@@ -80,6 +80,15 @@ module OpenShiftMigration
         file.write 'export OPENSHIFT_SYNC_GEARS_DIRS=( "repo" "node_modules" "../.m2" ".openshift" "deployments" "perl5lib" "phplib" )'
       end
       output << "Override for OPENSHIFT_SYNC_GEARS_DIRS for #{uuid}\n"
+
+      # Only remove virtenv on non-haproxy python2.7 cartridges
+      haproxy_14 = File.join(gear_home, 'haproxy-1.4')
+      unless File.directory?(haproxy_14)
+        Dir[File.join(gear_home, 'python-*', 'virtenv')].each do |d|
+          FileUtils.rm_r(d)
+          output << "Removed #{d} for #{uuid}\n"
+        end
+      end
     end
 
     total_time = (Time.now.to_f * 1000).to_i - start_time
