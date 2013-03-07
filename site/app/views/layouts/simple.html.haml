@@ -7,13 +7,15 @@
 
   %body{ :class => "simple #{controller.controller_name} #{controller.action_name}" }
 
+    %a.skip-navigation{:href => '#content', :accesskey => '2'} Skip to main content
+
     %header
       = render 'layouts/simple/header'
 
     - if content_for? :important_layout
       = yield :important_layout
 
-    #content.section-account
+    #content.section-account{:role => 'main'}
       .container
         .row
           .span12
