@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.5.9
+Version: 1.5.10
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -236,6 +236,12 @@ fi
 
 
 %changelog
+* Thu Mar 07 2013 Adam Miller <admiller@redhat.com> 1.5.10-1
+- Bug 918383 - Python community cartridges cannot share virtualenv
+  (jhonce@redhat.com)
+- Bug 918383 - Python community cartridges cannot share virtualenv
+  (jhonce@redhat.com)
+
 * Wed Mar 06 2013 Adam Miller <admiller@redhat.com> 1.5.9-1
 - Bug 918480 (dmcphers@redhat.com)
 
