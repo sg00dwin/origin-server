@@ -84,10 +84,10 @@ module OpenShiftMigration
       # Only remove virtenv on non-haproxy python2.7 cartridges
       haproxy_14 = File.join(gear_home, 'haproxy-1.4')
       unless File.directory?(haproxy_14)
-        Dir[File.join(gear_home, 'python-*', 'virtenv')].each do |d|
+        Dir[File.join(gear_home, 'python-*', 'virtenv', '*')].each do |d|
           FileUtils.rm_r(d)
-          output << "Removed #{d} for #{uuid}\n"
         end
+        output << "Removed #{d} for #{uuid}\n"
       end
     end
 
