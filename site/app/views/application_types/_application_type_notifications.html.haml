@@ -1,6 +1,6 @@
 - if type.usage_rates?
-  %div.alert.alert-info
-    %h3 #{type.display_name} is based on a premium cartridge.
+  %div.alert.alert-info.alert-block
+    %h4.alert-heading #{type.display_name} is based on a premium cartridge.
 
     - type.usage_rates.each do |rate|
       %p
