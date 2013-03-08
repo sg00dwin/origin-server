@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.3.7
+Version: 1.3.8
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,9 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Fri Mar 08 2013 Adam Miller <admiller@redhat.com> 1.3.8-1
+- Fix Aria event notification format (rpenta@redhat.com)
+
 * Wed Mar 06 2013 Adam Miller <admiller@redhat.com> 1.3.7-1
 - Usage migration: show total #usage records created in the end
   (rpenta@redhat.com)
