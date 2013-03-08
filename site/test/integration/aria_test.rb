@@ -131,15 +131,16 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   test "should record usage" do
-    u = record_usage_for_user(with_megashift_user)
-    assert r = Aria.get_usage_history(u.acct_no, :date_range_start => u.account_details.next_bill_date)
-    assert_equal 2, r.length
+    u = with_account_holder
+    assert_difference 'Aria.get_usage_history(u.acct_no, :date_range_start => u.account_details.last_bill_date).count', 2 do
+      record_usage_for_user(u)
+    end
     assert usage = Aria.get_unbilled_usage_summary(u.acct_no)
     assert usage.ptd_balance_amount > 0
     assert_equal 'usd', usage.currency_cd
 
-    assert_equal r, u.unbilled_usage
-    assert_equal usage, u.unbilled_balance
+    assert u.unbilled_line_items.present?
+    assert_equal usage.ptd_balance_amount, u.unbilled_balance.ptd_balance_amount
   end
 
   test "should get past invoices" do

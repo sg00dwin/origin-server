@@ -18,6 +18,8 @@ module Aria
   cache_method :get_supp_field_value
   cache_method :get_supp_field_values
   cache_method :get_client_plans_basic
+  cache_method :get_client_plan_service_rates
+  cache_method :get_client_plan_services
 
   def self.available?(message='Aria is not available:')
     return false unless Rails.configuration.aria_enabled

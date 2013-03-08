@@ -70,12 +70,14 @@ module Aria
       false
     end
 
-    def unbilled_usage
-      @unbilled_usage ||= Aria.get_usage_history(acct_no, :date_range_start => account_details.next_bill_date)
+    def unbilled_usage_line_items
+      @unbilled_usage_line_items ||=
+        Aria::UsageLineItem.for_usage(Aria.get_usage_history(acct_no, :date_range_start => account_details.last_bill_date), account_details.plan_no)
     end
 
     def unbilled_balance
-      @unbilled_balance ||= Aria.get_unbilled_usage_summary(acct_no)
+      @unbilled_balance ||=
+        Aria.get_unbilled_usage_summary(acct_no)
     end
 
     def unpaid_invoices

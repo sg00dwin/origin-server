@@ -24,17 +24,25 @@ module Aria
       capabilities[:gear_sizes]
     end
 
+    def recurring_line_items
+      @recurring_line_items ||= services.keep_if{ |s| s.is_usage_based_ind == 0 }.map{ |s| Aria::RecurringLineItem.new(s, plan_no) }
+    end
+
+    def services
+      @services ||= Aria.cached.get_client_plan_services(plan_no)
+    end
+
     def features
       @features ||= Aria::MasterPlanFeature.from_description(aria_plan.plan_desc)
     end
 
     # Find a feature of the given name or create a new 'null' feature to represent it
     def feature(name)
-      features.each { |feat|
+      features.each do |feat|
         if feat.name == name
           return feat
         end
-      }
+      end
 
       null_feature = Aria::MasterPlanFeature.new({ :name => name })
       @features << null_feature

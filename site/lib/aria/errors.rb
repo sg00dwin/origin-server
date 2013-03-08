@@ -21,6 +21,7 @@ module Aria
     # through IP but also auth_key or client_no could be wrong.
     1004 => (AuthenticationError = Class.new(Error)),
 
+    1008 => (NoLineItemsProvided = Class.new(Error)),
     1009 => (AccountDoesNotExist = Class.new(Error)),
     1010 => (MissingRequiredParameter = Class.new(Error)),
     1011 => (InvalidSession = Class.new(Error)),

@@ -3,11 +3,22 @@ module Account
     extend ActiveSupport::Concern
     include DomainAware
     include AsyncAware
- 
+    include SshkeyAware
+
     # trigger synchronous module load 
     [Key, Authorization, User, Domain, Plan] if Rails.env.development?
 
     def show
+      @user_has_keys = sshkey_uploaded?
+      @domain = user_default_domain rescue nil
+
+      @user = current_api_user
+      @plan = @user.plan
+      user = Aria::UserContext.new(current_user)
+      @line_items = @plan.recurring_line_items.concat(user.unbilled_usage_line_items).select{ |li| li.total_cost > 0.0 }
+    end
+
+    def settings
       @user = current_user
       @identities = Identity.find @user
       @show_email = false

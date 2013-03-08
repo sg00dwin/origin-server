@@ -60,6 +60,7 @@ RedHatCloud::Application.routes.draw do
            :controller => :account,
            :only => [:new, :create, :show] do
 
+    get :settings, :on => :member
     get :complete, :on => :member
 
     if Rails.configuration.aria_enabled

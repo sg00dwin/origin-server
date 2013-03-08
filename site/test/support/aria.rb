@@ -20,7 +20,7 @@ class ActiveSupport::TestCase
 
   def with_megashift_user
     user = Aria::UserContext.new(WebUser.new :login => new_uuid)
-    user.create_account :master_plan_no => Aria::MasterPlan.find('megashift').plan_no
+    create_megashift_user(user)
     set_user(user)
   end
 
@@ -29,11 +29,11 @@ class ActiveSupport::TestCase
   end
 
   def create_megashift_user(u)
-    u.create_account :billing_info => Aria::BillingInfo.test,
-                     :payment_method => Aria::PaymentMethod.test,
-                     :test_acct_ind => 0,
-                     :status_cd => 1,
-                     :master_plan_no => Aria::MasterPlan.find('megashift').plan_no
+    assert u.create_account :billing_info => Aria::BillingInfo.test,
+                            :payment_method => Aria::PaymentMethod.test,
+                            :test_acct_ind => 0,
+                            :status_cd => 1
+    User.find(:one, :as => u).tap{ |a| a.plan_id = :megashift; assert a.save }
   end
 
   def record_usage_for_user(u)

@@ -84,10 +84,16 @@ module Aria
     def get_usage_history(acct_no, opts)
       opts[:acct_no] = acct_no
       Array(super(opts).usage_history_records)
+    rescue Aria::NoLineItemsProvided
+      []
     end
 
     def get_acct_invoice_history(acct_no)
       Array(super(:acct_no => acct_no).invoice_history)
+    end
+
+    def get_client_plan_service_rates(plan_no, service_no)
+      Array(super(:plan_no => plan_no, :service_no => service_no).plan_service_rates)
     end
 
     def get_unbilled_usage_summary(acct_no)
@@ -117,5 +123,5 @@ module Aria
         end
         params
       end
- end
+  end
 end
