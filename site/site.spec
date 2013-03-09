@@ -9,7 +9,7 @@
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
 Version: 1.5.12
-Release:   2%{?dist}
+Release:   3%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -177,6 +177,12 @@ fi
 %{sitedir}/public
 
 %changelog
+* Fri Mar 08 2013 Adam Miller <admiller@redhat.com> 1.5.12-3
+- Bump once more to get proper tito tag
+
+* Fri Mar 08 2013 Adam Miller <maxamillion@gmail.com> - 1.5.12-3
+- bump to fix build
+
 * Thu Mar 07 2013 Adam Miller 1.5.12-2
 - Bump spec for mass drupal rebuild
 
