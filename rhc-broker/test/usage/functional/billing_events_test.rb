@@ -22,12 +22,14 @@ class BillingEventsTest < ActiveSupport::TestCase
       # event: 107
       assert(@api.update_master_plan(acct_no, :megashift))
 
+=begin # As of now, we are NOT using supplimental plans
       # event: 110
       assert(@api.assign_supp_plan(acct_no, :megashiftstorage))
       # event: 114
       assert(@api.modify_supp_plan(acct_no, :megashiftstorage, 5))
       # event: 112
       assert(@api.cancel_supp_plan(acct_no, :megashiftstorage))
+=end
 
       # event: 118
       assert(@api.update_acct_supp_fields(acct_no, 'BillCounty', 'Mercury'))

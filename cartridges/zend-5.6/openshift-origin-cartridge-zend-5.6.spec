@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      openshift-origin-cartridge-zend-5.6
-Version: 1.5.5
+Version: 1.6.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -109,6 +109,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Mar 07 2013 Adam Miller <admiller@redhat.com> 1.6.1-1
+- bump_minor_versions for sprint 25 (admiller@redhat.com)
+
 * Wed Mar 06 2013 Adam Miller <admiller@redhat.com> 1.5.5-1
 - Add some missing Zend Server PHP extensions (vvitek@redhat.com)
 

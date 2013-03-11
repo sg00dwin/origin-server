@@ -9,7 +9,7 @@
 
 Summary:        OpenShift plugin for streamline auth service
 Name:           rubygem-%{gem_name}
-Version: 1.3.4
+Version: 1.4.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -81,6 +81,9 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-auth-streamline-dev.conf
 
 %changelog
+* Thu Mar 07 2013 Adam Miller <admiller@redhat.com> 1.4.1-1
+- bump_minor_versions for sprint 25 (admiller@redhat.com)
+
 * Wed Mar 06 2013 Adam Miller <admiller@redhat.com> 1.3.4-1
 - Remove test case (ccoleman@redhat.com)
 - Bug 888384 - Stop caching rh_sso (ccoleman@redhat.com)

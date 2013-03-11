@@ -1,6 +1,8 @@
 - content_for :stylesheets do
   = stylesheet_link_tag 'site.css', :media => 'all'
 
+%a.skip-navigation{:href => '#content', :accesskey => '2'} Skip to main content
+
 %header
   #top.section-top
     .container
@@ -42,7 +44,7 @@
           %strong OpenShift Community
         .secondary This is the place to learn and engage with OpenShift users and developers. Sign in to participate.
 
-#content.section-striped
+#content.section-striped{:role => 'main'}
   .container
     .row-content
       .row.row-flush-right

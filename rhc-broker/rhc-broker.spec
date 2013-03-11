@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.5.13
+Version: 1.6.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -149,6 +149,9 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Thu Mar 07 2013 Adam Miller <admiller@redhat.com> 1.6.1-1
+- bump_minor_versions for sprint 25 (admiller@redhat.com)
+
 * Wed Mar 06 2013 Adam Miller <admiller@redhat.com> 1.5.13-1
 - Merge pull request #980 from abhgupta/abhgupta-dev
   (dmcphers+openshiftbot@redhat.com)
