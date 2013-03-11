@@ -13,7 +13,7 @@ describe 'FAQ Controller', ->
       # Then
       expect(scope.questions).toBe(scope.topten)
 
-    it 'should find a single match', ->
+    it 'should find a single name match', ->
       # Given
       scope = { topten: [], searchTerm: 'foo' }
       faq = {
@@ -31,7 +31,7 @@ describe 'FAQ Controller', ->
       # Then
       expect(scope.questions).toEqual([faq.faq[0]])
 
-    it 'should find case insensitive matches', ->
+    it 'should find case insensitive name matches', ->
       # Given
       scope = { topten: [], searchTerm: 'Bar' }
       faq = {
@@ -49,5 +49,64 @@ describe 'FAQ Controller', ->
       scope.filter()
 
       # Then
-      expect(scope.questions).toEqual([faq.faq[2], faq.faq[3]])
+      expect(scope.questions).toEqual([faq.faq[3], faq.faq[2]])
+
+    it 'should find a body match', ->
+
+      # Given
+      scope = { topten: [], searchTerm: 'body' }
+      faq = {
+        faq: [
+          {name :'one', body: 'This should not match'},
+          {name :'two', body: 'This body should match'}
+        ]
+      }
+
+      FaqController(scope, faq)
+
+      # When
+      scope.filter()
+
+      # Then
+      expect(scope.questions).toEqual([faq.faq[1]])
+
+    it 'should weight name matches higher', ->
+
+      # Given
+      scope = { topten: [], searchTerm: 'two' }
+      faq = {
+        faq: [
+          {name :'one', body: 'This has a two'},
+          {name :'two', body: 'This body does not match'}
+        ]
+      }
+
+      FaqController(scope, faq)
+
+      # When
+      scope.filter()
+
+      # Then
+      expect(scope.questions).toEqual([faq.faq[1], faq.faq[0]])
+
+    it 'should weight name and body matches highest', ->
+
+      # Given
+      scope = { topten: [], searchTerm: 'xxxx' }
+      faq = {
+        faq: [
+          {name :'one', body: 'This only xxxx matches the body'},
+          {name :'This has (xxxx) both', body: 'This also has both name and body xxxx'},
+          {name :'name', body: 'This body does not match at all'},
+          {name :'xxxx name', body: 'This only matches the name'}
+        ]
+      }
+
+      FaqController(scope, faq)
+
+      # When
+      scope.filter()
+
+      # Then
+      expect(scope.questions).toEqual([faq.faq[1], faq.faq[3], faq.faq[0]])
 
