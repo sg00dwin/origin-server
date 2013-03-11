@@ -273,15 +273,15 @@ class Release < Thor
 
           chain_set_failures.each do | failed_set |
             
-            chain_build_failures += "#### Chainset failed: #{failed_set.join(" : ")}::"
-            chain_build_failures += "#### To fix, run the following commands in order, verifying each:"
-            chain_build_failures += "#### one passes before moving to the next"
+            chain_build_failures += "#### Chainset failed: #{failed_set.join(" : ")}::\n"
+            chain_build_failures += "#### To fix, run the following commands in order, verifying each:\n"
+            chain_build_failures += "#### one passes before moving to the next\n"
             failed_set.each do | pkg |
               working_dir = File.expand_path("../#{full_pkg_set[pkg][0]}", File.dirname(__FILE__))
-              chain_build_failures += "# pushd #{working_dir} > /dev/null; #{tito_cmd}; popd > /dev/null;"
+              chain_build_failures += "# pushd #{working_dir} > /dev/null; #{tito_cmd}; popd > /dev/null;\n"
             end
-            chain_build_failures += "# for i in #{failed_set.join(" ")} ; do scm+=\"\$(printf \"%s \" \"\$(printf \"%s : \" \"git://pkgs.devel.redhat.com/rpms/$i/?#\$(git ls-remote git://pkgs.devel.redhat.com/rpms/$i refs/heads/libra-rhel-6 | awk '{print $1}')\")\")\"; done;"
-            chain_build_failures += "# brew chain-build --nowait libra-rhel-6-dirty $\{scm%:*\}"
+            chain_build_failures += "# for i in #{failed_set.join(" ")} ; do scm+=\"\$(printf \"%s \" \"\$(printf \"%s : \" \"git://pkgs.devel.redhat.com/rpms/$i/?#\$(git ls-remote git://pkgs.devel.redhat.com/rpms/$i refs/heads/libra-rhel-6 | awk '{print $1}')\")\")\"; done;\n"
+            chain_build_failures += "# brew chain-build --nowait libra-rhel-6-dirty $\{scm%:*\}\n"
 
           end
 
@@ -343,13 +343,12 @@ class Release < Thor
   end
 
   desc "sync", "Download a build from Brew (using Mash) and sync it to the OpenShift repos"
-  method_option :stage, :type => :string, :desc => "Comma-delimited list of packages to sync.  Exclude NVR for latest versions.  (e.g. --stage='rhc, rhc-site-0.73.3-1')"
+  method_option :stage, :type => :boolean, :desc => "Sync the stage repo"
   method_option :test, :type => :boolean, :desc => "Run against libra's -test repo"
-  method_option :stage_all, :type => :boolean, :desc => "Tag all the latest packages for stage"
   method_option :no_ami, :type => :boolean, :desc => "Indicates whether to not build an ami"
   method_option :source_ami, :type => :boolean, :desc => "Indicates whether to build a source ami"
   def sync
-    orig_branches = checkout_branch(options[:stage] || options.stage? ? "stage" : "master")
+    orig_branches = checkout_branch(options.stage? ? "stage" : "master")
     begin
       # do RHEL 6.x first
       mash_and_rsync BASE_RELEASE_BRANCH, false, options
@@ -367,15 +366,41 @@ class Release < Thor
   method_option :check, :type => :boolean, :desc => "Don't do anything yet, just show what would be done"
   method_option :stage, :type => :boolean, :desc => "Target brew tag is stage"
   method_option :candidate, :type => :boolean, :desc => "Target brew tag is candidate"
+  method_option :from, :type => :string, :desc => "Source brew tag (test, cadidate, stage)"
+  method_option :to, :type => :string, :desc => "Target brew tag (test, cadidate, stage)"
+  method_option :pkgs, :type => :string, :desc => "Comma separated list of brew pkgs"
   def tag_pkgs(after_date = nil)
+    tag_failures = ""
+    valid_tags = ["stage","candidate","test"]
     if options.stage?
       target_brew_tag = "#{BASE_RELEASE_BRANCH}-stage"
       src_brew_tag = "#{BASE_RELEASE_BRANCH}-candidate"
     elsif options.candidate?
       target_brew_tag = "#{BASE_RELEASE_BRANCH}-candidate"
       src_brew_tag = "#{BASE_RELEASE_BRANCH}-test"
+    elsif not options.to.nil? and not options.from.nil?
+      if options.from == options.to
+        puts "ERROR: target tag must be different from source tag"
+        exit 1
+      end
+
+      unless valid_tags.include? options.to and valid_tags.include? options.from
+        puts "ERROR: Invalid tag offered as --to or --from:"
+        puts "Valid Options: #{valid_tags.join(', ')}"
+        exit 1
+      end
+
+      if options.pkgs.nil?
+        puts "ERROR: must pass --pkgs with --from and --to args"
+        exit 1
+      end
+
+      src_brew_tag = BASE_RELEASE_BRANCH+"-#{options.from}"
+      target_brew_tag = BASE_RELEASE_BRANCH+"-#{options.to}"
+
     else
       puts "ERROR: must specify target brew tag with --stage or --candidate"
+      puts "Optionally (eg.): --from test --to candidate"
       exit 1
     end 
 
@@ -384,28 +409,207 @@ class Release < Thor
     begin
       
       git_pull
-      if after_date.nil? or after_date.empty?
-        # Define a month timeline to trim down the package list to process
-        # from brew's output
-        after_date = (Time.new - 60*60*24*30).strftime("%Y-%m-%d")
-      end
+      if options.from.nil? and options.to.nil?
+        if after_date.nil? 
+          # Define a month timeline to trim down the package list to process
+          # from brew's output
+          after_date = (Time.new - 60*60*24*30).strftime("%Y-%m-%d")
+        end
 
-      pkgs_need_tagging = get_packages_to_tag(src_brew_tag, target_brew_tag, after_date, options.include_internal?)
+        pkgs_need_tagging = get_packages_to_tag(src_brew_tag, target_brew_tag, after_date, options.include_internal?)
 
-      if options.check?
-        puts "### If this were run without --check, the following packages would be tagged into #{target_brew_tag}:"
-        pkgs_need_tagging.each { |pkg| puts pkg }
+        if options.check?
+          puts "### If this were run without --check, the following packages would be tagged into #{target_brew_tag}:"
+          pkgs_need_tagging.each { |pkg| puts pkg }
+        else
+          puts "### Tagging the following packages into #{target_brew_tag}:"
+          puts pkgs_need_tagging
+          puts "######### BEGIN: Brew Tag Output #########"
+          pkgs_need_tagging.each do |pkg|
+            tag_failures += brew_move_pkg(src_brew_tag, target_brew_tag, pkg)
+            puts "######### END: Brew Tag Output #########"
+          end
+        end
       else
-        puts "### Tagging the following packages into #{target_brew_tag}:"
-        puts pkgs_need_tagging
         puts "######### BEGIN: Brew Tag Output #########"
-        puts `brew move-pkg #{src_brew_tag} #{target_brew_tag} #{pkgs_need_tagging.join(" ")}`
-        puts "######### END: Brew Tag Output #########"
+        options.pkgs.split(",").each do |pkg|
+          tag_failures += brew_move_pkg(src_brew_tag, target_brew_tag, pkg)
+          puts "######### END: Brew Tag Output #########"
+        end
       end
+      
+      unless tag_failures.empty?
+        puts "************BEGIN TAG FAILURES****************"
+        puts tag_failures
+        puts "*************END TAG FAILURES*****************\n"
+      end
+
     ensure
       reset_orig_branches(orig_branches)
     end
   end
+
+  desc "tag_sanity_check", "Check the sanity of libra-rhel-6 tag tree"
+  method_option :prod, :type => :boolean, :desc => "Run against prod brew tag"
+  method_option :stage, :type => :boolean, :desc => "Run against stage brew tag"
+  method_option :candidate, :type => :boolean, :desc => "Run against candidate brew tag"
+  method_option :all, :type => :boolean, :desc => "Run against all brew tags"
+  def tag_sanity_check
+
+    unless options.all or options.prod or options.candidate or options.stage
+      puts "ERROR: Must provide --all, --prod, --stage, or --candidate"
+      exit 1
+    end
+
+    tag_sanity_failures = ""
+
+    # Check for rpmdevtools installation (need rpmdev-vercmp)
+    unless run("rpm -q rpmdevtools > /dev/null 2>&1", :verbose => options.verbose?)
+      puts "ERROR - you need the rpmdevtools package installed"; exit 1
+    end
+
+    # Check the Brew installation
+    `brew --help`
+    unless $? == 0
+      puts "ERROR - Brew not installed.  Read misc/docs/BREW for setup steps"
+      exit 2
+    end
+
+
+    # Warn people, this is not a fast process because we're querying brew a *lot*
+    puts "Sanity check starting .... "
+    puts "NOTE: This can take several minutes"
+
+    if options.prod or options.all
+      p_hash = {}
+      s_hash = {}
+
+      # Check sanity of stage vs prod (stage is upstream, prod is downstream)
+      prod_pkgs = `brew latest-pkg --quiet --all #{BASE_RELEASE_BRANCH} | \
+                    awk '{ print $1 }'`.split
+      stage_pkgs = `brew latest-pkg --quiet --all #{BASE_RELEASE_BRANCH}-stage | \
+                    awk '{ print $1 }'`.split
+
+      prod_pkgs.each do |pkg| 
+        p_hash["#{pkg.split('-')[0...-2].join('-')}"] = "#{pkg.split('-')[-2..-1].join('-')}" 
+      end  
+      stage_pkgs.each do |pkg| 
+        s_hash["#{pkg.split('-')[0...-2].join('-')}"] = "#{pkg.split('-')[-2..-1].join('-')}" 
+      end  
+
+      puts "Sanity checking #{BASE_RELEASE_BRANCH} - #{prod_pkgs.size} pkgs"
+      p_hash.each do |pkg_name, pkg_ver_rel|
+        
+        us_pkg = "#{pkg_name}-#{s_hash[pkg_name]}"
+        ds_pkg = "#{pkg_name}-#{pkg_ver_rel}"
+        
+        if us_pkg.empty? or us_pkg.nil?
+          tag_sanity_failures += "### TAG SANITY FAILURE stage vs. prod\n"
+          tag_sanity_failures += "#{ds_pkg} exists in #{BASE_RELEASE_BRANCH} not in #{BASE_RELEASE_BRANCH}-stage"
+        else
+          # rpmdev-vercmp - Exit status is 0 if the EVR's are equal, 11 if EVR1 is 
+          # newer, and 12 if EVR2 is newer.
+          `rpmdev-vercmp #{us_pkg} #{ds_pkg} > /dev/null 2>&1`
+          if $?.exitstatus == 12
+            tag_sanity_failures += "### TAG SANITY FAILURE stage vs. prod\n"
+            tag_sanity_failures += "#{BASE_RELEASE_BRANCH} - #{ds_pkg}\n"
+            tag_sanity_failures += "#{BASE_RELEASE_BRANCH}-stage - #{us_pkg}\n"
+          end
+        end
+      end
+    end
+    
+    if options.stage or options.all
+      s_hash = {}
+      c_hash = {}
+
+      # Check sanity of candidate vs stage (candidate is upstream, stage is downstream)
+      stage_pkgs = `brew latest-pkg --quiet --all #{BASE_RELEASE_BRANCH}-stage | \
+                    awk '{ print $1 }'`.split
+      candidate_pkgs = `brew latest-pkg --quiet --all \
+                  #{BASE_RELEASE_BRANCH}-candidate | awk '{ print $1 }'`.split
+
+      stage_pkgs.each do |pkg| 
+        s_hash["#{pkg.split('-')[0...-2].join('-')}"] = "#{pkg.split('-')[-2..-1].join('-')}" 
+      end  
+      candidate_pkgs.each do |pkg| 
+        c_hash["#{pkg.split('-')[0...-2].join('-')}"] = "#{pkg.split('-')[-2..-1].join('-')}" 
+      end  
+
+      puts "Sanity checking #{BASE_RELEASE_BRANCH}-stage - #{stage_pkgs.size} pkgs"
+      s_hash.each do |pkg_name, pkg_ver_rel|
+        
+        us_pkg = "#{pkg_name}-#{c_hash[pkg_name]}"
+        ds_pkg = "#{pkg_name}-#{pkg_ver_rel}"
+        
+        if us_pkg.empty? or us_pkg.nil?
+          tag_sanity_failures += "### TAG SANITY FAILURE candidate vs. stage\n"
+          tag_sanity_failures += "#{ds_pkg} exists in #{BASE_RELEASE_BRANCH}-stage not in #{BASE_RELEASE_BRANCH}-candidate"
+        else
+          # rpmdev-vercmp - Exit status is 0 if the EVR's are equal, 11 if EVR1 is 
+          # newer, and 12 if EVR2 is newer.
+          `rpmdev-vercmp #{us_pkg} #{ds_pkg} > /dev/null 2>&1`
+          if $?.exitstatus == 12
+            tag_sanity_failures += "### TAG SANITY FAILURE candidate vs. stage\n"
+            tag_sanity_failures += "#{BASE_RELEASE_BRANCH}-stage - #{ds_pkg}\n"
+            tag_sanity_failures += "#{BASE_RELEASE_BRANCH}-candidate - #{us_pkg}\n"
+          end
+        end
+      end
+    end
+
+
+    if options.candidate or options.all
+      c_hash = {}
+      t_hash = {}
+
+      # Check sanity of test vs candidate (test is upstream, candidate is downstream)
+      candidate_pkgs = `brew latest-pkg --quiet --all \
+                  #{BASE_RELEASE_BRANCH}-candidate | awk '{ print $1 }'`.split
+      test_pkgs = `brew latest-pkg --quiet --all \
+                  #{BASE_RELEASE_BRANCH}-test | awk '{ print $1 }'`.split
+
+      candidate_pkgs.each do |pkg| 
+        c_hash["#{pkg.split('-')[0...-2].join('-')}"] = "#{pkg.split('-')[-2..-1].join('-')}" 
+      end  
+      test_pkgs.each do |pkg| 
+        t_hash["#{pkg.split('-')[0...-2].join('-')}"] = "#{pkg.split('-')[-2..-1].join('-')}" 
+      end  
+
+      puts "Sanity checking #{BASE_RELEASE_BRANCH}-candidate - #{candidate_pkgs.size} pkgs"
+      c_hash.each do |p_name, p_ver_rel|
+        
+        us_pkg = "#{p_name}-#{t_hash[p_name]}"
+        ds_pkg = "#{p_name}-#{p_ver_rel}"
+        
+        if us_pkg.empty? or us_pkg.nil?
+          tag_sanity_failures += "### TAG SANITY FAILURE test vs.candidate\n"
+          tag_sanity_failures += "#{ds_pkg} exists in #{BASE_RELEASE_BRANCH}-candidate not in #{BASE_RELEASE_BRANCH}-test"
+        else
+          # rpmdev-vercmp - Exit status is 0 if the EVR's are equal, 11 if EVR1 is 
+          # newer, and 12 if EVR2 is newer.
+          `rpmdev-vercmp #{us_pkg} #{ds_pkg} > /dev/null 2>&1`
+          if $?.exitstatus == 12
+            tag_sanity_failures += "### TAG SANITY FAILURE test vs. candidate\n"
+            tag_sanity_failures += "#{BASE_RELEASE_BRANCH}-candidate - #{ds_pkg}\n"
+            tag_sanity_failures += "#{BASE_RELEASE_BRANCH}-test - #{us_pkg}\n"
+          end
+        end
+      end
+    end
+
+    unless tag_sanity_failures.empty?
+      puts "Done - Tag inconsistencies found"
+      puts "************BEGIN TAG FAILURES****************"
+      puts tag_sanity_failures
+      puts "*************END TAG FAILURES*****************\n"
+    end
+
+    if tag_sanity_failures.empty?
+      puts "Done - Tags are sane."
+    end
+  end
+
 
   desc "bump_minor_versions", "Bump the minor version in all specs > .1 patch level"
   method_option :push_changes, :type => :boolean, :desc => "Push the changes to the current branch"
@@ -498,7 +702,7 @@ class Release < Thor
       # Mash / RSync parameters
       if options.test?
         mash_config = "#{tag_base}-test"
-      elsif options[:stage] || options.stage_all
+      elsif options.stage? 
         mash_config = "#{tag_base}-stage"  
       else 
         mash_config = "#{tag_base}-candidate"
@@ -507,13 +711,7 @@ class Release < Thor
       repo_host = "mirror1.ops.rhcloud.com"
       repo_dir = "/export/gpxe/trees"
       repo = "#{repo_host}:#{repo_dir}"
-      rsync = nil
-      if options[:stage] || options.stage_all?
-        rsync = "rsync -aHv --progress --no-p --no-g --omit-dir-times --chmod=Dug=rwX"
-      else
-        #rsync = "rsync -aHv --delete-after --progress --no-p --no-g --omit-dir-times --chmod=Dug=rwX"
-        rsync = "rsync -aHv --progress --no-p --no-g --omit-dir-times --chmod=Dug=rwX"
-      end
+      rsync = "rsync -aHv --progress --no-p --no-g --omit-dir-times --chmod=Dug=rwX"
 
       # variable to keep track of if we've built a new rhc-devenv
       rhc_devenv_found = false
@@ -545,67 +743,6 @@ class Release < Thor
       rescue Errno::EACCES
         puts "ERROR - user doesn't have write access to /var/cache/mash - mash needs write access to this directory"
         exit 2
-      end
-  
-      # See if we are doing a stage sync - if so, tag the packages listed
-      if (options[:stage] and !options[:stage].empty?) or options.stage_all?
-
-        all_packages = get_packages
-        nvr_regex = /(.*)-(\d+)\.(\d+)\.(\d+)-?(\d)?/
-
-        packages = nil
-        if options[:stage]
-          packages = options[:stage].split(",").map do |package|
-            package.strip!
-            pkg = package
-            if nvr_regex.match(package)
-              pkg = $1
-            end
-            unless all_packages[pkg]
-              puts "Couldn't find '#{pkg}' on local system.  You probably don't have one of these repos #{SIBLING_REPOS}"
-              exit 1
-            end
-            package
-          end
-        else
-          packages = all_packages.keys
-          packages -= IGNORE_PACKAGES
-        end
-        
-        packages.each do |package|
-          # Check for the supplied NVR value (e.g. 0.45.1)
-          if nvr_regex.match(package)
-            pkg = $1 
-            # Confirm the package is valid
-            nvr_package = nil
-            build_info = all_packages[pkg]
-            build_dir = build_info[0]
-            inside(build_dir) do
-              nvr_package = `git tag | grep ^#{package} | tail -n1`.chomp
-            end
-  
-            unless nvr_package.empty?
-              package = nvr_package
-            else
-              puts "ERROR - invalid package supplied #{package}"
-              exit 1
-            end
-          else
-            # No NVR was specified - lookup the latest
-            tags = []
-            build_info = all_packages[package]
-            build_dir = build_info[0]
-            inside(build_dir) do
-              tags = `git tag | grep ^#{package}-[0-9]`.chomp.split("\n")
-            end
-  
-            # Sort the tags by NVR and take the last entry
-            package = tags.sort_by {|tag| nvr_regex.match(tag); $1 ? [$1, $2.to_i, $3.to_i, $4.to_i, $5.to_i] : []}[-1]
-          end
-  
-          puts "Tagging package #{package}..."
-          puts `brew move-pkg #{tag_base}-candidate #{tag_base}-stage #{package}.#{pkg_suffix}`
-        end
       end
   
       # Run mash twice since it usually fails the first time
