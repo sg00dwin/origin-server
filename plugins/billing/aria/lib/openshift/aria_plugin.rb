@@ -29,15 +29,23 @@ module OpenShift
 
     def get_billing_usage_type(urec)
       billing_usage_type = nil
+      err_msg = "Billing usage type NOT supported for '#{urec['usage_type']}'."
       case urec['usage_type']
       when UsageRecord::USAGE_TYPES[:gear_usage]
-        billing_usage_type = @usage_type[:gear][urec['gear_size'].to_sym]
+        if @usage_type[:gear][urec['gear_size'].to_sym]
+          billing_usage_type = @usage_type[:gear][urec['gear_size'].to_sym]
+        elsif Rails.configuration.openshift[:gear_sizes].include?(urec['gear_size'])
+          return billing_usage_type
+        else
+          print_error(err_msg, urec)
+          return billing_usage_type
+        end 
       when UsageRecord::USAGE_TYPES[:addtl_fs_gb]
         billing_usage_type = @usage_type[:storage][:gigabyte]
       when UsageRecord::USAGE_TYPES[:premium_cart]
         billing_usage_type = @usage_type[:cartridge][urec['cart_name'].to_sym]
       end
-      raise Exception.new "Billing usage type NOT supported for '#{urec['usage_type']}'." unless billing_usage_type
+      raise Exception.new err_msg unless billing_usage_type
       billing_usage_type
     end
 
@@ -73,16 +81,21 @@ module OpenShift
     def preprocess_user_srecs(user_srecs)
       new_srecs = []
       user_srecs.each do |srec|
+        billing_usage_type = get_billing_usage_type(srec)
+        next unless billing_usage_type
+        srec['billing_usage_type'] = billing_usage_type
         if srec['time'].month != srec['end_time'].month
           month_begin_time = Time.new(srec['end_time'].year, srec['end_time'].month)
           new_srec = srec.dup
           srec['end_time'] = month_begin_time
           srec['usage_date'] = srec['time'].strftime("%Y-%m-%d %H:%M:%S")
+          srec['usage'] = get_usage_time(srec)
 
           new_srec['time'] = month_begin_time
           new_srec['usage_date'] = new_srec['end_time'].strftime("%Y-%m-%d %H:%M:%S")
           new_srec['created_at'] += 1 # Make it different from orig. rec
           new_srec['no_update'] = true
+          new_srec['usage'] = get_usage_time(new_srec)
           new_srecs << new_srec
         else
           srec['usage_date'] = srec['end_time'].strftime("%Y-%m-%d %H:%M:%S")
@@ -97,7 +110,7 @@ module OpenShift
     
       preprocess_user_srecs(user_srecs) 
       # Saving sync time before sending usage data to billing vendor
-      user_ids = user_srecs.map { |rec| rec['_id'] }
+      user_ids = user_srecs.map { |rec| rec['_id'] unless rec['no_update']}
       session.with(safe:true)[:usage_records].find({_id: {"$in" => user_ids}}).update_all({"$set" => {sync_time: sync_time}})
 
       # Prepare for bulk usage reporting
@@ -119,7 +132,7 @@ module OpenShift
         end
         next if srec['usage'] == 0
         acct_nos << srec['acct_no']
-        usage_types << get_billing_usage_type(srec)
+        usage_types << srec['billing_usage_type']
         usage_units << srec['usage']
         usage_dates << srec['usage_date']
         gear_ids << srec['gear_id'].to_s
@@ -127,7 +140,7 @@ module OpenShift
       end
       # Send usage in bulk to billing vendor
       update_query = {"$set" => {event: UsageRecord::EVENTS[:continue], time: sync_time, sync_time: nil}}
-      if bulk_record_usage(acct_nos, usage_types, usage_units, gear_ids, created_times, sync_time, usage_dates)
+      if (acct_nos.size == 0) or bulk_record_usage(acct_nos, usage_types, usage_units, gear_ids, created_times, sync_time, usage_dates)
         # For non-ended usage records: set event to 'continue'
         session.with(safe:true)[:usage_records].find({_id: {"$in" => continue_user_ids}}).update_all(update_query) unless continue_user_ids.empty?
         # For ended usage records: delete from mongo
@@ -156,9 +169,8 @@ module OpenShift
         user_srecs -= ignore_srecs
 
         user_srecs.each do |srec|
-          usage_type = get_billing_usage_type(srec)
           if (srec['usage'] == 0) or
-             record_usage(srec['acct_no'], usage_type, srec['usage'], srec['gear_id'].to_s,
+             record_usage(srec['acct_no'], srec['billing_usage_type'], srec['usage'], srec['gear_id'].to_s,
                           srec['created_at'].to_i, sync_time, srec['usage_date'])
             if srec['no_update']
               # Ignore
