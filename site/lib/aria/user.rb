@@ -70,14 +70,30 @@ module Aria
       false
     end
 
+    def balance
+      account_details.balance.to_f
+    end
+
+    def bill_due_date
+      aria_datetime((balance > 0 ? account_details.last_bill_date : nil) || account_details.next_bill_date)
+    end
+
+    def current_period_day
+      (Date.today - current_period_date_range.first).to_i + 1
+    end
+
+    def current_period_date_range
+      [aria_datetime(current_period_start_date), aria_datetime(account_details.next_bill_date) - 1.day]
+    end
+
     def unbilled_usage_line_items
       @unbilled_usage_line_items ||=
-        Aria::UsageLineItem.for_usage(Aria.get_usage_history(acct_no, :date_range_start => account_details.last_bill_date), account_details.plan_no)
+        Aria::UsageLineItem.for_usage(Aria.get_usage_history(acct_no, :date_range_start => current_period_start_date), account_details.plan_no)
     end
 
     def unbilled_balance
       @unbilled_balance ||=
-        Aria.get_unbilled_usage_summary(acct_no)
+        Aria.get_unbilled_usage_summary(acct_no).ptd_balance_amount
     end
 
     def unpaid_invoices
@@ -178,6 +194,14 @@ module Aria
           :test_acct_ind => Rails.application.config.aria_force_test_users ? 1 : 0,
           :supplemental => {:rhlogin => login},
         })
+      end
+
+      def current_period_start_date
+        account_details.last_bill_date || account_details.last_bill_thru_date
+      end
+
+      def aria_datetime(s)
+        Date.strptime(s, '%Y-%m-%d').to_datetime
       end
   end
 

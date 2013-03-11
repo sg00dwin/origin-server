@@ -1,3 +1,5 @@
+- content_for :page_title, 'My Account'
+
 %h1
   Account for
   %small Bob Smith
@@ -7,18 +9,23 @@
 .row-fluid
   .span8
     %section.panel
-      %ul.unstyled
-        %li You owe $46.30 (USD), due on Sept 30, 2013 <strong>or</strong>
-        %li You owe $46.30 (USD) which was due on Sep 10, 2013 <strong>or</strong>
-        %li Your account balance is $0.00, next bill will be due Sep 30, 2013
+      - unless @has_payment_method
+        %p
+          The payment method associated with your account is no longer valid. #{link_to "Please provide a valid credit card for this account", edit_account_payment_method_path}.
+      %p
+        - if @current_balance > 0
+          - if @bill_due_date > Date.today
+            You owe #{number_to_currency(@current_balance)}, due on #{@bill_due_date.to_s(:billing_date)}.
+          - else
+            You owe #{number_to_currency(@current_balance)} which was due on #{@bill_due_date.to_s(:billing_date)}.
+        - else
+          Your account balance is #{number_to_currency(@current_balance)}, and your next bill will be due on #{@bill_due_date.to_s(:billing_date)}.
 
     %section.panel
-      .pull-right
-        View Details &gt;
       %h2 Current Charges 
-      %div Next bill will be due Sep 30, 2013
+      -#%div Next bill will be due #{@next_bill_date.to_s(:billing_date)}
       %p
-        Day 4 of billing cycle September 10 - September 30
+        Day #{@current_period_day} of billing cycle #{@current_period.first.to_s(:billing_date)} - #{@current_period.last.to_s(:billing_date)}
       .row-fluid
         .span6
           %table.table.table-striped.plan-items
@@ -26,15 +33,28 @@
               %tr.plan-item
                 %td
                   = li.name
-                  = li.summary
-                %td.plan-item-cost= li.total_cost
+                %td.plan-item-cost
+                  - if li.respond_to? :units
+                    #{pluralize(number_with_precision(li.units, :precision => 0), li.units_label)} @ #{number_to_currency(li.rate)}
+                  - else
+                    = number_to_currency(li.total_cost)
 
             %tr.plan-total
               %td.right{:colspan => 2}
-                %strong Total:&nbsp; #{@line_items.map(&:total_cost).sum}
+                %strong Estimated use this month:&nbsp; #{number_to_currency(@next_bill_estimate)}
+
+          %p The estimate above does not include taxes and may not accurately reflect discounts, peaks in future usage, or recent activity.
 
         .span6
           A graph of current vs old usage
+
+      %p.payment_method
+        - if @payment_method.persisted?
+          Credit card <span class="card_number">#### #### #### #{@payment_method.cc_no}</span>, expires <span class="card_expiration">#{@payment_method.expiration_date.to_s(:credit_card)}. #{link_to "Change", edit_account_payment_method_path}</span>
+        - else
+          #{link_to "Add a credit card to this account", edit_account_payment_method_path}
+        | #{link_to "Update billing address", edit_account_billing_info_path}
+
 
   .span4.sidebar
     %section.panel

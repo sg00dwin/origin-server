@@ -51,7 +51,7 @@
   = f.hidden_field :client_no, :name => :client_no
 
   = f.inputs 'Payment Method' do
-    - if defined? previous_payment_method and not previous_payment_method.nil?
+    - if defined? previous_payment_method and previous_payment_method.present?
       .control-group
         .controls
           .payment_method

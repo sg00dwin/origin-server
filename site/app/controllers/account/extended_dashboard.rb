@@ -16,6 +16,19 @@ module Account
       @plan = @user.plan
       user = Aria::UserContext.new(current_user)
       @line_items = @plan.recurring_line_items.concat(user.unbilled_usage_line_items).select{ |li| li.total_cost > 0.0 }
+
+      @next_bill_estimate =
+        @line_items.select(&:recurring?).map(&:total_cost).sum + 
+        user.unbilled_balance
+
+      @current_period_day = user.current_period_day
+      @current_period = user.current_period_date_range
+      @next_bill_date = @current_period.last + 1.day
+
+      @current_balance = user.balance
+      @bill_due_date = user.bill_due_date
+      @has_payment_method = user.has_valid_payment_method?
+      @payment_method = user.payment_method
     end
 
     def settings

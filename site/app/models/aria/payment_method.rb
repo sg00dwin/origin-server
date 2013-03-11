@@ -20,6 +20,14 @@ module Aria
       @persisted
     end
 
+    def blank?
+      not persisted?
+    end
+
+    def expiration_date
+      Date.new(cc_exp_yyyy, cc_exp_mm).to_datetime
+    end
+
     def form_of_payment
       'CreditCard'
     end

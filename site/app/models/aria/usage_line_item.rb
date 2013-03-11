@@ -1,20 +1,5 @@
 module Aria
   class UsageLineItem < LineItem
-
-    protected
-      define_attribute_methods [:usage_type_no,
-                                :usage_type_description,
-                                :pre_rated_rate,
-                                :recorded_units,
-                                :units_description,
-                                :billable_account_no]
-
-      def service
-        @service ||= Aria.cached.get_client_plan_services(plan_no).find{ |s| s.usage_type == usage_type_no }
-      end
-
-    public
-    alias_method :name, :usage_type_description
     define_attribute_method :units
 
     def recurring?
@@ -25,6 +10,19 @@ module Aria
     end
     def taxable?
       false
+    end
+
+    def name
+      case usage_type_description
+      when 'Small Gear' then 'Gear: Small'
+      when 'Medium Gear' then 'Gear: Medium'
+      when 'MegaShift Storage' then 'Storage: Additional Gear'
+      else usage_type_description
+      end
+    end
+
+    def rate
+      pre_rated_rate
     end
 
     #
@@ -38,14 +36,18 @@ module Aria
     # The string label that applies to this usage line item: e.g. 'hours'
     #
     def units_label
-      service.usage_unit_label 
+      case service.client_coa_code
+      when 'smallusage', 'mediumusage', 'largeusage'
+        "gear hour"
+      when 'megastorage'
+        "gigabyte hour"
+      else
+        "unit"
+      end
+      #service.usage_unit_label 
     rescue => e
       Rails.logger.error "#{e.message} (#{e.class})\n  #{e.backtrace.join("\n  ")}"
       '<unknown>'
-    end
-
-    def summary
-      "#{units} per #{units_label}"
     end
 
     #
@@ -72,6 +74,17 @@ module Aria
       @total_cost = total_cost + other.units * other.pre_rated_rate
     end
 
+    protected
+      define_attribute_methods [:usage_type_no,
+                                :usage_type_description,
+                                :pre_rated_rate,
+                                :recorded_units,
+                                :units_description,
+                                :billable_account_no]
+
+      def service
+        @service ||= Aria.cached.get_client_plan_services(plan_no).find{ |s| s.usage_type == usage_type_no }
+      end
 
   end
 end
