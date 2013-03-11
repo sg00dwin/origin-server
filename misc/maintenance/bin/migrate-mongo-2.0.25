@@ -29,17 +29,11 @@ def migrate_apps
     cursor.each do |app|
       new_aliases = []
       app["aliases"].each do |old_alias|
-        if old_alias.is_a?(Hash) and old_alias.has_key? "_id" and old_alias.has_key? "fqdn"
-          new_aliases << old_alias
-        elsif old_alias.is_a?(String)
-          new_aliases << { "_id" => BSON::ObjectId.new, "fqdn" => old_alias,  "has_private_certificate" => false }
-        else
-          raise Exception.new("Alias #{old_alias} for app #{app["name"]} does not follow any of the expected formats")
-        end
+        new_aliases << { "_id" => Moped::BSON::ObjectId.new.to_s, "fqdn" => old_alias,  "has_private_certificate" => false }
       end
       print "."
       print "Migrating app #{app['name']}/#{app['uuid']}.. " if $verbose
-      $coll.update({ "uuid" => app["uuid"] }, { "$set" => { "aliases" => new_aliases } } ) if new_aliases.length > 0
+      $coll.update({ "uuid" => app["uuid"] }, { "$set" => { "aliases" => new_aliases } } )
       print "done" if $verbose
     end
   end
