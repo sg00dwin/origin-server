@@ -67,8 +67,7 @@ require "/var/www/openshift/broker/config/environment"
 Rails.configuration.analytics[:enabled] = false
 
 PLAN_UPDATE_THRESHOLD = 300  #5 mins
-$aria = Online::AriaBilling::Api.new
-$default_plan_id = Rails.application.config.billing[:aria][:default_plan].to_s
+$default_plan_id = Rails.application.config.billing[:default_plan].to_s
 $total_count = $failure_count = $progress_count = 0
 
 def update_user_noplan(user)
@@ -189,10 +188,10 @@ def process_user(user, list, fix)
 end
 
 if remove_plan_lock
-  DistributedLock.release_lock("billing_plan")
+  OpenShift::DistributedLock.release_lock("billing_plan")
 else
   hostname = Socket.gethostname
-  if DistributedLock.obtain_lock("billing_plan", hostname)
+  if OpenShift::DistributedLock.obtain_lock("billing_plan", hostname)
     begin
       if login
         user = get_user_obj(login)
@@ -206,7 +205,7 @@ else
     rescue Mongoid::Errors::DocumentNotFound
       # No users found
     ensure
-      DistributedLock.release_lock("billing_plan", hostname)
+      OpenShift::DistributedLock.release_lock("billing_plan", hostname)
     end
   else
     puts "Failed to obtain lock to interact with billing plan"

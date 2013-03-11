@@ -3,11 +3,11 @@
     %table{:class => 'plan-pricing table table-condensed'}
       %thead
         %tr
-          %th
-          %th{:class => 'plan current'}
+          %td
+          %th{:class => 'plan current', :scope => 'col'}
             %h6 Current Plan
             %h3= current_plan.name
-          %th{:class => 'plan new'}
+          %th{:class => 'plan new', :scope => 'col'}
             %h6 New Plan
             %h3= new_plan.name
       %tbody

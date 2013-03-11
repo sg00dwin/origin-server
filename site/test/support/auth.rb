@@ -1,7 +1,15 @@
 class ActiveSupport::TestCase
+  class TestWebUser < Streamline::Base
+    def promote(streamline_hash)
+      streamline_hash[:login] = self.login
+      self.roles = ['authenticated','mock_user']
+      self.full_user?
+    end
+  end
+
   def new_streamline_user
     id = ::SecureRandom.base64(10).gsub(/[^a-zA-Z0-9_\-]/, '_')
-    Streamline::UserContext.new(Streamline::Base.new(
+    Streamline::UserContext.new(TestWebUser.new(
       :email_address => "os_#{id}@mailinator.com",
       :password => ::SecureRandom.base64(20)
     ))
@@ -25,7 +33,7 @@ class ActionController::TestCase
   def user_to_session(user, ses={})
     ses[:login] = user.login
     ses[:ticket] = user.ticket
-    ses[:api_ticket] = user.api_ticket
+    ses[:api_ticket] = user.api_ticket if user.respond_to? :api_ticket
     ses[:streamline_type] = user.streamline_type if user.respond_to? :streamline_type
     ses
   end
@@ -41,7 +49,6 @@ class ActionDispatch::IntegrationTest
         open_session do |sess|
           sess.https!
           sess.extend(CustomAssertions)
-          binding.pry
           sess.post login_path, :web_user => {:login => user.login, :password => user.password}
           sess.assert_response expected if expected
         end

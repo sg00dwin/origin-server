@@ -53,7 +53,8 @@ Broker::Application.configure do
 
   config.usage_tracking = {
     :datastore_enabled => conf.get_bool("ENABLE_USAGE_TRACKING_DATASTORE", "true"),
-    :syslog_enabled => conf.get_bool("ENABLE_USAGE_TRACKING_SYSLOG", "false")
+    :audit_log_enabled => conf.get_bool("ENABLE_USAGE_TRACKING_AUDIT_LOG", "true"),
+    :audit_log_filepath => conf.get_bool("USAGE_TRACKING_AUDIT_LOG_FILE", "/var/log/openshift/broker/usage.log")
   }
 
   config.analytics = {
@@ -62,7 +63,7 @@ Broker::Application.configure do
 
   config.user_action_logging = {
     :logging_enabled => conf.get_bool("ENABLE_USER_ACTION_LOG", "true"),
-    :log_filepath => conf.get("USER_ACTION_LOG_FILE", "/var/log/openshift/user_action.log")
+    :log_filepath => conf.get("USER_ACTION_LOG_FILE", "/var/log/openshift/broker/user_action.log")
   }
 
   config.openshift = {
@@ -93,77 +94,6 @@ Broker::Application.configure do
       :username => conf.get("NURTURE_USERNAME", ""),
       :password => conf.get("NURTURE_PASSWORD", ""),
       :url => conf.get("NURTURE_URL", ""),
-    }
-  }
-
-  config.billing = {
-    :aria => {
-      :config => {
-        :url => conf.get("BILLING_PROVIDER_URL", ""),
-        :auth_key => conf.get("BILLING_PROVIDER_AUTH_KEY", ""),
-        :client_no => conf.get("BILLING_PROVIDER_CLIENT_NO", "0").to_i,
-        :enable_event_notification => conf.get_bool("BILLING_PROVIDER_EVENT_NOTIFICATION", "false"),
-        :event_remote_ipaddr_begin => conf.get("BILLING_PROVIDER_EVENT_REMOTE_IPADDR_BEGIN", ""),
-        :event_remote_ipaddr_end => conf.get("BILLING_PROVIDER_EVENT_REMOTE_IPADDR_END", ""),
-        :event_orders_team_email => conf.get("BILLING_PROVIDER_EVENT_ORDERS_TEAM_EMAIL", ""),
-        :event_peoples_team_email => conf.get("BILLING_PROVIDER_EVENT_PEOPLES_TEAM_EMAIL", "")
-      },
-      :usage_type => {
-        :gear => {:small => 10014123,
-                  :medium => 10014125,
-                  :large => 10014127,
-                  :xlarge => 10014151},
-        :storage => {:gigabyte => 10037755},
-        :cartridge => {:"jbosseap-6.0" => 10041319}
-      },
-      :default_plan => :freeshift,
-      :plans => {
-        :freeshift => {
-          :plan_no => 10044929,
-          :name => "FreeShift",
-          :capabilities => {
-            'subaccounts' => false,
-            'max_gears' => 3,
-            'gear_sizes' => ["small"],
-            'plan_upgrade_enabled' => true,
-          }
-        },
-        :megashift => {
-          :plan_no => 10044931,
-          :name => "MegaShift",
-          :capabilities => {
-            'subaccounts' => false,
-            'max_gears' => 16,
-            'gear_sizes' => ["small", "medium"],
-            'max_storage_per_gear' => 30, # 30GB
-            'plan_upgrade_enabled' => true,
-          },
-          :usage_rates => {
-            :gear => { 
-                      :small => { 
-                                 :usd => 0.05, #$/hr
-                                 :duration => :hour
-                                },
-                      :medium => {
-                                  :usd => 0.12, #$/hr
-                                  :duration => :hour
-                                 }
-                     },
-            :storage => {
-                         :gigabyte => {
-                                       :usd => 1.00, #$/month
-                                       :duration => :month
-                                      }
-                        },
-            :cartridge => {
-                           :'jbosseap-6.0' => {
-                                               :usd => 0.03, #$/hr
-                                               :duration => :hour
-                                              }
-                          }
-          }
-        }
-      }
     }
   }
 

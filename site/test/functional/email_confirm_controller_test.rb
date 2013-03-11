@@ -56,7 +56,7 @@ class EmailConfirmControllerTest < ActionController::TestCase
 
   test "confirming user redirects to console" do
     get :confirm, :key => unconfirmed_user.token, :emailAddress => unconfirmed_user.email_address
-    assert_equal unconfirmed_user.ticket, cookies['rh_sso']
+    assert_nil cookies['rh_sso']
     assert_session_user unconfirmed_user
     assert_redirected_to console_path
   end

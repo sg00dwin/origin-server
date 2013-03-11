@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.5.4
+Version: 1.6.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -30,7 +30,6 @@ Requires:      rubygem-openshift-origin-node
 Requires:      openshift-origin-node-util
 Requires:      ruby193-rubygem-systemu
 Requires:      openshift-origin-cartridge-abstract
-Requires:      mcollective-qpid-plugin
 Requires:      openshift-origin-msg-node-mcollective
 Requires:      openshift-origin-port-proxy
 Requires:      openshift-origin-node-proxy
@@ -237,6 +236,32 @@ fi
 
 
 %changelog
+* Thu Mar 07 2013 Adam Miller <admiller@redhat.com> 1.6.1-1
+- bump_minor_versions for sprint 25 (admiller@redhat.com)
+
+* Thu Mar 07 2013 Adam Miller <admiller@redhat.com> 1.5.10-1
+- Bug 918383 - Python community cartridges cannot share virtualenv
+  (jhonce@redhat.com)
+- Bug 918383 - Python community cartridges cannot share virtualenv
+  (jhonce@redhat.com)
+
+* Wed Mar 06 2013 Adam Miller <admiller@redhat.com> 1.5.9-1
+- Bug 918480 (dmcphers@redhat.com)
+
+* Tue Mar 05 2013 Adam Miller <admiller@redhat.com> 1.5.8-1
+- Fix incorrect variable name. (rmillner@redhat.com)
+
+* Fri Mar 01 2013 Adam Miller <admiller@redhat.com> 1.5.7-1
+- Removing mcollective qpid plugin and adding some doc (dmcphers@redhat.com)
+- Use direct API calls, and set up the results of the proxy hook calls rather
+  than calling them.  Boost speed 4x. (rmillner@redhat.com)
+
+* Thu Feb 28 2013 Adam Miller <admiller@redhat.com> 1.5.6-1
+- Add the frontend to the migrator. (rmillner@redhat.com)
+
+* Wed Feb 27 2013 Adam Miller <admiller@redhat.com> 1.5.5-1
+- Use our own custom format log. (rmillner@redhat.com)
+
 * Tue Feb 26 2013 Adam Miller <admiller@redhat.com> 1.5.4-1
 - Merge pull request #926 from rmillner/US3143
   (dmcphers+openshiftbot@redhat.com)

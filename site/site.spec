@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.5.6
+Version: 1.6.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -179,6 +179,90 @@ fi
 %{sitedir}/public
 
 %changelog
+* Thu Mar 07 2013 Adam Miller <admiller@redhat.com> 1.6.1-1
+- bump_minor_versions for sprint 25 (admiller@redhat.com)
+
+* Thu Mar 07 2013 Adam Miller 1.5.12-2
+- Bump spec for mass drupal rebuild
+
+* Wed Mar 06 2013 Adam Miller <admiller@redhat.com> 1.5.12-1
+- Merge pull request #981 from maxamillion/dev/admiller/fix_site_gemfile
+  (admiller@redhat.com)
+- Merge pull request #979 from smarterclayton/fix_default_config
+  (dmcphers@redhat.com)
+- modify site Gemfile to not require specific version (admiller@redhat.com)
+- Add a trailing slash to the default COMMUNITY_URL (ccoleman@redhat.com)
+
+* Wed Mar 06 2013 Adam Miller <admiller@redhat.com> 1.5.11-1
+- Merge pull request #978 from spurtell/spurtell/analytics
+  (dmcphers+openshiftbot@redhat.com)
+- Tracking updates for domain split and enterprise (spurtell@redhat.com)
+- Merge pull request #975 from smarterclayton/bug_917946_do_not_rh_sso_on_login
+  (dmcphers@redhat.com)
+- Merge pull request #966 from sg00dwin/icon-changes
+  (dmcphers+openshiftbot@redhat.com)
+- Revert "Tracking code updates for domain split and enterprise"
+  (spurtell@redhat.com)
+- Tracking code updates for domain split and enterprise (spurtell@redhat.com)
+- Bug 917946 - Do not set rh_sso during login (ccoleman@redhat.com)
+- Merge pull request #972 from liggitt/alt_text (dmcphers@redhat.com)
+- Merge pull request #970 from smarterclayton/remove_old_pry_reference
+  (dmcphers+openshiftbot@redhat.com)
+- Add alt text to styleguide and twitter avatars (jliggitt@redhat.com)
+- Merge pull request #968 from smarterclayton/update_to_robots
+  (dmcphers+openshiftbot@redhat.com)
+- Remove old pry reference (ccoleman@redhat.com)
+- Update to robots (ccoleman@redhat.com)
+- Merge branch 'master' of github.com:openshift/li into icon-changes
+  (sgoodwin@redhat.com)
+- Add usage scenarios to icon styleguide (sgoodwin@redhat.com)
+
+* Tue Mar 05 2013 Adam Miller <admiller@redhat.com> 1.5.10-1
+- Merge pull request #958 from sg00dwin/general-dev
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #953 from nhr/BZ910091_enable_streamline_user_retrieval
+  (dmcphers@redhat.com)
+- Merge pull request #959 from
+  smarterclayton/bug_916495_relative_urls_in_community_still
+  (dmcphers@redhat.com)
+- Revised mock web user to better override the promote behavior
+  (hripps@redhat.com)
+- Bug 916495 - Fix more broken relative URLs (ccoleman@redhat.com)
+- revert link change (sgoodwin@redhat.com)
+- fix Bug 916564 content layout changes, minor (sgoodwin@redhat.com)
+- Bug 910091 - Corrected http_post call that was not returning JSON response
+  (hripps@redhat.com)
+
+* Fri Mar 01 2013 Adam Miller <admiller@redhat.com> 1.5.9-1
+- Merge pull request #936 from sg00dwin/iconfont
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #911 from fotioslindiakos/plan_upgrade
+  (dmcphers+openshiftbot@redhat.com)
+- Merge branch 'master' of github.com:openshift/li into blog-img
+  (sgoodwin@redhat.com)
+- Fix Bug 915523 - blog teaser img (sgoodwin@redhat.com)
+- addition of openshift-icon.css to config (sgoodwin@redhat.com)
+- Plan stuff (fotios@redhat.com)
+- include note for implementation (sgoodwin@redhat.com)
+- moving font files (sgoodwin@redhat.com)
+- change icon name in svg metadata (sgoodwin@redhat.com)
+- Iconfont modifications for styleguide and correct font name
+  (sgoodwin@redhat.com)
+
+* Thu Feb 28 2013 Adam Miller <admiller@redhat.com> 1.5.8-1
+- Add a test case for upgrading a user, allow session state to be reset during
+  promotion (ccoleman@redhat.com)
+
+* Wed Feb 27 2013 Adam Miller <admiller@redhat.com> 1.5.7-1
+- Merge pull request #886 from nhr/BZ910091_enable_streamline_user_retrieval
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #930 from smarterclayton/aria_direct_post_tweaks
+  (dmcphers+openshiftbot@redhat.com)
+- Tweak direct post production.rb example (ccoleman@redhat.com)
+- Additional check to ensure persistant account upgrade (hripps@redhat.com)
+- Bug 910091 - Users that exist in streamline are now populated from the
+  streamline API (hripps@redhat.com)
+
 * Tue Feb 26 2013 Adam Miller <admiller@redhat.com> 1.5.6-1
 - Bug 915602 - Unable to signup (ccoleman@redhat.com)
 - Merge pull request #924 from smarterclayton/community_url_not_available

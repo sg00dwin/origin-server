@@ -2,6 +2,6 @@
   - @retweets.each do |t|
     - t = t.retweeted_status rescue t
     .tweet
-      %img{:src => t.user.profile_image_url_https}
+      %img{:src => t.user.profile_image_url_https, :alt => ''}
       %p= tweet(t)
       %small= t.user.name

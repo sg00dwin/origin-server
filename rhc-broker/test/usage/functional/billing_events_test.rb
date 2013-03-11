@@ -3,13 +3,13 @@ require 'test_helper'
 
 class BillingEventsTest < ActiveSupport::TestCase
   def setup
-    @api = Online::AriaBilling::Api.instance
+    @api = OpenShift::BillingService.instance
   end
 
   test "billing events" do
-    aria_config = Rails.application.config.billing[:aria][:config]
-    if aria_config[:enable_event_notification]
-      userid = "aria_testuser_" + gen_uuid[0..9]
+    billing_config = Rails.application.config.billing[:config]
+    if billing_config[:enable_event_notification]
+      userid = "billing_testuser_" + gen_uuid[0..9]
       # event: 101
       acct_no = @api.create_fake_acct(userid, :freeshift)
 
@@ -22,12 +22,14 @@ class BillingEventsTest < ActiveSupport::TestCase
       # event: 107
       assert(@api.update_master_plan(acct_no, :megashift))
 
+=begin # As of now, we are NOT using supplimental plans
       # event: 110
       assert(@api.assign_supp_plan(acct_no, :megashiftstorage))
       # event: 114
       assert(@api.modify_supp_plan(acct_no, :megashiftstorage, 5))
       # event: 112
       assert(@api.cancel_supp_plan(acct_no, :megashiftstorage))
+=end
 
       # event: 118
       assert(@api.update_acct_supp_fields(acct_no, 'BillCounty', 'Mercury'))

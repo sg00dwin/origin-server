@@ -11,7 +11,7 @@ WORK_DIR = '/tmp/rhc/migration'
 ACTIVE_SUFFIX = '_active'
 
 # For each of these sets:  nil implies all and empty implies none
-MIGRATION_CART_TYPES = [].to_set
+MIGRATION_CART_TYPES = nil
 RESTART_CART_TYPES = ['jenkins-1.4'].to_set
 REDEPLOY_HTTPD_PROXY_CART_TYPES = [].to_set # Deploys on top of existing config.  Will not fixup renames.
 
@@ -108,7 +108,7 @@ def migrate_gear(login, app_name, gear_uuid, version)
                     end
                   end unless restart
                   if restart
-                    component = gear.group_instance.all_component_instances.find { |ci| ci.cartridge_name==gear_cart }
+                    component = gear.group_instance.all_component_instances.to_a.find { |ci| ci.cartridge_name==gear_cart }
                     restart_component(gear, component, out)
                   end
                 end
@@ -140,7 +140,7 @@ def restart_component(gear, component, out)
   if component
     leave_stopped = false
     reply = gear.status(component)
-    result.properties["attributes"][gear.uuid].each do |key, value|
+    reply.properties["attributes"][gear.uuid].each do |key, value|
       if key == 'status'
         case value
         when "ALREADY_STOPPED"

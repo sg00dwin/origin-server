@@ -751,10 +751,6 @@ function _openshift_get_group_description($node_id) {
   return $group_description;
 }
 
-function openshift_username($object) {
-  return $object->name;
-}
-
 function openshift_preprocess_user_profile(&$vars) {
 
   global $user;
@@ -771,41 +767,6 @@ function strip_email($username) {
 function readabledate($enterdate) {
   $newdate = date("l, F j, Y", $enterdate);
   return $newdate;
-}
-
-function uservoice_token(){
-
-  global $user;
-
-  $uservoice_subdomain = "openshift";
-  $sso_key = "2b258840625f4ed17e2554a97ad0daf3";
-
-  $salted = $sso_key . $uservoice_subdomain;
-  $hash = hash('sha1',$salted,true);
-  $saltedHash = substr($hash,0,16);
-  $iv = "OpenSSL for Ruby";
- 
-  $user_data = array('guid'  => $user->uid,
-                     'email' => $user->mail,
-                     'display_name' => $user->name);
-  $data = json_encode($user_data);
-
-  // double XOR first block
-  for ($i = 0; $i < 16; $i++)
-  {
-   $data[$i] = $data[$i] ^ $iv[$i];
-  }
-
-  $pad = 16 - (strlen($data) % 16);
-  $data = $data . str_repeat(chr($pad), $pad);
-    
-  $cipher = mcrypt_module_open(MCRYPT_RIJNDAEL_128,'','cbc','');
-  mcrypt_generic_init($cipher, $saltedHash, $iv);
-  $encryptedData = mcrypt_generic($cipher,$data);
-  mcrypt_generic_deinit($cipher);
-
-  $encryptedData = urlencode(base64_encode($encryptedData));
-  return $encryptedData;
 }
 
 function openshift_date_all_day_label() {

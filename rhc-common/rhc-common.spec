@@ -7,7 +7,7 @@
 
 Summary:   Common dependencies of the libra server and node
 Name:      rhc-common
-Version: 1.3.1
+Version: 1.4.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -46,7 +46,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%ghost %attr(-,-,libra_user) %{_sysconfdir}/mcollective/client.cfg
+%ghost %attr(0640,-,libra_user) %{_sysconfdir}/mcollective/client.cfg
 %{_libexecdir}/mcollective/mcollective/connector/amqp.rb
 %attr(0640,-,-) %{mco_agent_root}*
 
@@ -57,6 +57,13 @@ getent group libra_user >/dev/null || groupadd -r libra_user
 /bin/chgrp libra_user /etc/mcollective/client.cfg
 
 %changelog
+* Thu Mar 07 2013 Adam Miller <admiller@redhat.com> 1.4.1-1
+- bump_minor_versions for sprint 25 (admiller@redhat.com)
+
+* Thu Feb 28 2013 Adam Miller <admiller@redhat.com> 1.3.2-1
+- Bug 901424 - client.cfg should have same perms as on int/stg/prod.
+  (rmillner@redhat.com)
+
 * Wed Dec 12 2012 Adam Miller <admiller@redhat.com> 1.3.1-1
 - bump_minor_versions for sprint 22 (admiller@redhat.com)
 

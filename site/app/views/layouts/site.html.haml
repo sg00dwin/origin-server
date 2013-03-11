@@ -10,6 +10,8 @@
 
   %body{ :class => "#{controller.controller_name} #{controller.action_name} #{yield :body_class}" }
 
+    %a.skip-navigation{:href => '#content', :accesskey => '2'} Skip to main content
+
     %header
       = render 'layouts/site/header'
 
@@ -20,7 +22,7 @@
     - if content_for? :sub_layout
       = yield :sub_layout
     - else
-      .section-striped#content
+      .section-striped#content{:role => 'main'}
         .container
           .row-content
             .row.row-flush-right

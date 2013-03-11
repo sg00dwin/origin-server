@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.5.6
+Version: 1.6.1
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -47,6 +47,7 @@ Requires:  openshift-origin-cartridge-zend-5.6
 Requires:  openshift-origin-cartridge-community-python-2.7
 Requires:  openshift-origin-cartridge-community-python-3.3
 Requires:  openshift-origin-cartridge-mock
+Requires:  openshift-origin-cartridge-mock-plugin
 Requires:  activemq
 Requires:  activemq-client
 #Requires:  qpid-cpp-server
@@ -194,6 +195,9 @@ Requires:  openscap-python
 Requires:  openscap-utils
 Requires:  html2text
 
+# Security mod_security Requirements for Apache
+Requires:  mod_security
+
 # Match the rubygem-activesupport RPM in STG and PROD
 Requires: rubygem-activesupport
 
@@ -277,10 +281,6 @@ gem install kramdown --no-rdoc --no-ri
 gem install rspec --version 1.3.0 --no-rdoc --no-ri
 gem install fakefs --no-rdoc --no-ri
 gem install httpclient --version 2.3.2 --no-rdoc --no-ri
-
-# Work around issue with mongoid not being tagged into devenv yet,
-# REMOVE ME
-gem install mongoid --version 3.0.19 --no-rdoc --no-ri
 
 # Move over all configs and scripts
 /bin/cp -rf %{devenvdir}/etc/* %{_sysconfdir}
@@ -679,6 +679,20 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Thu Mar 07 2013 Adam Miller <admiller@redhat.com> 1.6.1-1
+- bump_minor_versions for sprint 25 (admiller@redhat.com)
+
+* Thu Mar 07 2013 Adam Miller <admiller@redhat.com> 1.5.9-1
+- Masks out testing STS on the app router and we do not need it on devenv.
+  (rmillner@redhat.com)
+
+* Tue Mar 05 2013 Adam Miller <admiller@redhat.com> 1.5.8-1
+- remove temp mongoid gem patch (dmcphers@redhat.com)
+- Security - add mod_security for Apache (tkramer@redhat.com)
+
+* Fri Mar 01 2013 Adam Miller <admiller@redhat.com> 1.5.7-1
+- Add mock-plugin to devenv.spec (pmorie@gmail.com)
+
 * Tue Feb 26 2013 Adam Miller <admiller@redhat.com> 1.5.6-1
 - Add a crontab line to purge expired authorizations. (ccoleman@redhat.com)
 - Merge pull request #925 from smarterclayton/session_auth_support_2

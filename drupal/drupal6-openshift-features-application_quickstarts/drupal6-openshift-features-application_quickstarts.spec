@@ -5,8 +5,8 @@
 %global modname             application_quickstarts
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.3.2
-Release: 2%{?dist}
+Version: 1.4.1
+Release: 1%{?dist}
 Summary: Openshift Application Quickstarts Feature for Drupal6
 Group:   Applications/Publishing
 License: GPLv2+
@@ -43,6 +43,12 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Thu Mar 07 2013 Adam Miller <admiller@redhat.com> 1.4.1-1
+- bump_minor_versions for sprint 25 (admiller@redhat.com)
+
+* Wed Mar 06 2013 Adam Miller 1.3.2-3
+- Bump spec for mass drupal rebuild
+
 * Mon Feb 18 2013 Adam Miller <admiller@redhat.com> 1.3.2-2
 - Bump spec for mass drupal rebuild
 

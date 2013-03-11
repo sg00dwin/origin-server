@@ -1,8 +1,10 @@
 # openshift.redhat.com
-# 2013-02-22
+# 2013-03-05
 
 # All agents allowed
 User-agent: *
 
-# Console
+Disallow: /broker/
 Disallow: /app/console/
+Disallow: /app/account/
+Disallow: /app/login

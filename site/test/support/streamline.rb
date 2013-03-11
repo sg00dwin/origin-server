@@ -9,17 +9,22 @@ class ActiveSupport::TestCase
   def assert_session_user(user)
     assert_equal user.login, session[:login]
     assert_equal user.ticket, session[:ticket]
-    assert_equal user.ticket, cookies['rh_sso']
+    assert_nil cookies['rh_sso']
     assert_equal user.streamline_type, session[:streamline_type]
   end
 
-  def unconfirmed_user
+  def unconfirmed_user(&block)
     @unconfirmed_user ||= begin
       user = new_streamline_user
       omit_on_register unless user.register('/email_confirm')
       assert user.token
+      yield user if block_given?
       user
     end
+  end
+
+  def with_confirmed_user
+    set_user(unconfirmed_user{ |u| assert u.confirm_email })
   end
 
   def full_user_args(user=nil, delete_keys=[])
@@ -32,6 +37,7 @@ class ActiveSupport::TestCase
       :first_name => 'Joe',
       :last_name => 'Somebody',
       :phone_number => '9191111111',
+      :title => 'CEO',
       :company => 'Test Corp.',
       :address1 => '12345 Happy Street',
       :city => 'Happyville',

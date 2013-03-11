@@ -36,27 +36,17 @@ module OpenShift
     def check_login(ticket, user, password)
       rhlogin = nil
       is_cached = false
+      begin
+        json, ticket = http_post(@roles_url, {}, ticket)
 
-      if ticket
-        # check for presence of rh_sso cookie in the auth cache
-        begin
-          json = get_cache(ticket)
-          if json
-            is_cached = true
-          else
-            Rails.logger.debug("Login information for ticket '#{ticket}' not available in cache. Continuing with streamline authentication for the ticket...")
-            json, ticket = http_post(@roles_url, {}, ticket)
-          end
+        login = json['username'] || json['login']
+        roles = json['roles']
 
-          login = json['username'] || json['login']
-          roles = json['roles']
-
-          check_access(roles)
-          rhlogin = login
-        rescue
-          Rails.logger.debug("Attempted to use previous ticket '#{ticket}' to establish but failed. Continuing with normal login...")
-        end
-      end
+        check_access(roles)
+        rhlogin = login
+      rescue
+        Rails.logger.debug("Attempted to use previous ticket '#{ticket}' to establish but failed. Continuing with normal login...")
+      end if ticket
 
       unless rhlogin
         begin
@@ -72,11 +62,6 @@ module OpenShift
           rhlogin = login
         end
       end
-
-      # store the validated ticket and login info in the cache for 5 minutes
-      # Write to cache only if the ticket is not already present in the cache
-      write_cache(ticket, json, :expires_in => 300.seconds) unless is_cached
-
       {:username => rhlogin}
     end
 
@@ -87,27 +72,6 @@ module OpenShift
           raise OpenShift::UserValidationException.new("Found valid credentials but you haven't been granted access yet", 146)
         else
           raise OpenShift::UserValidationException.new("Found valid credentials but you haven't requested access yet", 147)
-        end
-      end
-    end
-
-    def get_cache(key)
-      if Rails.configuration.action_controller.perform_caching
-        Rails.cache.read(key)
-      else
-        nil
-      end
-    rescue
-      Rails.logger.error("Failed to read auth cookie from cache")
-      nil
-    end
-
-    def write_cache(key, val, opts={})
-      if Rails.configuration.action_controller.perform_caching
-        begin
-          Rails.cache.write(key, val, opts)
-        rescue
-          Rails.logger.error("Failed to write auth cookie to cache")
         end
       end
     end

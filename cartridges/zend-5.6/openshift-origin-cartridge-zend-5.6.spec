@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      openshift-origin-cartridge-zend-5.6
-Version: 1.5.3
+Version: 1.6.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -21,6 +21,11 @@ Requires: rubygem(openshift-origin-node)
 Requires: zend-server-php-5.3 >= 5.6.0-11
 Requires: mod_bw
 Requires: rubygem-builder
+
+# PHP extensins that are not enabled by default in zend-server-php-5.3 pkg:
+Requires: php-5.3-mongo-zend-server
+Requires: php-5.3-imagick-zend-server
+Requires: php-5.3-uploadprogress-zend-server
 
 %description
 Provides zend support to OpenShift
@@ -104,6 +109,16 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Mar 07 2013 Adam Miller <admiller@redhat.com> 1.6.1-1
+- bump_minor_versions for sprint 25 (admiller@redhat.com)
+
+* Wed Mar 06 2013 Adam Miller <admiller@redhat.com> 1.5.5-1
+- Add some missing Zend Server PHP extensions (vvitek@redhat.com)
+
+* Tue Mar 05 2013 Vojtech Vitek (V-Teq) <vvitek@redhat.com> 1.5.4-1
+- Add PHP extensions that were not enabled by default:
+  Mongo driver, ImageMagick, Upload Progress
+
 * Tue Feb 26 2013 Adam Miller <admiller@redhat.com> 1.5.3-1
 - Missed ZendServer URL. (rmillner@redhat.com)
 

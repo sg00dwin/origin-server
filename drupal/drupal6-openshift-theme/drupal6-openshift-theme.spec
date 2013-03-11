@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.13.3
+Version: 3.14.1
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,18 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Mar 07 2013 Adam Miller <admiller@redhat.com> 3.14.1-1
+- bump_minor_versions for sprint 25 (admiller@redhat.com)
+
+* Wed Mar 06 2013 Adam Miller 3.13.4-2
+- Bump spec for mass drupal rebuild
+
+* Tue Mar 05 2013 Adam Miller <admiller@redhat.com> 3.13.4-1
+- Merge pull request #960 from smarterclayton/bug_916536_link_author_names
+  (dmcphers@redhat.com)
+- Bug 916536 - Link author names to their profile (ccoleman@redhat.com)
+- Bug 916495 - Fix more broken relative URLs (ccoleman@redhat.com)
+
 * Mon Feb 25 2013 Adam Miller <admiller@redhat.com> 3.13.3-1
 - Bug 909992 - Fix login errors outside of login (ccoleman@redhat.com)
 - Bug 912286 - Cleanup robots.txt and others for split (ccoleman@redhat.com)
