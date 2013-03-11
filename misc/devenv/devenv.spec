@@ -612,6 +612,10 @@ do
   then
     break
   else
+    if [ $i -eq 1 ]
+    then
+      service rhc-datastore restart
+    fi
     echo "Rechecking datastore....."
     sleep 1
   fi
