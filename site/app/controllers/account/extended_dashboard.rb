@@ -15,7 +15,12 @@ module Account
       @user = current_api_user
       @plan = @user.plan
       user = Aria::UserContext.new(current_user)
-      @line_items = @plan.recurring_line_items.concat(user.unbilled_usage_line_items).select{ |li| li.total_cost > 0.0 }
+
+      @current_usage_items = user.unbilled_usage_line_items
+      @past_usage_items = user.past_usage_line_items
+      @max_usage = [@current_usage_items, *@past_usage_items.values].map { |items| items.map(&:total_cost).sum }.max
+
+      @line_items = @plan.recurring_line_items.concat(@current_usage_items).select{ |li| li.total_cost > 0.0 }
 
       @next_bill_estimate =
         @line_items.select(&:recurring?).map(&:total_cost).sum + 

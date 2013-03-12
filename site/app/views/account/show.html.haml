@@ -46,7 +46,7 @@
           %p The estimate above does not include taxes and may not accurately reflect discounts, peaks in future usage, or recent activity.
 
         .span6
-          A graph of current vs old usage
+          = render :partial => 'usage_charges', :locals => {:current_usage_items => @current_usage_items, :past_usage_items => @past_usage_items, :max_usage => @max_usage}
 
       %p.payment_method
         - if @payment_method.persisted?

@@ -51,6 +51,13 @@ module Aria
     end
 
     #
+    # The CSS class used to assign color to line items of this type
+    #
+    def color_class_name
+      service.client_coa_code.downcase.gsub(/[^a-z]+/, '-')
+    end
+
+    #
     # Given a range of usage, calculate a set of usage line items for
     # that usage period.
     #
@@ -70,8 +77,10 @@ module Aria
     # validate that the usage record is related
     #
     def <<(other)
-      self.units += other.units
       @total_cost = total_cost + other.units * other.pre_rated_rate
+      self.units = self.units + other.units
+      self.recorded_units = nil
+      self.specific_record_charge_amount = nil
     end
 
     protected
@@ -85,6 +94,5 @@ module Aria
       def service
         @service ||= Aria.cached.get_client_plan_services(plan_no).find{ |s| s.usage_type == usage_type_no }
       end
-
   end
 end

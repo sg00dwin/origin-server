@@ -86,6 +86,10 @@ module Aria
       [aria_datetime(current_period_start_date), aria_datetime(account_details.next_bill_date) - 1.day]
     end
 
+    def current_period_start_date
+      account_details.last_bill_date || account_details.last_bill_thru_date
+    end
+
     def unbilled_usage_line_items
       @unbilled_usage_line_items ||=
         Aria::UsageLineItem.for_usage(Aria.get_usage_history(acct_no, :date_range_start => current_period_start_date), account_details.plan_no)
@@ -108,7 +112,15 @@ module Aria
     end
 
     def invoices
-      @invoices ||= Aria.get_acct_invoice_history(acct_no)
+      @invoices ||= Aria.cached.get_acct_invoice_history(acct_no).map {|i| Aria::Invoice.new(i, acct_no) }
+    end
+
+    def past_usage_line_items(periods=3)
+      Hash[
+        invoices.sort_by(&:bill_date).reverse.slice(0, periods).map { |i| 
+          [ i.period_name, i.line_items.select(&:usage?) ]
+        }
+      ]
     end
 
     def create_account(opts=nil)
@@ -194,10 +206,6 @@ module Aria
           :test_acct_ind => Rails.application.config.aria_force_test_users ? 1 : 0,
           :supplemental => {:rhlogin => login},
         })
-      end
-
-      def current_period_start_date
-        account_details.last_bill_date || account_details.last_bill_thru_date
       end
 
       def aria_datetime(s)
