@@ -42,41 +42,30 @@
 
   %section.row
     .span8
-      = f.inputs 'Billing Information', :class => 'inputs form-horizontal', :for => @billing_info do |b|
-        = b.semantic_errors
-        = b.inputs :inline => true, :required => true, :name => 'Name' do
-          = b.input :first_name, :required => true, :input_html => { :class => 'input-medium', :placeholder => "First" }
-          = b.input :middle_initial, :input_html => { :class => 'input-mini', :placeholder => "MI" }
-          = b.input :last_name, :required => true, :input_html => { :class => 'input-medium', :placeholder => "Last" }
-        = b.input :address1, :required => true, :label => 'Street Address'
-        = b.input :address2, :label => false
-        = b.input :address3, :label => false
-        = b.inputs :inline => true, :required => true, :name => 'City, State, Zip' do
-          = b.input :city, :required => true, :input_html => { :class => 'input-medium' }
-          = b.input :state, :required => true, :as => :select, :collection => us_states_for_select, :include_blank => false, :input_html => { :class => 'input-medium' }
-          = b.input :zip, :required => true, :input_html => { :class => 'input-mini', :placeholder => "Zip" }
-        = b.input :country, :label => 'Country', :input_html => { :readonly => true, :placeholder => "US", :value => "US", :title => 'Current signup restricted to United States' }
+      = render :partial => 'billing_info/form', :locals => {:billing_info => @billing_info, :form => f}
     %aside.span4
       %h5 Your contact information is safe
       %p
         Read our
         = link_to 'Privacy Policy', community_security_policy_url
 
-      %h5 Are you located in the US?
+      %h5 Don't see your country in the list?
       %p
-        At this time paid OpenShift access is only available to customers in the
-        United States. We plan on expanding availability in the future. Please
-        contact us at #{link_to_account_mailto} if you are interested in subscribing
-        from another country.
+        At this time paid OpenShift access is only available to customers in certain countries.
+        We plan on expanding availability in the future.
+        Please contact us at #{link_to_account_mailto} if you are interested in subscribing from another country.
+
+      %h5 Choosing Your Currency
+      %p
+        You may choose to be billed in any of our available currencies.
+        However, once you choose a currency, you cannot change it.
 
       %h5 Tax exempt?
       %p
         To qualify for tax exempt status you must submit a certificate to Red Hat.
-        Upon receipt of your certificate we will refund all previously paid taxes to 
-        your credit card. #{link_to "Learn more about filing for tax exempt status", tax_exempt_help_status, :target => '_blank', :class => 'external'}.
-
+        Upon reciept of your certificate we will refund all previously paid taxes to your credit card.
+        #{link_to "Learn more about filing for tax exempt status", tax_exempt_help_status, :target => '_blank', :class => 'external'}.
   = f.buttons do
     = link_to "Back to plans", account_plans_path, :class => 'btn'
     = f.commit_button "Update my account"
     = f.loading
-

@@ -96,7 +96,7 @@ class AccountUpgradesController < ConsoleController
       @full_user = Streamline::FullUser.new(
         {:postal_code => user_params[:aria_billing_info][:zip]}.
         merge!(user_params[:streamline_full_user]).
-        merge!(user_params[:aria_billing_info].slice(:address1, :address2, :address3, :city, :state, :country))
+        merge!(user_params[:aria_billing_info].slice(:address1, :address2, :address3, :city, :region, :country))
       )
 
       render :edit and return unless @full_user.promote(user)
@@ -125,7 +125,17 @@ class AccountUpgradesController < ConsoleController
       [:first_name, :last_name,
        :address1, :address2, :address3,
        :city, :state, :country, :postal_code
-      ].each{ |s| attr = s == :postal_code ? :zip : s; billing.send(:"#{attr}=", full_user.send(s)) }
+      ].each do |s|
+        attr = case s
+               when :postal_code
+                 :zip
+               when :state
+                 :region
+               else
+                  s
+               end
+        billing.send(:"#{attr}=", full_user.send(s))
+      end
       billing
     end
 

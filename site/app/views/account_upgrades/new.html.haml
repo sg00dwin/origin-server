@@ -1,29 +1,26 @@
 - content_for :title, "Upgrade your Plan"
 = plan_upgrade_steps 3
 
+%h2.divide Review and confirm your plan changes
+%section
+  .row
+    .span6.offset1
+      %h3 Payment Method
+      = render :partial => 'payment_methods/payment_method', :locals => {:payment_method => @payment_method}
+    .span5
+      %h3 Billing Information
+      = render :partial => 'billing_info/billing_info', :locals => {:billing_info => @billing_info}
+%section
+  %p.larger= "The following plan changes will take effect when you switch from #{@current_plan.name}  to #{@plan.name}."
+  = render :partial => 'plans/plan_comparison', :locals => { :current_plan => @current_plan, :new_plan => @plan } 
 
 = semantic_form_for @user, :simple => true, :url => account_plan_upgrade_path, :method => :post do |f|
   = hidden_field_tag :plan_id, @plan.id
-
-  %h2.divide Review and confirm your plan changes
-  %section
-    .row
-      %div{:class => 'span6 offset1'}
-        %h3 Payment method
-        = render :partial => 'payment_methods/payment_method', :locals => {:payment_method => @payment_method}
-        %p= link_to "Change your payment method", edit_account_plan_upgrade_payment_method_path
-      .span5
-        %h3 Billing Information
-        = render :partial => 'billing_info/billing_info', :locals => {:billing_info => @billing_info}
-        %p= link_to "Change your billing information", edit_account_plan_upgrade_billing_info_path
-
   = f.semantic_errors
-
-  %section
-    %p.larger= "The following plan changes will take effect when you switch from #{@current_plan.name}  to #{@plan.name}."
-    = render :partial => 'plans/plan_comparison', :locals => { :current_plan => @current_plan, :new_plan => @plan } 
-
   .form-actions
     = link_to "Back to plans", account_plans_path, :class => 'btn'
     = submit_tag "Confirm your plan changes", :class => 'btn btn-primary'
     = f.loading
+
+- content_for :stylesheets do
+  = stylesheet_link_tag 'plan_upgrade', :media => :all

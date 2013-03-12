@@ -55,8 +55,23 @@ RedHatCloud::Application.configure do
   config.aria_direct_post_redirect_base = nil
 
   # Currency
-  config.allowed_currencies = [:usd, :cad, :eur] 
+  # Specify allowed currencies here, use ISO4217 format
+  config.allowed_currencies = [:usd, :cad, :eur]
   config.default_currency = :usd
+
+  # Specify allowed countries
+  # Add a corresponding value in config/countries.yml if the country uses something other than:
+  #  - 'State' for the locality
+  #  - 'Postcode' for the postal code
+  config.allowed_countries = [:US, :DE, :CA]
+  config.preferred_countries = [:US]
+
+  # Specify accepted cards here. Keys can be found in config/credit_cards.yml
+  config.accepted_cards = [:visa,:mastercard,:amex]
+  # Disable extended credit card validation rules
+  #config.disable_cc_validation = true
+  # Disable JS based address form updates
+  #config.disable_dynamic_country_form = true
 
   # Promo code Email notification setup
   config.email_from = 'OpenShift <noreply@openshift.redhat.com>'

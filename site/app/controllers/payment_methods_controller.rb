@@ -6,6 +6,7 @@ class PaymentMethodsController < ConsoleController
 
   def edit
     @user = Aria::UserContext.new(current_user)
+    @billing_info = @user.billing_info
     @payment_method = @user.payment_method
     @previous_payment_method = @payment_method.dup
 

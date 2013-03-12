@@ -9,7 +9,8 @@ module Aria
               :zip,
               :first_name,
               :middle_initial,
-              :last_name
+              :last_name,
+              :currency_cd
     # Rails 3.0 requires all define_attribute_method calls to be together
 
     validates_presence_of :address1,
@@ -51,6 +52,10 @@ module Aria
     #  tax_exempt.present? and tax_exempt.to_i > 0
     #end
 
+    def can_change_currency?
+      !@persisted
+    end
+
     def full_name
       [first_name, middle_initial, last_name].map(&:presence).compact.join(' ')
     end
@@ -60,7 +65,7 @@ module Aria
     def location
       [
         [city].map(&:presence).compact,
-        [state, zip, country].map(&:presence).compact.join(' ')
+        [region, zip, country].map(&:presence).compact.join(' ')
       ].compact.join(', ')
     end
 
@@ -69,7 +74,7 @@ module Aria
         :address1 => '12345 Happy Street',
         :city => 'Happyville',
         :country => 'US',
-        :state => 'TX',
+        :region => 'TX',
         :zip => '10001',
       })
     end

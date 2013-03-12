@@ -1,0 +1,14 @@
+# Countries:
+#   Add any additional country information here.
+#   The accepted countries are based on config/environments/*
+#
+#   Links are provided to help find appropriate values per country)
+#     subdivision_name: default is 'State'     (http://en.wikipedia.org/wiki/ISO_3166-2)
+#     postal_code_name: default is 'Postcode'  (http://en.wikipedia.org/wiki/Postal_code#Terms)
+---
+:countries:
+  CA:
+    :subdivision_name: Province
+    :postal_code_name: Postal Code
+  US:
+    :postal_code_name: ZIP

@@ -1,0 +1,32 @@
+:ruby
+  def autocomplete(field)
+    {:autocomplete => "section-billing billing #{field}"}
+  end
+
+= form.inputs 'Billing Information', :class => 'inputs form-horizontal plan_upgrade billing', :for => billing_info do |b|
+  = b.semantic_errors
+  = b.inputs :inline => true, :name => 'Name' do
+    = b.input :first_name, :input_html => { :class => 'input-small', :placeholder => "First"}.merge(autocomplete('given-name'))
+    = b.input :middle_initial, :input_html => { :class => 'input-mini', :placeholder => "MI" }
+    = b.input :last_name, :input_html => { :class => 'input-medium', :placeholder => "Last"}.merge(autocomplete('family-name'))
+  = b.input :address1, :required => false, :label => "Street Address", :input_html => {:class => 'address-line'}.merge(autocomplete('address-line1'))
+  = b.input :address2, :label => false, :input_html => {:class => 'address-line'}.merge(autocomplete('address-line2'))
+  = b.input :address3, :label => false, :input_html => {:class => 'address-line'}.merge(autocomplete('address-line3'))
+  = b.inputs :inline => true, :name => 'City, State, ZIP'do
+    = b.input :city, :input_html => { :class => 'input-medium', :placeholder => 'City'}.merge(autocomplete('locality'))
+    = b.input :region, :as => :select, :collection => regions_for_select, :include_blank => true, :input_html => { :class => 'input-medium'}.merge(autocomplete('region'))
+    = b.input :zip, :input_html => { :class => 'input-mini', :placeholder => "ZIP"}.merge(autocomplete('postal-code'))
+  = b.inputs :inline => true, :name => 'Country' do
+    = b.input :country, :as => :select, :collection => countries_for_select, :include_blank => false, :input_html => autocomplete('country')
+  = b.inputs :inline => true, :name => 'Currency' do
+    - if billing_info.can_change_currency?
+      = b.input :currency_cd, :as => :select, :collection => currencies_for_select, :include_blank => false, :input_html => { :title => "Preferred currency for billing" }
+    - else
+      = b.input :currency_cd, :input_html => { :value => billing_info.currency_cd.upcase, :title => "Existing users may not change their currency", :readonly => true, :disabled => true }
+
+- content_for :stylesheets do
+  = stylesheet_link_tag 'plan_upgrade', :media => :all
+
+= content_for :javascripts do
+  - unless Rails.configuration.respond_to?(:disable_dynamic_country_form) && Rails.configuration.disable_dynamic_country_form
+    = javascript_include_tag 'site/address'

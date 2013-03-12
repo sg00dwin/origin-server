@@ -1,4 +1,10 @@
-.billing_info
-  .name= billing_info.full_name
-  - billing_info.address.each do |line|
-    .address= line
+- link_str = "Change your billing information"
+- if billing_info.nil? or billing_info.full_name.nil?
+  You do not have billing info on file
+  - link_str = "Add billing info"
+- else
+  .billing_info
+    .name= billing_info.full_name
+    - billing_info.address.each do |line|
+      .address= line
+%p= link_to "Change your billing information", edit_account_plan_upgrade_billing_info_path

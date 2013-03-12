@@ -1,4 +1,6 @@
 module AccountHelper
+  include CountryHelper
+
   PlanUpgradeStepsCreate = [
     {
       :name => 'Plans',

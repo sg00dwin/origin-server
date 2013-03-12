@@ -66,6 +66,22 @@ RedHatCloud::Application.configure do
   config.aria_direct_post_name = 'test_website_new_payment'
   config.aria_direct_post_redirect_base = 'https://example.com'
 
+  # Specify allowed countries
+  # Add a corresponding value in config/countries.yml if the country uses something other than:
+  #  - 'State' for the locality
+  #  - 'Postcode' for the postal code
+  config.allowed_countries = [:US, :DE, :CA]
+  # Preferred countries will show up first in the countries list
+  config.preferred_countries = [:US]
+  # Specify allowed currencies here
+  # If a country uses a different currency, it's default will be the first value here
+  config.allowed_currencies = [:usd, :eur]
+  # Specify accepted cards here. Keys can be found in config/credit_cards.yml
+  config.accepted_cards = [:visa, :mastercard, :amex]
+  # Disable extended credit card validation rules
+  #config.disable_cc_validation = true
+  # Disable JS based address form updates
+  #config.disable_dynamic_country_form = true
 
   # Twitter API information
   config.twitter_api_site = 'https://api.twitter.com'

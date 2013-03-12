@@ -1,0 +1,16 @@
+# These are the credit cards that our payment validation plugin supports
+# https://github.com/stripe/jquery.payment
+# There are also CSS classes and images for all these cards
+#
+# To change the order of the cards, the sprite image must also be updated
+# To limit the accepted cards, update config/environments/production.rb
+---
+:visa: VISA
+:mastercard: MasterCard
+:amex: American Express
+:dinersclub: Diners Club
+:unionpay: UnionPay
+:laser: Laser
+:jcb: JCB
+:discover: Discover
+:maestro: Maestro

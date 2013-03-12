@@ -8,6 +8,7 @@ class AccountUpgradePaymentMethodController < PaymentMethodsController
 
   def new
     @user = Aria::UserContext.new(current_user)
+    @billing_info = @user.billing_info
     @payment_method = @user.payment_method || Aria::PaymentMethod.new
 
     @payment_method = Aria::PaymentMethod.test if Rails.env.development?
