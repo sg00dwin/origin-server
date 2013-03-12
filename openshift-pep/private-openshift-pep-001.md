@@ -31,10 +31,10 @@ Specification
 -------------
 
 ###Entering the Downgrade Process:
-  Exit of the billing provider's dunning process in an arrears state is specified by an event from the billing provider (Aria).  When receiving the event, the user's account will be marked as in_arrears (this logic must be transactional) and pending_plan_id will be set to :freeshift.  In the long term an event should be scheduled to take the user's account through the downgrade process.  In the short term we will want to manage the downgrade via a cron job similar to rhc-admin-ctl-usage --sync.  Let's refer to this as rhc-admin-ctl-plan --process-in-arrears.
+  Exit of the billing provider's dunning process in an arrears state is specified by an event from the billing provider (Aria).  When receiving the event, the user's account will be marked as canceled (this logic must be transactional) and pending_plan_id will be set to :freeshift.  In the long term an event should be scheduled to take the user's account through the downgrade process.  In the short term we will want to manage the downgrade via a cron job similar to rhc-admin-ctl-usage --sync.  Let's refer to this as rhc-admin-ctl-plan --process-canceled.
 
 ###User Downgrade:
-  + Detected by plan_state of in_arrears
+  + Detected by plan_state of canceled
   + If current assets are above the level of the pending_plan_id
     + Loop across all the user's apps.
       + Change min scale to the min for the cart.  Scale down any existing scaled apps to their min.
@@ -70,11 +70,11 @@ Specification
 
 ####Broker:
   - Cloud_User:
-    plan_state: active*|deactivated|reactivating|in_arrears|pending
+    plan_state: active*|deactivated|reactivating|canceled|pending
 
     The existing fields pending_plan_id and plan_id can be used to indicate a downgrade is necessary.  When pending_plan_id < plan_id a downgrade is required or in progress.
     
-  - Users in a deactivated|in_arrears plan_state will not be allowed to create or control assets.
+  - Users in a deactivated|canceled plan_state will not be allowed to create or control assets.
   - Existing plan states of active and pending need to be set properly on the user.
   
 
@@ -93,21 +93,21 @@ Specification
 
 ####Admin Tools:
 
-  rhc-admin-ctl-plan --process-in-arrears  # Should be run on a frequency of at least once a day
-    Loops through all users in arrears and processes forced downgrades and destroys.
+  rhc-admin-ctl-plan --process-canceled  # Should be run on a frequency of at least once a day
+    Loops through all users in arrears/canceled and processes forced downgrades and destroys.
   
   rhc-admin-ctl-plan --process-reactivations # Should be run on a frequency of ~ once an hour
     Loops through all users in reactivating state and reactivates existing assets
     Also loops through all users in a deactivated state and validates they are still out of bounds with their intended plan.
 
-  rhc-admin-ctl-plan --process-in-arrears --login <login>
-    Same as --process-in-arrears except for a single user
+  rhc-admin-ctl-plan --process-canceled --login <login>
+    Same as --process-canceled except for a single user
   
   rhc-admin-ctl-plan --process-reactivation --login <login>
     Same as --process-reactivations except for a single user
 
   rhc-admin-ctl-plan --change-plan <plan_name> --login <login> --force-downgrade
-    Same as the force downgrade from --process-in-arrears except for a single user
+    Same as the force downgrade from --process-canceled except for a single user
   
   rhc-admin-ctl-plan --list-deactivated=<time period in days (Default: 180)>
     Lists the users/gears that have been deactivated for more than 6 months.
