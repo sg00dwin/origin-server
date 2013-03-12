@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.3.8
+Version: 1.3.9
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,10 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Tue Mar 12 2013 Adam Miller <admiller@redhat.com> 1.3.9-1
+- Bug 920107 - oo-admin-ctl-usage shouldn't throw errors in case of parent
+  users with c9 gears (rpenta@redhat.com)
+
 * Fri Mar 08 2013 Adam Miller <admiller@redhat.com> 1.3.8-1
 - Fix Aria event notification format (rpenta@redhat.com)
 
