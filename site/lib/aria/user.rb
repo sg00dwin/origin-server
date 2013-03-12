@@ -8,6 +8,12 @@ module Aria
       @acct_no ||= Aria.cached.get_acct_no_from_user_id(user_id)
     end
 
+    def has_account?
+      acct_no.present?
+    rescue AccountDoesNotExist
+      false
+    end
+
     def create_session
       @session_id ||= Aria.set_session(:user_id => user_id)
     end
@@ -178,15 +184,6 @@ module Aria
       end
       def random_password
         ::SecureRandom.base64(16)[0..12].gsub(/[^a-zA-Z0-9]/,'_') # Max allowed Aria limit
-      end
-
-      # Checks whether the basic Aria account exists, but not whether
-      # it is valid.
-      def has_account?
-        Aria.userid_exists user_id
-        true
-      rescue AccountDoesNotExist
-        false
       end
 
       def set_reg_uss_params(name, value)

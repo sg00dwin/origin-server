@@ -12,9 +12,14 @@ module Account
       @user_has_keys = sshkey_uploaded?
       @domain = user_default_domain rescue nil
 
+      user = Aria::UserContext.new(current_user)
+
       @user = current_api_user
       @plan = @user.plan
-      user = Aria::UserContext.new(current_user)
+
+      unless user.has_account?
+        render :dashboard_free and return
+      end
 
       @current_usage_items = user.unbilled_usage_line_items
       @past_usage_items = user.past_usage_line_items
