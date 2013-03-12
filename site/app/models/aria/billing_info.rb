@@ -4,7 +4,7 @@ module Aria
               :address2,
               :address3,
               :city,
-              :state,
+              :region,
               :country,
               :zip,
               :first_name,
@@ -14,7 +14,6 @@ module Aria
 
     validates_presence_of :address1,
                           :city,
-                          :state,
                           :country,
                           :zip
 
@@ -33,9 +32,20 @@ module Aria
                    :to => 'bill_',
                    :rename_to_save => {
                      'bill_zip' => 'bill_postal_cd',
-                     'bill_state' => 'bill_state_prov',
+                     'bill_region' => Hash.new('bill_locality').merge({
+                       'US' => 'bill_state_prov',
+                       'CA' => 'bill_state_prov',
+                     }),
                      'bill_middle_initial' => 'bill_mi',
-                   }
+                   },
+                   :rename_to_load => {
+                     'region' => Hash.new('locality').merge({
+                       'US' => 'state',
+                       'CA' => 'state',
+                     }),
+                   },
+                   :no_rename_to_update => ['bill_middle_initial'],
+                   :no_prefix => ['currency_cd']
 
     #def tax_exempt?
     #  tax_exempt.present? and tax_exempt.to_i > 0

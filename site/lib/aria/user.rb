@@ -240,7 +240,7 @@ module Aria
       validates = true
       opts.each_pair do |k,v|
         if v.respond_to? :to_aria_attributes
-          params.merge!(v.to_aria_attributes)
+          params.merge!(v.to_aria_attributes('update'))
         else
           params[k] = v
         end
@@ -269,6 +269,12 @@ module Aria
         validates &= v.valid? if v.respond_to? :valid?
       end
       return false unless validates
+
+      if self.billing_info.attributes['currency_cd'] != params['currency_cd']
+        params['force_currency_change'] = true
+        params['master_plan_assign_directive'] = 4
+        params['status_cd'] = 1
+      end
 
       Aria.update_acct_complete(acct_no, params)
       clear_cache!

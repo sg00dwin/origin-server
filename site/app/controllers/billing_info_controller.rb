@@ -10,7 +10,7 @@ class BillingInfoController < ConsoleController
 
   def update
     user = Aria::UserContext.new(current_user)
-    @billing_info = Aria::BillingInfo.new params[:aria_billing_info]
+    @billing_info = Aria::BillingInfo.new params[:aria_billing_info][:aria_billing_info]
     render :edit and return unless user.update_account(:billing_info => @billing_info)
     redirect_to next_path
   end

@@ -23,9 +23,27 @@ module Aria
     end
 
     class << self
-      attr_reader :from_prefix, :to_prefix
-      def rename_to_save(hash)
-        @rename_to_save.each_pair{ |from, to| old = hash[from]; hash[to] = old unless old.nil? } if @rename_to_save
+      attr_reader :from_prefix, :to_prefix, :no_prefix, :no_rename_to_update
+      def rename_to_save(hash, action='save')
+        return unless @rename_to_save
+        country_code = hash['bill_country']
+        @rename_to_save.each_pair do |from, to|
+          next if action == 'update' and no_rename_to_update.include?(from)
+          to = to[country_code] if from == 'bill_region'
+          old = hash[from]
+          hash[to] = old unless old.nil?
+          hash.delete(from)
+        end
+      end
+      def rename_to_load(hash)
+        return unless @rename_to_load
+        country_code = hash['country']
+        @rename_to_load.each_pair do |to, from|
+          from = from[country_code] if to == 'region'
+          old = hash[from]
+          hash[to] = old unless old.nil?
+          hash.delete(from)
+        end
       end
       def supplemental?(key)
         @supplemental and @supplemental.include?(key.to_sym)
@@ -34,7 +52,10 @@ module Aria
         def account_prefix(opts)
           @from_prefix = opts[:from].to_s
           @to_prefix = opts[:to].to_s
+          @no_prefix = Array opts[:no_prefix]
+          @no_rename_to_update = opts[:no_rename_to_update]
           @rename_to_save = opts[:rename_to_save]
+          @rename_to_load = opts[:rename_to_load]
           @supplemental = Array opts[:supplemental]
         end
         def attr_aria(*args)
@@ -43,23 +64,29 @@ module Aria
     end
 
     def self.from_account_details(details)
-      new(from_acct_details(details), persisted?(details))
+      new(from_acct_details(details).tap{ |h| rename_to_load(h) }, persisted?(details))
     end
-    def to_aria_attributes
+    def to_aria_attributes(action='save')
       @attributes.inject({}) do |h,(k,v)|
         if self.class.supplemental?(k)
           (h[:supplemental] ||= {})[k] = v
+        elsif self.class.no_prefix.include?(k)
+          h[k] = v
         else
           h["#{self.class.to_prefix}#{k}"] = v
         end
         h
-      end.tap{ |h| self.class.rename_to_save(h) }
+      end.tap{ |h| self.class.rename_to_save(h, action) }
     end
 
     protected
       def self.from_acct_details(details)
         details.attributes.inject({}) do |h,(k,v)|
-          h[k[from_prefix.length..-1]] = v if k.starts_with?(from_prefix)
+          if k.starts_with?(from_prefix)
+            h[k[from_prefix.length..-1]] = v
+          elsif no_prefix.include?(k)
+            h[k] = v
+          end
           h
         end
       end
