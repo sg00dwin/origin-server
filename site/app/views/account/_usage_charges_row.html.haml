@@ -1,6 +1,5 @@
 %td.usage-period{:scope => 'row'}= name
-%td.usage-data
-  .usage-graph-container
-    - usage_items.each_with_index do |item, index|
-      .usage-graph-element{:class => "#{item.color_class_name}", :style => "width: #{(100 * item.total_cost / max_usage).floor}%;", :title => "#{item.name}: #{number_to_currency(item.total_cost)}"}> &nbsp;
+%td.usage-data.graph-data
+  - usage_items.each_with_index do |item, index|
+    .graph-element{:class => "type-#{index+1}", :style => "width: #{(100 * item.total_cost / max_usage).floor}%;", :title => "#{item.name}: #{number_to_currency(item.total_cost)}"}> &nbsp;
 -#%td.usage-amount= "#{number_to_currency(usage_items.map(&:total_cost).sum)}"

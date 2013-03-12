@@ -51,13 +51,6 @@ module Aria
     end
 
     #
-    # The CSS class used to assign color to line items of this type
-    #
-    def color_class_name
-      service.client_coa_code.downcase.gsub(/[^a-z]+/, '-')
-    end
-
-    #
     # Given a range of usage, calculate a set of usage line items for
     # that usage period.
     #

@@ -1,4 +1,4 @@
-%table.table.table-condensed.usage-charges
+%table.table.table-condensed.graph-horizontal.usage-charges
   %tr= render :partial => 'usage_charges_row', :locals => {:name => "Current", :usage_items => current_usage_items, :max_usage => max_usage}
   - past_usage_items.each do |period_name, usage_items|
     %tr= render :partial => 'usage_charges_row', :locals => {:name => period_name, :usage_items => usage_items, :max_usage => max_usage}
