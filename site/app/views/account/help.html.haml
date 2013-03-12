@@ -11,11 +11,13 @@
       = render :partial => 'faq', :locals => {:topten => @topten}
   .span4
     %aside
+      -unless @user_on_basic_plan
+        .sidebar
+          = render :partial => 'customer_service'
+          = render :partial => 'contact', :locals => {:user => @user, :user_on_basic_plan => @user_on_basic_plan}
+          = render :partial => 'tech_support'
+      .sidebar
+        = render :partial => 'community_support'
       -if @user_on_basic_plan
         = render :partial => 'why_upgrade'
-      .sidebar
-        = render :partial => 'customer_service'
-        = render :partial => 'contact', :locals => {:user => @user, :user_on_basic_plan => @user_on_basic_plan}
-      .sidebar
-        = render :partial => 'tech_support'
 
