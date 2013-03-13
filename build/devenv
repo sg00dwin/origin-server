@@ -329,7 +329,7 @@ module Online
       def rpm_manifest(hostname)
         print "Retrieving RPM manifest.."
         manifest, exit_code = ssh(hostname, 'rpm -qa | grep rhc-', 60, true)
-        if exit_code != 0
+        if exit_code != 0 && !manifest.empty?
           puts "Error retrieving manifest #{manifest}"
           exit 1
         end
