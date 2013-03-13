@@ -1784,6 +1784,42 @@ function blogs_views_default_views() {
         'button' => 'Use default',
       ),
     ),
+    'edit_node' => array(
+      'label' => 'Edit',
+      'alter' => array(
+        'alter_text' => 1,
+        'text' => ' ([edit_node])',
+        'make_link' => 0,
+        'path' => '',
+        'absolute' => 0,
+        'link_class' => '',
+        'alt' => '',
+        'rel' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 1,
+      'empty_zero' => 0,
+      'hide_alter_empty' => 1,
+      'text' => '',
+      'exclude' => 0,
+      'id' => 'edit_node',
+      'table' => 'node',
+      'field' => 'edit_node',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
     'field_document_file_fid' => array(
       'label' => 'File',
       'alter' => array(
@@ -1899,7 +1935,42 @@ function blogs_views_default_views() {
     ),
   ));
   $handler->override_option('title', 'Documentation');
+  $handler->override_option('cache', array(
+    'type' => 'time',
+    'results_lifespan' => '300',
+    'output_lifespan' => '300',
+  ));
   $handler->override_option('header', '');
+  $handler->override_option('style_options', array(
+    'grouping' => '',
+    'override' => 1,
+    'sticky' => 0,
+    'order' => 'asc',
+    'summary' => '',
+    'columns' => array(
+      'title' => 'title',
+      'edit_node' => 'title',
+      'field_document_file_fid' => 'field_document_file_fid',
+      'created' => 'created',
+    ),
+    'info' => array(
+      'title' => array(
+        'sortable' => 0,
+        'separator' => '',
+      ),
+      'edit_node' => array(
+        'separator' => '',
+      ),
+      'field_document_file_fid' => array(
+        'separator' => '',
+      ),
+      'created' => array(
+        'sortable' => 0,
+        'separator' => '',
+      ),
+    ),
+    'default' => '-1',
+  ));
   $handler->override_option('path', 'documentation');
   $handler->override_option('menu', array(
     'type' => 'none',
