@@ -29,7 +29,6 @@ body {
 		background-color: #000;
     }
     
-h1,h2,h3,h4,h5,h6 {color: #fafbfc;}
 a:link,a:visited,a:hover,a:active {color:#6DB3C7;}
 a:hover,a:active {text-decoration: underline;}
 a:focus {
@@ -39,6 +38,8 @@ a:focus {
 a:focus:active {
     outline: none;
 }
+
+h1,h2,h3,h4,h5,h6 {color: $consoleHeaderColor;}
 
 
 // Tables
