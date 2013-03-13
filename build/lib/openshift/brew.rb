@@ -73,5 +73,35 @@ module OpenShift
       
       need_stage_tags
     end
+
+    def brew_move_pkg (src_brew_tag, target_brew_tag, pkg)
+      tag_failures = ""
+      pkg_name = pkg.split('-')[0...-2].join('-')
+      brew_cmd = "brew move-pkg #{src_brew_tag} #{target_brew_tag} #{pkg}"
+      brew_untag_cmd = "brew untag-pkg --all #{src_brew_tag} #{pkg_name}"
+
+      `#{brew_cmd}`
+      if $?.exitstatus == 0
+        puts "Tag #{pkg} into #{target_brew_tag} - Done"
+        `#{brew_untag_cmd}`
+        
+        # Sanity check after untag operation because brew untag-pkg will exit
+        # with 0 no matter what
+        src_tag_pkg = `brew latest-pkg --quiet #{src_brew_tag} #{pkg_name}`.split[0]
+        target_tag_pkg = `brew latest-pkg --quiet #{target_brew_tag} #{pkg_name}`.split[0]
+
+        unless src_tag_pkg == target_tag_pkg
+          tag_failures += "#{brew_untag_cmd}\n"
+        end
+
+        puts "Untag #{pkg_name} from #{src_brew_tag} - Done"
+      else
+        tag_failures += "#{brew_cmd}\n"
+        tag_failures += "#{brew_untag_cmd}\n"
+      end
+
+      tag_failures.to_s
+    end
+
   end
 end
