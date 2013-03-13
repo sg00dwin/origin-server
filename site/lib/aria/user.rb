@@ -150,6 +150,7 @@ module Aria
           :status_cd => 0,
           :master_plan_no => Aria.default_plan_no,
           :password => random_password,
+          :alt_bill_day => 1,
           :test_acct_ind => Rails.application.config.aria_force_test_users ? 1 : 0,
           :supplemental => {:rhlogin => login},
         })

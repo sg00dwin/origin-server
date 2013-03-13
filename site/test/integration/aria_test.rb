@@ -129,4 +129,10 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     assert plan.gear_sizes.kind_of? Array
     assert plan.gear_sizes.length > 0
   end
+
+  test "should have an anniversary date of day 1" do
+    u = with_account_holder
+    assert_equal u.account_details.bill_day, "1"
+  end
+   
 end
