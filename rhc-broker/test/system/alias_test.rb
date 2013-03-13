@@ -55,7 +55,7 @@ class AliasTest < ActionDispatch::IntegrationTest
     assert_response :created
     body = JSON.parse(@response.body)
     assert_equal(body["data"]["id"], @as)
-    assert_equal(body["data"]["has_private_certificate"], false) 
+    assert_equal(body["data"]["has_private_ssl_certificate"], false) 
     
     #change certificate to alias
     request_via_redirect(:put, APP_ALIAS_URL_FORMAT % [@ns, @app, @as], {:ssl_certificate => @ssl_certificate, :private_key => @private_key, :pass_phrase => @pass_phrase}, @headers)
@@ -72,7 +72,7 @@ class AliasTest < ActionDispatch::IntegrationTest
     @app = "app#{@random}"
     @as = "as#{@random}.foo.com"
     
-    @user.capabilities["private_certificates"] = true
+    @user.capabilities["private_ssl_certificates"] = true
     @user.save
     
     #create domain
@@ -139,21 +139,21 @@ class AliasTest < ActionDispatch::IntegrationTest
     assert_response :created
     body = JSON.parse(@response.body)
     assert_equal(body["data"]["id"], @as)
-    assert_equal(body["data"]["has_private_certificate"], false) 
+    assert_equal(body["data"]["has_private_ssl_certificate"], false) 
     
     #get created alias
     request_via_redirect(:get, APP_ALIAS_URL_FORMAT % [@ns, @app, @as], {}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
     assert_equal(body["data"]["id"], @as)
-    assert_equal(body["data"]["has_private_certificate"], false)
+    assert_equal(body["data"]["has_private_ssl_certificate"], false)
     
     #add certificate to alias
     request_via_redirect(:put, APP_ALIAS_URL_FORMAT % [@ns, @app, @as], {:ssl_certificate => @ssl_certificate, :private_key => @private_key, :pass_phrase => @pass_phrase}, @headers)
     assert_response :ok 
     body = JSON.parse(@response.body)
     assert_equal(body["data"]["id"], @as)
-    assert_equal(body["data"]["has_private_certificate"], true) 
+    assert_equal(body["data"]["has_private_ssl_certificate"], true) 
     
     #delete alias
     request_via_redirect(:delete, APP_ALIAS_URL_FORMAT % [@ns, @app, @as], {}, @headers)
@@ -164,13 +164,13 @@ class AliasTest < ActionDispatch::IntegrationTest
     assert_response :created
     body = JSON.parse(@response.body)
     assert_equal(body["data"]["id"], @as)
-    assert_equal(body["data"]["has_private_certificate"], true) 
+    assert_equal(body["data"]["has_private_ssl_certificate"], true) 
     
     request_via_redirect(:get, APP_ALIAS_URL_FORMAT % [@ns, @app, @as], {}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
     assert_equal(body["data"]["id"], @as)
-    assert_equal(body["data"]["has_private_certificate"], true) 
+    assert_equal(body["data"]["has_private_ssl_certificate"], true) 
     
     #change certificate to alias
     request_via_redirect(:put, APP_ALIAS_URL_FORMAT % [@ns, @app, @as], {:ssl_certificate => @ssl_certificate, :private_key => @private_key, :pass_phrase => @pass_phrase}, @headers)
@@ -178,7 +178,7 @@ class AliasTest < ActionDispatch::IntegrationTest
     body = JSON.parse(@response.body)
     
     assert_equal(body["data"]["id"], @as)
-    assert_equal(body["data"]["has_private_certificate"], true) 
+    assert_equal(body["data"]["has_private_ssl_certificate"], true) 
     
     #remove certificate to alias
     request_via_redirect(:put, APP_ALIAS_URL_FORMAT % [@ns, @app, @as], {}, @headers)
@@ -186,7 +186,7 @@ class AliasTest < ActionDispatch::IntegrationTest
     body = JSON.parse(@response.body)
     
     assert_equal(body["data"]["id"], @as)
-    assert_equal(body["data"]["has_private_certificate"], false) 
+    assert_equal(body["data"]["has_private_ssl_certificate"], false) 
     
     #try to create an existing alias
     request_via_redirect(:post, APP_ALIAS_COLLECTION_URL_FORMAT % [@ns, @app], {:id => @as}, @headers)

@@ -70,13 +70,13 @@ class CloudUser
       end if domain.applications
     end if self.domains
        
-    allow_certs = false or (plan_capabilities.has_key?("private_certificates") and plan_capabilities["private_certificates"] == true)
+    allow_certs = false or (plan_capabilities.has_key?("private_ssl_certificates") and plan_capabilities["private_ssl_certificates"] == true)
 
     self.domains.each do |domain|
       domain.applications.each do |app|
         app.aliases.each do |a|
-          if a.has_private_certificate
-            raise OpenShift::UserException.new("User #{self.login}, application '#{app.name}', alias #{a.fqdn} has private certificate installed.  The '#{plan_id}' plan does not allow private certificates.", 176)
+          if a.has_private_ssl_certificate
+            raise OpenShift::UserException.new("User #{self.login}, application '#{app.name}', alias #{a.fqdn} has private SSL certificate installed.  The '#{plan_id}' plan does not allow private SSL certificates.", 176)
           end
         end if app.aliases
       end if domain.applications
