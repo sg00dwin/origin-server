@@ -33,6 +33,8 @@ Broker::Application.configure do
         :cartridge => {:"jbosseap-6.0" => 10041319}
       },
       :default_plan => :freeshift,
+      # Maintain the order of plans from lowest to the highest
+      # Upgrade or Downgrade is decided based on this order.
       :plans => {
         :freeshift => {
           :plan_no => conf.get("FREESHIFT_PLAN_NO", 10044929).to_i,
