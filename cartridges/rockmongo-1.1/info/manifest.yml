@@ -1,5 +1,5 @@
 Name: rockmongo-1.1
-Namespace: ROCKMONGO
+Cartridge-Short-Name: ROCKMONGO
 Display-Name: RockMongo 1.1
 Description: "Web based MongoDB administration tool. Requires the MongoDB cartridge to be installed first."
 Version: 1.1
@@ -31,4 +31,7 @@ Configure-Order:
   - mongodb
   - rockmongo
 Endpoints:
-  - "IP:PORT(8080):PROXY_PORT"
+  - Private-IP-Name:   IP
+    Private-Port-Name: PORT
+    Private-Port:      8080
+    Public-Port-Name:  PROXY_PORT
