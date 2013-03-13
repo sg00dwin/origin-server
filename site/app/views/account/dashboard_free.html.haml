@@ -1,68 +1,49 @@
 - content_for :page_title, 'My Account'
 
 %h1
-  Account for
-  %small Bob Smith
+  My Account
   %small.pull-right
     <strong>#{@plan.name}</strong> Plan
 
 .row-fluid
   .span4
     %section.panel
-      %h2 Settings
-      %dl
-        %dt Login
-        %dd= @user.login
-        %dt Domain
-        %dd
-          - if @domain
-            = @domain.name
-          - else
-            = link_to "Create a domain for your applications", new_domain_path
-        %dt SSH Keys
-        %dd
-          - if @user_has_keys
-            Uploaded
-          - else
-            = link_to "Upload your public key to access code", new_key_path
+      = render :partial => 'settings', :locals => {:identity => @identity, :domain => @domain, :user => @user, :user_has_keys => @user_has_keys}
 
   .span8
     %section.panel
       %h2 Common Questions
       %dl
-        %dt How do I get help running my applications?
+        %dt How do I get started with OpenShift?
         %dd
+          Dive right in and #{link_to "create your first application", application_types_path}.
+        %dd
+          If you'd like to learn more about installing and using the command-line tools or building applications in
+          OpenShift with JBoss check out our #{link_to "Get Started page", getting_started_path}.
+
+        %dt How do I get help building and deploying applications?
+        %dd
+          OpenShift offers a number of community resources for building and maintaining your applications. See the 
+          #{link_to "Developer Center", developers_url} for documentation, tutorials, and technology guides
+          in your favorite technology. If you've got a specific question, ask it on #{stack_overflow_link} or via
+          our OpenShift #{link_to "forums", forums_url}.
+        %dd
+          If you are encountering an issue with the service, join us on #{link_to_irc} or send an email to 
+          #{link_to_account_mailto}.
+
         %dt What are the benefits of upgrading my account?
         %dd
-        %dt ?
+          An OpenShift account provides a number of features and conveniences for hosting production applications.
 
-:css
-  .block-gears { border: 1px solid gray; background-color: #444; display: inline-block; }
-  .block-gears-empty { background-color: transparent; display: block; }
-  .block-gears .block-gear { border-right: 1px solid gray; display: inline-block; width: 20px; }
-  .block-gears-empty .block-gear { width: auto; padding: 0 30px; min-width: 100px; }
-  .block-gears .block-gear:last-child { border-right: 0; }
-  .table-gears td { padding: 2px 10px; text-align: center; font-size: 11px; }
-  .table-gears td:first-child { padding-left: 0; }
+        %dd
+          %ul
+            %li 24/7 world-class technical support from Red Hat
+            %li Access to up to 16 gears for your applications
+            %li Additional disk storage for your gears
+            %li Custom SSL for your own domain names
 
-%section.row-fluid
-  .span4
-    %h3 Upgrade to get access to more gears
-  .span5
-    %h4 Using #{@user.consumed_gears} of #{@user.max_gears} gears
-    %table.table-gears
-      %tr
-        %td
-          .block-gears
-            .block-gear> &nbsp;
-            .block-gear> &nbsp;
-            .block-gear> &nbsp;
-        %td
-          .block-gears.block-gears-empty
-            .block-gear
-              Up to 16 Gears
-      %tr
-        %td FreeShift
-        %td Upgrade to MegaShift
-  .span3
-    %span.btn.btn-primary.btn-large Upgrade Now
+        %dd
+          For more information about upgrading see our #{link_to "plans and pricing page", pricing_url}.
+
+%section.panel
+  = render :partial => 'upgrade', :locals => {:user => @user}

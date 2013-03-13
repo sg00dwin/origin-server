@@ -11,6 +11,7 @@ module Account
     def show
       @user_has_keys = sshkey_uploaded?
       @domain = user_default_domain rescue nil
+      @identity = Identity.find(current_user).first
 
       user = Aria::UserContext.new(current_user)
 
@@ -25,19 +26,9 @@ module Account
       @past_usage_items = user.past_usage_line_items
       @max_usage = [@current_usage_items, *@past_usage_items.values].map { |items| items.map(&:total_cost).sum }.max
 
-      @line_items = @plan.recurring_line_items.concat(@current_usage_items).select{ |li| li.total_cost > 0.0 }
+      @bill = user.next_bill
 
-      @next_bill_estimate =
-        @line_items.select(&:recurring?).map(&:total_cost).sum + 
-        user.unbilled_balance
-
-      @current_period_day = user.current_period_day
-      @current_period = user.current_period_date_range
-      @next_bill_date = @current_period.last + 1.day
-
-      @current_balance = user.balance
-      @bill_due_date = user.bill_due_date
-      @has_payment_method = user.has_valid_payment_method?
+      @has_valid_payment_method = user.has_valid_payment_method?
       @payment_method = user.payment_method
     end
 

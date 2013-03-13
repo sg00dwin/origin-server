@@ -10,5 +10,9 @@ module Aria
 
     protected
       attr_reader :plan_no
+
+      def attribute_method?(attr_name)
+        false #respond_to_without_attributes?(:attributes)
+      end
   end
 end

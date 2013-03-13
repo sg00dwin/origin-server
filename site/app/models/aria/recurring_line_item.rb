@@ -8,25 +8,25 @@ module Aria
       false
     end
     def taxable?
-      taxable_ind == 1
+      false
     end
 
     def name
-      case client_coa_code
-      when 'recurring' then "Plan: MegaShift"
-      else service_desc
+      if service_name == 'Recurring' && plan_name
+        "Plan: #{plan_name}"
+      else description
       end
     end
 
-    def monthly_fee
-      Aria.cached.get_client_plan_service_rates(plan_no, service_no).first.monthly_fee
+    def total_cost
+      amount
     end
-    alias_method :total_cost, :monthly_fee
 
     protected
       define_attribute_methods [:service_no,
-                               :service_desc,
-                               :taxable_ind,
-                               :client_coa_code]
+                               :service_name,
+                               :amount,
+                               :description,
+                               :plan_name]
   end
 end

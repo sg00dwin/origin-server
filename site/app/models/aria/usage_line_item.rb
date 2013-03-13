@@ -82,6 +82,7 @@ module Aria
                                 :pre_rated_rate,
                                 :recorded_units,
                                 :units_description,
+                                :specific_record_charge_amount,
                                 :billable_account_no]
 
       def service

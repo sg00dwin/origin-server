@@ -76,20 +76,21 @@ module Aria
       false
     end
 
-    def balance
-      account_details.balance.to_f
-    end
-
-    def bill_due_date
-      aria_datetime((balance > 0 ? account_details.last_bill_date : nil) || account_details.next_bill_date)
-    end
-
-    def current_period_day
-      (Date.today - current_period_date_range.first).to_i + 1
-    end
-
-    def current_period_date_range
-      [aria_datetime(current_period_start_date), aria_datetime(account_details.next_bill_date) - 1.day]
+    def next_bill
+      @next_bill ||= begin
+          start_date = aria_datetime(current_period_start_date)
+          next_bill_date = aria_datetime(account_details.next_bill_date)
+          d = account_details
+          Aria::Bill.new(
+            start_date,
+            next_bill_date - 1.day,
+            next_bill_date,
+            (Date.today - start_date).to_i + 1,
+            unpaid_invoices.map(&:line_items).flatten(1),
+            unbilled_usage_line_items,
+            unbilled_usage_balance
+          )
+        end
     end
 
     def current_period_start_date
@@ -101,20 +102,17 @@ module Aria
         Aria::UsageLineItem.for_usage(Aria.get_usage_history(acct_no, :date_range_start => current_period_start_date), account_details.plan_no)
     end
 
-    def unbilled_balance
-      @unbilled_balance ||=
-        Aria.get_unbilled_usage_summary(acct_no).ptd_balance_amount
+    def unbilled_usage_balance
+      @unbilled_usage_balance ||=
+        Aria.get_unbilled_usage_summary(acct_no).ptd_balance_amount.to_f
     end
 
     def unpaid_invoices
-      invoices.select{ |i| i.paid_date.blank? }
+      invoices.delete_if(&:paid_date)
     end
 
-    #
-    # In order of bill date
-    #
     def paid_invoices
-      invoices.select{ |i| i.paid_date.present? }
+      invoices.select(&:paid_date)
     end
 
     def invoices

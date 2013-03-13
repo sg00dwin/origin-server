@@ -1,0 +1,19 @@
+%h2 Settings
+%dl
+  %dt Login
+  %dd #{identity.id} (#{identity.url.present? ? link_to(identity.type_name, identity.url, :class => 'external') : identity.type_name})
+
+  %dt Domain
+  %dd
+    - if domain
+      = domain.name
+    - else
+      = link_to "Create a domain for your applications", new_domain_path
+  %dt SSH Keys
+  %dd
+    - if user_has_keys
+      Uploaded
+    - else
+      = link_to "Upload your public key to access code", new_key_path
+
+%p= link_to "Change your settings", settings_account_path, :class => 'action-more'
