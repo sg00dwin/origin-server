@@ -9,7 +9,6 @@ class ActiveSupport::TestCase
         begin
           create_megashift_user(u)
           record_usage_for_user(u)
-          Aria.gen_invoice(:acct_no => u.acct_no)
         rescue Aria::AccountExists
         end
         u.account_details

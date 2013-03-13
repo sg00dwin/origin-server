@@ -167,6 +167,9 @@ module Aria
       Aria.update_acct_complete(acct_no, params)
       @billing_info = nil
       @account_details = nil
+      @invoices = nil
+      @unbilled_balance = nil
+      @unbilled_usage_line_items = nil
       #@tax_exempt = nil
       true
     rescue Aria::Error => e
@@ -200,6 +203,7 @@ module Aria
           :status_cd => 0,
           :master_plan_no => Aria.default_plan_no,
           :password => random_password,
+          :alt_bill_day => 1,
           :test_acct_ind => Rails.application.config.aria_force_test_users ? 1 : 0,
           :supplemental => {:rhlogin => login},
         })

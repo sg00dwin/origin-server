@@ -7,7 +7,7 @@ module Aria
     end
 
     def period_name
-      bill_date.to_date.strftime('%b %d')
+      bill_date.to_date.strftime('%b')
     end
 
     def line_items

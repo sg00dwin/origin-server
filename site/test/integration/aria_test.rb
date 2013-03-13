@@ -130,6 +130,11 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     assert plan.gear_sizes.length > 0
   end
 
+  test "should have an anniversary date of day 1" do
+    u = with_account_holder
+    assert_equal u.account_details.bill_day, "1"
+  end
+
   test "should record usage" do
     u = with_account_holder
     assert_difference 'Aria.get_usage_history(u.acct_no, :date_range_start => u.account_details.last_bill_date).count', 2 do
