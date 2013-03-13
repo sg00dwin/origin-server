@@ -7,6 +7,7 @@
   "github_user": "openshift",
   "irc_channel": "#openshift-dev",
   "bot_github_user": "openshift-bot",
+  "product": "Online",
   "action_required_prefix": "Online Action Required:",
   
   "repo_groups": {
@@ -23,7 +24,7 @@
   "settings": {
     "test_settings": {
       "name": "test",
-      "test_prefix": "Test Results:",
+      "test_prefix": "Online Test Results:",
       "allow_multiple": true,
       "branches": { "*": {"jenkins_job_name": "test_pull_requests_generic",
                           "downstream_job_name": "create_ami",
@@ -65,7 +66,7 @@
     },
     "merge_test_settings": {
       "name": "merge",
-      "test_prefix": "Merge Test Results:",
+      "test_prefix": "Online Merge Results:",
       "pretest_queue_threshold": 2,
       "pretest_settings_key": "test_settings",
       "pretest_comment": "[Test]ing while waiting on the merge queue",

@@ -487,6 +487,9 @@ cat > /usr/local/bin/openscap.sh << EOF
 /usr/bin/html2text -o /var/log/openscap_rsyslog.txt /var/log/report-xccdf.html
 EOF
 
+# Set mod_security.conf permissions
+chmod 0644 /etc/httpd/conf.d/mod_security.conf
+
 # Make OpenScap.sh executable
 chmod 0750 /usr/local/bin/openscap.sh
 
@@ -612,6 +615,10 @@ do
   then
     break
   else
+    if [ $i -eq 1 ]
+    then
+      service rhc-datastore restart
+    fi
     echo "Rechecking datastore....."
     sleep 1
   fi

@@ -1,0 +1,11 @@
+- if type.usage_rates?
+  .alert.alert-info
+    %h3 #{type.display_name} is a premium cartridge.
+
+    - type.usage_rates.each do |rate|
+      %p
+        It costs an additional
+        %strong= "$#{rate.usd}"
+        = "per gear #{rate.duration} after the first"
+        %strong 3
+        gears.
