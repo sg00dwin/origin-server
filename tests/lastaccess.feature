@@ -3,7 +3,6 @@ Feature: Last Access Updater
 
   #Disabled as last access script now filters local machine
   #@runtime_extended
-  #@runtime_extended3
   Scenario: Application Creation
     Given the libra client tools
     And an accepted node

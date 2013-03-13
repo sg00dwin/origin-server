@@ -16,6 +16,11 @@
             </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>EMAIL</name>
+          <description></description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -32,14 +37,14 @@
         <string>uploadpack</string>
         <string>git-upload-pack</string>
         <string>url</string>
-        <string>git@github.com:openshift/li.git</string>
+        <string>git@github.com:fotioslindiakos/li.git</string>
         <string>tagopt</string>
         <string></string>
       </org.spearce.jgit.transport.RemoteConfig>
     </remoteRepositories>
     <branches>
       <hudson.plugins.git.BranchSpec>
-        <name>master</name>
+        <name>sprint_status_report</name>
       </hudson.plugins.git.BranchSpec>
     </branches>
     <mergeOptions/>
@@ -67,7 +72,15 @@
   <builders>
     <hudson.tasks.Shell>
       <command>cd misc/sprint_status_report;
-bundle exec ruby sprint_status_report -r ${REPORT} -e</command>
+
+report_string=&quot;-r ${REPORT}&quot;                                                                                                                                                                   
+if [ &quot;${EMAIL}&quot; == true ]; then                                                                                                                                                                
+  report_string=&quot;${report_string} --email&quot;                                                                                                                                                     
+else                                                                                                                                                                                           
+  report_string=&quot;${report_string} --no-email&quot;                                                                                                                                                  
+fi           
+
+bundle exec ruby sprint_status_report ${report_string}</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>

@@ -17,7 +17,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>curl -kL &quot;https://ci.dev.openshift.redhat.com/jenkins/job/sprint_status_report/buildWithParameters?token=status_report&amp;REPORT=dev&quot;</command>
+      <command>curl -kL &quot;https://ci.dev.openshift.redhat.com/jenkins/job/sprint_status_report/buildWithParameters?token=status_report&amp;REPORT=dev&amp;EMAIL=true&quot;</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>

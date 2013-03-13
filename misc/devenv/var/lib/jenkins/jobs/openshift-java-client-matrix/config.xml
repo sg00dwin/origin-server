@@ -16,6 +16,31 @@
           <description>OpenShift testing account password</description>
           <defaultValue>1q2w3e</defaultValue>
         </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>sun.net.client.defaultConnectTimeout</name>
+          <description></description>
+          <defaultValue>600000</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>sun.net.client.defaultReadTimeout</name>
+          <description></description>
+          <defaultValue>600000</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>https.proxyHost</name>
+          <description></description>
+          <defaultValue>file.rdu.redhat.com</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>https.proxyPort</name>
+          <description></description>
+          <defaultValue>3128</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.TextParameterDefinition>
+          <name>https.proxySet</name>
+          <description></description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.TextParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -32,14 +57,14 @@
         <string>uploadpack</string>
         <string>git-upload-pack</string>
         <string>url</string>
-        <string>git://github.com/openshift/openshift-java-client.git</string>
+        <string>git://github.com/adietish/openshift-java-client.git</string>
         <string>tagopt</string>
         <string></string>
       </org.spearce.jgit.transport.RemoteConfig>
     </remoteRepositories>
     <branches>
       <hudson.plugins.git.BranchSpec>
-        <name>**</name>
+        <name>ci</name>
       </hudson.plugins.git.BranchSpec>
     </branches>
     <mergeOptions/>
@@ -62,6 +87,9 @@
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers class="vector">
+    <hudson.triggers.TimerTrigger>
+      <spec>0 3 * * *</spec>
+    </hudson.triggers.TimerTrigger>
     <hudson.triggers.SCMTrigger>
       <spec>0 * * * *</spec>
     </hudson.triggers.SCMTrigger>
@@ -76,7 +104,7 @@
       </values>
     </hudson.matrix.TextAxis>
     <hudson.matrix.TextAxis>
-      <name>openshiftserver</name>
+      <name>libra_server</name>
       <values>
         <string>openshift.redhat.com</string>
         <string>stg.openshift.redhat.com</string>
@@ -105,6 +133,6 @@
   </publishers>
   <buildWrappers/>
   <executionStrategy class="hudson.matrix.DefaultMatrixExecutionStrategyImpl">
-    <runSequentially>true</runSequentially>
+    <runSequentially>false</runSequentially>
   </executionStrategy>
 </matrix-project>

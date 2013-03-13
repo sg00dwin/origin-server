@@ -9,11 +9,15 @@
   <disabled>true</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers class="vector"/>
+  <triggers class="vector">
+    <hudson.triggers.TimerTrigger>
+      <spec>0 19 * * 0-4</spec>
+    </hudson.triggers.TimerTrigger>
+  </triggers>
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>curl -kL &quot;https://ci.dev.openshift.redhat.com/jenkins/job/sprint_status_report/buildWithParameters?token=status_report&amp;REPORT=qe&quot;</command>
+      <command>curl -kL &quot;https://ci.dev.openshift.redhat.com/jenkins/job/sprint_status_report/buildWithParameters?token=status_report&amp;REPORT=qe&amp;EMAIL=true&quot;</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
