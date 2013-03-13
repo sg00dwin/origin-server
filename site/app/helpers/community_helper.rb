@@ -4,6 +4,18 @@ module CommunityHelper
     community_base_url 'faq/are-there-different-gear-sizes-and-how-much-do-they-cost'
   end
 
+  def faq_add_on_storage_url
+    community_base_url 'faq/what-is-add-on-storage'
+  end
+
+  def faq_ssl_for_domains_url
+    community_base_url 'faq/how-do-i-get-ssl-for-my-domains'
+  end
+
+  def community_scaling_url
+    community_base_url 'developers/scaling'
+  end
+
   def community_security_policy_url
     community_base_url 'policy/security'
   end
