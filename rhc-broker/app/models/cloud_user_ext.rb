@@ -145,9 +145,15 @@ class CloudUser
     self.save!
 
     billing_api = OpenShift::BillingService.instance
+    cur_plan_index = -1
+    new_plan_index = -1
+    billing_api.get_plans.each_with_index do |plan, index|
+      new_plan_index = index if plan[1][:plan_no] == plan_info[:plan_no]
+      cur_plan_index = index if plan[0].to_s == old_plan_id
+    end
     begin
       #update plan in billing vendor
-      billing_api.update_master_plan(self.usage_account_id, plan_id.to_sym) unless plan_info[:plan_no] == account["plan_no"]
+      billing_api.update_master_plan(self.usage_account_id, plan_id.to_sym, (new_plan_index > cur_plan_index))
     rescue Exception => e
       self.pending_plan_id = nil
       self.pending_plan_uptime = nil
