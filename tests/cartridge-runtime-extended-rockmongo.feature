@@ -1,5 +1,5 @@
-@runtime_extended2
 @runtime_extended3
+@runtime_extended_other3
 Feature: rockmongo Embedded Cartridge Extended Checks
 
    Scenario Outline: Add remove rockmongo to one application
