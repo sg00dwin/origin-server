@@ -208,6 +208,7 @@ class AriaUnitTest < ActiveSupport::TestCase
       :supp_field_values => 'foo',
       :supp_field_names => 'rhlogin',
       :password => 'passw0rd',
+      :alt_bill_day => 1.to_s,
       :test_acct_ind => 1.to_s,
       :status_cd => 0.to_s,
       :master_plan_no => Rails.application.config.aria_default_plan_no.to_s,
