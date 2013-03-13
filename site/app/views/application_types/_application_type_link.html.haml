@@ -1,0 +1,4 @@
+= link_to type.display_name, application_type_path(type)
+
+- if type.usage_rates?
+  %span.label.label-premium{:title => 'Premium'}> $
