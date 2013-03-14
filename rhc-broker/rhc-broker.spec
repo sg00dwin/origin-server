@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.5.14
+Version: 1.5.15
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -149,6 +149,10 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Thu Mar 14 2013 Adam Miller <admiller@redhat.com> 1.5.15-1
+- Bug 921277 - User plan update api change: For upgrade, set assign_directive
+  to 2 and for downgrade set assign_directive to 1 (rpenta@redhat.com)
+
 * Fri Mar 08 2013 Adam Miller <admiller@redhat.com> 1.5.14-1
 - Fix Aria event notification format (rpenta@redhat.com)
 
