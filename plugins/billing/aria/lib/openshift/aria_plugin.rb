@@ -102,13 +102,15 @@ module OpenShift
         end
         new_srecs << srec
       end
-      user_srecs = new_srecs
+      new_srecs
     end
 
     def sync_usage(session, user_srecs, sync_time)
       return if user_srecs.empty?
     
-      preprocess_user_srecs(user_srecs) 
+      user_srecs = preprocess_user_srecs(user_srecs)
+      return if user_srecs.empty?
+
       # Saving sync time before sending usage data to billing vendor
       user_ids = user_srecs.map { |rec| rec['_id'] unless rec['no_update']}
       session.with(safe:true)[:usage_records].find({_id: {"$in" => user_ids}}).update_all({"$set" => {sync_time: sync_time}})
