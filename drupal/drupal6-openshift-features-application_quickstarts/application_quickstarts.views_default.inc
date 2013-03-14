@@ -1935,7 +1935,7 @@ print application_quickstarts_summary($data->node_data_field_quickstart_icon_fie
   ));
   $handler->override_option('header', '');
   $handler->override_option('header_empty', 0);
-  $handler->override_option('footer', '<p><a class="action-more" href=\'/quickstarts/all?order=value&sort=desc\'>See other highly voted quickstarts</a></p>');
+  $handler->override_option('footer', '<p><a class="action-more" href=\'/quickstarts/all?order=value&sort=desc\'>See all quickstarts</a></p>');
   $handler->override_option('footer_format', '1');
   $handler->override_option('footer_empty', 0);
   $handler->override_option('use_ajax', TRUE);
@@ -2595,7 +2595,7 @@ print application_quickstarts_summary($data->node_data_field_quickstart_icon_fie
   ));
   $handler->override_option('header', '');
   $handler->override_option('header_empty', 0);
-  $handler->override_option('footer', '<p><a class="action-more" href=\'/quickstarts/all?order=created&sort=desc\'>See older quickstarts</a></p>');
+  $handler->override_option('footer', '<p><a class="action-more" href=\'/quickstarts/all?order=created&sort=desc\'>See all quickstarts</a></p>');
   $handler->override_option('footer_format', '1');
   $handler->override_option('footer_empty', 0);
   $handler->override_option('use_ajax', TRUE);
@@ -3950,7 +3950,7 @@ print application_quickstarts_summary($data->node_data_field_quickstart_trust_fi
   ));
   $handler->override_option('header', '');
   $handler->override_option('header_empty', 0);
-  $handler->override_option('footer', '<p><a class="action-more" href=\'/quickstarts/all?order=created&sort=desc\'>See older quickstarts</a></p>');
+  $handler->override_option('footer', '<p><a class="action-more" href=\'/quickstarts/all?order=created&sort=desc\'>See all quickstarts</a></p>');
   $handler->override_option('footer_format', '1');
   $handler->override_option('footer_empty', 0);
   $handler->override_option('use_ajax', TRUE);

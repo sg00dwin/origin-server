@@ -627,15 +627,6 @@ html.js fieldset.collapsible .fieldset-wrapper {
     .author-bio-box  {
       .author-bio { display: none; }
     }
-    .provider {
-      border: 1px solid #ccc;
-      color: #333;
-      font-size: 9.5px;
-      margin: 0 6px 0 0;
-      padding: 1px 3px;
-      text-transform: uppercase;
-      vertical-align: top;
-    }
   }
 
   .cartridge-spec {
@@ -657,6 +648,65 @@ html.js fieldset.collapsible .fieldset-wrapper {
     margin-right: 12px;
     text-transform: none;
   }
+}
+
+.community .provider {
+  border: 1px solid #ccc;
+  color: #333;
+  font-size: 9.5px;
+  line-height: 1;
+  margin: 0 6px 0 0;
+  padding: 1px 3px;
+  text-transform: uppercase;
+}
+.community .view-application-quickstarts-content .provider {
+  display: inline-block;
+}
+.community .view-application-quickstarts-content .views-field-title .provider {
+  position: relative;
+  top: -5px;
+}
+
+.community .view-application-quickstarts-content .table {
+  margin-bottom: 0;
+}
+.community .view-application-quickstarts-content .table tbody tr td {
+  padding-bottom: 16px;
+  padding-left: 0;
+  padding-top: 12px;
+}
+.community .view-application-quickstarts-content .table tbody tr:hover td {
+  background-color: transparent;
+}
+.community .view-application-quickstarts-content .table tbody tr.views-row-extra td {
+  border-top: 0;
+}
+.community .view-application-quickstarts-content .table tbody tr td p {
+  margin-bottom: 10px;
+}
+.community .view-application-quickstarts-content .table tbody tr td a[href^='/quickstart-tags'] {
+  font-size: 11px;
+}
+.community .view-application-quickstarts-content .table tbody tr td a > h3 {
+  color: inherit;
+  margin-bottom: 6px;
+}
+.community .view-application-quickstarts-content .table thead tr th {
+  padding-left: 0;
+}
+.community .view-application-quickstarts-content .table thead tr th.active a > img {
+  margin-left: 5px;
+}
+.community .view-application-quickstarts-content .table thead tr th.views-field-created {
+  font-size: inherit;
+}
+
+.community .view-application-quickstarts-content .view-footer {
+  border-top: 1px solid #ddd;
+  padding-top: 12px;
+}
+.community .view-application-quickstarts-content .view-footer .action-more {
+  font-size: inherit;
 }
 
 @media (max-width: 480px) {
