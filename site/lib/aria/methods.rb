@@ -104,6 +104,10 @@ module Aria
       super(:acct_no => acct_no)
     end
 
+    def get_queued_service_plans(acct_no)
+      Array(super(:account_number => acct_no).queued_plans)
+    end
+
     def record_usage(acct_no, usage_type, usage_units, opts={})
       opts[:acct_no] = acct_no
       opts[:usage_type] = usage_type

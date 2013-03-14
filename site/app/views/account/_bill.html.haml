@@ -1,0 +1,22 @@
+:css
+  table.plan-items .plan-item-cost { text-align: right; }
+
+%table.table.table-striped.plan-items
+  - bill.line_items.sort_by(&Aria::LineItem.plan_sort).each do |li|
+    %tr.plan-item
+      %td
+        = li.name
+      %td.plan-item-rate
+        - if li.usage?
+          #{number_with_precision(li.units, :precision => 0)} @ #{number_to_currency(li.rate)} / #{li.units_label}
+        - elsif li.recurring? && li.rate
+          #{number_to_currency(li.rate)} / month
+          - if li.prorated?
+            (prorated)
+      %td.plan-item-cost
+        = number_to_currency(li.total_cost)
+
+  %tr.plan-total
+    %td.right{:colspan => 3}
+      %strong Total:&nbsp; #{number_to_currency(bill.estimated_balance)}
+

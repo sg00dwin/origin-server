@@ -7,8 +7,8 @@ module Aria
     def usage?
       false
     end
-    def taxable?
-      false
+    def tax?
+      rate_per_unit.nil? || service_name.include?('Taxes')
     end
 
     def name
@@ -22,10 +22,20 @@ module Aria
       amount
     end
 
+    def prorated?
+      units != 1.0
+    end
+
+    def rate
+      rate_per_unit
+    end
+
     protected
       define_attribute_methods [:service_no,
                                :service_name,
                                :amount,
+                               :units,
+                               :rate_per_unit,
                                :description,
                                :plan_name]
   end

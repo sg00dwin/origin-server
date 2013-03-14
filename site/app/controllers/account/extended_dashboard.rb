@@ -42,13 +42,6 @@ module Account
       async{ @keys = Key.all :as => @user }
       async{ @authorizations = Authorization.all :as => @user }
 
-      if user_can_upgrade_plan?
-        async do
-          api_user = current_api_user
-          @plan = api_user.plan.tap{ |c| c.name }
-        end
-      end
-
       join!(30)
 
       if not @domain

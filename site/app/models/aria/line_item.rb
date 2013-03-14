@@ -8,6 +8,18 @@ module Aria
       @plan_no = plan_no
     end
 
+    def self.plan_sort
+      lambda { |li| 
+        if li.tax?
+          [2, -li.total_cost]
+        elsif li.usage? 
+          [1, li.rate] 
+        else 
+          [0, -li.total_cost] 
+        end 
+      }
+    end
+
     protected
       attr_reader :plan_no
 

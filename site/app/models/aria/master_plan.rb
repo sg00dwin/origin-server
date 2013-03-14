@@ -66,6 +66,10 @@ module Aria
     cache_find_method :every,
                       :before => lambda{ |plans| plans.each{ |p| p.as = nil; p.send(:aria_plan); p.send(:description); p.send(:features) } }
 
+    def self.for_plan_no(plan_no)
+      cached.all.find{ |p| p.plan_no == plan_no }
+    end
+
     protected
       def aria_plan
         @aria_plan ||= Aria.cached.get_client_plans_basic.find{ |plan| plan.plan_no == self.plan_no }

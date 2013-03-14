@@ -8,7 +8,7 @@ module Aria
     def usage?
       true
     end
-    def taxable?
+    def tax?
       false
     end
 
@@ -38,9 +38,9 @@ module Aria
     def units_label
       case service.client_coa_code
       when 'smallusage', 'mediumusage', 'largeusage'
-        "gear hour"
+        "gear-hour"
       when 'megastorage'
-        "gigabyte hour"
+        "gigabyte-hour"
       else
         "unit"
       end

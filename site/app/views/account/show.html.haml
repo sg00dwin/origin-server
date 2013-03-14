@@ -17,8 +17,6 @@
           You owe #{number_to_currency(@bill.balance)}, due on #{@bill.due_date.to_s(:billing_date)}.
         - else
           You owe #{number_to_currency(@bill.balance)} which was due on #{@nbill.due_date.to_s(:billing_date)}.
-    -# else
-      Your account balance is #{number_to_currency(@current_balance)}, and your next bill will be due on #{@bill_due_date.to_s(:billing_date)}.
 
 .row-fluid
   .span8
@@ -27,44 +25,29 @@
         %h2 Current Charges 
         %p
           Day #{@bill.day} of billing cycle #{@bill.start_date.to_s(:billing_date)} - #{@bill.end_date.to_s(:billing_date)}
-        .row-fluid
-          .span6
-            - if @bill.line_items.present?
-              %table.table.table-striped.plan-items
-                - @bill.line_items.each do |li|
-                  %tr.plan-item
-                    %td
-                      = li.name
-                    %td.plan-item-cost
-                      - if li.respond_to? :units
-                        #{pluralize(number_with_precision(li.units, :precision => 0), li.units_label)} @ #{number_to_currency(li.rate)}
-                      - else
-                        = number_to_currency(li.total_cost)
 
-                %tr.plan-total
-                  %td.right{:colspan => 2}
-                    %strong Estimated use this month:&nbsp; #{number_to_currency(@bill.estimated_balance)}
-
-              %p The amount above does not include taxes and may not accurately reflect discounts, peaks in future usage, or recent activity.
-
-            - else
-              %p You have no charges for the current month
-
-          .span6
-            - if @plan.basic? && @past_usage_items
-              %p Your previous bills are visible from the billing page
-            - else
-              - if @past_usage_items.present?
+        - if @bill.line_items.present? 
+          - if not @plan.basic? and @past_usage_items
+            .row-fluid
+              .span6
+                = render :partial => 'bill', :locals => {:bill => @bill}
+              .span6
                 = render :partial => 'usage_charges', :locals => {:current_usage_items => @current_usage_items, :past_usage_items => @past_usage_items, :max_usage => @max_usage}
-              - else
-                %p In future months we'll show you a comparison of your plan usage here.
+          - else
+            = render :partial => 'bill', :locals => {:bill => @bill}
 
-        .payment_method
+        - else
+          %p You have no recorded charges yet
+
+
+        %p.payment_method
           - if @payment_method.present?
-            %p
-              Using credit card ending in <span class="card_number">#{@payment_method.cc_no}</span>, expires <span class="card_expiration">#{@payment_method.expiration_date.to_s(:credit_card)}</span>.
-              #{link_to @payment_method.blank? ? "Add a card to this account" : "Change", edit_account_payment_method_path}
-              | #{link_to "Update address", edit_account_billing_info_path}
+            Your credit card (ending in <span class="card_number">#{@payment_method.cc_no}</span> and expiring <span class="card_expiration">#{@payment_method.expiration_date.to_s(:credit_card)}</span>) will be charged on #{@bill.due_date.to_s(:billing_date)}.<br>
+          #{link_to @payment_method.blank? ? "Add a card to this account" : "Change card", edit_account_payment_method_path}
+          | #{link_to "Update address", edit_account_billing_info_path}
+
+        %p.disclaimer The amounts above may not accurately reflect discounts, applicable sales taxes, peaks in future usage, or recent activity.
+
 
 
   .span4.sidebar
@@ -72,11 +55,12 @@
       = render :partial => 'settings', :locals => {:identity => @identity, :domain => @domain, :user => @user, :user_has_keys => @user_has_keys}
 
     %section.panel
-      %h2 Get Help
-      %ul.unstyled
-        %li= link_to "Find answers to account questions", settings_account_path
-        %li Need Technical Support? #{link_to "Visit the Customer Portal", openshift_customer_portal_url}.
-        %li= link_to "More details on your plan", account_plans_path
+      %h2 Got Questions?
+      %h3= link_to "Account Help", settings_account_path
+      - if @plan.basic?
+        %h3= link_to "Community Support", console_help_path
+      - else
+        %h3= link_to "Technical Support", openshift_customer_portal_url
 
 - if @plan.basic?
   %section.panel

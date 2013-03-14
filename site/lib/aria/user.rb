@@ -94,7 +94,7 @@ module Aria
     end
 
     def current_period_start_date
-      account_details.last_bill_date || account_details.last_bill_thru_date
+      [(account_details.last_bill_date || account_details.last_bill_thru_date), Date.today.to_s].min
     end
 
     def unbilled_usage_line_items
@@ -125,6 +125,18 @@ module Aria
           [ i.period_name, i.line_items.select(&:usage?) ]
         }
       ]
+    end
+
+    def downgraded_plan
+      plan = queued_plans.last
+      @queued_plan ||= ::OpenStruct.new(
+        :name => plan.original_plan,
+        :until_date => aria_datetime(plan.change_date)
+      ) if plan && plan.new_plan_no != account_details.plan_no
+    end
+
+    def queued_plans
+      @queued_plans ||= Aria.get_queued_service_plans(acct_no)
     end
 
     def create_account(opts=nil)
