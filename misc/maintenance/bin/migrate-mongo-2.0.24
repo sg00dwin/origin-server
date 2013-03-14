@@ -18,6 +18,7 @@ $usage_recs = []
 $cur_rec_count = 0
 $failure_count = 0
 $total_rec_count = 0
+$create_rec_count = 0
 $domain_hash = {}
 $user_hash = {}
       
@@ -50,19 +51,19 @@ def write_usage_records
     usage << u
   end
 
+  $total_rec_count += $cur_rec_count
   begin
     # Write bulk records to usage_records collection
     begin
       $session.with(safe: true)[:usage_records].insert($usage_recs)
-      $total_rec_count += $cur_rec_count
+      $create_rec_count += $cur_rec_count
     rescue Moped::Errors::OperationFailure => e
-      $total_rec_count -= $cur_rec_count
       # There can be duplicate key error index, try one at a time
       # This happens when usage record already exists for the gear
       $usage_recs.each do |urec|
         begin
           $session.with(safe: true)[:usage_records].insert(urec)
-          $total_rec_count += 1
+          $create_rec_count += 1
         rescue Moped::Errors::OperationFailure => e
           #Ignore
         end
@@ -209,7 +210,7 @@ begin
   $session = get_mongo_session
 
   # Create index to ensure that we don't create duplicate begin record entries
-  $session.with(safe: true)[:usage_records].indexes.create(usage_index_fields, {unique: true})
+  $session.with(safe: true, consistency: :strong)[:usage_records].indexes.create(usage_index_fields, {unique: true})
 
   # Populate domain id => user id cache
   $session[:domains].find.select(owner_id: 1).no_timeout.each do |domain|
@@ -233,15 +234,16 @@ rescue Exception => e
   exit 1
 ensure
   if $session
-    $session.with(safe: true)[:usage_records].indexes.drop(usage_index_fields)
+    $session.with(safe: true, consistency: :strong)[:usage_records].indexes.drop(usage_index_fields)
     release_mongo_session($session)
   end
 end
 
 puts "***************************"
 if $failure_count == 0
-  puts "Migration Done! - No failures, created #{$total_rec_count} usage records"
+  puts "Migration Done! - No Failures"
 else
-  puts "Migration Done! - #{$failure_count} failures, created #{$total_rec_count} usage records"
+  puts "Migration Done! - #{$failure_count} Failures"
 end
+puts "Usage records - Created: #{$create_rec_count}, Duplicates: #{$total_rec_count-$create_rec_count}"
 puts "***************************"
