@@ -119,6 +119,10 @@ module Aria
       @invoices ||= Aria.cached.get_acct_invoice_history(acct_no).map {|i| Aria::Invoice.new(i, acct_no) }
     end
 
+    def statements
+      @statements ||= Aria.cached.get_acct_statement_history(acct_no)
+    end
+
     def past_usage_line_items(periods=3)
       Hash[
         invoices.sort_by(&:bill_date).reverse.slice(0, periods).inject([]) { |a, i| 
@@ -180,7 +184,7 @@ module Aria
       @billing_info = nil
       @account_details = nil
       @invoices = nil
-      @unbilled_balance = nil
+      @unbilled_usage_balance = nil
       @unbilled_usage_line_items = nil
       #@tax_exempt = nil
       true

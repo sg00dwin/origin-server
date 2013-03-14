@@ -145,6 +145,8 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal 'usd', usage.currency_cd
 
     assert u.unbilled_usage_line_items.present?
+    assert_equal usage.ptd_balance_amount, u.unbilled_usage_balance
+    assert_equal u.unbilled_usage_balance.round(2), u.unbilled_usage_line_items.map(&:total_cost).sum.round(2)
   end
 
   test "should get past invoices" do

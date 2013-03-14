@@ -96,6 +96,11 @@ module Aria
       Array(super({:acct_no => acct_no, :src_transaction_id => src_transaction_id}).invoice_line_items)
     end
 
+    def get_acct_statement_history(acct_no, opts={})
+      opts[:acct_no] = acct_no
+      Array(super(opts).statement_history)
+    end
+
     def get_client_plan_service_rates(plan_no, service_no)
       Array(super(:plan_no => plan_no, :service_no => service_no).plan_service_rates)
     end
