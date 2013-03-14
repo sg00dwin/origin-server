@@ -48,6 +48,11 @@ Requires:  openshift-origin-cartridge-community-python-2.7
 Requires:  openshift-origin-cartridge-community-python-3.3
 Requires:  openshift-origin-cartridge-mock
 Requires:  openshift-origin-cartridge-mock-plugin
+#Requires:  openshift-origin-cartridge-jbosseap
+Requires:  openshift-origin-cartridge-php
+Requires:  openshift-origin-cartridge-perl
+Requires:  openshift-origin-cartridge-python
+Requires:  openshift-origin-cartridge-ruby
 Requires:  activemq
 Requires:  activemq-client
 #Requires:  qpid-cpp-server
@@ -665,6 +670,15 @@ cd /var/www/openshift/site && /usr/bin/scl enable ruby193 "rake assets:clean"
 
 # Configure Drupal for the first time
 /etc/drupal6/drupal-setup.sh
+
+# Install the carts
+mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/mock
+mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/mock-plugin
+#mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/jbosseap
+mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/php
+mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/perl
+mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/python
+mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/ruby
 
 %files
 %defattr(-,root,root,-)
