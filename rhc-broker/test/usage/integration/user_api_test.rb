@@ -57,6 +57,8 @@ class UserApiTest < ActionDispatch::IntegrationTest
     assert(plans.length == 1)
     current_plan = plans[0]
     assert_equal(current_plan["plan_name"], "MegaShift", "Current plan name #{current_plan["plan_name"]} expected MegaShift")
+    plans = api.get_queued_service_plans(acct_no)
+    assert(plans == nil)
   end
 
   def test_user_downgrade
@@ -77,10 +79,10 @@ class UserApiTest < ActionDispatch::IntegrationTest
     assert_equal(user.pending_plan_id, nil)
     assert_equal(user.pending_plan_uptime, nil)
     #assert plan changed in billing provider
-    plans = api.get_acct_plans_all(acct_no)
+    plans = api.get_queued_service_plans(acct_no)
     assert(plans.length == 1)
     current_plan = plans[0]
-    assert_equal(current_plan["plan_name"], "FreeShift", "Current plan name #{current_plan["plan_name"]} expected FreeShift")
+    assert_equal(current_plan["new_plan"], "FreeShift", "Current plan name #{current_plan["new_plan"]} expected FreeShift")
   end
  
   def test_user_downgrade_with_too_many_gears
@@ -156,6 +158,8 @@ class UserApiTest < ActionDispatch::IntegrationTest
     assert(plans.length == 1)
     current_plan = plans[0]
     assert_equal(current_plan["plan_name"], "FreeShift", "Current plan name #{current_plan["plan_name"]} expected FreeShift")
+    plans = api.get_queued_service_plans(acct_no)
+    assert(plans == nil)
   end
   
   def test_billing_account_not_found
@@ -210,6 +214,8 @@ class UserApiTest < ActionDispatch::IntegrationTest
     plans = api.get_acct_plans_all(acct_no)
     assert(plans.length == 1)
     assert_equal(plans[0]["plan_name"], "MegaShift", "Current plan name #{plans[0]["plan_name"]} expected MegaShift")
+    plans = api.get_queued_service_plans(acct_no)
+    assert(plans == nil)
   end
  
   def test_plan_upgrade_mega_to_free_recovery
@@ -243,9 +249,10 @@ class UserApiTest < ActionDispatch::IntegrationTest
     assert_equal(user_capabilities.has_key?("max_storage_per_gear"), false)
     assert_equal(user.pending_plan_id, nil)
     assert_equal(user.pending_plan_uptime, nil)
-    plans = api.get_acct_plans_all(acct_no)
+    plans = api.get_queued_service_plans(acct_no)
     assert(plans.length == 1)
-    assert_equal(plans[0]["plan_name"], "FreeShift", "Current plan name #{plans[0]["plan_name"]} expected FreeShift")
+    current_plan = plans[0]
+    assert_equal(current_plan["new_plan"], "FreeShift", "Current plan name #{current_plan["new_plan"]} expected FreeShift")
   end
  
   def test_plan_upgrade_noplan_to_mega_recovery_success
@@ -283,6 +290,8 @@ class UserApiTest < ActionDispatch::IntegrationTest
     plans = api.get_acct_plans_all(acct_no)
     assert(plans.length == 1)
     assert_equal(plans[0]["plan_name"], "MegaShift", "Current plan name #{plans[0]["plan_name"]} expected MegaShift")
+    plans = api.get_queued_service_plans(acct_no)
+    assert(plans == nil)
   end
 
   def test_plan_upgrade_noplan_to_mega_recovery_failure
