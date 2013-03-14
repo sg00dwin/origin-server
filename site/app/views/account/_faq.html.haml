@@ -1,9 +1,10 @@
 %h1 Account Help
-%div{'ng-app' => 'openshift', 'ng-controller' => 'FaqController', :class => 'control-group-important'}
-  %div
-    %input{:type => 'text', :class => 'span8', :placeholder => 'Search frequently asked questions', 'ng-model' => 'searchTerm', 'ng-change' => 'filter()'}
+.span7.control-group-important{'ng-app' => 'openshift', 'ng-controller' => 'FaqController'}
+  %form.form-search
+    %input.span7.search-query{:placeholder => 'Search frequently asked questions...', 'ng-model' => 'searchTerm', 'ng-change' => 'filter()'}
+    %button.search.font-icon.font-icon-size-16{:type => 'submit', "aria-hidden" => "true", "data-icon" => "\uee03"}
 
-  %div{'ng-init' => "topten = #{topten.to_json}; questions = topten",
+  #questions{'ng-init' => "topten = #{topten.to_json}; questions = topten",
       'ng-show' => 'true',
       :style => 'display: none;'}
     %dl{'ng-repeat' => 'q in questions'}
@@ -11,6 +12,8 @@
         %a{:href => '{{ q.href }}', 'ng-bind-html-unsafe' => 'q.name'}
       %dd{'ng-bind-html-unsafe' => 'q.body'}
 
+  %div{'ng-show' => 'searchTerm && questions.length == 0'}
+    %em There are no questions that match '{{ searchTerm }}'
 
   -# If javascript is not enabled, this will be the only rendered content
   %ul{'ng-hide' => 'true'}
