@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.3.9
+Version: 1.3.10
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,12 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Thu Mar 14 2013 Adam Miller <admiller@redhat.com> 1.3.10-1
+- Bug 921277 - User plan update api change: For upgrade, set assign_directive
+  to 2 and for downgrade set assign_directive to 1 (rpenta@redhat.com)
+- Bug 920107 - Don't create usage records for subaccount users during migration
+  (rpenta@redhat.com)
+
 * Tue Mar 12 2013 Adam Miller <admiller@redhat.com> 1.3.9-1
 - Bug 920107 - oo-admin-ctl-usage shouldn't throw errors in case of parent
   users with c9 gears (rpenta@redhat.com)
