@@ -94,7 +94,7 @@ module Aria
     end
 
     def current_period_start_date
-      [(account_details.last_bill_date || account_details.last_bill_thru_date), Date.today.to_s].min
+      [(account_details.last_bill_date || account_details.last_bill_thru_date), today].min
     end
 
     def unbilled_usage_line_items
@@ -108,11 +108,11 @@ module Aria
     end
 
     def unpaid_invoices
-      invoices.delete_if(&:paid_date)
+      invoices.reject{ |i| i.paid_date && i.paid_date <= today }
     end
 
     def paid_invoices
-      invoices.select(&:paid_date)
+      invoices.select{ |i| i.paid_date.nil? or i.paid_date > today }
     end
 
     def invoices
@@ -121,8 +121,10 @@ module Aria
 
     def past_usage_line_items(periods=3)
       Hash[
-        invoices.sort_by(&:bill_date).reverse.slice(0, periods).map { |i| 
-          [ i.period_name, i.line_items.select(&:usage?) ]
+        invoices.sort_by(&:bill_date).reverse.slice(0, periods).inject([]) { |a, i| 
+          arr = [ i.period_name, i.line_items.select(&:usage?) ]
+          a << arr if arr.last.present?
+          a
         }
       ]
     end
@@ -221,6 +223,10 @@ module Aria
 
       def aria_datetime(s)
         Date.strptime(s, '%Y-%m-%d').to_datetime
+      end
+
+      def today
+        @today ||= Date.today.to_s
       end
   end
 

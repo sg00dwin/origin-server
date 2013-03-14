@@ -22,7 +22,7 @@ module Aria
     alias_method :estimated_balance, :balance
 
     def blank?
-      balance < 0.01
+      line_items.blank? and @unbilled_usage_balance < 0.01
     end
   end
 end

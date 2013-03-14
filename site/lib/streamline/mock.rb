@@ -202,6 +202,9 @@ module Streamline
       true
     end
 
+    def streamline_type!
+    end
+
     private
       def set_fake_roles
         @roles, @email_address = if @rhlogin.index '@'
