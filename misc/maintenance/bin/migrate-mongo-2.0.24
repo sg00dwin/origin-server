@@ -19,6 +19,7 @@ $cur_rec_count = 0
 $failure_count = 0
 $total_rec_count = 0
 $domain_hash = {}
+$user_hash = {}
       
 def get_mongo_session
   # Get Mongo session
@@ -87,6 +88,17 @@ def write_usage_records
   end
 end
 
+# Get parent user id for the given user id
+def get_parent_user_id(user_id)
+  unless $user_hash[user_id.to_s]
+    user_obj = $session[:cloud_users].find(_id: user_id).select(parent_user_id: 1).first
+    if user_obj
+      $user_hash[user_id.to_s] = user_obj['parent_user_id']
+    end
+  end
+  $user_hash[user_id.to_s]
+end
+
 # Get user id for the given domain id
 def get_user_id(domain_id)
   unless $domain_hash[domain_id.to_s]
@@ -105,6 +117,7 @@ def process_app(app)
     unless user_id and app['name']
       raise Exception.new "Invalid user_id/app_name."
     end
+    return if get_parent_user_id(user_id)  # Skip subaccount users
  
     app_info = {}
     # Process component instances and find premium carts
@@ -201,6 +214,11 @@ begin
   # Populate domain id => user id cache
   $session[:domains].find.select(owner_id: 1).no_timeout.each do |domain|
     $domain_hash[domain['_id'].to_s] = domain['owner_id']
+  end
+
+  # Populate user id => parent user id cache
+  $session[:cloud_users].find.select(parent_user_id: 1).no_timeout.each do |user|
+    $user_hash[user['_id'].to_s] = user['parent_user_id']
   end
 
   # Cursor over all applications
