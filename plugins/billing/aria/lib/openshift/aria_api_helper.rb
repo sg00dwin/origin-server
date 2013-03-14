@@ -188,7 +188,12 @@ module OpenShift
     end
 
     def update_master_plan(acct_no, plan_name,
-                           num_plan_units=1, assignment_directive=2)
+                           is_upgrade=false, num_plan_units=1)
+      if is_upgrade
+        assignment_directive = 2
+      else
+        assignment_directive = 1
+      end
       {
         'acct_no' => acct_no,
         'master_plan_no' => get_plan_no(plan_name),
@@ -197,6 +202,15 @@ module OpenShift
         'client_no' => @client_no,
         'auth_key' => @auth_key,
         'rest_call' => "update_master_plan"
+      }
+    end
+  
+    def get_queued_service_plans(acct_no)
+      {
+        'account_number' => acct_no,
+        'client_no' => @client_no,
+        'auth_key' => @auth_key,
+        'rest_call' => "get_queued_service_plans"
       }
     end
 
