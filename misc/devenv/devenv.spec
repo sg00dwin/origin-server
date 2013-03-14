@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.6.1
+Version: 1.6.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -700,6 +700,25 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Thu Mar 14 2013 Adam Miller <admiller@redhat.com> 1.6.2-1
+- Merge pull request #1016 from tkramer-rh/dev/tkramer/security/mod_security
+  (dmcphers+openshiftbot@redhat.com)
+- install the new carts as part of the devenv (dmcphers@redhat.com)
+- Security - mod_security add bad robots and openshift policies
+  (tkramer@redhat.com)
+- Security - mod_security - re-enable check in mod_security conf to not deny
+  just log (tkramer@redhat.com)
+- syncing jenkins jobs (dmcphers@redhat.com)
+- adding runtime_other tests (dmcphers@redhat.com)
+- Security - mod_security - change mod_security config file from an echo in the
+  spec to a flat file (tkramer@redhat.com)
+- Merge pull request #994 from tkramer-
+  rh/dev/tkramer/security/mod_security_conf (dmcphers+openshiftbot@redhat.com)
+- Add restart on mongo when doa (dmcphers@redhat.com)
+- Security - mod_security.conf standardized configuration file
+  (tkramer@redhat.com)
+- Add feature to test while waiting on a merge (dmcphers@redhat.com)
+
 * Thu Mar 07 2013 Adam Miller <admiller@redhat.com> 1.6.1-1
 - bump_minor_versions for sprint 25 (admiller@redhat.com)
 
