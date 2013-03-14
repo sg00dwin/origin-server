@@ -96,16 +96,12 @@ pushd li
     RESULT=$?
   set -e
 
-  if [ -n &quot;$EXTENDED_TESTS&quot; ]
+  if [ $RESULT -eq 0 ] &amp;&amp; [ -n &quot;$EXTENDED_TESTS&quot; ]
   then
-    if [ $RESULT -eq 0 ]
-    then
-      # Run the extended tests
-      build/devenv test devenv-test_${BUILD_NUMBER} --include_extended=&quot;$EXTENDED_TESTS&quot; --terminate
-    else
-      build/devenv terminate devenv-test_${BUILD_NUMBER}
-      exit $RESULT
-    fi
+    build/devenv test devenv-test_${BUILD_NUMBER} --include_extended=&quot;$EXTENDED_TESTS&quot; --terminate
+  else
+    build/devenv terminate devenv-test_${BUILD_NUMBER}
+    exit $RESULT
   fi
 
 popd</command>

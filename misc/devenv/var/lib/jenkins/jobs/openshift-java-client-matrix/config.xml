@@ -26,21 +26,6 @@
           <description></description>
           <defaultValue>600000</defaultValue>
         </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>https.proxyHost</name>
-          <description></description>
-          <defaultValue>file.rdu.redhat.com</defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>https.proxyPort</name>
-          <description></description>
-          <defaultValue>3128</defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.TextParameterDefinition>
-          <name>https.proxySet</name>
-          <description></description>
-          <defaultValue>true</defaultValue>
-        </hudson.model.TextParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -57,14 +42,14 @@
         <string>uploadpack</string>
         <string>git-upload-pack</string>
         <string>url</string>
-        <string>git://github.com/adietish/openshift-java-client.git</string>
+        <string>git://github.com/openshift/openshift-java-client.git</string>
         <string>tagopt</string>
         <string></string>
       </org.spearce.jgit.transport.RemoteConfig>
     </remoteRepositories>
     <branches>
       <hudson.plugins.git.BranchSpec>
-        <name>ci</name>
+        <name>master</name>
       </hudson.plugins.git.BranchSpec>
     </branches>
     <mergeOptions/>
