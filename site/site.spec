@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.6.1
+Version: 1.6.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -177,6 +177,38 @@ fi
 %{sitedir}/public
 
 %changelog
+* Thu Mar 14 2013 Adam Miller <admiller@redhat.com> 1.6.2-1
+- Merge pull request #1012 from liggitt/bug/921276_master
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 921276 - default bill_day to 1 for new aria accounts
+  (jliggitt@redhat.com)
+- Revoved reference to missing partial /site/type (sgoodwin@redhat.com)
+- Merge branch 'master' of github.com:openshift/li into misc-dev
+  (sgoodwin@redhat.com)
+- Merge pull request #997 from nhr/US2461_upgrade_confirmation_page
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #991 from jtharris/features/US2627
+  (dmcphers+openshiftbot@redhat.com)
+- US2461 - Upgrade confirmation page (hripps@redhat.com)
+- moving to console for inclusion in origin.css (sgoodwin@redhat.com)
+- %%div is redundant (jharris@redhat.com)
+- Console heading color variable used (sgoodwin@redhat.com)
+- Revert to single _type partial And add usage cases in styleguide font page
+  (sgoodwin@redhat.com)
+- Updated styleguide page for iconfont usage (sgoodwin@redhat.com)
+- Merge branch 'master' of github.com:openshift/li into misc-dev
+  (sgoodwin@redhat.com)
+- Merge pull request #986 from liggitt/aria_landmarks
+  (dmcphers+openshiftbot@redhat.com)
+- Small tweak to usage costs message. (jharris@redhat.com)
+- Remove whitespace around premium decorator to avoid orphan wrapping
+  (jliggitt@redhat.com)
+- Adding partial overrides for premium messaging. (jharris@redhat.com)
+- Separate _type partials for console and site move h1,h2,h3...
+  (sgoodwin@redhat.com)
+- Scope table cell and row headers, add role=main landmarks, add 'Skip to
+  content' links (jliggitt@redhat.com)
+
 * Thu Mar 07 2013 Adam Miller <admiller@redhat.com> 1.6.1-1
 - bump_minor_versions for sprint 25 (admiller@redhat.com)
 
