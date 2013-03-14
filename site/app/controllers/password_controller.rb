@@ -65,7 +65,7 @@ class PasswordController < ApplicationController
 
     respond_to do |format|
       if @user.change_password
-        format.html { redirect_to account_path, :flash => { :success => 'Your password has been changed' } }
+        format.html { redirect_to account_settings_redirect, :flash => { :success => 'Your password has been changed' } }
         format.js { render :json => { :status => 'success', :message => 'Your password has been successfully changed' } }
       else
         msg = @user.errors.values.first
@@ -74,5 +74,10 @@ class PasswordController < ApplicationController
       end
     end
   end
+
+  protected
+    def active_tab
+      :account if ['edit', 'update'].include? action_name
+    end
 
 end

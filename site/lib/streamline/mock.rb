@@ -173,6 +173,35 @@ module Streamline
       end
     end
 
+    def user_info!
+      if full_user?
+        {"last_name"=>"Test",
+         "greeting"=>"Mr.",
+         "state"=>"TX",
+         "address1"=>"123 Address",
+         "address2"=>nil,
+         "address3"=>nil,
+         "city"=>"SOMEWHERE",
+         "country"=>"UNKNOWN",
+         "title"=>"Software",
+         "postal_code"=>"12345",
+         "phone_number"=>"000-000-0000",
+         "company"=>"Red Hat",
+         "login"=>login,
+         "first_name"=>"User"}
+      else
+        {
+          "login"=>login,
+        }
+      end
+    end
+
+    def promote(*args)
+      @streamline_type = :full
+      @roles = ['authenticated']
+      true
+    end
+
     private
       def set_fake_roles
         @roles, @email_address = if @rhlogin.index '@'

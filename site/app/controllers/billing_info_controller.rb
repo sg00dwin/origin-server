@@ -21,4 +21,9 @@ class BillingInfoController < ConsoleController
   def previous_path
     next_path
   end
+
+  protected
+    def active_tab
+      :account
+    end
 end

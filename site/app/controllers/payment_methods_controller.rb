@@ -76,6 +76,10 @@ class PaymentMethodsController < ConsoleController
       end
     end
 
+    def active_tab
+      :account
+    end
+
     def text
       TextHelper.instance
     end

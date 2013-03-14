@@ -1,5 +1,5 @@
 - content_for :title, 'Change Password'
-- breadcrumb_for_account 'Change your password'
+- breadcrumb_for_account_settings 'Change your password'
 
 %h1 Change your password
 
@@ -17,6 +17,6 @@
     = f.input :password_confirmation, :as => :password, :required => true, :label => 'Retype new password'
 
   = f.buttons do
-    = link_to "Cancel", account_path, :class => 'btn'
+    = link_to "Cancel", account_settings_redirect, :class => 'btn'
     = f.commit_button :label => 'Change Password'
     = f.loading

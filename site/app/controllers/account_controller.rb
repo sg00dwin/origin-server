@@ -13,4 +13,10 @@ class AccountController < ApplicationController
   include Account::Creation
   include Account::ExternalCreation
   include Account::ExtendedDashboard
+
+  protected
+    helper_method :active_tab
+    def active_tab
+      :account
+    end
 end
