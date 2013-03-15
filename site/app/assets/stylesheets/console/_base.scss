@@ -131,6 +131,7 @@ textarea::-webkit-input-placeholder {
 }
 
 label {color: inherit;}
+legend {color: $consoleHeaderColor;}
 
 
 ::-moz-selection {background: #f0f392;color: black;}
