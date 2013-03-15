@@ -530,4 +530,28 @@ class AriaUnitTest < ActiveSupport::TestCase
     # Different features can't be sorted together
     assert_raise(Aria::MasterPlanFeature::ComparisonError) {[plan2_scale, plan1_gears].sort}
   end
+
+  def test_bill_should_be_blank
+    assert Aria::Bill.new(nil, nil, nil, nil, [], [], 0).blank?
+    assert Aria::Bill.new(nil, nil, nil, nil, [], [], 0.01).present?
+    assert Aria::Bill.new(nil, nil, nil, nil, [Aria::RecurringLineItem.new({'amount' => 0.01}, 1)], [], 0).present?
+    assert Aria::Bill.new(nil, nil, nil, nil, [Aria::RecurringLineItem.new({'amount' => 0.00}, 1)], [], 0).present?
+  end
+
+  def test_line_item_prorated
+    assert !Aria::RecurringLineItem.new({'units' => 1.0}, 1).prorated?
+    assert  Aria::RecurringLineItem.new({'units' => 0.1}, 1).prorated?
+  end
+
+  def test_sort_line_items
+    rec = Aria::RecurringLineItem.new({'amount' => 0.00, 'rate_per_unit' => 1.0, 'service_name' => 'Recurring'}, 1)
+    assert !rec.tax?
+    assert rec.recurring?
+    tx1 = Aria::RecurringLineItem.new({'amount' => 1.00, 'rate_per_unit' => nil}, 1)
+    assert tx1.tax?
+    tx2 = Aria::RecurringLineItem.new({'amount' => 2.00, 'rate_per_unit' => 1.0, 'service_name' => 'Taxes'}, 1)
+    assert tx2.tax?
+    use = Aria::UsageLineItem.new({'units' => 1, 'rate' => 1.0}, 1)
+    assert_equal [rec,use,tx2,tx1], [use,tx1,tx2,rec].sort_by(&Aria::LineItem.plan_sort)
+  end
 end

@@ -73,7 +73,7 @@ class AccountControllerTest < ActionController::TestCase
       with_unique_user
       get :show
       assert_response :success
-      assert assigns(:user).email_address.present?
+      assert assigns(:user)
       assert assigns(:identities).present?
       assert assigns(:domain).nil?
 
@@ -88,7 +88,7 @@ class AccountControllerTest < ActionController::TestCase
       with_unique_user
       get :show
       assert_response :success
-      assert assigns(:user).email_address.present?
+      assert assigns(:user)
       assert assigns(:identities).present?
       assert assigns(:domain).nil?
 

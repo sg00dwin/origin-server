@@ -139,7 +139,9 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     post '/account/plans/megashift/upgrade', {:plan_id => 'megashift'}
-    assert_redirected_to '/account/plan'
+    assert_response :success
+    assert_select 'h1', 'You have upgraded to MegaShift!'
+    assert_template :upgraded
 
     assert_equal 'megashift', User.find(:one, :as => user).plan_id
 
