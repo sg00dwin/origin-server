@@ -37,6 +37,18 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     assert user.send(:has_account?)
   end
 
+  test 'should set bill day correctly' do
+    user = Aria::UserContext.new(WebUser.new :rhlogin => new_uuid)
+    assert user.create_account
+    assert user.errors.empty?
+
+    assert_equal '1', user.account_details.bill_day
+    user.set_bill_day 2
+    assert_equal '2', user.account_details.bill_day
+    user.set_bill_day 1
+    assert_equal '1', user.account_details.bill_day
+  end
+
   test 'should set and update billing info' do
     user = Aria::UserContext.new(WebUser.new :rhlogin => new_uuid)
 
