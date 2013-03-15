@@ -73,6 +73,7 @@ Requires:  charlie
 Requires:  pam
 Requires:  pam-devel
 Requires:  bind
+Requires:  memcached
 
 # CI Requirements
 Requires:  jenkins
@@ -86,6 +87,7 @@ Requires:  php-mysql
 Requires:  php-pdo
 Requires:  php-pear-MDB2-Driver-mysql
 Requires:  php-pear-MDB2-Driver-mysqli
+Requires:  php-pecl-memcached
 Requires:  php-pecl-apc
 Requires:  php-soap
 Requires:  php-tidy
@@ -404,6 +406,8 @@ service iptables restart
 service activemq restart
 #service qpidd restart
 service mcollective start
+service memcached-1 start
+service memcached-2 start
 service rhc-datastore configure
 service rhc-datastore start
 service rhc-site restart
@@ -416,6 +420,8 @@ chkconfig named on
 #chkconfig qpidd on
 chkconfig activemq on
 chkconfig mcollective on
+chkconfig memcached-1 on
+chkconfig memcached-2 on
 chkconfig rhc-datastore on
 chkconfig rhc-site on
 chkconfig rhc-broker on
