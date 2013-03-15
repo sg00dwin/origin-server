@@ -25,6 +25,7 @@ gem 'wddx'
 gem 'pony'
 gem 'systemu'
 gem 'rest-client'
+gem 'dalli'
 
 gem 'openshift-origin-dns-dynect'
 gem 'openshift-origin-billing-aria'
