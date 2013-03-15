@@ -126,7 +126,7 @@ module OpenShift
       raise
     rescue Exception => e
       Rails.logger.error "Exception occurred while calling streamline - #{e.message}"
-      Rails.logger.error e, e.backtrace
+      Rails.logger.error e.backtrace
       raise OpenShift::AuthServiceException
     end
   end

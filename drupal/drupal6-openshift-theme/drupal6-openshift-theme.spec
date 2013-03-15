@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.14.1
+Version: 3.14.2
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,13 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Mar 14 2013 Adam Miller <admiller@redhat.com> 3.14.2-1
+- Merge pull request #983 from fabianofranz/master
+  (dmcphers+openshiftbot@redhat.com)
+- Merge remote-tracking branch 'upstream/master' (ffranz@redhat.com)
+- Reverted the ajax XHR hack previously used to fix bug 876681 and bug 874645
+  (was fixed on the latest verison of drupal) (ffranz@redhat.com)
+
 * Thu Mar 07 2013 Adam Miller <admiller@redhat.com> 3.14.1-1
 - bump_minor_versions for sprint 25 (admiller@redhat.com)
 
