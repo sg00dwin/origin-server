@@ -74,12 +74,12 @@ class AccountControllerTest < ActionController::TestCase
       get :show
       assert_response :success
       assert assigns(:user)
-      assert assigns(:identities).present?
+      assert assigns(:identity)
       assert assigns(:domain).nil?
 
       assert assigns(:plan).present?, assigns(:user).inspect
-      assert_select 'a', 'Upgrade now!'
-      assert_select 'p', /FreeShift/, response.inspect
+      assert_select 'a', 'Upgrade Now'
+      assert_select 'h1', /FreeShift/, response.inspect
     end
   end
 
@@ -88,13 +88,14 @@ class AccountControllerTest < ActionController::TestCase
       with_unique_user
       get :show
       assert_response :success
+      assert_template :dashboard_free
       assert assigns(:user)
-      assert assigns(:identities).present?
+      assert assigns(:identity)
       assert assigns(:domain).nil?
 
-      assert assigns(:plan).nil?
-      assert_select 'a', /Learn more about upcoming/
-      assert_select 'p', /FreeShift/, response.inspect
+      assert assigns(:plan)
+      assert_select 'a', /Get more help and information/
+      assert_select 'h1', /FreeShift/, response.inspect
     end
   end
 

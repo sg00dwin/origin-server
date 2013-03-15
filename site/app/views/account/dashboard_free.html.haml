@@ -30,5 +30,6 @@
 
       %p= link_to "Get more help and information about OpenShift accounts", settings_account_path, :class => 'action-more'
 
-%section.panel
-  = render :partial => 'upgrade', :locals => {:user => @user}
+- if user_can_upgrade_plan?
+  %section.panel
+    = render :partial => 'upgrade', :locals => {:user => @user}
