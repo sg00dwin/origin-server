@@ -70,7 +70,7 @@ class CloudUser
       end if domain.applications
     end if self.domains
        
-    allow_certs = false or (plan_capabilities.has_key?("private_ssl_certificates") and plan_capabilities["private_ssl_certificates"] == true)
+    allow_certs = (plan_capabilities.has_key?("private_ssl_certificates") and plan_capabilities["private_ssl_certificates"] == true)
 
     self.domains.each do |domain|
       domain.applications.each do |app|
