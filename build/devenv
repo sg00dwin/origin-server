@@ -26,6 +26,21 @@ module Online
       get_sync_dirs
     end
 
+    desc "tunnel", "Setup tunnelling to the devenv"
+    method_option :localhost, :required => false, :default => 'localhost', :desc => "The hostname to use locally (default 'localhost')"
+    method_option :devenv,    :required => false, :default => 'verifier',  :desc => "The hostname for the devenv (default 'verifier')"
+    def tunnel
+      ports = {
+        8118 => 8118,
+        9443 => 443,
+        11211 => 11211,
+        11212 => 11212
+      }
+      say "Your local machine will now think '#{options.localhost}' is the hostname of your devenv."
+      cmd = "ssh #{ports.map{ |k,v| "-L #{k}:#{options.localhost}:#{v}"}.join(' ')} #{options.devenv}"
+      exec cmd
+    end
+
     desc "watch", "Watch for changes to your source directory with the 'listen' gem and copy them to the remote image. Not a full replacement for 'sync' - intended to speed Rails development."
     method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
 
