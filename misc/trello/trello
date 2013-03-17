@@ -5,6 +5,9 @@ $LOAD_PATH.unshift(File.dirname(__FILE__) + '/lib') unless $LOAD_PATH.include?(F
 require 'config'
 
 require 'trello_helper'
+require 'output_helper'
+require 'reports'
+require 'report'
 
 require 'pp'
 require 'yaml'
@@ -28,7 +31,7 @@ def load_conf(klass,args,single = false)
   end
 end
 
-tag_to_label_color = {
+$tag_to_label_color = {
   'documentation' => 'green',
   'tc-approved' => 'yellow',
   'no-qe' => 'orange',
@@ -77,7 +80,7 @@ command :list do |c|
             puts "     #{index+1}) #{card.name} (##{card.short_id})"
             members = card.members
             if !members.empty?
-              puts "       Assigne(es): #{members.map{|member| member.full_name}.join(',')}"
+              puts "       Assignee(s): #{members.map{|member| member.full_name}.join(',')}"
             end
           end
         end
@@ -90,8 +93,44 @@ end
 command :report do |c|
   c.syntax = "#{name} report"
 
+  c.option "--report-type NAME" , "Available report types: %s" % CONFIG.reports.keys.join(', ')
+
   c.description = "An assortment of Trello reporting utilities"
   c.action do |args, options|
+    options.report_type ||= choose("Report to run?",*CONFIG.reports.keys)
+    options.report_type = options.report_type.to_sym
+    if options.date
+      $date = Date.parse(options.date)
+    end
+    
+    heading "Generating Status Report" do
+      # Read Rally configuration file
+      _progress "Logging into Trello" do
+        $sprint = Sprint.new({:trello => trello})
+      end
+      
+      # Generate queries
+      _progress "Generating queries" do
+        $report_types = load_conf(UserStoryReport,CONFIG.queries)
+      end
+
+      # Generate reports
+      _progress "Building available reports" do
+        $reports = load_conf(Report,CONFIG.reports)
+      end
+    end
+    
+    report = $reports[options.report_type]
+    report.options = options.__hash__
+    
+    _table(
+      "Running Report With Options",
+      report.options.marshal_dump,
+      { :capitalize => true, :sort => 0, :separator => ':' }
+    )
+    
+    report.send_email
+    
   end
 end
 
