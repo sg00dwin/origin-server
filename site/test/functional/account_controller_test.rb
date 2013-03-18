@@ -99,12 +99,12 @@ class AccountControllerTest < ActionController::TestCase
     end
   end
 
-	test "should get success on post and choosing Express" do
-		post(:create, {:web_user => get_post_form})
+  test "should get success on post and choosing Express" do
+    post(:create, {:web_user => get_post_form})
 
-		assert_equal 'openshift', assigns(:product)
+    assert_equal 'openshift', assigns(:product)
     assert_redirected_to complete_account_path
-	end
+  end
 
   test "should fail register external with invalid password" do
     post(:create_external, {:json_data => '{"email_address":"tester@example.com","password":"pw"}', :captcha_secret => 'secret', :registration_referrer => 'appcelerator'})
@@ -128,6 +128,21 @@ class AccountControllerTest < ActionController::TestCase
     assert "promo1", user.promo_code
 
     assert_redirected_to complete_account_path(:promo_code => 'promo1')
+  end
+
+  test 'should send support contact mail' do
+    email_obj = Object.new
+    AccountSupportContactMailer.expects(:contact_email).once.returns(email_obj)
+    email_obj.expects(:deliver).once
+
+    post(:contact_support,
+      {:support_contact => {
+        :from => 'test@example.com',
+        :to => Rails.configuration.acct_help_mail_to,
+        :subject => 'test',
+        :body => 'nothing'}})
+    assert contact = assigns(:contact)
+    assert_redirected_to({:action => 'help'})
   end
 
   def get_post_form

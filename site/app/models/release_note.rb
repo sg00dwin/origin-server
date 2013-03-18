@@ -1,10 +1,9 @@
-class ReleaseNote < RestApi::Base
+class ReleaseNote < CommunityApi::Base
   include RestApi::Cacheable
   allow_anonymous
   singleton
 
-  self.site = Console.config.community_url
-  self.prefix = URI.join(Console.config.community_url, 'releases/').path
+  self.prefix = '/releases/'
 
   schema do
     string :title, :summary, :href

@@ -7,12 +7,12 @@ class AccountController < ApplicationController
     ['new','create','complete','create_external'].include?(action_name) ? 'simple' : 'console'
   end
 
-  before_filter :require_login, :only => :show
   protect_from_forgery :except => :create_external
 
   include Account::Creation
   include Account::ExternalCreation
   include Account::ExtendedDashboard
+  include Account::Help
 
   protected
     helper_method :active_tab

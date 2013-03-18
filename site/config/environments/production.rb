@@ -111,5 +111,8 @@ RedHatCloud::Application.configure do
                                  overpass.css
                                 )
 
+  # Account Support contact
+  config.acct_help_mail_to = 'os.accounts@redhat.com'
+
   Console.configure(ENV['CONSOLE_CONFIG_FILE'] || '/etc/openshift/console.conf')
 end

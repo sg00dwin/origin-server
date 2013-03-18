@@ -78,6 +78,9 @@ RedHatCloud::Application.configure do
   config.email_from = 'OpenShift <noreply@openshift.redhat.com>'
   config.marketing_mailing_list = 'Marketing Mailing List <jgurrero@redhat.com>'
 
+  # Account Support contact
+  config.acct_help_mail_to = 'os.accounts@redhat.com'
+
   Console.configure do |c|
     c.api = (ENV['CONSOLE_API_MODE'] || 'local').to_sym
     c.community_url = 'https://www.openshift.com/'
