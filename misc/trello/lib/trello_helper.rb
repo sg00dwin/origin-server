@@ -59,8 +59,8 @@ class TrelloHelper
     org.boards.target
   end
 
-  def board(board_name)
-    boards[board_name]
+  def board(board_id)
+    boards[board_id]
   end
   
   def member(member_name)

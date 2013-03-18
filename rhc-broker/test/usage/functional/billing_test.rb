@@ -54,7 +54,7 @@ class BillingTest < ActiveSupport::TestCase
     current_plan = plans[0]
     assert_equal(current_plan["plan_name"], "FreeShift", "Current plan name #{current_plan["plan_name"]} expected FreeShift")
     
-    api.update_master_plan(acct_no, :megashift)
+    api.update_master_plan(acct_no, :megashift, true)
     
     plans = api.get_acct_plans_all(acct_no)
     assert(plans.length == 1)
@@ -70,7 +70,7 @@ test "update master plan and then revert to previous" do
     current_plan = plans[0]
     assert_equal(current_plan["plan_name"], "FreeShift", "Current plan name #{current_plan["plan_name"]} expected FreeShift")
       
-    api.update_master_plan(acct_no, :megashift)
+    api.update_master_plan(acct_no, :megashift, true)
       
     plans = api.get_acct_plans_all(acct_no)
     assert(plans.length == 1)
@@ -79,10 +79,10 @@ test "update master plan and then revert to previous" do
       
     api.update_master_plan(acct_no, :freeshift)
       
-    plans = api.get_acct_plans_all(acct_no)
+    plans = api.get_queued_service_plans(acct_no)
     assert(plans.length == 1)
     current_plan = plans[0]
-    assert_equal(current_plan["plan_name"], "FreeShift", "Current plan name #{current_plan["plan_name"]} expected FreeShift")
+    assert_equal(current_plan["new_plan"], "FreeShift", "Current plan name #{current_plan["new_plan"]} expected FreeShift")
   end
   
   test "update master plan to same plan" do

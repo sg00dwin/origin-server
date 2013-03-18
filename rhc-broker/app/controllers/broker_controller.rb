@@ -34,6 +34,8 @@ class BrokerController < ActionController::Base
               Rails.logger.error("Invalid gear uuid #{gear_uuid}")
               next
             end
+            app.analytics["last_accessed_at"] = access_time
+            app.save
             app_data = { "app_uuid" => app.uuid, "column_name" => "last_accessed_at", "column_value" => access_time }
             if not app_uuid_hash.has_key?(app.uuid)
               bulk_update_array << app_data 
@@ -47,6 +49,11 @@ class BrokerController < ActionController::Base
         return unless data
         action = data['action']
         app_uuid = data['app_uuid']
+        if action=='push'
+          app,gear = Application.find_by_gear_uuid(app_uuid)
+          app.analytics[action] = Time.now.strftime("%Y-%m-%d %H:%M:%S")
+          app.save
+        end
         Online::Broker::Nurture.application_update(action, app_uuid)
       end
   
