@@ -149,6 +149,8 @@ class UserApiTest < ActionDispatch::IntegrationTest
     acct_no = api.create_fake_acct(user_id, :freeshift)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :megashift}, @headers)
     assert_response :ok
+    body = JSON.parse(@response.body)
+    assert_equal(body["data"]["capabilities"]["private_ssl_certificates"], true)
     #create app and add certificate
     request_via_redirect(:post, "/rest/domains", {:id=> @login[0..15]}, @headers)
     assert_response :created
