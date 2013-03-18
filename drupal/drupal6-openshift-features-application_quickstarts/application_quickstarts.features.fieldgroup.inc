@@ -47,7 +47,7 @@ function application_quickstarts_fieldgroup_default_groups() {
         'description' => '',
       ),
     ),
-    'weight' => '6',
+    'weight' => '-1',
     'fields' => array(
       '0' => 'field_quickstart_trust',
       '1' => 'field_quickstart_icon',

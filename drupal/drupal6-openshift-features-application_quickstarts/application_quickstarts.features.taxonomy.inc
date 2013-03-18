@@ -11,9 +11,9 @@ function application_quickstarts_taxonomy_default_vocabularies() {
       'help' => '',
       'relations' => '1',
       'hierarchy' => '0',
-      'multiple' => '0',
+      'multiple' => '1',
       'required' => '0',
-      'tags' => '1',
+      'tags' => '0',
       'module' => 'features_quickstart_tags',
       'weight' => '0',
       'nodes' => array(

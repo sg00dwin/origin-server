@@ -634,19 +634,20 @@ html.js fieldset.collapsible .fieldset-wrapper {
   }
 }
 
-.community article.quickstart .clear-block > .links {
-  margin-top: 25px;
-}
-
-.community article.quickstart .terms {
-  font-weight: bold;
-  .links {
-    font-weight: normal;
-    margin: 0 0 0 6px;
+.community .quickstart {
+  .clear-block > .links {
+    margin-top: 25px;
   }
-  .links.inline a {
-    margin-right: 12px;
-    text-transform: none;
+  .terms {
+    font-weight: bold;
+    .links {
+      font-weight: normal;
+      margin: 0 0 0 6px;
+    }
+    .links.inline a {
+      margin-right: 12px;
+      text-transform: none;
+    }
   }
 }
 
@@ -659,54 +660,63 @@ html.js fieldset.collapsible .fieldset-wrapper {
   padding: 1px 3px;
   text-transform: uppercase;
 }
-.community .view-application-quickstarts-content .provider {
-  display: inline-block;
-}
-.community .view-application-quickstarts-content .views-field-title .provider {
-  position: relative;
-  top: -5px;
-}
+.community .view-application-quickstarts-content {
+  .provider {
+    display: inline-block;
+  }
+  .views-field-title .provider {
+    position: relative;
+    top: -5px;
+  }
 
-.community .view-application-quickstarts-content .table {
-  margin-bottom: 0;
-}
-.community .view-application-quickstarts-content .table tbody tr td {
-  padding-bottom: 16px;
-  padding-left: 0;
-  padding-top: 12px;
-}
-.community .view-application-quickstarts-content .table tbody tr:hover td {
-  background-color: transparent;
-}
-.community .view-application-quickstarts-content .table tbody tr.views-row-extra td {
-  border-top: 0;
-}
-.community .view-application-quickstarts-content .table tbody tr td p {
-  margin-bottom: 10px;
-}
-.community .view-application-quickstarts-content .table tbody tr td a[href^='/quickstart-tags'] {
-  font-size: 11px;
-}
-.community .view-application-quickstarts-content .table tbody tr td a > h3 {
-  color: inherit;
-  margin-bottom: 6px;
-}
-.community .view-application-quickstarts-content .table thead tr th {
-  padding-left: 0;
-}
-.community .view-application-quickstarts-content .table thead tr th.active a > img {
-  margin-left: 5px;
-}
-.community .view-application-quickstarts-content .table thead tr th.views-field-created {
-  font-size: inherit;
-}
+  .metadata {
+    color: #999;
+    font-size: 12px;
+    margin-bottom: 5px;
+    position: relative; 
+    .author-bio-box  {
+      .author-bio { display: none; }
+    }
+  }
 
-.community .view-application-quickstarts-content .view-footer {
-  border-top: 1px solid #ddd;
-  padding-top: 12px;
-}
-.community .view-application-quickstarts-content .view-footer .action-more {
-  font-size: inherit;
+  p {
+    margin-bottom: 10px;
+  }
+
+  .views-field-tid {
+    a {
+      font-size: 11px;
+    }
+  }
+
+  .views-row {
+    margin-bottom: 20px; /* Remove when tiles are introduced to this view */
+  }
+
+  .view-footer {
+    padding-top: 12px;
+
+    .action-more {
+      font-size: inherit;
+    }
+  }
+
+  .table {
+    td {
+      padding-bottom: 16px;
+      padding-left: 0;
+      padding-top: 12px;
+    }
+    tr:hover td {
+      background-color: transparent;
+    }
+    tr.views-row-extra td {
+      border-top: 0;
+    }
+    th.views-field-created {
+      font-size: inherit;
+    }
+  }
 }
 
 @media (max-width: 480px) {

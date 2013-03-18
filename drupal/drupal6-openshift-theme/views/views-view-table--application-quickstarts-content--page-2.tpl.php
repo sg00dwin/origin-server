@@ -18,7 +18,8 @@
   <?php if (!empty($title)) : ?>
     <caption><?php print $title; ?></caption>
   <?php endif; ?>
-  <?php 
+  <?php
+    $exportField = 'teaser';
     $hasHeader = false;
     foreach ($header as $field => $label) {
       $label = trim($label);
@@ -30,8 +31,8 @@
     if ($hasHeader) { ?>
   <thead>
     <tr>
-      <?php foreach ($header as $field => $label): 
-        if ($field == 'markup'){ continue; }
+      <?php foreach ($header as $field => $label):
+        if ($field == $exportField){ continue; }
         ?>
         <th class="views-field views-field-<?php print $fields[$field]; ?>"><?php print $label; ?></th>
       <?php endforeach; ?>
@@ -42,12 +43,12 @@
     <?php foreach ($rows as $count => $row): ?>
       <tr class="<?php print implode(' ', $row_classes[$count]); ?>">
         <?php foreach ($row as $field => $content): 
-          if ($field == 'markup') { continue; } ?>
+          if ($field == $exportField) { continue; } ?>
           <td class="views-field views-field-<?php print $fields[$field]; ?>"><?php print $content; ?></td>
         <?php endforeach; ?>
       </tr>
       <?php 
-        $field = 'markup';
+        $field = $exportField;
         if (array_key_exists($field, $row)) { 
           $content = $row[$field]; ?>
         <tr class="<?php print implode(' ', $row_classes[$count]); ?> views-row-extra">

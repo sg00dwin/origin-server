@@ -1452,7 +1452,7 @@ print application_quickstarts_summary($data->node_data_field_cartridges_list_fie
       'hide_alter_empty' => 1,
       'link_to_node' => 0,
       'label_type' => 'none',
-      'format' => 'user_image_large_80x80_default',
+      'format' => 'user_image_medium_40x40_default',
       'multiple' => array(
         'group' => TRUE,
         'multiple_number' => '',
@@ -1472,7 +1472,7 @@ print application_quickstarts_summary($data->node_data_field_cartridges_list_fie
       'label' => '',
       'alter' => array(
         'alter_text' => 1,
-        'text' => '[field_quickstart_trust_value] | ',
+        'text' => '<span class="provider">[field_quickstart_trust_value]</span>',
         'make_link' => 0,
         'path' => '',
         'absolute' => 0,
@@ -1643,7 +1643,7 @@ print application_quickstarts_summary($data->node_data_field_cartridges_list_fie
       'label' => '',
       'alter' => array(
         'alter_text' => 1,
-        'text' => '<div class="meta">[field_quickstart_trust_value] Added by [name] [value] [comment_count]</div>',
+        'text' => '<div class="metadata">[field_quickstart_trust_value]</div>',
         'make_link' => 0,
         'path' => '',
         'absolute' => 0,
@@ -1677,7 +1677,7 @@ print application_quickstarts_summary($data->node_data_field_cartridges_list_fie
       ),
     ),
     'teaser' => array(
-      'label' => 'Teaser',
+      'label' => '',
       'alter' => array(
         'alter_text' => 0,
         'text' => '',
@@ -1738,9 +1738,9 @@ print application_quickstarts_summary($data->node_data_field_cartridges_list_fie
       'empty_zero' => 0,
       'hide_alter_empty' => 1,
       'value' => '<p><?php
-print application_quickstarts_summary($data->node_data_field_quickstart_icon_field_cartridges_list_value, $data->node_data_field_quickstart_icon_field_git_repository_url_value);
+/* print application_quickstarts_summary($data->node_data_field_quickstart_icon_field_cartridges_list_value, $data->node_data_field_quickstart_icon_field_git_repository_url_value); */
 ?></p>',
-      'exclude' => 0,
+      'exclude' => 1,
       'id' => 'phpcode',
       'table' => 'customfield',
       'field' => 'phpcode',
@@ -1876,7 +1876,7 @@ print application_quickstarts_summary($data->node_data_field_quickstart_icon_fie
       ),
     ),
     'tid' => array(
-      'label' => 'Tags',
+      'label' => '',
       'alter' => array(
         'alter_text' => 0,
         'text' => '',
@@ -1940,78 +1940,14 @@ print application_quickstarts_summary($data->node_data_field_quickstart_icon_fie
   $handler->override_option('footer_empty', 0);
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('use_pager', '0');
+  $handler->override_option('style_plugin', 'default');
   $handler->override_option('style_options', array(
     'grouping' => '',
-    'override' => 1,
-    'sticky' => 0,
-    'order' => 'asc',
-    'summary' => '',
-    'columns' => array(
-      'nid' => 'title',
-      'title' => 'title',
-      'field_quickstart_icon_fid' => 'title',
-      'name' => 'title',
-      'comment_count' => 'title',
-      'value' => 'title',
-      'created' => 'title',
-      'teaser' => 'title',
-      'phpcode' => 'title',
-      'field_cartridges_list_value' => 'field_cartridges_list_value',
-      'field_git_repository_url_value' => 'field_git_repository_url_value',
-      'field_code_language_value' => 'field_code_language_value',
-      'tid' => 'title',
-    ),
-    'info' => array(
-      'nid' => array(
-        'sortable' => 0,
-        'separator' => '<br/>',
-      ),
-      'title' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'field_quickstart_icon_fid' => array(
-        'separator' => '',
-      ),
-      'name' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'comment_count' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'value' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'created' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'teaser' => array(
-        'separator' => '',
-      ),
-      'phpcode' => array(
-        'separator' => '',
-      ),
-      'field_cartridges_list_value' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'field_git_repository_url_value' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'field_code_language_value' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'tid' => array(
-        'separator' => '',
-      ),
-    ),
-    'default' => '-1',
+  ));
+  $handler->override_option('row_options', array(
+    'inline' => array(),
+    'separator' => '',
+    'hide_empty' => 1,
   ));
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
@@ -2051,7 +1987,7 @@ print application_quickstarts_summary($data->node_data_field_quickstart_icon_fie
       'label' => '',
       'alter' => array(
         'alter_text' => 1,
-        'text' => '<h4>[title]</h4>',
+        'text' => '<h3>[title]</h3>',
         'make_link' => 1,
         'path' => 'node/[nid]',
         'absolute' => 0,
@@ -2111,7 +2047,7 @@ print application_quickstarts_summary($data->node_data_field_quickstart_icon_fie
       'hide_alter_empty' => 1,
       'link_to_node' => 0,
       'label_type' => 'none',
-      'format' => 'user_image_large_80x80_default',
+      'format' => 'user_image_medium_40x40_default',
       'multiple' => array(
         'group' => TRUE,
         'multiple_number' => '',
@@ -2258,7 +2194,7 @@ print application_quickstarts_summary($data->node_data_field_quickstart_icon_fie
       'label' => '',
       'alter' => array(
         'alter_text' => 1,
-        'text' => '[field_quickstart_trust_value] |',
+        'text' => '<span class="provider">[field_quickstart_trust_value]</span>',
         'make_link' => 0,
         'path' => '',
         'absolute' => 0,
@@ -2302,7 +2238,7 @@ print application_quickstarts_summary($data->node_data_field_quickstart_icon_fie
       'label' => '',
       'alter' => array(
         'alter_text' => 1,
-        'text' => '<div class="meta">[field_quickstart_trust_value] Added by [name] [value] [comment_count]</div>',
+        'text' => '<div class="metadata">[field_quickstart_trust_value]</div>',
         'make_link' => 0,
         'path' => '',
         'absolute' => 0,
@@ -2336,7 +2272,7 @@ print application_quickstarts_summary($data->node_data_field_quickstart_icon_fie
       ),
     ),
     'teaser' => array(
-      'label' => 'Teaser',
+      'label' => '',
       'alter' => array(
         'alter_text' => 0,
         'text' => '',
@@ -2361,7 +2297,7 @@ print application_quickstarts_summary($data->node_data_field_quickstart_icon_fie
       'hide_empty' => 0,
       'empty_zero' => 0,
       'hide_alter_empty' => 1,
-      'exclude' => 1,
+      'exclude' => 0,
       'id' => 'teaser',
       'table' => 'node_revisions',
       'field' => 'teaser',
@@ -2397,9 +2333,9 @@ print application_quickstarts_summary($data->node_data_field_quickstart_icon_fie
       'empty_zero' => 0,
       'hide_alter_empty' => 1,
       'value' => '<p><?php
-print application_quickstarts_summary($data->node_data_field_quickstart_icon_field_cartridges_list_value, $data->node_data_field_quickstart_icon_field_git_repository_url_value);
+/* print application_quickstarts_summary($data->node_data_field_quickstart_icon_field_cartridges_list_value, $data->node_data_field_quickstart_icon_field_git_repository_url_value); */
 ?></p>',
-      'exclude' => 0,
+      'exclude' => 1,
       'id' => 'phpcode',
       'table' => 'customfield',
       'field' => 'phpcode',
@@ -2409,7 +2345,7 @@ print application_quickstarts_summary($data->node_data_field_quickstart_icon_fie
       ),
     ),
     'tid' => array(
-      'label' => 'Tags',
+      'label' => '',
       'alter' => array(
         'alter_text' => 0,
         'text' => 'Tagged with [tid]',
@@ -2600,78 +2536,14 @@ print application_quickstarts_summary($data->node_data_field_quickstart_icon_fie
   $handler->override_option('footer_empty', 0);
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('use_pager', '0');
+  $handler->override_option('style_plugin', 'default');
   $handler->override_option('style_options', array(
     'grouping' => '',
-    'override' => 1,
-    'sticky' => 0,
-    'order' => 'asc',
-    'summary' => '',
-    'columns' => array(
-      'nid' => 'title',
-      'title' => 'title',
-      'field_quickstart_icon_fid' => 'title',
-      'name' => 'title',
-      'value' => 'title',
-      'comment_count' => 'title',
-      'created' => 'title',
-      'teaser' => 'title',
-      'phpcode' => 'title',
-      'field_cartridges_list_value' => 'field_cartridges_list_value',
-      'field_git_repository_url_value' => 'field_git_repository_url_value',
-      'field_code_language_value' => 'field_code_language_value',
-      'tid' => 'title',
-    ),
-    'info' => array(
-      'nid' => array(
-        'sortable' => 0,
-        'separator' => '<br/>',
-      ),
-      'title' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'field_quickstart_icon_fid' => array(
-        'separator' => '',
-      ),
-      'name' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'value' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'comment_count' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'created' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'teaser' => array(
-        'separator' => '',
-      ),
-      'phpcode' => array(
-        'separator' => '',
-      ),
-      'field_cartridges_list_value' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'field_git_repository_url_value' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'field_code_language_value' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'tid' => array(
-        'separator' => '',
-      ),
-    ),
-    'default' => '-1',
+  ));
+  $handler->override_option('row_options', array(
+    'inline' => array(),
+    'separator' => '',
+    'hide_empty' => 1,
   ));
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
@@ -2710,7 +2582,7 @@ print application_quickstarts_summary($data->node_data_field_quickstart_icon_fie
     'title' => array(
       'label' => 'Name',
       'alter' => array(
-        'alter_text' => 1,
+        'alter_text' => 0,
         'text' => '<h4>[title]</h4>',
         'make_link' => 1,
         'path' => 'node/[nid]',
@@ -2781,10 +2653,54 @@ print application_quickstarts_summary($data->node_data_field_quickstart_icon_fie
         'button' => 'Use default',
       ),
     ),
+    'field_quickstart_trust_value' => array(
+      'label' => 'Provider',
+      'alter' => array(
+        'alter_text' => 1,
+        'text' => '<span class="provider">[field_quickstart_trust_value]</span>',
+        'make_link' => 0,
+        'path' => '',
+        'absolute' => 0,
+        'link_class' => '',
+        'alt' => '',
+        'rel' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'hide_alter_empty' => 1,
+      'link_to_node' => 0,
+      'label_type' => 'custom',
+      'format' => 'default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 0,
+      'id' => 'field_quickstart_trust_value',
+      'table' => 'node_data_field_quickstart_trust',
+      'field' => 'field_quickstart_trust_value',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
     'created' => array(
       'label' => 'Added',
       'alter' => array(
-        'alter_text' => 1,
+        'alter_text' => 0,
         'text' => '[created] by [name]',
         'make_link' => 0,
         'path' => '',
@@ -2902,50 +2818,6 @@ print application_quickstarts_summary($data->node_data_field_quickstart_icon_fie
       'id' => 'comment_count',
       'table' => 'node_comment_statistics',
       'field' => 'comment_count',
-      'override' => array(
-        'button' => 'Use default',
-      ),
-      'relationship' => 'none',
-    ),
-    'field_quickstart_trust_value' => array(
-      'label' => '',
-      'alter' => array(
-        'alter_text' => 1,
-        'text' => 'Provided by [field_quickstart_trust_value] |',
-        'make_link' => 0,
-        'path' => '',
-        'absolute' => 0,
-        'link_class' => '',
-        'alt' => '',
-        'rel' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'target' => '',
-        'help' => '',
-        'trim' => 0,
-        'max_length' => '',
-        'word_boundary' => 1,
-        'ellipsis' => 1,
-        'html' => 0,
-        'strip_tags' => 0,
-      ),
-      'empty' => '',
-      'hide_empty' => 0,
-      'empty_zero' => 0,
-      'hide_alter_empty' => 1,
-      'link_to_node' => 0,
-      'label_type' => 'none',
-      'format' => 'default',
-      'multiple' => array(
-        'group' => TRUE,
-        'multiple_number' => '',
-        'multiple_from' => '',
-        'multiple_reversed' => FALSE,
-      ),
-      'exclude' => 1,
-      'id' => 'field_quickstart_trust_value',
-      'table' => 'node_data_field_quickstart_trust',
-      'field' => 'field_quickstart_trust_value',
       'override' => array(
         'button' => 'Use default',
       ),
@@ -3177,7 +3049,7 @@ print application_quickstarts_summary($data->node_data_field_quickstart_trust_fi
         'target' => '',
         'help' => '',
         'trim' => 1,
-        'max_length' => '240',
+        'max_length' => '400',
         'word_boundary' => 1,
         'ellipsis' => 1,
         'html' => 1,
@@ -3187,7 +3059,7 @@ print application_quickstarts_summary($data->node_data_field_quickstart_trust_fi
       'hide_empty' => 0,
       'empty_zero' => 0,
       'hide_alter_empty' => 1,
-      'exclude' => 1,
+      'exclude' => 0,
       'id' => 'teaser',
       'table' => 'node_revisions',
       'field' => 'teaser',
@@ -3195,43 +3067,6 @@ print application_quickstarts_summary($data->node_data_field_quickstart_trust_fi
       'override' => array(
         'button' => 'Use default',
       ),
-    ),
-    'markup' => array(
-      'label' => 'Body contents',
-      'alter' => array(
-        'alter_text' => 1,
-        'text' => '[teaser] <p>[field_quickstart_trust_value] [phpcode_1]</p>',
-        'make_link' => 0,
-        'path' => '',
-        'absolute' => 0,
-        'link_class' => '',
-        'alt' => '',
-        'rel' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'target' => '',
-        'help' => '',
-        'trim' => 0,
-        'max_length' => '',
-        'word_boundary' => 1,
-        'ellipsis' => 1,
-        'html' => 0,
-        'strip_tags' => 0,
-      ),
-      'empty' => '',
-      'hide_empty' => 0,
-      'empty_zero' => 0,
-      'hide_alter_empty' => 0,
-      'value' => '',
-      'format' => '1',
-      'exclude' => 0,
-      'id' => 'markup',
-      'table' => 'customfield',
-      'field' => 'markup',
-      'override' => array(
-        'button' => 'Use default',
-      ),
-      'relationship' => 'none',
     ),
   ));
   $handler->override_option('sorts', array());
@@ -3247,16 +3082,16 @@ print application_quickstarts_summary($data->node_data_field_quickstart_trust_fi
       'nid' => 'value',
       'title' => 'title',
       'name' => 'name',
+      'field_quickstart_trust_value' => 'field_quickstart_trust_value',
       'created' => 'created',
       'value' => 'value',
       'comment_count' => 'comment_count',
-      'field_code_language_value' => 'field_code_language_value',
-      'field_git_repository_url_value' => 'field_git_repository_url_value',
-      'field_quickstart_icon_fid' => 'field_quickstart_icon_fid',
-      'field_cartridges_list_value' => 'field_cartridges_list_value',
-      'phpcode_1' => 'phpcode_1',
-      'teaser' => 'title',
-      'markup' => 'markup',
+      'field_code_language_value' => 'teaser',
+      'field_git_repository_url_value' => 'teaser',
+      'field_quickstart_icon_fid' => 'teaser',
+      'field_cartridges_list_value' => 'teaser',
+      'phpcode_1' => 'teaser',
+      'teaser' => 'teaser',
     ),
     'info' => array(
       'nid' => array(
@@ -3268,6 +3103,10 @@ print application_quickstarts_summary($data->node_data_field_quickstart_trust_fi
         'separator' => '<br/>',
       ),
       'name' => array(
+        'sortable' => 0,
+        'separator' => '',
+      ),
+      'field_quickstart_trust_value' => array(
         'sortable' => 0,
         'separator' => '',
       ),
@@ -3302,9 +3141,6 @@ print application_quickstarts_summary($data->node_data_field_quickstart_trust_fi
         'separator' => '',
       ),
       'teaser' => array(
-        'separator' => '',
-      ),
-      'markup' => array(
         'separator' => '',
       ),
     ),
@@ -3361,7 +3197,7 @@ print application_quickstarts_summary($data->node_data_field_quickstart_trust_fi
       'label' => '',
       'alter' => array(
         'alter_text' => 1,
-        'text' => '<h4>[title]</h4>',
+        'text' => '<h3>[title]</h3>',
         'make_link' => 1,
         'path' => 'node/[nid]',
         'absolute' => 0,
@@ -3421,7 +3257,7 @@ print application_quickstarts_summary($data->node_data_field_quickstart_trust_fi
       'hide_alter_empty' => 1,
       'link_to_node' => 0,
       'label_type' => 'none',
-      'format' => 'user_image_large_80x80_default',
+      'format' => 'user_image_medium_40x40_default',
       'multiple' => array(
         'group' => TRUE,
         'multiple_number' => '',
@@ -3568,7 +3404,7 @@ print application_quickstarts_summary($data->node_data_field_quickstart_trust_fi
       'label' => '',
       'alter' => array(
         'alter_text' => 1,
-        'text' => '[field_quickstart_trust_value] |',
+        'text' => '<span class="provider">[field_quickstart_trust_value]</span>',
         'make_link' => 0,
         'path' => '',
         'absolute' => 0,
@@ -3612,7 +3448,7 @@ print application_quickstarts_summary($data->node_data_field_quickstart_trust_fi
       'label' => '',
       'alter' => array(
         'alter_text' => 1,
-        'text' => '<div class="meta">[field_quickstart_trust_value] Added by [name] [value] [comment_count]</div>',
+        'text' => '<div class="metadata">[field_quickstart_trust_value] [comment_count]</div>',
         'make_link' => 0,
         'path' => '',
         'absolute' => 0,
@@ -3646,7 +3482,7 @@ print application_quickstarts_summary($data->node_data_field_quickstart_trust_fi
       ),
     ),
     'teaser' => array(
-      'label' => 'Teaser',
+      'label' => '',
       'alter' => array(
         'alter_text' => 0,
         'text' => '',
@@ -3706,10 +3542,10 @@ print application_quickstarts_summary($data->node_data_field_quickstart_trust_fi
       'hide_empty' => 0,
       'empty_zero' => 0,
       'hide_alter_empty' => 1,
-      'value' => '<p><?php
-print application_quickstarts_summary($data->node_data_field_quickstart_trust_field_cartridges_list_value, $data->node_data_field_quickstart_trust_field_git_repository_url_value);
-?></p>',
-      'exclude' => 0,
+      'value' => '<?php 
+/* <p> print application_quickstarts_summary($data->node_data_field_quickstart_trust_field_cartridges_list_value, $data->node_data_field_quickstart_trust_field_git_repository_url_value); </p>*/
+?>',
+      'exclude' => 1,
       'id' => 'phpcode',
       'table' => 'customfield',
       'field' => 'phpcode',
@@ -3719,7 +3555,7 @@ print application_quickstarts_summary($data->node_data_field_quickstart_trust_fi
       ),
     ),
     'tid' => array(
-      'label' => 'Tags',
+      'label' => '',
       'alter' => array(
         'alter_text' => 0,
         'text' => 'Tagged with [tid]',
@@ -3956,78 +3792,9 @@ print application_quickstarts_summary($data->node_data_field_quickstart_trust_fi
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('items_per_page', 3);
   $handler->override_option('use_pager', '0');
+  $handler->override_option('style_plugin', 'default');
   $handler->override_option('style_options', array(
     'grouping' => '',
-    'override' => 1,
-    'sticky' => 0,
-    'order' => 'asc',
-    'summary' => '',
-    'columns' => array(
-      'nid' => 'title',
-      'title' => 'title',
-      'field_quickstart_icon_fid' => 'title',
-      'name' => 'title',
-      'value' => 'title',
-      'comment_count' => 'title',
-      'created' => 'title',
-      'teaser' => 'title',
-      'phpcode' => 'title',
-      'field_cartridges_list_value' => 'field_cartridges_list_value',
-      'field_git_repository_url_value' => 'field_git_repository_url_value',
-      'field_code_language_value' => 'field_code_language_value',
-      'tid' => 'title',
-    ),
-    'info' => array(
-      'nid' => array(
-        'sortable' => 0,
-        'separator' => '<br/>',
-      ),
-      'title' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'field_quickstart_icon_fid' => array(
-        'separator' => '',
-      ),
-      'name' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'value' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'comment_count' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'created' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'teaser' => array(
-        'separator' => '',
-      ),
-      'phpcode' => array(
-        'separator' => '',
-      ),
-      'field_cartridges_list_value' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'field_git_repository_url_value' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'field_code_language_value' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'tid' => array(
-        'separator' => '',
-      ),
-    ),
-    'default' => '-1',
   ));
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);

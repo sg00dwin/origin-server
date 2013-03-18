@@ -19,18 +19,7 @@ function application_quickstarts_context_default_contexts() {
       ),
     ),
   );
-  $context->reactions = array(
-    'block' => array(
-      'blocks' => array(
-        'application_quickstarts-0' => array(
-          'module' => 'application_quickstarts',
-          'delta' => 0,
-          'region' => 'sidebar_left',
-          'weight' => 0,
-        ),
-      ),
-    ),
-  );
+  $context->reactions = array();
   $context->condition_mode = 1;
   $export['viewing-quickstarts'] = $context;
 
