@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.6.2
+Version: 1.6.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -708,6 +708,12 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Mon Mar 18 2013 Adam Miller <admiller@redhat.com> 1.6.3-1
+- Adding memcached files to RPM list (mhicks@redhat.com)
+- Paths for memcached services were wrong (ccoleman@redhat.com)
+- Implement memcached on devenv (ccoleman@redhat.com)
+- adjust to the php-5.3 dir (dmcphers@redhat.com)
+
 * Thu Mar 14 2013 Adam Miller <admiller@redhat.com> 1.6.2-1
 - Merge pull request #1016 from tkramer-rh/dev/tkramer/security/mod_security
   (dmcphers+openshiftbot@redhat.com)
