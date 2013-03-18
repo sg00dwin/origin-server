@@ -29,11 +29,11 @@ class AriaUnitTest < ActiveSupport::TestCase
       request.headers['User-Agent'] == Rails.configuration.user_agent
     end
   end
-  def error_wddx(code, message)
-    {'error_code' => code, 'error_msg' => message}.to_wddx
+  def error_wddx(code, message, body={})
+    {'error_code' => code, 'error_msg' => message}.merge(body).to_wddx
   end
-  def ok_wddx
-    error_wddx(0, 'Ok')
+  def ok_wddx(body={})
+    error_wddx(0, 'Ok', body)
   end
   def resp(*args)
     opts = args.extract_options!
@@ -213,6 +213,29 @@ class AriaUnitTest < ActiveSupport::TestCase
       :status_cd => 0.to_s,
       :master_plan_no => Rails.application.config.aria_default_plan_no.to_s,
       :userid => Digest::MD5::hexdigest('foo'),
+    }).to_return(resp(ok_wddx))
+
+    stub_aria(:get_acct_no_from_user_id, {
+      :user_id => Digest::MD5::hexdigest('foo'),
+    }).to_return(resp(ok_wddx({:acct_no => 123.to_s})))
+
+    stub_aria(:get_acct_details_all, {
+      :acct_no => 123.to_s
+    }).to_return(resp(ok_wddx({
+      :bill_day => 2.to_s,
+      :next_bill_date => '2013-01-02'
+    })))
+
+    stub_aria(:adjust_billing_dates, {
+      :acct_no => 123.to_s,
+      :action_directive => 1.to_s,
+      :adjustment_days => 27.to_s
+    }).to_return(resp(ok_wddx))
+
+    stub_aria(:adjust_billing_dates, {
+      :acct_no => 123.to_s,
+      :action_directive => 1.to_s,
+      :adjustment_days => 3.to_s
     }).to_return(resp(ok_wddx))
 
     user = TestUser.new
