@@ -115,9 +115,14 @@ module Aria
       invoices.select{ |i| i.paid_date.nil? or i.paid_date > today }
     end
 
+    def usage_invoices
+      invoices.select(&:usage_bill_from)
+    end
+
     def invoices
       @invoices ||= Aria.cached.get_acct_invoice_history(acct_no).map {|i| Aria::Invoice.new(i, acct_no) }
     end
+
 
     def statements
       @statements ||= Aria.cached.get_acct_statement_history(acct_no)

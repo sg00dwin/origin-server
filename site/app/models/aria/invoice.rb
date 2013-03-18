@@ -10,6 +10,10 @@ module Aria
       bill_date.to_date.strftime('%b')
     end
 
+    def payments
+      @payments ||= Aria.cached.get_payments_on_invoice(acct_no, invoice_no)
+    end
+
     def line_items
       @line_items ||= Aria.cached.get_invoice_details(acct_no, invoice_no).map {|li| 
         if li.usage_type_no
