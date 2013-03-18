@@ -164,9 +164,6 @@ module Aria
       return false unless validates
 
       Aria.create_acct_complete(params)
-
-      # If this fails, we're left with an existing user with an incorrect bill_day
-      set_bill_day(params[:alt_bill_day])
       true
     rescue Aria::AccountExists
       raise
@@ -189,11 +186,7 @@ module Aria
       return false unless validates
 
       Aria.update_acct_complete(acct_no, params)
-      @billing_info = nil
-      @account_details = nil
-      @invoices = nil
-      @unbilled_usage_balance = nil
-      @unbilled_usage_line_items = nil
+      (instance_variables - [:@delegate_sd_obj, :@acct_no]).each{ |s| remove_instance_variable(s) }
       #@tax_exempt = nil
       true
     rescue Aria::Error => e

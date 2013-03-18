@@ -1,13 +1,16 @@
 - content_for :page_title, 'My Account'
 
+.pull-right
+  %div.right <strong>#{@plan.name}</strong> Plan
+  %div.right= link_to "Plan details", account_plan_path
+
 %h1
   Account for
   %small #{@user.login}
-  %small.pull-right
-    <strong>#{@plan.name}</strong> Plan
 
-.panel
-  - unless @has_valid_payment_method
+
+- unless @has_valid_payment_method
+  .panel
     %p
       The payment method associated with your account is no longer valid. #{link_to "Please provide a valid credit card for this account", edit_account_payment_method_path}.
 
@@ -53,7 +56,7 @@
         %p.disclaimer The amounts above may not accurately reflect discounts, applicable sales taxes, peaks in future usage, or recent activity.
 
 
-  .span4.sidebar
+  .span4
     %section.panel
       = render :partial => 'settings', :locals => {:identity => @identity, :domain => @domain, :user => @user, :user_has_keys => @user_has_keys}
 
