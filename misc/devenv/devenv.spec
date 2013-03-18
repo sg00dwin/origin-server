@@ -697,6 +697,8 @@ mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshif
 %{_initddir}/rhc-broker
 %{_initddir}/rhc-site
 %{_initddir}/sauce-connect
+%{_initddir}/memcached-1
+%{_initddir}/memcached-2
 %{policydir}/*
 /etc/openshift/development
 
