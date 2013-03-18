@@ -2,10 +2,6 @@ module Account
   module Help
     extend ActiveSupport::Concern
 
-    included do
-      before_filter :require_login, :only => :help
-    end
-
     def help
       @topten = FaqItem.topten
       @user = User.find :one, :as => current_user

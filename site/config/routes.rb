@@ -62,6 +62,10 @@ RedHatCloud::Application.routes.draw do
 
     get :settings, :on => :member
     get :complete, :on => :member
+    get :help, :on => :member
+    get :faqs, :on => :member
+    match 'contact' => 'account#contact_support', :via => :post
+
 
     if Rails.configuration.aria_enabled
       resources :plans,   :only => :index do
@@ -104,10 +108,6 @@ RedHatCloud::Application.routes.draw do
   scope 'account' do
     openshift_account_resource_routes
   end
-
-  match 'account/help' => 'account#help', :via => [:get]
-  match 'account/faqs' => 'account#faqs', :via => [:get]
-  match 'account/contact' => 'account#contact_support', :via => [:post]
 
   match 'user/create/external' => 'account#create_external', :via => [:post]
 

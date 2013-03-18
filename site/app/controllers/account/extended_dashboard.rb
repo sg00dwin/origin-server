@@ -5,8 +5,6 @@ module Account
     include AsyncAware
     include SshkeyAware
 
-    before_filter :require_login, :only => :show
-
     # trigger synchronous module load 
     [Key, Authorization, User, Domain, Plan] if Rails.env.development?
 

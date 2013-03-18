@@ -1,8 +1,5 @@
 - content_for :page_title, 'Account Help'
--#.row
-  %section
-    .navbar
-      = render :partial => 'help_banner', :locals => {:user => @user, :user_on_basic_plan => @user_on_basic_plan}
+- breadcrumb_for_account 'Help'
 
 = flashes
 .row
@@ -11,13 +8,27 @@
       = render :partial => 'faq', :locals => {:topten => @topten}
   .span4
     %aside
-      -unless @user_on_basic_plan
-        .sidebar
-          = render :partial => 'customer_service'
-          = render :partial => 'contact', :locals => {:user => @user, :user_on_basic_plan => @user_on_basic_plan}
-          = render :partial => 'tech_support'
       .sidebar
-        = render :partial => 'community_support'
+        - unless @user_on_basic_plan
+          %h4 For Account Assistance
+          %p Submit a question regarding your account
+          = render :partial => 'contact', :locals => {:user => @user, :user_on_basic_plan => @user_on_basic_plan}
+
+          %h4 For Technical Support
+          %p
+            Visit the #{link_to "Red Hat Customer Portal", openshift_customer_portal_url, :class => 'external'}. 
+            You can also ask application questions in the community:
+          %ul
+            %li= link_to "OpenShift Forum", forums_url
+            %li= link_to "IRC on Freenode (#openshift)", irc_web_url
+
+        - else
+          %h4 Community Support
+          %ul
+            %li= link_to "OpenShift Forum", forums_url
+            %li= link_to "IRC on Freenode (#openshift)", irc_web_url
+            %li Send us an email to #{link_to_account_mailto}
+
       -if @user_on_basic_plan
         = render :partial => 'why_upgrade'
 

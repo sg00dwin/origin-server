@@ -8,6 +8,7 @@ class AccountController < ApplicationController
   end
 
   protect_from_forgery :except => :create_external
+  before_filter :require_login, :only => [:show, :settings, :help, :contact_support]
 
   include Account::Creation
   include Account::ExternalCreation
