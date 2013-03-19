@@ -661,12 +661,10 @@ html.js fieldset.collapsible .fieldset-wrapper {
   text-transform: uppercase;
 }
 .community .view-application-quickstarts-content {
-  .provider {
-    display: inline-block;
-  }
-  .views-field-title .provider {
-    position: relative;
-    top: -5px;
+  margin-top: -4px;
+
+  + h2 {
+    margin-top: 36px;
   }
 
   .metadata {
@@ -677,6 +675,12 @@ html.js fieldset.collapsible .fieldset-wrapper {
     .author-bio-box  {
       .author-bio { display: none; }
     }
+  }
+
+  .provider {
+    margin-right: 2px;
+    position: relative;
+    top: -6px;
   }
 
   p {
@@ -690,32 +694,16 @@ html.js fieldset.collapsible .fieldset-wrapper {
   }
 
   .views-row {
-    margin-bottom: 20px; /* Remove when tiles are introduced to this view */
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+    margin-bottom: 12px;
+    h3 {
+      color: inherit;
+    }
   }
 
   .view-footer {
     padding-top: 12px;
-
-    .action-more {
-      font-size: inherit;
-    }
-  }
-
-  .table {
-    td {
-      padding-bottom: 16px;
-      padding-left: 0;
-      padding-top: 12px;
-    }
-    tr:hover td {
-      background-color: transparent;
-    }
-    tr.views-row-extra td {
-      border-top: 0;
-    }
-    th.views-field-created {
-      font-size: inherit;
-    }
   }
 }
 
