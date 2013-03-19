@@ -1,4 +1,5 @@
 - content_for :title, 'Bills'
+- breadcrumb_for_account "Bills"
 
 - content_for :javascripts do
   :javascript
@@ -23,7 +24,7 @@
             = submit_tag 'View', :class => 'btn'
         = link_to "Download", @download_url, {:class => 'btn'}
         = link_to "Print", account_bills_path({:date => @bill_date, :print => true}), {:target => 'blank', :class => 'btn'}
-    
+
     %section.panel.clear-both
       - if @bill
         %h2 You were charged #{number_to_currency(@bill.balance)} on #{@bill.due_date.to_s(:billing_date)}

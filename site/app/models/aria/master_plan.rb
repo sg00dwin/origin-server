@@ -25,7 +25,7 @@ module Aria
     end
 
     def recurring_line_items
-      @recurring_line_items ||= services.keep_if{ |s| s.is_usage_based_ind == 0 }.map{ |s| Aria::RecurringLineItem.new(s, plan_no) }
+      @recurring_line_items ||= Aria::RecurringLineItem.find_all_by_plan_no(plan_no)
     end
 
     def services

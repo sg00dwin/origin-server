@@ -25,7 +25,8 @@
   .span8
     %section.panel
       - if @bill.present?
-        %h2 Current Charges 
+        .pull-right= link_to "Billing history", account_bills_path
+        %h2 Upcoming Charges
         %p
           Day #{@bill.day} of billing cycle #{@bill.start_date.to_s(:billing_date)} - #{@bill.end_date.to_s(:billing_date)}
 
@@ -42,8 +43,11 @@
         - else
           %p You have no recorded charges yet
 
+        %p.disclaimer The amounts above may not accurately reflect discounts, applicable sales taxes, peaks in future usage, or recent activity.  You are billed for your previous month's usage and any flat fees for the next month (prorated).
+
       - else
-        %h2 Current Charges
+
+        %h2 Upcoming Charges
         %p The breakdown of your next bill is not available yet.  Please check back shortly.
 
       %p.payment_method
@@ -51,9 +55,6 @@
           Your credit card (ending in <span class="card_number">#{@payment_method.cc_no}</span> and expiring <span class="card_expiration">#{@payment_method.expiration_date.to_s(:credit_card)}</span>) will be charged on #{@bill.due_date.to_s(:billing_date)}.<br>
         #{link_to @payment_method.blank? ? "Add a card to this account" : "Change card", edit_account_payment_method_path}
         | #{link_to "Update address", edit_account_billing_info_path}
-
-      - if @bill.present?
-        %p.disclaimer The amounts above may not accurately reflect discounts, applicable sales taxes, peaks in future usage, or recent activity.
 
 
   .span4

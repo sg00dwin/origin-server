@@ -109,7 +109,7 @@ module Aria
             next_bill_date - 1.day,
             next_bill_date,
             (Date.today - start_date).to_i + 1,
-            unpaid_invoices.map(&:line_items).flatten(1),
+            unpaid_invoices.map(&:line_items).flatten(1).concat(Aria::RecurringLineItem.find_all_by_plan_no(next_plan_no)),
             unpaid_invoices.map(&:payments).flatten(1),
             unbilled_usage_line_items,
             unbilled_usage_balance
@@ -132,11 +132,11 @@ module Aria
     end
 
     def unpaid_invoices
-      invoices.reject{ |i| i.paid_date && i.paid_date <= today }
+      invoices.reject{ |i| i.paid_date }
     end
 
     def paid_invoices
-      invoices.select{ |i| i.paid_date.nil? or i.paid_date > today }
+      invoices.select{ |i| i.paid_date.nil? }
     end
 
     def invoices_with_amounts
@@ -161,12 +161,12 @@ module Aria
       ]
     end
 
-    def downgraded_plan
-      plan = queued_plans.last
-      @queued_plan ||= ::OpenStruct.new(
-        :name => plan.original_plan,
-        :until_date => aria_datetime(plan.change_date)
-      ) if plan && plan.new_plan_no != account_details.plan_no
+    def next_plan_no
+      if plan = queued_plans.last
+        plan.new_plan_no.to_s
+      else
+        account_details.plan_no
+      end
     end
 
     def queued_plans

@@ -176,8 +176,22 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     assert bill.due_date > bill.end_date
     assert bill.start_date <= Date.today.to_datetime
     assert bill.line_items.present?
+    assert bill.line_items.select(&:recurring?).present?
     assert bill.line_items.select(&:usage?).present?
     assert bill.balance > 0
     assert bill.estimated_balance > 0
+  end
+
+  test "should get recurring line items from plans" do
+    assert items = Aria::RecurringLineItem.find_all_by_plan_no(Aria::MasterPlan.find('megashift').plan_no)
+    assert items.length == 1
+    assert_equal "Plan: MegaShift", items[0].name
+    assert_equal 42, items[0].amount
+    assert_equal 42, items[0].total_cost
+    assert !items[0].prorated?
+    assert_equal 1.0, items[0].units
+
+    assert items = Aria::RecurringLineItem.find_all_by_plan_no(Aria::MasterPlan.find('freeshift').plan_no)
+    assert items.empty?
   end
 end
