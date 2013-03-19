@@ -82,6 +82,7 @@ User errors:
 218: Not found response from request.  Possibly need to update client tools.
 219: Unable to communicate with server
 220: Plan change is not allowed for this account.
+221: Plan change is not allowed at this time for this account. Please retry after sometime and if problem persists, contact Red Hat support.
 253: Could not open config file
 255: Usage error
 
