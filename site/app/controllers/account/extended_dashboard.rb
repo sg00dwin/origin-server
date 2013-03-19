@@ -22,6 +22,8 @@ module Account
         render :dashboard_free and return
       end
 
+      @is_test_user = user.test_user?
+
       @current_usage_items = user.unbilled_usage_line_items
       @past_usage_items = user.past_usage_line_items
       @max_usage = [@current_usage_items, *@past_usage_items.values].map { |items| items.map(&:total_cost).sum }.max

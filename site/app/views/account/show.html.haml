@@ -8,7 +8,6 @@
   Account for
   %small #{@user.login}
 
-
 - unless @has_valid_payment_method
   .panel
     %p
@@ -55,6 +54,9 @@
           Your credit card (ending in <span class="card_number">#{@payment_method.cc_no}</span> and expiring <span class="card_expiration">#{@payment_method.expiration_date.to_s(:credit_card)}</span>) will be charged on #{@bill.due_date.to_s(:billing_date)}.<br>
         #{link_to @payment_method.blank? ? "Add a card to this account" : "Change card", edit_account_payment_method_path}
         | #{link_to "Update address", edit_account_billing_info_path}
+
+      - if @is_test_user
+        .alert.alert-warning You are accessing OpenShift with a test user.  If this is in error, please contact the account support team immediately.
 
 
   .span4

@@ -77,6 +77,10 @@ module Aria
       false
     end
 
+    def test_user?
+      account_details.is_test_acct == 'Y'
+    end
+
     def bill_dates
       invoices_with_amounts.map(&:bill_date).uniq.sort.reverse!
     end
