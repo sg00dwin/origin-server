@@ -280,18 +280,18 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
     print '.'
     user_id = domain_map[app['domain_id'].to_s]
     if user_id.nil?
-      relocated_domain = Domain.where(_id: Moped::BSON::ObjectId.from_string(app['domain_id'].to_s)).first
+      relocated_domain = Domain.where(_id: Moped::BSON::ObjectId(app['domain_id'])).first
       next if relocated_domain.nil?
       user_id = relocated_domain.owner._id.to_s
-      user_uuid = relocated_domain.owner.uuid
+      user_uuid = user_id
       user_login = relocated_domain.owner.login
     else
       if user_map.has_key? user_id
         user_uuid,user_login = user_map[user_id]
       else
-        relocated_user = CloudUser.where(_id: Moped::BSON::ObjectId.from_string(user_id)).first
+        relocated_user = CloudUser.where(_id: Moped::BSON::ObjectId(user_id)).first
         next if relocated_user.nil?
-        user_uuid = relocated_user.uuid
+        user_uuid = relocated_user._id.to_s
         user_login = relocated_user.login
       end
     end
