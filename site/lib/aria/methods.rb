@@ -98,6 +98,8 @@ module Aria
 
     def get_payments_on_invoice(acct_no, src_transaction_id)
       Array(super({:acct_no => acct_no, :src_transaction_id => src_transaction_id}).invoice_payments)
+    rescue Aria::NoLineItemsProvided
+      []
     end
 
     def get_acct_statement_history(acct_no, opts={})

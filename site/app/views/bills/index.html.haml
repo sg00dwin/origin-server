@@ -1,0 +1,52 @@
+- content_for :title, 'Bills'
+
+- content_for :javascripts do
+  :javascript
+    $(function() {
+      $('#date').change(function() {
+        if ($(this).val())
+          $('#date_form').submit();
+      })
+    });
+
+:css
+  select { vertical-align: top }
+
+.row-fluid
+  .span8
+    %h1.pull-left Bill Details
+    %div.pull-right
+      = form_tag account_bills_path, {:id => 'date_form', :method => 'get'} do |form|
+        - if @bill_dates.count > 1
+          = select_tag 'date', options_for_select([["Bill date:",""], *@bill_dates.map{|d| [d.to_datetime.to_s(:billing_date),d] }], @bill_date), {:title => 'Bill date'}
+          %noscript
+            = submit_tag 'View', :class => 'btn'
+        = link_to "Download", @download_url, {:class => 'btn'}
+        = link_to "Print", account_bills_path({:date => @bill_date, :print => true}), {:target => 'blank', :class => 'btn'}
+    
+    %section.panel.clear-both
+      - if @bill
+        %h2 You were charged #{number_to_currency(@bill.balance)} on #{@bill.due_date.to_s(:billing_date)}
+        = render :partial => '/account/bill', :locals => {:bill => @bill, :show_dates => false}
+      - elsif @bill_content
+        = @bill_content.html_safe
+      - else
+        %p There is no bill for the selected date.
+        %p= link_to "View your most recent bill.", account_bills_path
+
+    %section.panel
+      - if @prev_date
+        %span.pull-left= link_to "< Previous bill", account_bills_path({:date => @prev_date})
+      - if @next_date
+        %span.pull-right= link_to "Next bill >", account_bills_path({:date => @next_date})
+
+  .span4.sidebar
+    %section.panel
+      Current bill comparison
+
+    %section.panel
+      Change billing info
+      Change payment info
+
+    %section.panel
+      Tax note

@@ -1,3 +1,4 @@
+
 require 'delegate'
 
 module Aria
@@ -76,6 +77,28 @@ module Aria
       false
     end
 
+    def bill_dates
+      invoices_with_amounts.map(&:bill_date).uniq.sort.reverse!
+    end
+
+    def bill_for(date)
+      invoices = invoices_with_amounts.select {|i| i.bill_date == date }
+      return nil unless invoices.present?
+      start_date = aria_datetime(invoices.map(&:recurring_bill_from).min)
+      end_date = aria_datetime(invoices.map(&:recurring_bill_thru).max)
+      due_date = aria_datetime(date)
+      Aria::Bill.new(
+        start_date,
+        end_date,
+        due_date,
+        nil,
+        invoices.map(&:line_items).flatten(1),
+        invoices.map(&:payments).flatten(1),
+        [],
+        0
+      )
+    end
+
     def next_bill
       @next_bill ||= begin
           start_date = aria_datetime(current_period_start_date)
@@ -87,6 +110,7 @@ module Aria
             next_bill_date,
             (Date.today - start_date).to_i + 1,
             unpaid_invoices.map(&:line_items).flatten(1),
+            unpaid_invoices.map(&:payments).flatten(1),
             unbilled_usage_line_items,
             unbilled_usage_balance
           )
@@ -115,22 +139,21 @@ module Aria
       invoices.select{ |i| i.paid_date.nil? or i.paid_date > today }
     end
 
+    def invoices_with_amounts
+      invoices.select {|i| i.debit != 0 || i.credit != 0 }      
+    end
+
     def usage_invoices
       invoices.select(&:usage_bill_from)
     end
 
     def invoices
-      @invoices ||= Aria.cached.get_acct_invoice_history(acct_no).map {|i| Aria::Invoice.new(i, acct_no) }
-    end
-
-
-    def statements
-      @statements ||= Aria.cached.get_acct_statement_history(acct_no)
+      @invoices ||= Aria.get_acct_invoice_history(acct_no).map {|i| Aria::Invoice.new(i, acct_no) }
     end
 
     def past_usage_line_items(periods=3)
       Hash[
-        invoices.sort_by(&:bill_date).reverse.slice(0, periods).inject([]) { |a, i| 
+        usage_invoices.sort_by(&:bill_date).reverse.slice(0, periods).inject([]) { |a, i| 
           arr = [ i.period_name, i.line_items.select(&:usage?) ]
           a << arr if arr.last.present?
           a

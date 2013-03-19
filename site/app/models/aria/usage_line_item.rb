@@ -2,14 +2,8 @@ module Aria
   class UsageLineItem < LineItem
     define_attribute_method :units
 
-    def recurring?
-      false
-    end
     def usage?
       true
-    end
-    def tax?
-      false
     end
 
     def name
@@ -19,6 +13,10 @@ module Aria
       when 'MegaShift Storage' then 'Storage: Additional Gear'
       else usage_type_description
       end
+    end
+
+    def date
+      date_range_start
     end
 
     def rate
@@ -83,7 +81,8 @@ module Aria
                                 :recorded_units,
                                 :units_description,
                                 :specific_record_charge_amount,
-                                :billable_account_no]
+                                :billable_account_no,
+                                :date_range_start]
 
       def service
         @service ||= Aria.cached.get_client_plan_services(plan_no).find{ |s| s.usage_type == usage_type_no }
