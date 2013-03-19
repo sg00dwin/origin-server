@@ -348,7 +348,15 @@ getsebool httpd_execmem | grep -q -e 'on$' || /usr/sbin/setsebool -P httpd_execm
 
 # Allow httpd to verify dns records
 getsebool httpd_verify_dns | grep -q -e 'on$' || /usr/sbin/setsebool -P httpd_verify_dns=on || :
- 
+
+# Allow memcached to bind to port 11212 so we can test multi-memcached environments
+semanage port -l | grep memcache | grep 11212 > /dev/null
+if [ $? -ne 0 ]
+then
+  semanage port -a -t memcache_port_t -p tcp 11212
+  semanage port -a -t memcache_port_t -p udp 11212
+fi
+
 # Add policy for developement environment
 cd %{policydir} ; make -f ../devel/Makefile
 semodule -l | grep -q dhcpnamedforward || semodule -i dhcpnamedforward.pp
