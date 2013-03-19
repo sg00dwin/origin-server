@@ -688,15 +688,7 @@ cd /var/www/openshift/site && /usr/bin/scl enable ruby193 "rake assets:clean"
 /etc/drupal6/drupal-setup.sh
 
 # Install the carts
-mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/mock
-mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/mock-plugin
-#mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/jbosseap
-mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/php-5.3
-mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/perl
-mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/python
-mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/ruby
-mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/jenkins
-mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/jenkins-client
+oo-admin-cartridge --recursive -a install -s /usr/libexec/openshift/cartridges/v2/
 
 %files
 %defattr(-,root,root,-)
