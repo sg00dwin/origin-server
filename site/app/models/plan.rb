@@ -7,8 +7,7 @@ class Plan < RestApi::Base
   end
   custom_id :id
 
-  class Capability < RestApi::Base; end
-  has_one :capabilities, :class_name => 'plan/capability'
+  has_one :capabilities, :class_name => as_indifferent_hash
 
   def basic?
     id == 'free'

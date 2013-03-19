@@ -4,9 +4,9 @@ module Aria
     self.element_name = 'plan'
     allow_anonymous
 
-    has_one :capabilities, :class_name => 'rest_api/base/attribute_hash'
-    has_one :usage_rates, :class_name => 'rest_api/base/attribute_hash'
-    has_one :storage, :class_name => 'rest_api/base/attribute_hash'
+    has_one :capabilities, :class_name => as_indifferent_hash
+    has_one :usage_rates, :class_name => as_indifferent_hash
+    has_one :storage, :class_name => as_indifferent_hash
 
     def name
       aria_plan.plan_name

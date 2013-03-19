@@ -44,8 +44,8 @@ class Tweet < RestApi::Base
   class User < RestApi::Base
   end
 
-  has_one :user, :class_name => 'tweet/user'
-  has_one :retweeted_status, :class_name => 'tweet'
+  has_one :user, :class_name => Tweet::User
+  has_one :retweeted_status, :class_name => Tweet
 
   def all_entities
     (entities.hashtags + entities.user_mentions + entities.urls).flatten rescue []

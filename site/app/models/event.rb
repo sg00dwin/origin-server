@@ -22,9 +22,7 @@ class Event < CommunityApi::Base
 
   cache_method :find_every, :expires_in => 10.minutes
 
-  class << self
-    def upcoming
-      all(:from => "#{prefix}upcoming.json")
-    end
+  def self.upcoming
+    all(:from => "#{prefix}upcoming.json")
   end
 end
