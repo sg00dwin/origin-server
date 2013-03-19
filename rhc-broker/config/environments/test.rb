@@ -93,6 +93,11 @@ Broker::Application.configure do
     :log_filepath => "/var/log/openshift/broker/user_action.log"
   }
 
+  config.maintenance = {
+    :enabled => false,
+    :outage_msg_filepath => "/etc/openshift/outage_notification.txt"
+  }
+
   config.billing = {
     :config => {
       :url => "https://streamline-proxy1.ops.rhcloud.com/api/ws/api_ws_class_dispatcher.php",
