@@ -21,7 +21,7 @@ module Aria
         else
           Aria::RecurringLineItem.new(li, master_plan_no)
         end
-      }
+      }.sort_by(&Aria::LineItem.plan_sort)
     end
 
     protected

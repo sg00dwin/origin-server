@@ -74,6 +74,20 @@ module Aria
       self.specific_record_charge_amount = nil
     end
 
+    def self.type_info (items)
+      Hash[
+        items
+          .uniq(&:name)
+          .sort_by(&Aria::LineItem.plan_sort)
+          .each_with_index.map { |item,index| 
+            [
+              item.name,
+              OpenStruct.new({:units => item.units_label, :class_name => "type-#{index+1}" })
+            ]
+          }
+      ]
+    end
+
     protected
       define_attribute_methods [:usage_type_no,
                                 :usage_type_description,

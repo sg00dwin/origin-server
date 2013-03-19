@@ -85,19 +85,18 @@ module Aria
       invoices_with_amounts.map(&:bill_date).uniq.sort.reverse!
     end
 
-    def bill_for(date)
-      invoices = invoices_with_amounts.select {|i| i.bill_date == date }
-      return nil unless invoices.present?
-      start_date = aria_datetime(invoices.map(&:recurring_bill_from).min)
-      end_date = aria_datetime(invoices.map(&:recurring_bill_thru).max)
-      due_date = aria_datetime(date)
+    def bill_for(invoice)
+      return nil unless invoice
+      start_date = aria_datetime(invoice.recurring_bill_from)
+      end_date = aria_datetime(invoice.recurring_bill_thru)
+      due_date = aria_datetime(invoice.bill_date)
       Aria::Bill.new(
         start_date,
         end_date,
         due_date,
         nil,
-        invoices.map(&:line_items).flatten(1),
-        invoices.map(&:payments).flatten(1),
+        invoice.line_items,
+        invoice.payments,
         [],
         0
       )
@@ -114,7 +113,7 @@ module Aria
             next_bill_date,
             (Date.today - start_date).to_i + 1,
             unpaid_invoices.map(&:line_items).flatten(1).concat(Aria::RecurringLineItem.find_all_by_plan_no(next_plan_no)),
-            unpaid_invoices.map(&:payments).flatten(1),
+            [],
             unbilled_usage_line_items,
             unbilled_usage_balance
           )
@@ -127,7 +126,7 @@ module Aria
 
     def unbilled_usage_line_items
       @unbilled_usage_line_items ||=
-        Aria::UsageLineItem.for_usage(Aria.get_usage_history(acct_no, :date_range_start => current_period_start_date), account_details.plan_no)
+        Aria::UsageLineItem.for_usage(Aria.get_usage_history(acct_no, :date_range_start => current_period_start_date), account_details.plan_no).sort_by(&Aria::LineItem.plan_sort)
     end
 
     def unbilled_usage_balance
@@ -144,7 +143,7 @@ module Aria
     end
 
     def invoices_with_amounts
-      invoices.select {|i| i.debit != 0 || i.credit != 0 }      
+      invoices.select {|i| i.debit != 0 || i.credit != 0 }
     end
 
     def usage_invoices
