@@ -6,6 +6,7 @@ gem 'json'
 gem 'parseconfig'
 gem 'bson'
 gem 'bson_ext'
+gem 'uuidtools'
 
 gem 'openshift-origin-controller'
 
