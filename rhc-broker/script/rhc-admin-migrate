@@ -317,7 +317,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
       	    end
       	  end
       	end
-      end
+      end if cart_names
     end
   end
   gather_users_total_time = (Time.now.to_f * 1000).to_i - gather_users_start_time
