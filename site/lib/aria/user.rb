@@ -217,23 +217,6 @@ module Aria
       false
     end
 
-    def set_bill_day(day)
-      if day && account_details.bill_day != day
-        next_date = account_details.next_bill_date.to_date
-        target_date = next_date.change :day => day
-        target_date = target_date.next_month if target_date < next_date
-
-        @account_details = nil
-
-        # Aria won't allow adjusting more than 27 days at a time
-        delta = (target_date-next_date).to_i
-        while delta > 0
-          Aria.adjust_billing_dates :acct_no => acct_no, :action_directive => 1, :adjustment_days => [27,delta].min
-          delta -= 27
-        end
-      end
-    end
-
     def set_session_redirect(url)
       set_reg_uss_params('redirecturl', url)
     end

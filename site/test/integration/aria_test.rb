@@ -41,12 +41,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     user = Aria::UserContext.new(WebUser.new :rhlogin => new_uuid)
     assert user.create_account
     assert user.errors.empty?
-
-    assert_equal '1', user.account_details.bill_day
-    user.set_bill_day 2
-    assert_equal '2', user.account_details.bill_day
-    user.set_bill_day 1
-    assert_equal '1', user.account_details.bill_day
+    assert_equal '1', user.account_details.bill_day, "A new user's bill_day is not 1. Make sure 'Perform Prorated Initial Invoicing Upon Account Creation' is set to false in Aria"
   end
 
   test 'should set and update billing info' do

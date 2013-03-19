@@ -39,6 +39,7 @@
         %span.pull-left= link_to "< Previous bill", account_bills_path({:date => @prev_date})
       - if @next_date
         %span.pull-right= link_to "Next bill >", account_bills_path({:date => @next_date})
+      &nbsp;
 
   .span4.sidebar
     %section.panel
