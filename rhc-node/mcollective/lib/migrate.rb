@@ -5,7 +5,6 @@ require 'socket'
 require 'parseconfig'
 require 'pp'
 require File.dirname(__FILE__) + "/migrate-util"
-require File.dirname(__FILE__) + "/migrate-frontend"
 
 module OpenShiftMigration
 
@@ -62,35 +61,7 @@ module OpenShiftMigration
       echo_output, echo_exitcode = Util.execute_script(env_echo)
       output += echo_output
     end
-
-    # Migrate the Frontend Connection
-    o, r = FrontendHttpServerMigration.migrate(uuid, gear_name, namespace)
-    output << o
-    if r !=0
-      output << "ERROR: Failed to migrate frontend for #{uuid}\n"
-      exitcode = r
-    end
-
-    python_27 = File.join(gear_home, 'python-2.7')
-    python_33 = File.join(gear_home, 'python-3.3')
-    sync_gears = File.join(gear_home, '.env', 'OPENSHIFT_SYNC_GEARS_DIRS')
-    if (File.directory?(python_27) || File.directory?(python_33)) && !File.file?(sync_gears)
-      # Cannot sync virtualenv for these cartridge types BZ918383
-      File.open(sync_gears, File::WRONLY|File::TRUNC|File::CREAT) do |file|
-        file.write 'export OPENSHIFT_SYNC_GEARS_DIRS=( "repo" "node_modules" "../.m2" ".openshift" "deployments" "perl5lib" "phplib" )'
-      end
-      output << "Override for OPENSHIFT_SYNC_GEARS_DIRS for #{uuid}\n"
-
-      # Only remove virtenv on non-haproxy python2.7 cartridges
-      haproxy_14 = File.join(gear_home, 'haproxy-1.4')
-      unless File.directory?(haproxy_14)
-        Dir[File.join(gear_home, 'python-*', 'virtenv')].each do |d|
-          FileUtils.rm_r(d)
-          output << "Removed #{d} for #{uuid}\n"
-        end
-      end
-    end
-
+      
     total_time = (Time.now.to_f * 1000).to_i - start_time
     output += "***time_migrate_on_node_measured_from_node=#{total_time}***\n"
     return output, exitcode
