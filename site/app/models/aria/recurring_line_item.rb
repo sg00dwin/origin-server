@@ -4,18 +4,21 @@ module Aria
     def recurring?
       true
     end
-    def usage?
-      false
-    end
     def tax?
-      rate_per_unit.nil? || service_name.include?('Taxes')
+      service_name.include?('Taxes')
     end
 
     def name
       if service_name == 'Recurring' && plan_name
         "Plan: #{plan_name}"
+      elsif tax?
+        "Tax: #{description}"
       else description
       end
+    end
+
+    def date
+      date_range_start
     end
 
     def total_cost
@@ -37,6 +40,7 @@ module Aria
                                :units,
                                :rate_per_unit,
                                :description,
-                               :plan_name]
+                               :plan_name,
+                               :date_range_start]
   end
 end

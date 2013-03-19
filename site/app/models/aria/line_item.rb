@@ -1,6 +1,17 @@
 module Aria
   class LineItem < Base
     attr_aria :name
+    attr_aria :date
+
+    def recurring?
+      false
+    end
+    def usage?
+      false
+    end
+    def tax?
+      false
+    end
 
     def initialize(attrs, plan_no)
       @attributes = attrs.is_a?(Aria::WDDX::Struct) ? attrs.attributes : attrs
@@ -11,11 +22,11 @@ module Aria
     def self.plan_sort
       lambda { |li|
         if li.tax?
-          [2, -li.total_cost]
+          [2, li.date || '9999-99-99', -li.total_cost]
         elsif li.usage?
-          [1, li.rate]
+          [1, li.date || '9999-99-99', (li.rate || 0)]
         else 
-          [0, -li.rate]
+          [0, li.date || '9999-99-99', -(li.rate || 0)]
         end 
       }
     end

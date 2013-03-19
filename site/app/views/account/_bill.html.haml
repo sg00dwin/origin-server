@@ -4,19 +4,37 @@
 %table.table.table-striped.plan-items
   - bill.line_items.sort_by(&Aria::LineItem.plan_sort).each do |li|
     %tr.plan-item
+      - if show_dates
+        %td= li.date
       %td
         = li.name
       %td.plan-item-rate
-        - if li.usage?
+        - if li.tax?
+          &nbsp;
+        - elsif li.usage?
           #{number_with_precision(li.units, :precision => 0)} @ #{number_to_currency(li.rate)} / #{li.units_label}
-        - elsif li.recurring? && li.rate
-          #{number_to_currency(li.rate)} / month
-          - if li.prorated?
-            (prorated)
+        - elsif li.recurring?
+          - if li.rate
+            #{number_to_currency(li.rate)} / month
+            - if li.prorated?
+              (prorated)
+          - elsif li.total_cost < 0
+            Service Credit
       %td.plan-item-cost
         = number_to_currency(li.total_cost)
 
   %tr.plan-total
-    %td.right{:colspan => 3}
-      %strong Total:&nbsp; #{number_to_currency(bill.estimated_balance)}
+    %td{:colspan => (show_dates ? 2:1)}
+      - bill.payments.each do |p|
+        %div
+          = bill.show_payment_amounts ? "#{number_to_currency(p.applied_amount)} billed to" : "Billed to"
+          %strong= p.payment_src_description
+          - if p.payment_src_suffix
+            ending in 
+            %strong= p.payment_src_suffix
+          - if show_dates
+            on
+            = p.date.to_datetime.to_s(:billing_date)
 
+    %td.right{:colspan => 2}
+      %strong Total charges:&nbsp; #{number_to_currency(bill.estimated_balance)}

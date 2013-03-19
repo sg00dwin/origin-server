@@ -11,7 +11,7 @@ module Aria
     end
 
     def payments
-      @payments ||= Aria.cached.get_payments_on_invoice(acct_no, invoice_no)
+      @payments ||= Aria.cached.get_payments_on_invoice(acct_no, invoice_no).map { |p| Aria::Payment.new(p) }
     end
 
     def line_items

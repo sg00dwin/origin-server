@@ -555,10 +555,10 @@ class AriaUnitTest < ActiveSupport::TestCase
   end
 
   def test_bill_should_be_blank
-    assert Aria::Bill.new(nil, nil, nil, nil, [], [], 0).blank?
-    assert Aria::Bill.new(nil, nil, nil, nil, [], [], 0.01).present?
-    assert Aria::Bill.new(nil, nil, nil, nil, [Aria::RecurringLineItem.new({'amount' => 0.01}, 1)], [], 0).present?
-    assert Aria::Bill.new(nil, nil, nil, nil, [Aria::RecurringLineItem.new({'amount' => 0.00}, 1)], [], 0).present?
+    assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0).blank?
+    assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0.01).present?
+    assert Aria::Bill.new(nil, nil, nil, nil, nil, [Aria::RecurringLineItem.new({'amount' => 0.01}, 1)], [], 0).present?
+    assert Aria::Bill.new(nil, nil, nil, nil, nil, [Aria::RecurringLineItem.new({'amount' => 0.00}, 1)], [], 0).present?
   end
 
   def test_line_item_prorated

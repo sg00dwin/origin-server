@@ -33,11 +33,11 @@
           - if not @plan.basic? and @past_usage_items.present?
             .row-fluid
               .span6
-                = render :partial => 'bill', :locals => {:bill => @bill}
+                = render :partial => 'bill', :locals => {:bill => @bill, :show_dates => false}
               .span6
                 = render :partial => 'usage_charges', :locals => {:current_usage_items => @current_usage_items, :past_usage_items => @past_usage_items, :max_usage => @max_usage}
           - else
-            = render :partial => 'bill', :locals => {:bill => @bill}
+            = render :partial => 'bill', :locals => {:bill => @bill, :show_dates => false}
 
         - else
           %p You have no recorded charges yet
