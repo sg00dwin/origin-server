@@ -53,6 +53,8 @@ Requires:  openshift-origin-cartridge-php
 Requires:  openshift-origin-cartridge-perl
 Requires:  openshift-origin-cartridge-python
 Requires:  openshift-origin-cartridge-ruby
+Requires:  openshift-origin-cartridge-jenkins
+Requires:  openshift-origin-cartridge-jenkins-client
 Requires:  activemq
 Requires:  activemq-client
 #Requires:  qpid-cpp-server
@@ -685,6 +687,8 @@ mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshif
 mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/perl
 mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/python
 mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/ruby
+mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/jenkins
+mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/jenkins-client
 
 %files
 %defattr(-,root,root,-)
