@@ -91,12 +91,16 @@ def migrate_gear(login, app_name, gear_uuid, version)
                   end unless redeploy_httpd_proxy
                 end
 
-                #remove_httpd_proxy(gear, out) if recreate_httpd_proxy
+                # Should call oo-frontend-destroy and re-build the
+                # application, including idle state from scratch if
+                # need to purge possibly stale configuration.
+                # remove_httpd_proxy(gear, out) if recreate_httpd_proxy
+
                 redeploy_httpd_proxy_start_time = (Time.now.to_f * 1000).to_i
                 redeploy_httpd_proxy(gear, out) if redeploy_httpd_proxy
                 redeploy_httpd_proxy_time = (Time.now.to_f * 1000).to_i - redeploy_httpd_proxy_start_time
                 out << "***time_redeploy_httpd_proxy=#{redeploy_httpd_proxy_time}***\n"
-                #redeploy_aliases(gear, out) if recreate_httpd_proxy
+                redeploy_aliases(gear, out) if redeploy_httpd_proxy
 
                 restart_start_time = (Time.now.to_f * 1000).to_i
                 cartridges.each do |gear_cart|
@@ -198,8 +202,9 @@ def httpd_proxy_action(gear, action, out)
   gear_cartridges.each do |cart|
     out << "#{action} for '#{cart}' on gear '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
     embedded = embedded_carts.include? cart
-    reply = gear.get_proxy.send(:run_cartridge_command, (embedded ? "embedded/" : '') + cart, gear, action, nil, false)
-  
+    args = gear.get_proxy.send(:build_base_gear_args, gear)
+    reply = gear.get_proxy.send(:run_cartridge_command, (embedded ? "embedded/" : '') + cart, gear, action, args, false)
+
     out << "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
     out << "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
       
@@ -212,14 +217,16 @@ end
 
 def redeploy_aliases(gear, out)
   unless gear.app.aliases.nil?
-    gear.app.aliases.each do |server_alias|
-      out << "Adding alias '#{server_alias}' for '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
-      reply = gear.add_alias(server_alias)
-      out << "ADD_ALIAS DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
-      out << "ADD_ALIAS ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
-      if reply.exitcode != 0
-        out << "Add alias on node exit code: #{reply.exitcode}\n"
-        raise "Failed adding alias #{server_alias} for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
+    if gear.app_dns
+      gear.app.aliases.each do |server_alias|
+        out << "Adding alias '#{server_alias}' for '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
+        reply = gear.add_alias(server_alias)
+        out << "ADD_ALIAS DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+        out << "ADD_ALIAS ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+        if reply.exitcode != 0
+          out << "Add alias on node exit code: #{reply.exitcode}\n"
+          raise "Failed adding alias #{server_alias} for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
+        end
       end
     end
   end
