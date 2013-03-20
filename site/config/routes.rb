@@ -68,7 +68,11 @@ RedHatCloud::Application.routes.draw do
 
 
     if Rails.configuration.aria_enabled
-      resources :bills, :only => :index
+      resources :bills, :only => [:index, :show] do
+        get :print, :on => :member
+        get :export, :on => :collection
+        post :locate, :on => :collection
+      end
       resources :plans,   :only => :index do
         resource :upgrade, :controller => :account_upgrades, :only => [:edit, :new, :create, :show] do
           put  :edit, :action => :update, :on => :member

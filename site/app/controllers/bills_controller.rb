@@ -2,36 +2,68 @@ class BillsController < ConsoleController
   include BillingAware
 
   before_filter :authenticate_user!
+  before_filter :require_aria_account
+  before_filter :require_invoices
 
   def index
-    user = Aria::UserContext.new(current_user)
+    populate_view(@user, @invoices, @invoices.first)
+  end
 
-    @user = current_api_user
-    @plan = @user.plan
+  def export
+    render :text => "Export" and return
+  end
 
-    redirect_to account_path unless user.has_account?
+  def locate
+    if params[:id].present?
+      redirect_to account_bill_path(params[:id])
+    else
+      redirect_to account_bills_path
+    end
+  end
 
-    @is_test_user = user.test_user?
+  def show
+    invoice = find_invoice(params[:id])
+    populate_view(@user, @invoices, invoice)
+  end
 
-    invoices = user.invoices_with_amounts
-    render :no_bills and return if invoices.empty?
+  def print
+    invoice = find_invoice(params[:id])
+    render :text => "#{invoice.statement_content} <script>try{window.print();}catch(e){}</script>" and return
+  end
 
-    invoice_no = params[:invoice_no] || invoices.first.invoice_no.to_s
-    invoice = invoices.detect {|i| i.invoice_no.to_s == invoice_no }
 
-    if invoice and params[:print]
-      render :text => "#{invoice.statement_content} <script>try{window.print();}catch(e){}</script>" and return
+  protected
+    def require_aria_account
+      @user = Aria::UserContext.new(current_user)
+      redirect_to account_path and return false unless @user.has_account?
     end
 
-    @invoice_options = invoices.map {|i| [ "#{i.bill_date.to_datetime.to_s(:billing_date)}", i.invoice_no.to_s ] }
-    @invoice_no = invoice_no
-    @bill = user.bill_for(invoice)
+    def require_invoices
+      @invoices = @user.invoices_with_amounts
+      render :no_bills and return false if @invoices.empty?
+    end
 
-    index = invoices.index(invoice)
-    @next_no = invoices[index - 1].invoice_no if index and index > 0
-    @prev_no = invoices[index + 1].invoice_no if index and index < invoices.length - 1
+    def find_invoice(id)
+      invoice = @invoices.detect {|i| i.invoice_no.to_s == params[:id] }
+      raise Aria::ResourceNotFound.new("Invoice ##{id} does not exist") if invoice.nil?
+      invoice
+    end
 
-    if @bill
+    def populate_view(user, invoices, invoice)
+      @invoice_options = invoices.map {|i| [
+        "#{i.bill_date.to_datetime.to_s(:billing_date)}",
+        i.invoice_no.to_s,
+        {"data-url" => account_bill_path(i.invoice_no)}
+      ]}
+      @id = invoice.invoice_no.to_s
+      @bill = @user.bill_for(invoice)
+
+      index = invoices.index(invoice)
+      @next_no = invoices[index - 1].invoice_no if index and index > 0
+      @prev_no = invoices[index + 1].invoice_no if index and index < invoices.length - 1
+
+      @is_test_user = user.test_user?
+
       @next_bill = user.next_bill
       current_usage_items = @next_bill.unbilled_usage_line_items
       past_usage_items = invoice.line_items.select(&:usage?)
@@ -40,21 +72,7 @@ class BillsController < ConsoleController
           "Current" => current_usage_items,
           "This bill" => past_usage_items
         }
-      else
-        # TODO: remove, debug
-        # @usage_items = {
-        #   "Current" => current_usage_items
-        # }.merge(
-        #   {
-        #     "This bill" => [
-        #       OpenStruct.new({:units_label => 'hour', :units => 10, :total_cost => 1, :name => "Gear: Small"}),
-        #       OpenStruct.new({:units_label => 'hour', :units => 10, :total_cost => 3, :name => "Gear: Medium"})
-        #     ]
-        #   }
-        # )
       end
       @usage_types = Aria::UsageLineItem.type_info(@usage_items.values.flatten) if @usage_items
     end
-
-  end
 end

@@ -35,6 +35,10 @@ module Aria
 
   # The Aria method you have requested does not exist
   InvalidMethod = Class.new(StandardError)
+
+  # Expected resource does not exist
+  ResourceNotFound = Class.new(StandardError)
+
   # The Aria service is not responding
   class NotAvailable < StandardError
     attr_reader :response

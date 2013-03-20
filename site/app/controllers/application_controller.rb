@@ -8,6 +8,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
 
   rescue_from AccessDeniedException, :with => :access_denied
+  rescue_from 'Aria::ResourceNotFound', :with => :resource_not_found
   rescue_from 'Streamline::Error',
               'Aria::Error', 'Aria::NotAvailable',
               :with => :generic_error
