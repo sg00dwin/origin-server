@@ -49,6 +49,7 @@ Requires:  ruby193-rubygem-bigdecimal
 Requires:  ruby193-rubygem-state_machine
 Requires:  ruby193-rubygem-minitest
 Requires:  ruby193-rubygem-dalli
+Requires:  ruby193-rubygem-uuidtools
 
 BuildArch: noarch
 
