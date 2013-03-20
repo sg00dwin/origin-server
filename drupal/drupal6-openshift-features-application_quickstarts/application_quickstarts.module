@@ -108,9 +108,9 @@ function application_quickstarts_page() {
   $content .= '<input type="hidden" value="search_form" id="edit-search-form" name="form_id" />';
   $content .= '<input type="hidden" name="type[quickstart]" id="edit-idea" value="quickstart" /></form>';
   $content .= '<div class="search-help"><strong>Advanced options:</strong> quotes search for <strong>"exact phrase"</strong>, dash excludes a <strong>-keyword</strong>, OR matches any <strong>keyword OR term</strong></div>';
-  if ($count > 20) {
-    $content .= '<p class="meta">Browse all  '.$count.' quickstarts below</p>';
-  }
+  #if ($count > 20) {
+  #  $content .= '<p class="meta">Browse all  '.$count.' quickstarts</p>';
+  #}
   $content .= '<div class="row-fluid"><div class="span6"><h2>Top Quickstarts</h2>';
   $content .= '</h2>';
   $content .= views_embed_view('application_quickstarts_content', 'block_1');
