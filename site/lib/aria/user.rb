@@ -103,21 +103,28 @@ module Aria
     end
 
     def next_bill
-      @next_bill ||= begin
-          start_date = aria_datetime(current_period_start_date)
-          next_bill_date = aria_datetime(account_details.next_bill_date)
-          d = account_details
-          Aria::Bill.new(
-            start_date,
-            next_bill_date - 1.day,
-            next_bill_date,
-            (Date.today - start_date).to_i + 1,
-            unpaid_invoices.map(&:line_items).flatten(1).concat(Aria::RecurringLineItem.find_all_by_plan_no(next_plan_no)),
-            [],
-            unbilled_usage_line_items,
-            unbilled_usage_balance
-          )
-        end
+      if @next_bill.nil?
+        default_plan = Rails.configuration.aria_default_plan_no.to_s
+        @next_bill =
+          if account_details.plan_no.to_s == default_plan && next_plan_no == default_plan
+            false
+          else
+            start_date = aria_datetime(current_period_start_date)
+            next_bill_date = aria_datetime(account_details.next_bill_date)
+            d = account_details
+            Aria::Bill.new(
+              start_date,
+              next_bill_date - 1.day,
+              next_bill_date,
+              (Date.today - start_date).to_i + 1,
+              unpaid_invoices.map(&:line_items).flatten(1).concat(next_plan_recurring_line_items),
+              [],
+              unbilled_usage_line_items,
+              unbilled_usage_balance
+            )
+          end
+      end
+      @next_bill
     end
 
     def current_period_start_date
@@ -170,6 +177,16 @@ module Aria
       else
         account_details.plan_no
       end
+    end
+
+    def next_plan_recurring_line_items
+      @next_plan_recurring_line_items ||= begin
+          if plan = queued_plans.last
+            Aria::RecurringLineItem.find_all_by_plan_no(plan.new_plan_no.to_s)
+          else
+            Aria::RecurringLineItem.find_all_by_current_plan(acct_no)
+          end
+        end
     end
 
     def queued_plans

@@ -10,11 +10,24 @@ module Aria
           'service_name' => s.service_desc,
           'description' => s.service_desc,
           'plan_name' => plan_name,
-          'amount' => rate,
           'rate_per_unit' => rate,
           'units' => 1.0,
         }, plan_no)
       end.compact
+    end
+
+    def self.find_all_by_current_plan(acct_no)
+      plan = Aria.get_acct_plans_all(acct_no).last
+      plan.plan_services.inject([]) do |a, s|
+        a << Aria::RecurringLineItem.new({
+          'service_name' => s.service_desc,
+          'description' => s.service_desc,
+          'plan_name' => plan.plan_name,
+          'rate_per_unit' => s.plan_service_rates.map(&:monthly_fee).max,
+          'units' => 1.0,
+        }, plan.plan_no) if s.is_recurring_ind == 1
+        a
+      end
     end
 
     def recurring?
@@ -36,7 +49,7 @@ module Aria
     end
 
     def total_cost
-      amount
+      amount || (rate_per_unit * units)
     end
 
     def prorated?

@@ -47,6 +47,10 @@ module Aria
       super(:acct_no => acct_no)
     end
 
+    def get_acct_plans_all(acct_no)
+      super(:acct_no => acct_no).all_acct_plans
+    end
+
     def get_supp_field_values(acct_no, field_name)
       super(:acct_no => acct_no, :field_name => field_name).supp_field_values || []
     end
