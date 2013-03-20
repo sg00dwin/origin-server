@@ -24,9 +24,14 @@ module Account
 
       @is_test_user = user.test_user?
 
-      current_usage_items = user.unbilled_usage_line_items
+      @bill = user.next_bill
+
+      @has_valid_payment_method = user.has_valid_payment_method?
+      @payment_method = user.payment_method
+
+      current_usage_items = @bill.unbilled_usage_line_items
       past_usage_items = user.past_usage_line_items
-      if current_usage_items and past_usage_items.present?
+      if current_usage_items.present? and past_usage_items.present?
         @usage_items = { "Current" => current_usage_items }.merge(past_usage_items)
       else
         # TODO: remove, debug
@@ -46,11 +51,6 @@ module Account
         # )
       end
       @usage_types = Aria::UsageLineItem.type_info(@usage_items.values.flatten) if @usage_items
-
-      @bill = user.next_bill
-
-      @has_valid_payment_method = user.has_valid_payment_method?
-      @payment_method = user.payment_method
     end
 
     def settings

@@ -27,7 +27,7 @@
         .pull-right= link_to "Billing history", account_bills_path
         %h2 Upcoming Charges
         %p
-          Day #{@bill.day} of billing cycle #{@bill.start_date.to_s(:billing_date)} - #{@bill.end_date.to_s(:billing_date)}
+          Day #{@bill.day} of billing cycle #{@bill.start_date.to_s(:billing_date_no_year)} - #{@bill.end_date.to_s(:billing_date_no_year)}
 
         - if @bill.line_items.present? 
           - if not @plan.basic? and @usage_items.present?

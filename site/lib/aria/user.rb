@@ -220,6 +220,11 @@ module Aria
       false
     end
 
+    def cancel_queued_service_plan
+      @queued_plans = nil
+      Aria.cancel_queued_service_plan :account_number => acct_no
+    end
+
     def set_session_redirect(url)
       set_reg_uss_params('redirecturl', url)
     end

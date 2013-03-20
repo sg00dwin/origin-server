@@ -27,13 +27,14 @@ class BillsController < ConsoleController
     @next_no = invoices[index - 1].invoice_no if index and index > 0
     @prev_no = invoices[index + 1].invoice_no if index and index < invoices.length - 1
 
-    if invoice
-      current_usage_items = user.unbilled_usage_line_items
+    if @bill
+      @next_bill = user.next_bill
+      current_usage_items = @next_bill.unbilled_usage_line_items
       past_usage_items = invoice.line_items.select(&:usage?)
-      if current_usage_items and past_usage_items.present?
+      if current_usage_items.present? and past_usage_items.present?
         @usage_items = {
           "Current" => current_usage_items,
-          invoice.period_name => past_usage_items
+          "This bill" => past_usage_items
         }
       else
         # TODO: remove, debug
@@ -41,7 +42,7 @@ class BillsController < ConsoleController
         #   "Current" => current_usage_items
         # }.merge(
         #   {
-        #     invoice.period_name => [
+        #     "This bill" => [
         #       OpenStruct.new({:units_label => 'hour', :units => 10, :total_cost => 1, :name => "Gear: Small"}),
         #       OpenStruct.new({:units_label => 'hour', :units => 10, :total_cost => 3, :name => "Gear: Medium"})
         #     ]

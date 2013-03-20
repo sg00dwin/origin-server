@@ -47,10 +47,14 @@
       &nbsp;
 
   .span4
-    - if @usage_items
+    - if @usage_items and @next_bill
       %section.panel
         %h2 Compare Usage
         = render :partial => '/account/usage_charges', :locals => {:usage_items => @usage_items, :usage_types => @usage_types}
+
+        %p
+          Day #{@next_bill.day} of billing cycle #{@next_bill.start_date.to_s(:billing_date_no_year)} - #{@next_bill.end_date.to_s(:billing_date_no_year)}
+
 
     %section.panel
       %h2 Help
