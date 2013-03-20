@@ -570,7 +570,7 @@ class AriaUnitTest < ActiveSupport::TestCase
     rec = Aria::RecurringLineItem.new({'amount' => 0.00, 'rate_per_unit' => 1.0, 'service_name' => 'Recurring'}, 1)
     assert !rec.tax?
     assert rec.recurring?
-    tx1 = Aria::RecurringLineItem.new({'amount' => 1.00, 'rate_per_unit' => nil}, 1)
+    tx1 = Aria::RecurringLineItem.new({'amount' => 1.00, 'rate_per_unit' => nil, 'service_name' => 'State Taxes'}, 1)
     assert tx1.tax?
     tx2 = Aria::RecurringLineItem.new({'amount' => 2.00, 'rate_per_unit' => 1.0, 'service_name' => 'Taxes'}, 1)
     assert tx2.tax?
