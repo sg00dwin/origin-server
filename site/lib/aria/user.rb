@@ -151,12 +151,12 @@ module Aria
     end
 
     def invoices
-      @invoices ||= Aria.get_acct_invoice_history(acct_no).map {|i| Aria::Invoice.new(i, acct_no) }
+      @invoices ||= Aria.get_acct_invoice_history(acct_no).map {|i| Aria::Invoice.new(i, acct_no) }.sort_by(&:bill_date).reverse!
     end
 
     def past_usage_line_items(periods=3)
       Hash[
-        usage_invoices.sort_by(&:bill_date).reverse.slice(0, periods).inject([]) { |a, i| 
+        usage_invoices.slice(0, periods).inject([]) { |a, i| 
           arr = [ i.period_name, i.line_items.select(&:usage?) ]
           a << arr if arr.last.present?
           a

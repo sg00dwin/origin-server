@@ -14,6 +14,10 @@ module Aria
       @payments ||= Aria.cached.get_payments_on_invoice(acct_no, invoice_no).map { |p| Aria::Payment.new(p) }
     end
 
+    def statement_content
+      Aria.get_statement_for_invoice(:acct_no => acct_no, :invoice_no => invoice_no).out_statement
+    end
+
     def line_items
       @line_items ||= Aria.cached.get_invoice_details(acct_no, invoice_no).map {|li| 
         if li.usage_type_no

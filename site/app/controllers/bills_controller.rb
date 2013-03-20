@@ -13,11 +13,15 @@ class BillsController < ConsoleController
 
     @is_test_user = user.test_user?
 
-    invoices = user.invoices_with_amounts.sort_by(&:bill_date).reverse!
+    invoices = user.invoices_with_amounts
     render :no_bills and return if invoices.empty?
 
     invoice_no = params[:invoice_no] || invoices.first.invoice_no.to_s
     invoice = invoices.detect {|i| i.invoice_no.to_s == invoice_no }
+
+    if invoice and params[:print]
+      render :text => "#{invoice.statement_content} <script>try{window.print();}catch(e){}</script>" and return
+    end
 
     @invoice_options = invoices.map {|i| [ "#{i.bill_date.to_datetime.to_s(:billing_date)}", i.invoice_no.to_s ] }
     @invoice_no = invoice_no

@@ -25,7 +25,7 @@
           = select_tag 'invoice_no', options_for_select([["Bill date:",""], *@invoice_options ], @invoice_no), {:title => 'Bill date'}
           %noscript
             = submit_tag 'View', :class => 'btn'
-        = link_to "Download", @download_url, {:class => 'btn'}
+        = link_to "Export All", @download_url, {:class => 'btn', :title => 'Export all bills to a CSV file'}
         - if @bill
           = link_to "Print", account_bills_path({:invoice_no => @invoice_no, :print => true}), {:target => 'blank', :class => 'btn'}
 
@@ -36,7 +36,7 @@
         %h2 You were charged #{number_to_currency(@bill.balance)} on #{@bill.due_date.to_s(:billing_date)}
         = render :partial => '/account/bill', :locals => {:bill => @bill, :show_dates => true, :show_details => true, :show_payments => true}
       - else
-        %p No bill was found for invoice ##{@invoice_no}.
+        %p Invoice ##{@invoice_no} was not found.
         %p= link_to "View your most recent bill.", account_bills_path
 
     %section.panel
