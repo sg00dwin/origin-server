@@ -10,9 +10,7 @@ module OpenShift
       "112" => "Account supplemental service plan de-assigned",
       "114" => "Account supplemental service plan modified",
       "118" => "Account supplemental field value added event",
-      "119" => "Account supplemental field value modified",
-
-      "413" => "Dunning Sent To Account Holder"  # TODO: check with Ed on final dunning event
+      "119" => "Account supplemental field value modified"
     }
     LABEL = "- [NEW]"
     STATUS_CODES = {
@@ -188,7 +186,7 @@ MSG
           email_to = aria_config[:event_peoples_team_email]
         when 105
           if OpenShift::AriaEvent::STATUS_CODES.keys.include?(h['status_cd'])
-            mark_acct_canceled(h) if OpenShift::AriaEvent::STATUS_CODES[h['status_cd']] == "Cancelled"
+            mark_acct_canceled(h) if h['status_cd'] < "0"
             body = acct_status(h)
           end
         when 107
@@ -197,8 +195,6 @@ MSG
           body = acct_supp_plans(h)
         when 118, 119
           body = acct_supp_fields(h)
-        when 413
-          mark_acct_canceled(h)
         else
           Rails.logger.error "Invalid Event, id: #{ev}"
         end
