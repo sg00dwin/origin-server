@@ -27,17 +27,17 @@
         .pull-right= link_to "Billing history", account_bills_path
         %h2 Upcoming Charges
         %p
-          Day #{@bill.day} of billing cycle #{@bill.start_date.to_s(:billing_date)} - #{@bill.end_date.to_s(:billing_date)}
+          Day #{@bill.day} of billing cycle #{@bill.start_date.to_s(:billing_date_no_year)} - #{@bill.end_date.to_s(:billing_date_no_year)}
 
         - if @bill.line_items.present? 
-          - if not @plan.basic? and @past_usage_items.present?
+          - if not @plan.basic? and @usage_items.present?
             .row-fluid
               .span6
-                = render :partial => 'bill', :locals => {:bill => @bill, :show_dates => false}
+                = render :partial => 'bill', :locals => {:bill => @bill}
               .span6
-                = render :partial => 'usage_charges', :locals => {:current_usage_items => @current_usage_items, :past_usage_items => @past_usage_items, :max_usage => @max_usage}
+                = render :partial => 'usage_charges', :locals => {:usage_items => @usage_items, :usage_types => @usage_types}
           - else
-            = render :partial => 'bill', :locals => {:bill => @bill, :show_dates => false}
+            = render :partial => 'bill', :locals => {:bill => @bill}
 
         - else
           %p You have no recorded charges yet

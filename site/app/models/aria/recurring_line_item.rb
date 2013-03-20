@@ -27,8 +27,6 @@ module Aria
     def name
       if service_name == 'Recurring' && plan_name
         "Plan: #{plan_name}"
-      elsif tax?
-        "Tax: #{description}"
       else description
       end
     end

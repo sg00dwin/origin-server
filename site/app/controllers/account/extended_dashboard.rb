@@ -24,14 +24,33 @@ module Account
 
       @is_test_user = user.test_user?
 
-      @current_usage_items = user.unbilled_usage_line_items
-      @past_usage_items = user.past_usage_line_items
-      @max_usage = [@current_usage_items, *@past_usage_items.values].map { |items| items.map(&:total_cost).sum }.max
-
       @bill = user.next_bill
 
       @has_valid_payment_method = user.has_valid_payment_method?
       @payment_method = user.payment_method
+
+      current_usage_items = @bill.unbilled_usage_line_items
+      past_usage_items = user.past_usage_line_items
+      if current_usage_items.present? and past_usage_items.present?
+        @usage_items = { "Current" => current_usage_items }.merge(past_usage_items)
+      else
+        # TODO: remove, debug
+        # @usage_items = {
+        #   "Current" => current_usage_items
+        # }.merge(
+        #   {
+        #     "Feb" => [
+        #       OpenStruct.new({:units_label => 'hour', :units => 10, :total_cost => 1, :name => "Gear: Small"}),
+        #       OpenStruct.new({:units_label => 'hour', :units => 10, :total_cost => 3, :name => "Gear: Medium"})
+        #     ],
+        #     "Jan" => [
+        #       OpenStruct.new({:units_label => 'hour', :units => 30, :total_cost => 3, :name => "Gear: Small"}),
+        #       OpenStruct.new({:units_label => 'hour', :units => 10, :total_cost => 3, :name => "Gear: Medium"})
+        #     ]
+        #   }
+        # )
+      end
+      @usage_types = Aria::UsageLineItem.type_info(@usage_items.values.flatten) if @usage_items
     end
 
     def settings
