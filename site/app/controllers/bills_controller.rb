@@ -4,25 +4,31 @@ class BillsController < ConsoleController
   before_filter :authenticate_user!
   before_filter :require_aria_account
   before_filter :require_invoices
-  before_filter :find_invoice, :except => [:export, :index]
 
   def index
-    # Look up by id (needed for drop-down selector form without javascript)
-    find_invoice if params[:id]
-    @invoice = @invoices.first if @invoice.nil?
-    populate_view(@user, @invoices, @invoice)
+    populate_view(@user, @invoices, @invoices.first)
   end
 
   def export
     render :text => "Export" and return
   end
 
+  def locate
+    if params[:id].present?
+      redirect_to account_bill_path(params[:id])
+    else
+      redirect_to account_bills_path
+    end
+  end
+
   def show
-    populate_view(@user, @invoices, @invoice)
+    invoice = find_invoice(params[:id])
+    populate_view(@user, @invoices, invoice)
   end
 
   def print
-    render :text => "#{@invoice.statement_content} <script>try{window.print();}catch(e){}</script>" and return
+    invoice = find_invoice(params[:id])
+    render :text => "#{invoice.statement_content} <script>try{window.print();}catch(e){}</script>" and return
   end
 
 
@@ -37,22 +43,17 @@ class BillsController < ConsoleController
       render :no_bills and return false if @invoices.empty?
     end
 
-    def find_invoice
-      id = params[:id]
-      @invoice = @invoices.detect {|i| i.invoice_no.to_s == params[:id] }
-      if @invoice.nil?
-        raise Aria::ResourceNotFound.new(
-          "Invoice ##{id} does not exist",
-          [["View your most recent bill", account_bills_path]]
-        )
-      end
+    def find_invoice(id)
+      invoice = @invoices.detect {|i| i.invoice_no.to_s == params[:id] }
+      raise Aria::ResourceNotFound.new("Invoice ##{id} does not exist") if invoice.nil?
+      invoice
     end
 
     def populate_view(user, invoices, invoice)
       @invoice_options = invoices.map {|i| [
         "#{i.bill_date.to_datetime.to_s(:billing_date)}",
         i.invoice_no.to_s,
-        {"data-url" => account_bill_path({:id => i.invoice_no})}
+        {"data-url" => account_bill_path(i.invoice_no)}
       ]}
       @id = invoice.invoice_no.to_s
       @bill = @user.bill_for(invoice)

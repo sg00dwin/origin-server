@@ -36,6 +36,9 @@ module Aria
   # The Aria method you have requested does not exist
   InvalidMethod = Class.new(StandardError)
 
+  # Expected resource does not exist
+  ResourceNotFound = Class.new(StandardError)
+
   # The Aria service is not responding
   class NotAvailable < StandardError
     attr_reader :response
@@ -44,14 +47,4 @@ module Aria
       super "Aria is not responding (#{response.code})"
     end
   end
-
-  # Expected resource does not exist
-  class ResourceNotFound < StandardError
-    attr_reader :alternatives
-    def initialize(message="Resource not found", alternatives = [])
-      @alternatives = alternatives
-      super message
-    end
-  end
-
 end

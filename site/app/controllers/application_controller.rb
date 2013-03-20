@@ -80,14 +80,6 @@ class ApplicationController < ActionController::Base
       render 'console/error'
     end
 
-    def resource_not_found(e=nil)
-      @reference_id = request.uuid
-      logger.error "Unhandled exception reference ##{@reference_id}: #{e.message}\n#{e.backtrace.join("\n  ")}"
-      @message = e.message if e and e.respond_to?(:message)
-      @alternatives = e.alternatives if e and e.respond_to?(:alternatives)
-      render 'console/not_found'
-    end
-
     def access_denied(e)
       logger.debug "Access denied: #{e}"
       redirect_to logout_path :cause => e.message, :then => account_path

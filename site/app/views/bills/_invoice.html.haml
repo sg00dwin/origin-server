@@ -11,7 +11,7 @@
         if (url)
           window.location = url;
         else if (value)
-          $("#date_form").submit();
+          $("#bill_form").submit();
       })
     });
 
@@ -25,12 +25,12 @@
   .span8
     %h1.pull-left Bill Details
     %div.pull-right
-      %form{:action => account_bills_path, :id => 'date_form', :method => 'get'}
+      = form_tag locate_account_bills_path, :id => 'bill_form' do |form|
         - if @invoice_options.count > 1
           = select_tag 'id', options_for_select([["Bill date:",""], *@invoice_options ], @id), {:title => 'Bill date'}
           %noscript
             = submit_tag 'View', :class => 'btn'
-        = link_to "Print", print_account_bill_path({:id => @id}), {:target => '_blank', :class => 'btn', :title => 'Print the statement for this bill'}
+        = link_to "Print", print_account_bill_path(@id), {:target => '_blank', :class => 'btn', :title => 'Print the statement for this bill'}
         = link_to "Export All", export_account_bills_path, {:target => '_blank', :class => 'btn', :title => 'Export all bills to a CSV file'}
 
 .row-fluid
@@ -41,9 +41,9 @@
 
     %section.panel
       - if @prev_no
-        %span.pull-left= link_to "< Previous bill", account_bill_path({:id => @prev_no})
+        %span.pull-left= link_to "< Previous bill", account_bill_path(@prev_no)
       - if @next_no
-        %span.pull-right= link_to "Next bill >", account_bill_path({:id => @next_no})
+        %span.pull-right= link_to "Next bill >", account_bill_path(@next_no)
       &nbsp;
 
   .span4
