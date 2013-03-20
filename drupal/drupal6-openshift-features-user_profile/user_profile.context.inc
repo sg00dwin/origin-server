@@ -253,6 +253,11 @@ function user_profile_context_default_contexts() {
         'node_form' => '1',
       ),
     ),
+    'path' => array(
+      'values' => array(
+        'quickstart-tags/*' => 'quickstart-tags/*',
+      ),
+    ),
     'views' => array(
       'values' => array(
         'application_quickstarts_content' => 'application_quickstarts_content',

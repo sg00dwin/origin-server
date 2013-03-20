@@ -20,6 +20,7 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'moderator',
+      '2' => 'page author',
     ),
   );
 
@@ -29,6 +30,7 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'moderator',
+      '2' => 'page author',
     ),
   );
 
@@ -281,6 +283,7 @@ function user_profile_user_default_permissions() {
     'name' => 'administer pathauto',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'page author',
     ),
   );
 
@@ -297,6 +300,7 @@ function user_profile_user_default_permissions() {
     'name' => 'administer redirects',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'page author',
     ),
   );
 
@@ -345,6 +349,7 @@ function user_profile_user_default_permissions() {
     'name' => 'administer url aliases',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'page author',
     ),
   );
 
@@ -410,7 +415,7 @@ function user_profile_user_default_permissions() {
     'name' => 'administer xmlsitemap',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'page author',
     ),
   );
 
@@ -601,6 +606,7 @@ function user_profile_user_default_permissions() {
     'name' => 'create url aliases',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'page author',
     ),
   );
 
