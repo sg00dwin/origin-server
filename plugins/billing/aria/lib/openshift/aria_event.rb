@@ -20,6 +20,8 @@ module OpenShift
       "-2" => "Cancelled", 
       "-3" => "Terminated"
     }
+    PLAN_STATE_UPDATE_RETRIES = 3
+    PLAN_STATE_UPDATE_RETRY_TIME = 3
 
     def self.get_header
       data = <<MSG
@@ -146,9 +148,35 @@ Supplemental Fields #{label_str}
 MSG
     end
 
+    def self.mark_acct_canceled(h)
+      begin
+        login = nil
+        for i in 0..h['supp_field_name'].length-1 do
+          if h['supp_field_name'][i] == 'RHLogin'
+            login = h['supp_field_value'][i]
+            break
+          end
+        end
+        Rails.logger.error "Unable to find 'RHLogin' field for the event: #{h}" unless login
+        filter = {:login => login, :pending_plan_id => nil, :pending_plan_uptime => nil}
+        update = {"$set" => {:pending_plan_id => :freeshift, :pending_plan_uptime => Time.now.utc, :plan_state => CloudUser::PLAN_STATES['canceled']}}
+        user = nil
+        OpenShift::AriaEvent::PLAN_STATE_UPDATE_RETRIES.times do 
+          user = CloudUser.with(consistency: :strong).where(filter).find_and_modify(update, {:new => true})
+          break if user
+          sleep OpenShift::AriaEvent::PLAN_STATE_UPDATE_RETRY_TIME
+        end
+        Rails.logger.error "Failed to change plan state to 'canceled' for user '#{login}'. Event: #{h}" unless user
+      rescue Exception => e
+        Rails.logger.error e.message
+        Rails.logger.error e.backtrace.inspect
+      end 
+    end
+
     def self.handle_event(h)
       aria_config = Rails.application.config.billing[:config]
       h['event_id'].each do |ev|
+        body = nil
         email_to = aria_config[:event_orders_team_email]
         case ev.to_i
         when 101
@@ -158,9 +186,8 @@ MSG
           email_to = aria_config[:event_peoples_team_email]
         when 105
           if OpenShift::AriaEvent::STATUS_CODES.keys.include?(h['status_cd'])
+            mark_acct_canceled(h) if h['status_cd'] < "0"
             body = acct_status(h)
-          else
-            next
           end
         when 107
           body = acct_plans(h)
@@ -170,7 +197,6 @@ MSG
           body = acct_supp_fields(h)
         else
           Rails.logger.error "Invalid Event, id: #{ev}"
-          next
         end
         OpenShift::AriaNotification.report_event(ev, body, email_to) if body 
       end

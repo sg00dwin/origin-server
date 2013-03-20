@@ -68,12 +68,12 @@ Rails.configuration.analytics[:enabled] = false
 
 PLAN_UPDATE_THRESHOLD = 300  #5 mins
 $default_plan_id = Rails.application.config.billing[:default_plan].to_s
-$total_count = $failure_count = $progress_count = 0
+$total_count = $skip_count = $failure_count = $progress_count = 0
 
 def update_user_noplan(user)
   if user.check_plan_compatibility($default_plan_id)
     if user.usage_account_id
-      user.update_plan($default_plan_id)
+      user.update_plan($default_plan_id, true)
     else
       user.assign_plan($default_plan_id)
       user.plan_id = nil
@@ -94,7 +94,7 @@ end
 def fix_user_plan(user, old_plan_id, new_plan_id)
   #Try to redo plan change
   begin
-    user.update_plan(new_plan_id)
+    user.update_plan(new_plan_id, true)
     return true
   rescue Exception => e
     throw_error(user, new_plan_id, e)
@@ -107,7 +107,7 @@ def fix_user_plan(user, old_plan_id, new_plan_id)
       update_user_noplan(user)
       return true
     else
-      user.update_plan(old_plan_id)
+      user.update_plan(old_plan_id, true)
       return true
     end
   rescue Exception => e
@@ -122,6 +122,7 @@ def print_summary(fix)
   puts "##########################"
   puts "Users with inconsistent plan:" 
   puts "Total = #{$total_count}"
+  puts "Skipped = #{$skip_count}"
   puts "In progress = #{$progress_count}"
   if fix
     puts "Fixed = #{$total_count - $failure_count}"
@@ -144,7 +145,11 @@ def get_user_obj(login)
 end
 
 def process_user(user, list, fix)
-  if user.pending_plan_id && ((Time.now.utc - user.pending_plan_uptime) <= PLAN_UPDATE_THRESHOLD)
+  if not ["ACTIVE", "PENDING"].include?(user.plan_state)
+    $total_count += 1
+    $skip_count += 1
+    puts "Skipping User '#{user.login}', plan state not in ['ACTIVE', 'PENDING']." 
+  elsif user.pending_plan_id && ((Time.now.utc - user.pending_plan_uptime) <= PLAN_UPDATE_THRESHOLD)
     $total_count += 1
     $progress_count += 1
   elsif user.pending_plan_id

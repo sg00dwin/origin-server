@@ -149,6 +149,8 @@ class UserApiTest < ActionDispatch::IntegrationTest
     acct_no = api.create_fake_acct(user_id, :freeshift)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :megashift}, @headers)
     assert_response :ok
+    body = JSON.parse(@response.body)
+    assert_equal(body["data"]["capabilities"]["private_ssl_certificates"], true)
     #create app and add certificate
     request_via_redirect(:post, "/rest/domains", {:id=> @login[0..15]}, @headers)
     assert_response :created
@@ -221,6 +223,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     user = CloudUser.find_by(login: @login)
     user.pending_plan_id = "megashift"
     user.pending_plan_uptime = Time.now.utc-1000
+    user.plan_state = "PENDING"
     user.save!
 
     `rhc-admin-ctl-plan --fix --login #{@login}`
@@ -259,6 +262,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     user = CloudUser.find_by(login: @login)
     user.pending_plan_id = "freeshift"
     user.pending_plan_uptime = Time.now.utc-1000
+    user.plan_state = "PENDING"
     user.save!
 
     `rhc-admin-ctl-plan --fix --login #{@login}`
@@ -297,6 +301,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     assert_equal(user.plan_id, "freeshift")
     user.pending_plan_id = "megashift"
     user.pending_plan_uptime = Time.now.utc-1000
+    user.plan_state = "PENDING"
     user.save!
 
     `rhc-admin-ctl-plan --fix --login #{@login}`
@@ -315,46 +320,6 @@ class UserApiTest < ActionDispatch::IntegrationTest
     assert_equal(plans[0]["plan_name"], "MegaShift", "Current plan name #{plans[0]["plan_name"]} expected MegaShift")
     plans = api.get_queued_service_plans(acct_no)
     assert(plans == nil)
-  end
-
-  def test_plan_upgrade_noplan_to_mega_recovery_failure
-    api = OpenShift::BillingService.instance
-    user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :megashift)
-    request_via_redirect(:get, USER_COLLECTION_URL, {}, @headers)
-    assert_response :ok
-    body = JSON.parse(@response.body)
-    user = body["data"]
-    assert_equal(user["plan_id"], "freeshift")
-    assert_equal(user["usage_account_id"], nil)
-    assert_equal(user["max_gears"], 3)
-    assert_equal(user["capabilities"]["gear_sizes"], ["small"])
-    assert_equal(user["capabilities"].has_key?("max_storage_per_gear"), false)
-
-    #simulate noplan to megashift failure thats not recoverable
-    user = CloudUser.find_by(login: @login)
-    user_capabilities = user.get_capabilities
-    assert_equal(user.plan_id, "freeshift")
-    user.pending_plan_id = "megashift"
-    user.pending_plan_uptime = Time.now.utc-1000
-    user.capabilities_will_change!
-    user_capabilities["gear_sizes"].push("c9")
-    user.set_capabilities(user_capabilities)
-    user.save!
-
-    request_via_redirect(:post, "/rest/domains", {:id=> @login[0..15]}, @headers)
-    assert_response :created
-    body = JSON.parse(@response.body)
-    domain_id = body["data"]["id"]
-    request_via_redirect(:post, "/rest/domains/#{domain_id}/applications", {:name => "app", :cartridge => "php-5.3", :gear_profile => "c9"}, @headers)
-    assert_response :created
-
-    `rhc-admin-ctl-plan --fix --login #{@login}`
-
-    user = CloudUser.find_by(login: @login)
-    assert_equal(user.plan_id, "freeshift")
-    assert_equal(user.pending_plan_id, "megashift")
-    assert_not_equal(user.pending_plan_uptime, nil)
   end
 
   def test_fix_user_plan_capabilities_success

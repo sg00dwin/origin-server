@@ -93,6 +93,11 @@ Broker::Application.configure do
     :log_filepath => "/var/log/openshift/broker/user_action.log"
   }
 
+  config.maintenance = {
+    :enabled => false,
+    :outage_msg_filepath => "/etc/openshift/outage_notification.txt"
+  }
+
   config.billing = {
     :config => {
       :url => "https://streamline-proxy1.ops.rhcloud.com/api/ws/api_ws_class_dispatcher.php",
@@ -122,6 +127,7 @@ Broker::Application.configure do
           'max_gears' => 3,
           'gear_sizes' => ["small"],
           'plan_upgrade_enabled' => true,
+          'private_ssl_certificates' => false
         }
       },
       :megashift => {
@@ -133,6 +139,7 @@ Broker::Application.configure do
           'gear_sizes' => ["small", "medium"],
           'max_storage_per_gear' => 30, # 30GB
           'plan_upgrade_enabled' => true,
+          'private_ssl_certificates' => true
         },
         :usage_rates => {
           :gear => { 

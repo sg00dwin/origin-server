@@ -11,10 +11,13 @@ class BillingController < BaseController
     valid_ip=false
     begin
       aria_config = Rails.application.config.billing[:config]
-      ipaddr_low = IPAddr.new(aria_config[:event_remote_ipaddr_begin]).to_i
-      ipaddr_high = IPAddr.new(aria_config[:event_remote_ipaddr_end]).to_i
-      ipaddr_remote = IPAddr.new(request.remote_ip).to_i
-      valid_ip = ((ipaddr_low..ipaddr_high) === ipaddr_remote)
+      if (params[:auth_key] == aria_config[:auth_key]) and
+         (params[:client_no].to_i == aria_config[:client_no])
+        ipaddr_low = IPAddr.new(aria_config[:event_remote_ipaddr_begin]).to_i
+        ipaddr_high = IPAddr.new(aria_config[:event_remote_ipaddr_end]).to_i
+        ipaddr_remote = IPAddr.new(request.remote_ip).to_i
+        valid_ip = ((ipaddr_low..ipaddr_high) === ipaddr_remote)
+      end
     rescue Exception => e
       Rails.logger.error e
     end

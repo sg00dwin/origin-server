@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.6.2
+Version: 1.6.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -179,6 +179,13 @@ fi
 %{sitedir}/public
 
 %changelog
+* Mon Mar 18 2013 Adam Miller <admiller@redhat.com> 1.6.3-1
+- Implement memcached on devenv (ccoleman@redhat.com)
+- Revise signup test to expect account upgrade view (hripps@redhat.com)
+- Merge pull request #1017 from sg00dwin/various-work (dmcphers@redhat.com)
+- set legend color that was accidently removed with previous css refactor
+  (sgoodwin@redhat.com)
+
 * Thu Mar 14 2013 Adam Miller <admiller@redhat.com> 1.6.2-1
 - Merge pull request #1012 from liggitt/bug/921276_master
   (dmcphers+openshiftbot@redhat.com)

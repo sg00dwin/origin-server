@@ -223,7 +223,7 @@ begin
   end
 
   # Cursor over all applications
-  $session[:applications].find.select(domain_id: 1, name: 1, default_gear_size: 1, component_instances: 1, 
+  $session[:applications].find({"group_instances.gears.0" => { "$exists" => true}}).select(domain_id: 1, name: 1, default_gear_size: 1, component_instances: 1, 
                                       group_instances: 1, group_overrides: 1).no_timeout.each do |app|
     process_app(app)
   end
