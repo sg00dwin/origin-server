@@ -1,0 +1,60 @@
+- content_for :title, 'Bill Details'
+- breadcrumb_for_account 'Bill Details'
+
+- content_for :javascripts do
+  :javascript
+    $(function() {
+      $('#id').change(function() {
+        $this = $(this);
+        var url = $this.find('option:selected').data("url");
+        var value = $this.val();
+        if (url)
+          window.location = url;
+        else if (value)
+          $("#date_form").submit();
+      })
+    });
+
+:css
+  select { vertical-align: top }
+
+- if @is_test_user
+  .alert.alert-warning You are accessing OpenShift with a test user.  If this is in error, please contact the account support team immediately.
+
+.row-fluid
+  .span8
+    %h1.pull-left Bill Details
+    %div.pull-right
+      %form{:action => account_bills_path, :id => 'date_form', :method => 'get'}
+        - if @invoice_options.count > 1
+          = select_tag 'id', options_for_select([["Bill date:",""], *@invoice_options ], @id), {:title => 'Bill date'}
+          %noscript
+            = submit_tag 'View', :class => 'btn'
+        = link_to "Print", print_account_bill_path({:id => @id}), {:target => '_blank', :class => 'btn', :title => 'Print the statement for this bill'}
+        = link_to "Export All", export_account_bills_path, {:target => '_blank', :class => 'btn', :title => 'Export all bills to a CSV file'}
+
+.row-fluid
+  .span8
+    %section.panel
+      %h2 You were charged #{number_to_currency(@bill.balance)} on #{@bill.due_date.to_s(:billing_date)}
+      = render :partial => '/account/bill', :locals => {:bill => @bill, :show_dates => true, :show_details => true, :show_payments => true}
+
+    %section.panel
+      - if @prev_no
+        %span.pull-left= link_to "< Previous bill", account_bill_path({:id => @prev_no})
+      - if @next_no
+        %span.pull-right= link_to "Next bill >", account_bill_path({:id => @next_no})
+      &nbsp;
+
+  .span4
+    - if @usage_items and @next_bill
+      %section.panel
+        %h2 Compare Usage
+        = render :partial => '/account/usage_charges', :locals => {:usage_items => @usage_items, :usage_types => @usage_types}
+
+        %p
+          Day #{@next_bill.day} of billing cycle #{@next_bill.start_date.to_s(:billing_date_no_year)} - #{@next_bill.end_date.to_s(:billing_date_no_year)}
+
+    %section.panel
+      %h2 Help
+      %p Tax help
