@@ -1,0 +1,75 @@
+#!/bin/bash
+
+#
+# Fix the failed migrations on a node
+# 
+
+#
+# This assumes that the httpd directories remain but the conf files
+# moved out of the way.
+#
+
+source /etc/openshift/node.conf
+
+RC='system_u:system_r:openshift_initrc_t:s0-s0:c0.c1023'
+
+DEBUG=""
+DEBUG="echo"
+
+mkdir -p ${OPENSHIFT_HTTP_CONF_DIR}/fixfailed
+
+grep :"$GEAR_GECOS": /etc/passwd | { 
+     while read gear
+     do
+         uuid=$(echo $gear | cut -f 1 -d :)
+         uid=$(echo $gear | cut -f 3 -d :)
+         geardir=$(echo $gear | cut -f 6 -d :)
+
+         stale_apache=$(eval ls -d "${OPENSHIFT_HTTP_CONF_DIR}/${uuid}_*/00000_default.conf" 2>/dev/null |grep -v migrated)
+         if [ -n "$stale_apache" ]
+         then
+             echo "Attempting to fix: $uuid"
+             (
+                 set -e
+                 source $geardir/.env/OPENSHIFT_GEAR_NAME
+                 source $geardir/.env/OPENSHIFT_GEAR_DNS
+
+                 namespace=$(echo "$OPENSHIFT_GEAR_DNS" | cut -f 1 -d . | cut -f 2 -d -)
+
+                 $DEBUG runcon "$RC" /usr/bin/oo-frontend-create \
+                     --with-container-uuid "$uuid" \
+                     --with-namespace "$namespace" \
+                     --with-container-name "$OPENSHIFT_GEAR_NAME"
+
+                 for cart_path in $geardir/*
+                 do
+                     cart=$(basename "$cart_path")
+                     hook="$CARTRIDGE_BASE_PATH/$cart/info/hooks/deploy-httpd-proxy"
+                     if [ -e "$hook" ]
+                     then
+                         (
+                             source $geardir/.env/PATH
+                             $DEBUG runcon "$RC" "$hook" "$OPENSHIFT_GEAR_NAME" "$namespace" "$uuid"
+                         )
+                     fi
+                 done
+
+                 if [ -e "${OPENSHIFT_HTTP_CONF_DIR}/${uuid}_*/*_disabled.conf" ]
+                 then
+                     $DEBUG runcon "$RC" /usr/bin/oo-frontend-idle --with-container-uuid "$uuid"
+                 fi
+
+                 aliases=$(eval ls "${OPENSHIFT_HTTP_CONF_DIR}/${uuid}_*/server_alias-*.conf" 2>/dev/null )
+                 if [ -n "$aliases" ]
+                 then
+                     for alias_path in "$aliases"
+                     do
+                         alias_name=$(basename "$alias_path" .conf | sed -e 's|server_alias-||' )
+                         $DEBUG runcon "$RC" /usr/bin/oo-add-alias --with-container-uuid "$uuid" --with-alias-name "$alias_name" || :
+                     done
+                 fi
+                 $DEBUG mv -f ${OPENSHIFT_HTTP_CONF_DIR}/${uuid}_* ${OPENSHIFT_HTTP_CONF_DIR}/fixfailed
+             )
+         fi
+     done
+}
