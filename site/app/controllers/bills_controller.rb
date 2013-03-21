@@ -80,6 +80,8 @@ class BillsController < ConsoleController
     end
 
     def populate_view(user, invoices, invoice)
+      @plan = current_api_user.plan
+
       @invoice_options = invoices.map {|i| [
         "#{i.bill_date.to_datetime.to_s(:billing_date)}",
         i.invoice_no.to_s,
@@ -93,6 +95,7 @@ class BillsController < ConsoleController
       @prev_no = invoices[index + 1].invoice_no if index and index < invoices.length - 1
 
       @is_test_user = user.test_user?
+      @virtual_time = Aria::DateTime.now if Aria::DateTime.virtual_time?
 
       @next_bill = user.next_bill
       current_usage_items = @next_bill.unbilled_usage_line_items

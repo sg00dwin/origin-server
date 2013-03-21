@@ -709,6 +709,10 @@ class AriaUnitTest < ActiveSupport::TestCase
     })
     plan_no = opts[:plan_no] || Rails.application.aria_default_plan_no
 
+    stub_aria(:get_virtual_datetime, {
+    }).to_return(resp(ok_wddx({
+      :current_offset_hours => 0,
+    })))
     stub_acct_details(acct_no, {:plan_no => plan_no}.merge(opts.slice(:next_bill_date, :last_bill_date)))
     stub_queued_plans(acct_no, opts[:queued_plans] || [])
     stub_acct_invoice_history(acct_no, opts[:invoice_history] || [])

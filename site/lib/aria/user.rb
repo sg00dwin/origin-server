@@ -115,7 +115,7 @@ module Aria
               start_date,
               next_bill_date - 1.day,
               next_bill_date,
-              (Date.today - start_date).to_i + 1,
+              (Aria::DateTime.today - start_date).to_i + 1,
               unpaid_invoices.map(&:line_items).flatten(1).concat(next_plan_recurring_line_items),
               [],
               unbilled_usage_line_items,
@@ -254,6 +254,19 @@ module Aria
       set_reg_uss_params('redirecturl', url)
     end
 
+    # Mostly for test use
+    def clear_cache!
+      @queued_plans = nil
+      @billing_info = nil
+      @account_details = nil
+      @invoices = nil
+      @next_plan_recurring_line_items = nil
+      @unbilled_usage_balance = nil
+      @unbilled_usage_line_items = nil
+      @next_bill = nil
+      @payment_method = nil
+    end
+
     private
       def user_id
         Digest::MD5::hexdigest(login)
@@ -287,7 +300,7 @@ module Aria
       end
 
       def today
-        @today ||= Date.today.to_s
+        @today ||= Aria::DateTime.today.to_s
       end
   end
 
