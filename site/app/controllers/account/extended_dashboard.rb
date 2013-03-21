@@ -23,6 +23,7 @@ module Account
       end
 
       @is_test_user = user.test_user?
+      @virtual_time = Aria::DateTime.now if Aria::DateTime.virtual_time?
 
       @bill = user.next_bill
 

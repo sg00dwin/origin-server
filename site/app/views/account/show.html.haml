@@ -15,7 +15,7 @@
 
     - if @bill.present?
       %p
-        - if @bill.due_date > Date.today
+        - if @bill.due_date > Aria::DateTime.today
           You owe #{number_to_currency(@bill.balance)}, due on #{@bill.due_date.to_s(:billing_date)}.
         - else
           You owe #{number_to_currency(@bill.balance)} which was due on #{@nbill.due_date.to_s(:billing_date)}.
@@ -57,6 +57,8 @@
 
       - if @is_test_user
         .alert.alert-warning You are accessing OpenShift with a test user.  If this is in error, please contact the account support team immediately.
+      - if @virtual_time
+        .alert.alert-warning You are accessing an Aria test system. The virtual time is #{@virtual_time}.
 
 
   .span4
