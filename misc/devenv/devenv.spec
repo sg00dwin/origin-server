@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.6.2
+Version: 1.6.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -53,6 +53,9 @@ Requires:  openshift-origin-cartridge-php
 Requires:  openshift-origin-cartridge-perl
 Requires:  openshift-origin-cartridge-python
 Requires:  openshift-origin-cartridge-ruby
+Requires:  openshift-origin-cartridge-jenkins
+Requires:  openshift-origin-cartridge-jenkins-client
+Requires:  openshift-origin-cartridge-mysql
 Requires:  activemq
 Requires:  activemq-client
 #Requires:  qpid-cpp-server
@@ -348,7 +351,15 @@ getsebool httpd_execmem | grep -q -e 'on$' || /usr/sbin/setsebool -P httpd_execm
 
 # Allow httpd to verify dns records
 getsebool httpd_verify_dns | grep -q -e 'on$' || /usr/sbin/setsebool -P httpd_verify_dns=on || :
- 
+
+# Allow memcached to bind to port 11212 so we can test multi-memcached environments
+semanage port -l | grep memcache | grep 11212 > /dev/null
+if [ $? -ne 0 ]
+then
+  semanage port -a -t memcache_port_t -p tcp 11212
+  semanage port -a -t memcache_port_t -p udp 11212
+fi
+
 # Add policy for developement environment
 cd %{policydir} ; make -f ../devel/Makefile
 semodule -l | grep -q dhcpnamedforward || semodule -i dhcpnamedforward.pp
@@ -678,13 +689,7 @@ cd /var/www/openshift/site && /usr/bin/scl enable ruby193 "rake assets:clean"
 /etc/drupal6/drupal-setup.sh
 
 # Install the carts
-mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/mock
-mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/mock-plugin
-#mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/jbosseap
-mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/php-5.3
-mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/perl
-mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/python
-mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshift/cartridges/v2/ruby
+oo-admin-cartridge --recursive -a install -s /usr/libexec/openshift/cartridges/v2/
 
 %files
 %defattr(-,root,root,-)
@@ -697,6 +702,8 @@ mco rpc openshift cartridge_repository action=install path=/usr/libexec/openshif
 %{_initddir}/rhc-broker
 %{_initddir}/rhc-site
 %{_initddir}/sauce-connect
+%{_initddir}/memcached-1
+%{_initddir}/memcached-2
 %{policydir}/*
 /etc/openshift/development
 
@@ -706,6 +713,12 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Mon Mar 18 2013 Adam Miller <admiller@redhat.com> 1.6.3-1
+- Adding memcached files to RPM list (mhicks@redhat.com)
+- Paths for memcached services were wrong (ccoleman@redhat.com)
+- Implement memcached on devenv (ccoleman@redhat.com)
+- adjust to the php-5.3 dir (dmcphers@redhat.com)
+
 * Thu Mar 14 2013 Adam Miller <admiller@redhat.com> 1.6.2-1
 - Merge pull request #1016 from tkramer-rh/dev/tkramer/security/mod_security
   (dmcphers+openshiftbot@redhat.com)

@@ -1,13 +1,15 @@
 class CloudUser
   include UtilHelper
   #alias :initialize_old :initialize
-
-  field :plan_id, type: String, pre_processed: true, default: ->{ Rails.configuration.billing[:default_plan] }
-
   #
   # Capability keys that should be preserved when a user's plan changes.
   #
   PRESERVE_CAPABILITIES_ON_PLAN_CHANGE = ['plan_upgrade_enabled']
+  PLAN_STATES = { 'active' => "ACTIVE", 'pending' => "PENDING", 'canceled' => "CANCELED",
+                  'deactivated' => "DEACTIVATED", 'reactivating' => "REACTIVATING" }
+
+  field :plan_id, type: String, pre_processed: true, default: ->{ Rails.configuration.billing[:default_plan] }
+  field :plan_state, type: Array, pre_processed: true, default: ->{ PLAN_STATES['active'] }
 
   #def initialize(login=nil, ssh=nil, ssh_type=nil, key_name=nil, capabilities=nil, parent_user_login=nil)
   #  initialize_old(login, ssh, ssh_type, key_name, capabilities, parent_user_login)
@@ -128,78 +130,86 @@ class CloudUser
     end
   end
 
-  def update_plan(plan_id)
+  def update_plan(plan_id, skip_lock=false)
     plan_info = self.get_plan_info(plan_id)
 
-    #check if subaccount user
-    raise OpenShift::UserException.new("Plan change not allowed for subaccount user", 157) unless self.parent_user_id.nil?
-
-    raise OpenShift::UserException.new("Plan change is not allowed for this account", 220) unless self.capabilities['plan_upgrade_enabled']
-
-    #check to see if user can be switched to the new plan
-    self.check_plan_compatibility(plan_id)
-
-    #get billing account number and account details
-    self.usage_account_id = self.get_billing_account_no unless self.usage_account_id
-    account = self.get_billing_details
-
-    default_plan_id = Rails.application.config.billing[:default_plan].to_s
-    #allow user to downgrade to default plan if the a/c status is not active. 
-    raise OpenShift::UserException.new("Billing account status not active", 152) if account["status_cd"].to_i <= 0 and plan_id != default_plan_id
-
-    old_plan_id = self.plan_id
-    old_capabilities = self.get_capabilities
     cur_time = Time.now.utc
-    self.pending_plan_id = plan_id
-    self.pending_plan_uptime = cur_time
+    filter = {:_id => self._id, :pending_plan_id => nil, :pending_plan_uptime => nil, :plan_state => PLAN_STATES['active']}
+    update = {"$set" => {:pending_plan_id => plan_id, :pending_plan_uptime => cur_time, :plan_state => CloudUser::PLAN_STATES['pending']}}
+    user = CloudUser.with(consistency: :strong).where(filter).find_and_modify(update, {:new => true})
 
-    #to minimize the window where the user can create gears without being on megashift plan
-    self.assign_plan(default_plan_id) if old_plan_id && (old_plan_id != default_plan_id)
-    self.save!
+    # Only rhc-admin-ctl-plan script skips the lock to fix user plans
+    raise OpenShift::UserException.new("Plan change is not allowed at this time for this account. "\
+          "Please retry after sometime and if problem persists, contact Red Hat support.", 221) unless user or skip_lock
 
-    billing_api = OpenShift::BillingService.instance
-    cur_plan_index = -1
-    new_plan_index = -1
-    billing_api.get_plans.each_with_index do |plan, index|
-      new_plan_index = index if plan[1][:plan_no] == plan_info[:plan_no]
-      cur_plan_index = index if plan[0].to_s == old_plan_id
-    end
+    old_plan_id = nil
+    old_capabilities = nil
     begin
-      #update plan in billing vendor
-      billing_api.update_master_plan(self.usage_account_id, plan_id.to_sym, (new_plan_index > cur_plan_index))
+      self.with(consistency: :strong).reload
+
+      #check if subaccount user
+      raise OpenShift::UserException.new("Plan change not allowed for subaccount user", 157) unless self.parent_user_id.nil?
+      raise OpenShift::UserException.new("Plan change is not allowed for this account", 220) unless self.capabilities['plan_upgrade_enabled']
+
+      #check to see if user can be switched to the new plan
+      self.check_plan_compatibility(plan_id)
+
+      #get billing account number and account details
+      self.usage_account_id = self.get_billing_account_no unless self.usage_account_id
+      account = self.get_billing_details
+
+      default_plan_id = Rails.application.config.billing[:default_plan].to_s
+      #allow user to downgrade to default plan if the a/c status is not active. 
+      raise OpenShift::UserException.new("Billing account status not active", 152) if account["status_cd"].to_i <= 0 and plan_id != default_plan_id
+
+      old_plan_id = self.plan_id
+      old_capabilities = self.get_capabilities
+      #to minimize the window where the user can create gears without being on megashift plan
+      self.assign_plan(default_plan_id) if old_plan_id && (old_plan_id != default_plan_id)
+      self.save!
+
+      billing_api = OpenShift::BillingService.instance
+
+      update_aria_plan = true
+      queued_plans = billing_api.get_queued_service_plans(self.usage_account_id)
+      if queued_plans
+        if queued_plans[0]["new_plan_no"] == plan_info[:plan_no]
+          update_aria_plan = false
+        else
+          billing_api.cancel_queued_service_plan(self.usage_account_id)
+        end
+      end
+      update_aria_plan = false if account["plan_no"].to_i == plan_info[:plan_no]
+      if update_aria_plan
+        cur_plan_index = -1
+        new_plan_index = -1
+        billing_api.get_plans.each_with_index do |plan, index|
+          new_plan_index = index if plan[1][:plan_no] == plan_info[:plan_no]
+          cur_plan_index = index if plan[0].to_s == old_plan_id
+        end
+        #update plan in billing vendor
+        billing_api.update_master_plan(self.usage_account_id, plan_id.to_sym, (new_plan_index > cur_plan_index))
+      end
     rescue Exception => e
+      Rails.logger.error e.message
+      Rails.logger.error e.backtrace.inspect
+      raise
+    ensure
       self.pending_plan_id = nil
       self.pending_plan_uptime = nil
-      self.plan_id = old_plan_id
-      self.capabilities_will_change!
-      self.set_capabilities(old_capabilities)
+      self.plan_state = CloudUser::PLAN_STATES['active']
+      self.plan_id = old_plan_id if old_plan_id
+      if old_capabilities
+        self.capabilities_will_change!
+        self.set_capabilities(old_capabilities)
+      end
       self.save!
-      Rails.logger.error e
-      raise
     end
 
     #update user record
     self.pending_plan_id = nil
     self.pending_plan_uptime = nil
+    self.plan_state = CloudUser::PLAN_STATES['active']
     self.assign_plan(plan_id, true)
-
-    begin
-      #check user record consistency
-      self.check_plan_compatibility(self.plan_id)
-      self.match_plan_capabilities(self.plan_id)
-    rescue Exception => e
-      #update succeeded but the user record is in inconsistent state (can happen in case of parallel ops)
-      # - assign default plan temporarily to restrict un-authorized resources
-      # - put pending plan id marker so that it is fixed later by background process/ops team.
-      self.pending_plan_id = plan_id
-      self.pending_plan_uptime = cur_time
-      self.assign_plan(default_plan_id, true)
-      begin
-        billing_api.update_master_plan(self.usage_account_id, default_plan_id.to_sym) if self.usage_account_id
-      rescue
-      end
-      Rails.logger.error e
-      raise
-    end
   end
 end

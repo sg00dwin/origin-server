@@ -9,7 +9,7 @@
 
 Summary:        OpenShift plugin for streamline auth service
 Name:           rubygem-%{gem_name}
-Version: 1.4.1
+Version: 1.4.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -81,6 +81,10 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-auth-streamline-dev.conf
 
 %changelog
+* Mon Mar 18 2013 Adam Miller <admiller@redhat.com> 1.4.2-1
+- Fix for bug 921713 now passing correct number of arguments to
+  Rails.logger.error method (abhgupta@redhat.com)
+
 * Thu Mar 07 2013 Adam Miller <admiller@redhat.com> 1.4.1-1
 - bump_minor_versions for sprint 25 (admiller@redhat.com)
 

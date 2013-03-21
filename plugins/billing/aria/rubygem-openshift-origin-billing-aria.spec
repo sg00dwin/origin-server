@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.4.2
+Version: 1.4.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,10 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Mon Mar 18 2013 Adam Miller <admiller@redhat.com> 1.4.3-1
+- Changed private_certificate to private_ssl_certificate (lnader@redhat.com)
+- Add SNI upload support to API (lnader@redhat.com)
+
 * Thu Mar 14 2013 Adam Miller <admiller@redhat.com> 1.4.2-1
 - Merge pull request #1006 from pravisankar/dev/ravi/bug920107
   (dmcphers+openshiftbot@redhat.com)
