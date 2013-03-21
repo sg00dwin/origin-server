@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.6.3
+Version: 1.6.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -714,6 +714,19 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Thu Mar 21 2013 Adam Miller <admiller@redhat.com> 1.6.4-1
+- Add openshift-origin-cartridge-jbossews v2 cart to Requires
+  (ironcladlou@gmail.com)
+- trying a larger shun threshold (dmcphers@redhat.com)
+- Add v2 mysql to devenv.spec (pmorie@gmail.com)
+- Merge pull request #1037 from danmcp/master (dmcphers@redhat.com)
+- Merge pull request #1035 from smarterclayton/selinux_for_alt_memcache_port
+  (dmcphers+openshiftbot@redhat.com)
+- more work getting carts installed (dmcphers@redhat.com)
+- Memcached should be allowed to run on port 11212 in the devenv
+  (ccoleman@redhat.com)
+- getting jenkins building (dmcphers@redhat.com)
+
 * Mon Mar 18 2013 Adam Miller <admiller@redhat.com> 1.6.3-1
 - Adding memcached files to RPM list (mhicks@redhat.com)
 - Paths for memcached services were wrong (ccoleman@redhat.com)
