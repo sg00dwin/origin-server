@@ -52,6 +52,7 @@ class CloudUserUnitTest < ActiveSupport::TestCase
     billing.stubs(:get_acct_no_from_user_id).returns(1234)
     billing.stubs(:get_plans).returns(billing_api.get_plans)
     billing.stubs(:get_acct_details_all).returns({"status_cd" => 1})
+    billing.stubs(:get_queued_service_plans).returns(nil)
     billing.stubs(:update_master_plan).returns(true)
  
     @user = CloudUser.new(login: @login)

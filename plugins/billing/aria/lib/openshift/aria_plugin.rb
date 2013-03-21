@@ -284,6 +284,10 @@ module OpenShift
       result.data['queued_plans']
     end
 
+    def cancel_queued_service_plan(*args)
+      get_response(@ah.cancel_queued_service_plan(*args), __method__)
+    end
+
     def assign_supp_plan(*args)
       get_response_status(@ah.assign_supp_plan(*args), __method__)
     end

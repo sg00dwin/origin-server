@@ -376,9 +376,46 @@ class UserApiTest < ActionDispatch::IntegrationTest
     assert_equal(user.plan_id, "freeshift")
     assert_equal(user_capabilities["gear_sizes"].sort, ["c9", "small"])
   end
-  
-    def ssl_certificate_data
-    
+ 
+  def test_user_queued_plans
+    api = OpenShift::BillingService.instance
+    user_id = Digest::MD5::hexdigest(@login)
+    acct_no = api.create_fake_acct(user_id, :freeshift)
+    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :megashift}, @headers)
+    assert_response :ok
+    body = JSON.parse(@response.body)
+    user = body["data"]
+    assert_equal(user["plan_id"], "megashift")
+    acct_details = api.get_acct_details_all(acct_no)
+    assert_equal(acct_details["plan_name"], "MegaShift")
+    queued_plans = api.get_queued_service_plans(acct_no)
+    assert_equal(queued_plans, nil)
+
+    2.times do 
+      request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :freeshift}, @headers)
+      assert_response :ok
+      body = JSON.parse(@response.body)
+      user = body["data"]
+      assert_equal(user["plan_id"], "freeshift")
+      acct_details = api.get_acct_details_all(acct_no)
+      assert_equal(acct_details["plan_name"], "MegaShift")
+      queued_plans = api.get_queued_service_plans(acct_no)
+      assert_equal(queued_plans[0]["new_plan"], "FreeShift")
+    end
+    2.times do 
+      request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :megashift}, @headers)
+      assert_response :ok
+      body = JSON.parse(@response.body)
+      user = body["data"]
+      assert_equal(user["plan_id"], "megashift")
+      acct_details = api.get_acct_details_all(acct_no)
+      assert_equal(acct_details["plan_name"], "MegaShift")
+      queued_plans = api.get_queued_service_plans(acct_no)
+      assert_equal(queued_plans, nil)
+    end
+  end
+ 
+  def ssl_certificate_data
     @ssl_certificate = "-----BEGIN CERTIFICATE-----
 MIIDoDCCAogCCQDzF8AJCHnrbjANBgkqhkiG9w0BAQUFADCBkTELMAkGA1UEBhMC
 VVMxCzAJBgNVBAgMAkNBMRIwEAYDVQQHDAlTdW5ueXZhbGUxDzANBgNVBAoMBnJl
