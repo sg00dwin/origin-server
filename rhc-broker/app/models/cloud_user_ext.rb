@@ -169,17 +169,30 @@ class CloudUser
       self.save!
 
       billing_api = OpenShift::BillingService.instance
-      cur_plan_index = -1
-      new_plan_index = -1
-      billing_api.get_plans.each_with_index do |plan, index|
-        new_plan_index = index if plan[1][:plan_no] == plan_info[:plan_no]
-        cur_plan_index = index if plan[0].to_s == old_plan_id
-      end
 
-      #update plan in billing vendor
-      billing_api.update_master_plan(self.usage_account_id, plan_id.to_sym, (new_plan_index > cur_plan_index))
+      update_aria_plan = true
+      queued_plans = billing_api.get_queued_service_plans(self.usage_account_id)
+      if queued_plans
+        if queued_plans[0]["new_plan_no"] == plan_info[:plan_no]
+          update_aria_plan = false
+        else
+          billing_api.cancel_queued_service_plan(self.usage_account_id)
+        end
+      end
+      update_aria_plan = false if account["plan_no"].to_i == plan_info[:plan_no]
+      if update_aria_plan
+        cur_plan_index = -1
+        new_plan_index = -1
+        billing_api.get_plans.each_with_index do |plan, index|
+          new_plan_index = index if plan[1][:plan_no] == plan_info[:plan_no]
+          cur_plan_index = index if plan[0].to_s == old_plan_id
+        end
+        #update plan in billing vendor
+        billing_api.update_master_plan(self.usage_account_id, plan_id.to_sym, (new_plan_index > cur_plan_index))
+      end
     rescue Exception => e
-      Rails.logger.error e
+      Rails.logger.error e.message
+      Rails.logger.error e.backtrace.inspect
       raise
     ensure
       self.pending_plan_id = nil
