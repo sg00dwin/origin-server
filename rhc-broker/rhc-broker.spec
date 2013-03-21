@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.5.15
+Version: 1.5.16
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -149,6 +149,11 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Thu Mar 21 2013 Adam Miller <admiller@redhat.com> 1.5.16-1
+- fix migration script for 2.0.24 (rchopra@redhat.com)
+- fixing migration (dmcphers@redhat.com)
+- get the migrate script running (dmcphers@redhat.com)
+
 * Thu Mar 14 2013 Adam Miller <admiller@redhat.com> 1.5.15-1
 - Bug 921277 - User plan update api change: For upgrade, set assign_directive
   to 2 and for downgrade set assign_directive to 1 (rpenta@redhat.com)
