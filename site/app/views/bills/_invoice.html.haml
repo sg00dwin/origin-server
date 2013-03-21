@@ -65,7 +65,7 @@
       - else
         %h3= link_to "Technical Support", openshift_customer_portal_url
 
-    - if [].detect(&:tax?)
+    - if @bill.line_items.detect(&:tax?)
       %section.panel
         %h2 Tax exempt?
         %p
