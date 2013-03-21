@@ -100,7 +100,6 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %attr(0770,root,libra_user) %{brokerdir}/tmp
 %defattr(0640,root,libra_user,0750)
-%ghost %attr(0660,root,root) %{_var}/log/openshift/user_action.log
 %config(noreplace) %{brokerdir}/config/keys/public.pem
 %config(noreplace) %{brokerdir}/config/keys/private.pem
 %attr(0600,-,-) %config(noreplace) %{brokerdir}/config/keys/rsync_id_rsa
@@ -109,6 +108,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{brokerdir}/config/keys/generate_rsync_rsa_keys
 %attr(0750,-,-) %{brokerdir}/script
 %attr(0770,root,libra_user) %{_var}/log/openshift/broker/
+%ghost %attr(0660,root,libra_user) %{_var}/log/openshift/user_action.log
 %ghost %attr(0660,root,libra_user) %{_var}/log/openshift/broker/production.log
 %ghost %attr(0660,root,libra_user) %{_var}/log/openshift/broker/development.log
 %ghost %attr(0660,root,libra_user) %{_var}/log/openshift/broker/usage.log
