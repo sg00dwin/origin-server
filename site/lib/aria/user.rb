@@ -106,12 +106,11 @@ module Aria
       if @next_bill.nil?
         default_plan = Rails.configuration.aria_default_plan_no.to_s
         @next_bill =
-          if account_details.plan_no.to_s == default_plan && next_plan_no == default_plan
+          if plan_no == default_plan && next_plan_no == default_plan
             false
           else
             start_date = aria_datetime(current_period_start_date)
             next_bill_date = aria_datetime(account_details.next_bill_date)
-            d = account_details
             Aria::Bill.new(
               start_date,
               next_bill_date - 1.day,
@@ -133,7 +132,7 @@ module Aria
 
     def unbilled_usage_line_items
       @unbilled_usage_line_items ||=
-        Aria::UsageLineItem.for_usage(Aria.get_usage_history(acct_no, :date_range_start => current_period_start_date), account_details.plan_no).sort_by(&Aria::LineItem.plan_sort)
+        Aria::UsageLineItem.for_usage(Aria.get_usage_history(acct_no, :date_range_start => current_period_start_date), plan_no).sort_by(&Aria::LineItem.plan_sort)
     end
 
     def unbilled_usage_balance
@@ -171,12 +170,21 @@ module Aria
       ]
     end
 
+    def plan_no
+      account_details.plan_no
+    end
+
     def next_plan_no
       if plan = queued_plans.last
         plan.new_plan_no.to_s
       else
-        account_details.plan_no
+        plan_no
       end
+    end
+
+    def default_plan_pending?
+      next_plan_no == Rails.configuration.aria_default_plan_no.to_s && 
+        plan_no != Rails.configuration.aria_default_plan_no.to_s
     end
 
     def next_plan_recurring_line_items

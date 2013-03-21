@@ -131,6 +131,7 @@ class AccountControllerTest < ActionController::TestCase
   end
 
   test 'should send support contact mail' do
+    with_unique_user
     email_obj = Object.new
     AccountSupportContactMailer.expects(:contact_email).once.returns(email_obj)
     email_obj.expects(:deliver).once

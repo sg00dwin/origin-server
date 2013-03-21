@@ -26,6 +26,10 @@ module Aria
       super.plans_basic
     end
 
+    def get_client_plans_all
+      super.all_client_plans
+    end
+
     def get_client_plan_services(plan_no)
       super(:plan_no => plan_no).plan_services
     end

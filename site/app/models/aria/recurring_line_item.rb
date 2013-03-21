@@ -2,18 +2,19 @@ module Aria
   class RecurringLineItem < LineItem
 
     def self.find_all_by_plan_no(plan_no)
-      plan_name = Aria.cached.get_client_plans_basic.find{ |plan| plan.plan_no.to_s == plan_no.to_s }.plan_name
-      Aria.cached.get_client_plan_services(plan_no).keep_if{ |s| s.is_usage_based_ind == 0 }.map do |s| 
-        rate = Aria.cached.get_client_plan_service_rates(plan_no, s.service_no).first.monthly_fee
-        next if rate <= 0.01
-        Aria::RecurringLineItem.new({
+      plan = Aria.cached.get_client_plans_all.find{ |plan| plan.plan_no.to_s == plan_no.to_s }
+      plan.plan_services.inject([]) do |a, s|
+        next a if s.is_usage_based_ind == 1 || s.plan_service_rates.empty?
+        rate = s.plan_service_rates.first.monthly_fee
+        a << Aria::RecurringLineItem.new({
           'service_name' => s.service_desc,
           'description' => s.service_desc,
-          'plan_name' => plan_name,
+          'plan_name' => plan.plan_name,
           'rate_per_unit' => rate,
           'units' => 1.0,
-        }, plan_no)
-      end.compact
+        }, plan_no) if rate >= 0.01
+        a
+      end || []
     end
 
     def self.find_all_by_current_plan(acct_no)
@@ -27,7 +28,7 @@ module Aria
           'units' => 1.0,
         }, plan.plan_no) if s.is_recurring_ind == 1
         a
-      end
+      end || []
     end
 
     def recurring?
@@ -48,9 +49,10 @@ module Aria
       date_range_start
     end
 
-    def total_cost
-      amount || (rate_per_unit * units)
+    def amount
+      attributes['amount'] || (rate_per_unit * units)
     end
+    alias_method :total_cost, :amount
 
     def prorated?
       units != 1.0
