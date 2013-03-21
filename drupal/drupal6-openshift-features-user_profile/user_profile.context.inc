@@ -241,6 +241,39 @@ function user_profile_context_default_contexts() {
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
+  $context->name = 'menu-active-quickstarts';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+    'node' => array(
+      'values' => array(
+        'quickstart' => 'quickstart',
+      ),
+      'options' => array(
+        'node_form' => '1',
+      ),
+    ),
+    'path' => array(
+      'values' => array(
+        'quickstart-tags/*' => 'quickstart-tags/*',
+      ),
+    ),
+    'views' => array(
+      'values' => array(
+        'application_quickstarts_content' => 'application_quickstarts_content',
+        'application_quickstarts_content:page_2' => 'application_quickstarts_content:page_2',
+      ),
+    ),
+  );
+  $context->reactions = array(
+    'menu' => 'quickstarts',
+  );
+  $context->condition_mode = 0;
+  $export['menu-active-quickstarts'] = $context;
+
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
   $context->name = 'menu-active-videos';
   $context->description = '';
   $context->tag = '';

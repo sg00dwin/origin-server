@@ -253,6 +253,7 @@ function openshift_pager($tags = array(), $limit = 10, $element = 0, $parameters
 function _openshift_heading(&$vars) {
   global $user;
   $page_title = $vars['title'];
+  $title = $page_title;
   $item = end(menu_get_active_trail());
   #print_r($item);
   if ($vars['forum']['new-topic']) {
@@ -277,6 +278,24 @@ function _openshift_heading(&$vars) {
       $title = $item['title'];
     }
   }
+  elseif ($item['path'] == 'quickstarts') {
+    $type = 'quickstarts';
+  }
+  elseif ($item['page_callback'] == 'taxonomy_term_page') {
+    if ($term = taxonomy_get_term($item['page_arguments'][0])) {
+      #$vocab = taxonomy_vocabulary_load($term->vid);
+      if ($term->vid == 4) {
+        $title = "QuickStarts Tagged with '".$term->name."'";
+        #drupal_set_title($title);
+        $vars['head_title'] = $title;
+      } else {
+        $title = "Content Tagged with ".$term->name;
+      }
+    } else {
+      $title = "Tagged Content";
+    }
+    $type = '';
+  }
   elseif ($item['path'] == 'community') {
     $type = 'community';
   }
@@ -290,7 +309,7 @@ function _openshift_heading(&$vars) {
   case 'wikis': $heading = "Open Source Wiki"; break;
   case 'discussion':
   case 'groups':
-  case 'group': $heading = "Forum"; drupal_set_title($heading); break;
+  case 'group': $heading = "Forum"; $vars['head_title'] = $heading; break;
   #case 'documentation': $heading = "Documentation"; break; // no title for some reason
   case 'community': $heading = "Welcome to OpenShift"; break; // override the default link title
   case 'calendar':
@@ -300,6 +319,8 @@ function _openshift_heading(&$vars) {
   case 'kb': $heading = "Knowledge Base"; break; // no title for some reason
   case 'blogs': // no title for some reason
   case 'blog': $heading = "OpenShift Blog"; break;
+  case 'quickstarts':
+  case 'quickstart': $heading = "QuickStarts"; break;
   case 'faq': $heading = "Frequently Asked Questions"; break;
   #case 'videos': // no title for some reason
   #case 'video': $heading = "Videos"; break;
@@ -354,12 +375,18 @@ function openshift_preprocess_node(&$vars) {
     default:
       $vars['forum'] = NULL;
   }
-  
+
+  // Allow node taxonomy theming
+  if (arg(0) == 'taxonomy') {
+     $suggestions = array(
+       'node-taxonomy',
+       'node-'.$vars['type'].'-taxonomy'
+     );
+     $vars['template_files'] = array_merge($vars['template_files'], $suggestions);
+  }
+
   // Theme the links appended to each discussion node.
   _openshift_theme_subscription_links($vars['links']);
-  
-  // FIXME replace with better integration with drupal site nav and taxonomies
-  $vars['heading'] = _openshift_heading($vars);
 }
 
 function _openshift_theme_subscription_links(&$links) {
