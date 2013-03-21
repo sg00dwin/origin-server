@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.6.3
+Version: 1.6.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -151,6 +151,33 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Thu Mar 21 2013 Adam Miller <admiller@redhat.com> 1.6.4-1
+- fixed bz924308 (admiller@redhat.com)
+- Merge pull request #1048 from abhgupta/abhgupta-dev
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 923801 - Update user plan will also look at queued plans and decides
+  whether to cancel queued plan or/and update the master plan.
+  (rpenta@redhat.com)
+- Fixing randomize app/gear uuid to ensure they are the same for the first gear
+  (abhgupta@redhat.com)
+- Merge pull request #1039 from rmillner/fix_proxy
+  (dmcphers+openshiftbot@redhat.com)
+- Fixes frontend httpd proxy rebuild. (rmillner@redhat.com)
+- Randomize the uuid in test and dev environments. This helps simulate the
+  environment in production and facilitates testing those scenarios
+  (abhgupta@redhat.com)
+- US436: When broker receives final dunning event/cancel acct status, mark plan
+  state as 'canceled' for the corresponding user in mongo. (rpenta@redhat.com)
+- Merge pull request #1034 from pravisankar/dev/ravi/us506
+  (dmcphers+openshiftbot@redhat.com)
+- fix migration script for 2.0.24 (rchopra@redhat.com)
+- fixing migration (dmcphers@redhat.com)
+- update migration to current release (dmcphers@redhat.com)
+- get the migrate script running (dmcphers@redhat.com)
+- fixed broker extended test (lnader@redhat.com)
+- US506 : Broker rails flag to enable/disable broker in maintenance mode
+  (rpenta@redhat.com)
+
 * Mon Mar 18 2013 Adam Miller <admiller@redhat.com> 1.6.3-1
 - Merge pull request #1028 from abhgupta/abhgupta-dev
   (dmcphers+openshiftbot@redhat.com)
