@@ -27,7 +27,7 @@ var _gaq = _gaq || [];
 	// Google Analytics tracking configuration
 	_gaq.push(['_require', 'inpage_linkid', '//www.google-analytics.com/plugins/ga/inpage_linkid.js']);
 	
-	if(/openshift\.com$/.test(location.hostname) || /^\/(app\/)?account\/(new|create)/.test(location.pathname)) {
+	if(/openshift\.com$/.test(location.hostname) || /^\/(app\/)?account\/(new|complete)/.test(location.pathname)) {
 		_gaq.push(['_setAccount', 'UA-30752912-5']); // drupal account
 		$("a[href*='openshift.redhat.com']").on('click', function(event){
 			event.preventDefault();
