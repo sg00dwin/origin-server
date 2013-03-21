@@ -2,6 +2,7 @@ module Aria
   require_dependency 'aria/errors'
   require_dependency 'aria/client'
   require_dependency 'aria/user'
+  require_dependency 'aria/date_time'
   require_dependency 'aria/methods'
 
   include Cacheable
@@ -14,6 +15,7 @@ module Aria
     end
   end
 
+  cache_method :get_virtual_datetime
   cache_method :get_acct_no_from_user_id
   cache_method :get_supp_field_value
   cache_method :get_supp_field_values

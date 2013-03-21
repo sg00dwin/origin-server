@@ -174,7 +174,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     u = record_usage_for_user(with_account_holder)
     assert bill = u.next_bill
     assert bill.due_date > bill.end_date
-    assert bill.start_date <= Date.today.to_datetime
+    assert bill.start_date <= Aria::DateTime.today.to_datetime
     assert bill.line_items.present?
     assert bill.line_items.select(&:recurring?).present?
     assert bill.line_items.select(&:usage?).present?
