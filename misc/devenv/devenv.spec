@@ -56,6 +56,7 @@ Requires:  openshift-origin-cartridge-ruby
 Requires:  openshift-origin-cartridge-jenkins
 Requires:  openshift-origin-cartridge-jenkins-client
 Requires:  openshift-origin-cartridge-mysql
+Requires:  openshift-origin-cartridge-jbossews
 Requires:  activemq
 Requires:  activemq-client
 #Requires:  qpid-cpp-server
