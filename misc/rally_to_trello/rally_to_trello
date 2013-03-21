@@ -214,7 +214,7 @@ command :run do |c|
               addtl_tags_name_addition += "[#{story.iteration.to_s}] "
             end
 
-            name = "(#{story.plan_estimate ? story.plan_estimate.to_s : '?'})#{addtl_tags_name_addition}#{story.name}"
+            name = "(#{story.plan_estimate ? story.plan_estimate.to_i.to_s : '?'})#{addtl_tags_name_addition}#{story.name}"
 
             desc = ''
             if story.description && !story.description.empty?
