@@ -214,6 +214,15 @@ module OpenShift
       }
     end
 
+    def cancel_queued_service_plan(acct_no)
+      {
+        'account_number' => acct_no,
+        'client_no' => @client_no,
+        'auth_key' => @auth_key,
+        'rest_call' => "cancel_queued_service_plan"
+      }
+    end
+
     def assign_supp_plan(acct_no, supp_plan_name, 
                          num_plan_units=1, assignment_directive=2)
       {
