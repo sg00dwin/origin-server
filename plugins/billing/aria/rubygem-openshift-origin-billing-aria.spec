@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.4.3
+Version: 1.4.4
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,17 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Thu Mar 21 2013 Adam Miller <admiller@redhat.com> 1.4.4-1
+- Bug 923801 - Update user plan will also look at queued plans and decides
+  whether to cancel queued plan or/and update the master plan.
+  (rpenta@redhat.com)
+- - Allow request to /broker/billing/rest/events only if auth_key, client_no
+  matches and remote ip is within aria provisioning servers IP range. - Mark
+  user as in 'canceled' plan state if aria event status code < 0 i.e.
+  suspended, canceled or terminated. (rpenta@redhat.com)
+- US436: When broker receives final dunning event/cancel acct status, mark plan
+  state as 'canceled' for the corresponding user in mongo. (rpenta@redhat.com)
+
 * Mon Mar 18 2013 Adam Miller <admiller@redhat.com> 1.4.3-1
 - Changed private_certificate to private_ssl_certificate (lnader@redhat.com)
 - Add SNI upload support to API (lnader@redhat.com)
