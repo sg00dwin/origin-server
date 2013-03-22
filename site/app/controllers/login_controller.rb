@@ -42,10 +42,11 @@ class LoginController < ApplicationController
     def check_referrer
       if request.referer && request.referer != '/'
         referrer = URI.parse(request.referer) rescue nil
-        if remote_request? referrer
-          logger.debug "  Logging out user referred from: #{referrer.to_s}"
-          reset_sso
-        end
+        # of questionable utility - does not protect against cross domain CSRF
+        #if remote_request? referrer
+          #logger.debug "  Logging out user referred from: #{referrer.to_s}"
+          #reset_sso  
+        #end
         @referrerRedirect = valid_referrer(referrer)
         logger.debug "  Stored referrer #{@referrerRedirect}"
       end
