@@ -5,7 +5,7 @@
 %global modname             user_profile
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.11.1
+Version: 1.11.2
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom User Profile Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,15 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Fri Mar 22 2013 Adam Miller <admiller@redhat.com> 1.11.2-1
+- Add left navigation for quickstart tags (ccoleman@redhat.com)
+- Add quickstart features, simplify markup for blogs and quickstarts to be
+  consistent (ccoleman@redhat.com)
+- Add trust rating, export permissions for quickstart fields
+  (ccoleman@redhat.com)
+- Implement a quickstart content view with popular and recent results
+  (ccoleman@redhat.com)
+
 * Thu Mar 07 2013 Adam Miller <admiller@redhat.com> 1.11.1-1
 - bump_minor_versions for sprint 25 (admiller@redhat.com)
 
