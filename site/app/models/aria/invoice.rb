@@ -21,7 +21,7 @@ module Aria
     def line_items
       @line_items ||= Aria.cached.get_invoice_details(acct_no, invoice_no).map {|li| 
         if li.usage_type_no
-          Aria::UsageLineItem.for_usage(li, master_plan_no)
+          Aria::UsageLineItem.new(li, master_plan_no)
         else
           Aria::RecurringLineItem.new(li, master_plan_no)
         end
