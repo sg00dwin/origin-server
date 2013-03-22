@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.14.2
+Version: 3.14.3
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,17 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Mar 22 2013 Adam Miller <admiller@redhat.com> 3.14.3-1
+- Final tweaks, last round of items (ccoleman@redhat.com)
+- Switch to div based layout, lock taxonomies.  Follow Rob's changes to views
+  and remove excess output. (ccoleman@redhat.com)
+- US3113:  detabbing _community.scss, addressing .links.inline a { } bug, and
+  first cut at styling of a quick start page (rhamilto@redhat.com)
+- Add quickstart features, simplify markup for blogs and quickstarts to be
+  consistent (ccoleman@redhat.com)
+- Implement a quickstart content view with popular and recent results
+  (ccoleman@redhat.com)
+
 * Thu Mar 14 2013 Adam Miller <admiller@redhat.com> 3.14.2-1
 - Merge pull request #983 from fabianofranz/master
   (dmcphers+openshiftbot@redhat.com)
