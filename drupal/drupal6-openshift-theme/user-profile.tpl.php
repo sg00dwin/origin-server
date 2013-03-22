@@ -1,6 +1,5 @@
 <?php drupal_set_title($account->name); ?>
 <div id="profile">
-  <h2><?php $account->uid === $user->uid ? print 'Your Profile' : print 'User Profile' ?></h2>
   <?php if ($account->uid === $user->uid): ?>
   <div class="profile-edit-link"><a href="<?php print base_path() .'user/'. $user->uid; ?>/edit">[Edit]</a></div>
   <?php endif; ?> 

@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.6.3
+Version: 1.6.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -179,6 +179,10 @@ fi
 %{sitedir}/public
 
 %changelog
+* Thu Mar 21 2013 Adam Miller <admiller@redhat.com> 1.6.4-1
+- updated account inclusion regex (spurtell@redhat.com)
+- Bug 921508 - Fix link to Create Application page (hripps@redhat.com)
+
 * Mon Mar 18 2013 Adam Miller <admiller@redhat.com> 1.6.3-1
 - Implement memcached on devenv (ccoleman@redhat.com)
 - Revise signup test to expect account upgrade view (hripps@redhat.com)

@@ -20,6 +20,7 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'moderator',
+      '2' => 'page author',
     ),
   );
 
@@ -29,6 +30,7 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'moderator',
+      '2' => 'page author',
     ),
   );
 
@@ -281,6 +283,7 @@ function user_profile_user_default_permissions() {
     'name' => 'administer pathauto',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'page author',
     ),
   );
 
@@ -297,6 +300,7 @@ function user_profile_user_default_permissions() {
     'name' => 'administer redirects',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'page author',
     ),
   );
 
@@ -345,6 +349,7 @@ function user_profile_user_default_permissions() {
     'name' => 'administer url aliases',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'page author',
     ),
   );
 
@@ -410,7 +415,7 @@ function user_profile_user_default_permissions() {
     'name' => 'administer xmlsitemap',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'page author',
     ),
   );
 
@@ -591,7 +596,9 @@ function user_profile_user_default_permissions() {
   // Exported permission: create quickstart content
   $permissions['create quickstart content'] = array(
     'name' => 'create quickstart content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'authenticated user',
+    ),
   );
 
   // Exported permission: create url aliases
@@ -599,6 +606,7 @@ function user_profile_user_default_permissions() {
     'name' => 'create url aliases',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'page author',
     ),
   );
 
@@ -728,7 +736,10 @@ function user_profile_user_default_permissions() {
   // Exported permission: delete any quickstart content
   $permissions['delete any quickstart content'] = array(
     'name' => 'delete any quickstart content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
   );
 
   // Exported permission: delete any video content
@@ -879,7 +890,9 @@ function user_profile_user_default_permissions() {
   // Exported permission: delete own quickstart content
   $permissions['delete own quickstart content'] = array(
     'name' => 'delete own quickstart content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'authenticated user',
+    ),
   );
 
   // Exported permission: delete own video content
@@ -1033,7 +1046,10 @@ function user_profile_user_default_permissions() {
   // Exported permission: edit any quickstart content
   $permissions['edit any quickstart content'] = array(
     'name' => 'edit any quickstart content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
   );
 
   // Exported permission: edit any video content
@@ -1213,6 +1229,14 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: edit field_file
+  $permissions['edit field_file'] = array(
+    'name' => 'edit field_file',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
   // Exported permission: edit field_git_repository_url
   $permissions['edit field_git_repository_url'] = array(
     'name' => 'edit field_git_repository_url',
@@ -1327,6 +1351,15 @@ function user_profile_user_default_permissions() {
     'name' => 'edit field_quickstart_priority',
     'roles' => array(
       '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: edit field_quickstart_trust
+  $permissions['edit field_quickstart_trust'] = array(
+    'name' => 'edit field_quickstart_trust',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
     ),
   );
 
@@ -1539,7 +1572,9 @@ function user_profile_user_default_permissions() {
   // Exported permission: edit own quickstart content
   $permissions['edit own quickstart content'] = array(
     'name' => 'edit own quickstart content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'authenticated user',
+    ),
   );
 
   // Exported permission: edit own video content
@@ -2078,6 +2113,15 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: view field_file
+  $permissions['view field_file'] = array(
+    'name' => 'view field_file',
+    'roles' => array(
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+    ),
+  );
+
   // Exported permission: view field_git_repository_url
   $permissions['view field_git_repository_url'] = array(
     'name' => 'view field_git_repository_url',
@@ -2189,6 +2233,15 @@ function user_profile_user_default_permissions() {
   // Exported permission: view field_quickstart_priority
   $permissions['view field_quickstart_priority'] = array(
     'name' => 'view field_quickstart_priority',
+    'roles' => array(
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+    ),
+  );
+
+  // Exported permission: view field_quickstart_trust
+  $permissions['view field_quickstart_trust'] = array(
+    'name' => 'view field_quickstart_trust',
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',

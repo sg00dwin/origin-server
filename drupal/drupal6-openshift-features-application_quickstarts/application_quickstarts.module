@@ -1,3 +1,126 @@
 <?php
 
 include_once('application_quickstarts.features.inc');
+
+function application_quickstarts_menu() {
+  $items['quickstarts'] = array(
+    'page callback' => application_quickstarts_page,
+    'access callback' => TRUE,
+    'title' => 'QuickStarts',
+    'type' => MENU_NORMAL_ITEM,
+    'menu_name' => 'primary-links',
+  );
+  
+  return $items;
+}
+
+function application_quickstarts_cart_group($s) {
+  $carts = array_map('application_quickstarts_cart_trim', array_filter(array_map('trim', explode('|', $s))));
+  return implode(' or ', $carts);
+}
+
+function application_quickstarts_cart_trim($s) {
+  return '<span class="cartridge-spec">'.check_plain(preg_replace("#\\-*?\\*+$#", '', trim($s)))."</span>";
+}
+
+function application_quickstarts_build_url($parse_url) {
+  return ((isset($parse_url['scheme'])) ? $parse_url['scheme'] . '://' : '')
+    . ((isset($parse_url['user'])) ? $parse_url['user'] . ((isset($parse_url['pass'])) ? ':' . $parse_url['pass'] : '') . '@' : '')
+    . ((isset($parse_url['host'])) ? $parse_url['host'] : '')
+    . ((isset($parse_url['port'])) ? ':' . $parse_url['port'] : '')
+    . ((isset($parse_url['path'])) ? $parse_url['path'] : '')
+    . ((isset($parse_url['query'])) ? '?' . $parse_url['query'] : '')
+    . ((isset($parse_url['fragment'])) ? '#' . $parse_url['fragment'] : '')
+  ;
+}
+
+function application_quickstarts_summary($cartridges, $git_url, $language=NULL) {
+  $first = substr($cartridges, 0, 1);
+  if ($first == '[') {
+    $cartridges = 'Custom';
+  }
+  else {
+    $cartridges = implode(', ', array_filter(array_map('application_quickstarts_cart_group', explode(',', $cartridges))));
+  }
+  $content = "Uses " . $cartridges;
+  if (!empty($git_url)) {
+    $git_url = parse_url($git_url);
+    if ($git_url) {
+      $out_url = application_quickstarts_build_url($git_url);
+      if ($out_url) {
+        $content .= " with code from <a href=\"".check_plain($out_url)."\">".check_plain($out_url)."</a>";
+      }
+    }
+  }
+  if (isset($language)) {
+    $content .= " ".check_plain($language);
+  }
+  return $content;
+}
+
+function application_quickstarts_block($op = 'list', $delta = 0, $edit = array()) {
+  if ($op == 'list') {
+    $blocks[0] = array(
+      'info' => t('Display quickstart taxonomy tag cloud'),
+      'weight' => 0,
+      'status' => 1,
+      #'region' => '',
+      'cache' => BLOCK_NO_CACHE,
+      #'cache' => BLOCK_CACHE_PER_ROLE | BLOCK_CACHE_PER_PAGE,
+    );
+
+    return $blocks;
+  }
+  else if ($op == 'view') {
+    switch ($delta) {
+      case 0:
+        // Your module will need to define this function to render the block.
+        $block = array(
+          'subject' => t('Quickstart tags'), 
+          'content' => application_quickstarts_all_tags_block(),
+        );
+        break;
+    }
+    return $block;
+  }
+}
+
+function application_quickstarts_all_tags_block() {
+  $content = '';
+  $results = db_query("SELECT tid, name, (SELECT COUNT(*) FROM {term_node} n WHERE n.tid = tid) AS count FROM {term_data} WHERE vid=4 ORDER BY count DESC LIMIT 50;");
+  while ($result = db_fetch_array($results)) {
+    $content .= ' '.l($result['name'], 'quickstart-tags/'.check_url($result['name']));
+  }
+  return $content;
+}
+
+function application_quickstarts_page() {
+  global $base_url;
+  $count = db_result(db_query("SELECT COUNT(*) FROM {node} WHERE type = 'quickstart' and status = 1"));
+  $content .= '<p>Quickstarts allow you to easily launch a new application on OpenShift by combining code and one or more cartridges.  You can see the top rated and recent quickstarts below, or <a href="/node/add/quickstart">submit a new one</a> today!</p>';
+  $content .= '<p>NOTE: Quickstarts are not maintained by the OpenShift team, and can be created by anyone. You\'re responsible for keeping up to date with security issues as needed.  If you find a problem with a quickstart, please report it in the comments so others can be aware!</p>';
+  $content .= '<form action="/search/node" method="post" class="form-search custom-form-search">';
+  $content .= '<input class="span6" placeholder="Search quickstarts..." type="text" value="" name="keys" />';
+  $content .= '<input type="submit" value="" name="op" title="Search OpenShift quickstarts" alt="Search OpenShift quickstarts" />';
+  $content .= '<input type="hidden" value="';
+  $content .= drupal_get_token('search_form');
+  $content .= '" name="form_token" />';
+  $content .= '<input type="hidden" value="search_form" id="edit-search-form" name="form_id" />';
+  $content .= '<input type="hidden" name="type[quickstart]" id="edit-idea" value="quickstart" /></form>';
+  $content .= '<div class="search-help"><strong>Advanced options:</strong> quotes search for <strong>"exact phrase"</strong>, dash excludes a <strong>-keyword</strong>, OR matches any <strong>keyword OR term</strong></div>';
+  #if ($count > 20) {
+  #  $content .= '<p class="meta">Browse all  '.$count.' quickstarts</p>';
+  #}
+  $content .= '<div class="row-fluid"><div class="span6"><h2>Top Quickstarts</h2>';
+  $content .= '</h2>';
+  $content .= views_embed_view('application_quickstarts_content', 'block_1');
+  $content .= '</div><section class="span6">';
+  $content .= '<h2>Partner Quickstarts</h2>';
+  $content .= views_embed_view('application_quickstarts_content', 'block_2');
+  $content .= '<h2>Recent Quickstarts</h2>';
+  $content .= views_embed_view('application_quickstarts_content', 'block_3');
+  $content .= '</section></div>';
+  $content .= '<section>';
+  return $content;
+}
+

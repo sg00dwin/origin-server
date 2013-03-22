@@ -62,7 +62,7 @@ function application_quickstarts_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Cartridges',
-      'weight' => '-2',
+      'weight' => '-7',
       'description' => '<p>All Quickstarts must require one or more cartridges.  When specifying a list of cartridges, you can do so using</p>
 <ul>
 <li>A comma delimited list of cartridge names: <code>php-5.3, mysql-5.1</code></li>
@@ -135,7 +135,7 @@ other|Other',
       ),
       'default_value_php' => NULL,
       'label' => 'Language',
-      'weight' => 0,
+      'weight' => '-5',
       'description' => '',
       'type' => 'optionwidgets_select',
       'module' => 'optionwidgets',
@@ -193,7 +193,7 @@ other|Other',
       'default_value' => NULL,
       'default_value_php' => NULL,
       'label' => 'Git Repository URL',
-      'weight' => '-1',
+      'weight' => '-6',
       'description' => 'An optional URL to a Git repository that will be cloned into this quickstart on creation.  The created application will have the base content here.',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -256,7 +256,7 @@ other|Other',
       ),
       'default_value_php' => NULL,
       'label' => 'Admin Tags',
-      'weight' => '32',
+      'weight' => '36',
       'description' => 'Provide administrative protected tags to be used',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -338,7 +338,7 @@ other|Other',
       'insert_class' => '',
       'insert_width' => '',
       'label' => 'Icon',
-      'weight' => '2',
+      'weight' => '34',
       'description' => 'An icon that will be used to represent this type.',
       'type' => 'imagefield_widget',
       'module' => 'imagefield',
@@ -401,10 +401,72 @@ other|Other',
       ),
       'default_value_php' => NULL,
       'label' => 'Priority',
-      'weight' => '31',
+      'weight' => '35',
       'description' => 'Administrative option, gives this element higher priority in the visible display of the console.',
       'type' => 'number',
       'module' => 'number',
+    ),
+  );
+
+  // Exported field: field_quickstart_trust
+  $fields['quickstart-field_quickstart_trust'] = array(
+    'field_name' => 'field_quickstart_trust',
+    'type_name' => 'quickstart',
+    'display_settings' => array(
+      'label' => array(
+        'format' => 'above',
+        'exclude' => 0,
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'text',
+    'required' => '1',
+    'multiple' => '0',
+    'module' => 'text',
+    'active' => '1',
+    'text_processing' => '0',
+    'max_length' => '',
+    'allowed_values' => 'openshift|OpenShift Team
+partner|Partner
+trusted|Reviewed
+community|Community',
+    'allowed_values_php' => '',
+    'widget' => array(
+      'default_value' => array(
+        '0' => array(
+          'value' => 'community',
+        ),
+      ),
+      'default_value_php' => NULL,
+      'label' => 'Provider',
+      'weight' => '33',
+      'description' => 'Controls the trust level associated with a cartridge.  Only partner carts should be identified as the highest trust level.',
+      'type' => 'optionwidgets_select',
+      'module' => 'optionwidgets',
     ),
   );
 
@@ -472,7 +534,7 @@ other|Other',
       ),
       'default_value_php' => NULL,
       'label' => 'Website',
-      'weight' => '1',
+      'weight' => '-4',
       'description' => 'A website for this quickstart',
       'type' => 'link',
       'module' => 'link',
@@ -487,6 +549,7 @@ other|Other',
   t('Icon');
   t('Language');
   t('Priority');
+  t('Provider');
   t('Website');
 
   return $fields;
