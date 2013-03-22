@@ -271,6 +271,14 @@ module OpenShift
       }
     end
 
+    def get_virtual_datetime()
+      {
+        'client_no' => @client_no,
+        'auth_key' => @auth_key,
+        'rest_call' => "get_virtual_datetime"
+      }
+    end
+
     private
 
     def get_plan_no(plan_id=nil)

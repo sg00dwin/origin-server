@@ -68,7 +68,7 @@ module OpenShift
         if found
           print_warning "Usage already posted to billing vendor but not removed from mongo datastore."\
                         "Resetting begin_time to previous sync_time.", urec
-          urec['time'] = urec['sync_time']
+          urec['time'] = adjust_to_aria_time(urec['sync_time'])
         end
       end
       total_time = 0
@@ -84,6 +84,10 @@ module OpenShift
         billing_usage_type = get_billing_usage_type(srec)
         next unless billing_usage_type
         srec['billing_usage_type'] = billing_usage_type
+
+        srec['time'] = adjust_to_aria_time(srec['time']) if srec['time']
+        srec['end_time'] = adjust_to_aria_time(srec['end_time']) if srec['end_time']
+
         if srec['time'].month != srec['end_time'].month
           month_begin_time = Time.new(srec['end_time'].year, srec['end_time'].month)
           new_srec = srec.dup
@@ -307,7 +311,24 @@ module OpenShift
       get_response_status(@ah.update_acct_supp_fields(*args), __method__)
     end
 
+    def get_virtual_datetime_offset
+      return 0 if Rails.env.production?
+      @virtual_datetime_offset ||= get_virtual_datetime().current_offset_hours
+    end
+
+    def get_virtual_datetime(*args)
+      get_response(@ah.get_virtual_datetime(*args), __method__)
+    end
+
     private
+
+    def adjust_to_aria_time(time)
+      if time
+        time + get_virtual_datetime_offset.hours
+      else
+        time
+      end
+    end
 
     def send(request)
       begin
