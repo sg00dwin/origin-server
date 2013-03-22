@@ -77,6 +77,17 @@ function user_profile_node_info() {
       'min_word_count' => '0',
       'help' => '',
     ),
+    'partner' => array(
+      'name' => t('Partner'),
+      'module' => 'features',
+      'description' => t('Information about an OpenShift partner, displayed on the partners page.'),
+      'has_title' => '1',
+      'title_label' => t('Partner Name'),
+      'has_body' => '1',
+      'body_label' => t('Description'),
+      'min_word_count' => '0',
+      'help' => '',
+    ),
   );
   return $items;
 }
