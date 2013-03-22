@@ -1,12 +1,14 @@
 - content_for :page_title, 'My Account'
 
-.pull-right
-  %div.right <strong>#{@plan.name}</strong> Plan
-  %div.right= link_to "Plan details", account_plan_path
 
-%h1
-  Account for
-  %small #{@user.login}
+.row-fluid
+  .span8
+    %h1
+      Account for
+      %small #{@user.login}
+  .span4
+    %div.right <strong>#{@plan.name}</strong> Plan
+    %div.right= link_to "Plan details", account_plan_path
 
 - unless @has_valid_payment_method
   .panel
