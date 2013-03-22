@@ -49,7 +49,7 @@
               .span6
                 = render :partial => 'usage_charges', :locals => {:usage_items => @usage_items, :usage_types => @usage_types}
           - else
-            = render :partial => 'bill', :locals => {:bill => @bill}
+            = render :partial => 'bill', :locals => {:bill => @bill, :show_details => true}
 
         %p.disclaimer
           - if @bill && !@bill.empty?

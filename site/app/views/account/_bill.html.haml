@@ -7,6 +7,7 @@
 
 %table.table.table-striped.plan-items
   - bill.line_items.sort_by(&Aria::LineItem.plan_sort).each do |li|
+
     %tr.plan-item
       - if show_dates
         %td= li.date
@@ -14,18 +15,8 @@
         = li.name
       - if show_details
         %td.plan-item-rate
-          - if li.tax?
-            &nbsp;
-          - elsif li.usage?
-            #{number_with_precision(li.units, :precision => 0)} @ #{number_to_currency(li.rate)} / #{li.units_label}
-          - elsif li.recurring?
-            - if li.rate
-              #{number_to_currency(li.rate)} / month
-              - if li.prorated?
-                (prorated)
-            - elsif li.total_cost < 0
-              Service Credit
-      %td.plan-item-cost
+          = line_item_details(li) || "&nbsp;"
+      %td.plan-item-cost{:title => (line_item_details(li) unless show_details)}
         = number_to_currency(li.total_cost)
 
   %tr.plan-total

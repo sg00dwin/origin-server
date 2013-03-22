@@ -8,9 +8,9 @@ module Aria
 
     def name
       case usage_type_description
-      when 'Small Gear' then 'Gear: Small'
-      when 'Medium Gear' then 'Gear: Medium'
-      when 'MegaShift Storage' then 'Storage: Additional Gear'
+      when /Small Gear/ then 'Gear: Small'
+      when /Medium Gear/ then 'Gear: Medium'
+      when /MegaShift Storage/ then 'Storage: Additional Gear'
       else usage_type_description
       end
     end
@@ -20,14 +20,16 @@ module Aria
     end
 
     def rate
-      pre_rated_rate
+      attributes['pre_rated_rate'] || attributes['rate_per_unit']
     end
+    alias_method :pre_rated_rate, :rate
+    alias_method :rate_per_unit, :rate
 
     #
     # The total amount associated with this line item.
     #
     def total_cost
-      @total_cost ||= units * pre_rated_rate
+      @total_cost ||= units * rate
     end
 
     #
@@ -42,7 +44,6 @@ module Aria
       else
         "unit"
       end
-      #service.usage_unit_label 
     rescue => e
       Rails.logger.error "#{e.message} (#{e.class})\n  #{e.backtrace.join("\n  ")}"
       '<unknown>'
@@ -63,9 +64,15 @@ module Aria
       end.values
     end
 
+    def usage_type_description
+      attributes['usage_type_description'] || attributes['service_name']
+    end
+
     #
     # Combine an Aria usage record into this line item.  Does not
     # validate that the usage record is related
+    #
+    # "other" must be an Aria usage_history record item.
     #
     def <<(other)
       @total_cost = total_cost + other.units * other.pre_rated_rate
@@ -91,7 +98,6 @@ module Aria
     protected
       define_attribute_methods [:usage_type_no,
                                 :usage_type_description,
-                                :pre_rated_rate,
                                 :recorded_units,
                                 :units_description,
                                 :specific_record_charge_amount,

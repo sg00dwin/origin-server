@@ -156,6 +156,14 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal u.unbilled_usage_balance.round(2), u.unbilled_usage_line_items.map(&:total_cost).sum.round(2)
   end
 
+  #
+  # 'aaa' is a user with an unpaid invoice that has usage records.
+  #
+  test "should calculate total cost for usage record from an unpaid invoice" do
+    user = Aria::UserContext.new(WebUser.new :rhlogin => 'aaa')
+    assert user.next_bill.line_items.map(&:total_cost), "The user 'aaa' must have an unbilled line item"
+  end
+
   test "should get past invoices" do
     u = record_usage_for_user(with_account_holder)
     assert invoices = u.invoices
