@@ -5,7 +5,7 @@
 %global modname             application_quickstarts
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.4.1
+Version: 1.4.2
 Release: 1%{?dist}
 Summary: Openshift Application Quickstarts Feature for Drupal6
 Group:   Applications/Publishing
@@ -43,6 +43,19 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Fri Mar 22 2013 Adam Miller <admiller@redhat.com> 1.4.2-1
+- Final tweaks, last round of items (ccoleman@redhat.com)
+- Switch to div based layout, lock taxonomies.  Follow Rob's changes to views
+  and remove excess output. (ccoleman@redhat.com)
+- US3113:  presentational tweaks to quickstarts lists (rhamilto@redhat.com)
+- Display partners on quickstarts page. (ccoleman@redhat.com)
+- Add quickstart features, simplify markup for blogs and quickstarts to be
+  consistent (ccoleman@redhat.com)
+- Add trust rating, export permissions for quickstart fields
+  (ccoleman@redhat.com)
+- Implement a quickstart content view with popular and recent results
+  (ccoleman@redhat.com)
+
 * Thu Mar 07 2013 Adam Miller <admiller@redhat.com> 1.4.1-1
 - bump_minor_versions for sprint 25 (admiller@redhat.com)
 
