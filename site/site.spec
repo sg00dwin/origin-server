@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.6.4
+Version: 1.6.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -179,6 +179,22 @@ fi
 %{sitedir}/public
 
 %changelog
+* Fri Mar 22 2013 Adam Miller <admiller@redhat.com> 1.6.5-1
+- Merge pull request #1052 from smarterclayton/quickstarts_in_community
+  (dmcphers+openshiftbot@redhat.com)
+- Merge remote-tracking branch 'origin/master' into quickstarts_in_community
+  (ccoleman@redhat.com)
+- Style fixes from rob (ccoleman@redhat.com)
+- Switch to div based layout, lock taxonomies.  Follow Rob's changes to views
+  and remove excess output. (ccoleman@redhat.com)
+- US3113:  presentational tweaks to quickstarts lists (rhamilto@redhat.com)
+- US3113:  detabbing _community.scss, addressing .links.inline a { } bug, and
+  first cut at styling of a quick start page (rhamilto@redhat.com)
+- Add quickstart features, simplify markup for blogs and quickstarts to be
+  consistent (ccoleman@redhat.com)
+- Implement a quickstart content view with popular and recent results
+  (ccoleman@redhat.com)
+
 * Thu Mar 21 2013 Adam Miller <admiller@redhat.com> 1.6.4-1
 - updated account inclusion regex (spurtell@redhat.com)
 - Bug 921508 - Fix link to Create Application page (hripps@redhat.com)
