@@ -270,9 +270,12 @@ module OpenShift
       result.data
     end
 
-    def update_master_plan(*args)
+    def update_master_plan(acct_no, plan_name, is_upgrade=false, num_plan_units=1)
       begin
-        get_response(@ah.update_master_plan(*args), __method__)
+        get_response(@ah.update_master_plan(acct_no, plan_name, is_upgrade, num_plan_units), __method__)
+        if is_upgrade
+          cancel_queued_service_plan(acct_no)
+        end
       rescue OpenShift::AriaErrorCodeException => e
         raise if e.error_code.to_s != "1034"
       end

@@ -65,40 +65,84 @@ class BillingTest < ActiveSupport::TestCase
 test "update master plan and then revert to previous" do
     api = OpenShift::BillingService.instance
     acct_no = api.create_fake_acct(@user_id, :freeshift)
+
     plans = api.get_acct_plans_all(acct_no)
+    queued = api.get_queued_service_plans(acct_no)
     assert(plans.length == 1)
+    assert_nil queued
     current_plan = plans[0]
     assert_equal(current_plan["plan_name"], "FreeShift", "Current plan name #{current_plan["plan_name"]} expected FreeShift")
       
     api.update_master_plan(acct_no, :megashift, true)
       
     plans = api.get_acct_plans_all(acct_no)
+    queued = api.get_queued_service_plans(acct_no)
     assert(plans.length == 1)
+    assert_nil queued
     current_plan = plans[0]
     assert_equal(current_plan["plan_name"], "MegaShift", "Current plan name #{current_plan["plan_name"]} expected MegaShift")
       
     api.update_master_plan(acct_no, :freeshift)
       
-    plans = api.get_queued_service_plans(acct_no)
+    plans = api.get_acct_plans_all(acct_no)
+    queued = api.get_queued_service_plans(acct_no)
     assert(plans.length == 1)
+    assert(queued.length == 1)
     current_plan = plans[0]
-    assert_equal(current_plan["new_plan"], "FreeShift", "Current plan name #{current_plan["new_plan"]} expected FreeShift")
+    assert_equal(current_plan["plan_name"], "MegaShift", "Current plan name #{current_plan["plan_name"]} expected MegaShift")
+    new_plan = queued[0]
+    assert_equal(new_plan["new_plan"], "FreeShift", "New plan name #{new_plan["new_plan"]} expected FreeShift")
+
+    api.update_master_plan(acct_no, :megashift, true)
+      
+    plans = api.get_acct_plans_all(acct_no)
+    queued = api.get_queued_service_plans(acct_no)
+    assert(plans.length == 1)
+    assert_nil queued
+    current_plan = plans[0]
+    assert_equal(current_plan["plan_name"], "MegaShift", "Current plan name #{current_plan["plan_name"]} expected MegaShift")
   end
   
   test "update master plan to same plan" do
     api = OpenShift::BillingService.instance
     acct_no = api.create_fake_acct(@user_id, :megashift)
     plans = api.get_acct_plans_all(acct_no)
+    queued = api.get_queued_service_plans(acct_no)
     assert(plans.length == 1)
+    assert_nil queued
     current_plan = plans[0]
     assert_equal(current_plan["plan_name"], "MegaShift", "Current plan name #{current_plan["plan_name"]} expected MegaShift")
       
     api.update_master_plan(acct_no, :megashift)
       
     plans = api.get_acct_plans_all(acct_no)
+    queued = api.get_queued_service_plans(acct_no)
     assert(plans.length == 1)
+    assert_nil queued
     current_plan = plans[0]
     assert_equal(current_plan["plan_name"], "MegaShift", "Current plan name #{current_plan["plan_name"]} expected MegaShift")
+
+    api.update_master_plan(acct_no, :freeshift)
+      
+    plans = api.get_acct_plans_all(acct_no)
+    queued = api.get_queued_service_plans(acct_no)
+    assert(plans.length == 1)
+    assert(queued.length == 1)
+    current_plan = plans[0]
+    assert_equal(current_plan["plan_name"], "MegaShift", "Current plan name #{current_plan["plan_name"]} expected MegaShift")
+    new_plan = queued[0]
+    assert_equal(new_plan["new_plan"], "FreeShift", "New plan name #{new_plan["new_plan"]} expected FreeShift")
+
+    api.update_master_plan(acct_no, :freeshift)
+      
+    plans = api.get_acct_plans_all(acct_no)
+    queued = api.get_queued_service_plans(acct_no)
+    assert(plans.length == 1)
+    assert(queued.length == 1)
+    current_plan = plans[0]
+    assert_equal(current_plan["plan_name"], "MegaShift", "Current plan name #{current_plan["plan_name"]} expected MegaShift")
+    new_plan = queued[0]
+    assert_equal(new_plan["new_plan"], "FreeShift", "New plan name #{new_plan["new_plan"]} expected FreeShift")
   end
 
   def teardown
