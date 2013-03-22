@@ -1,8 +1,8 @@
 %h1 Account Help
-.span7.control-group-important{'ng-app' => 'openshift', 'ng-controller' => 'FaqController'}
+.control-group-important{'ng-app' => 'openshift', 'ng-controller' => 'FaqController'}
   %form.form-search
-    %input.span7.search-query{:placeholder => 'Search frequently asked questions...', 'ng-model' => 'searchTerm', 'ng-change' => 'filter()', :autofocus => true}
-    %button.search.font-icon.font-icon-size-16{:type => 'submit', "aria-hidden" => "true", "data-icon" => "\uee03"}
+    %input.search-query.input-block-level{:placeholder => 'Search frequently asked questions...', 'ng-model' => 'searchTerm', 'ng-change' => 'filter()', :autofocus => true}
+    %button.search.font-icon{:type => 'submit', "aria-hidden" => "true", "data-icon" => "\uee03"}
 
   #questions{'ng-init' => "topten = #{topten.to_json}; questions = topten",
       'ng-show' => 'true',
@@ -16,13 +16,13 @@
     %em There are no questions that match '{{ searchTerm }}'
 
   -# If javascript is not enabled, this will be the only rendered content
-  %ul{'ng-hide' => 'true'}
+  %div{'ng-hide' => 'true'}
     - topten.each do |faq|
-      %li
-        %h3
+      %dl
+        %dt
           %a{:href => faq.href, :rel => 'tooltip'}
             = raw faq.name
-        %p
+        %dd
           = raw faq.body
 
 
