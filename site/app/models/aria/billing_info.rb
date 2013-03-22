@@ -18,6 +18,17 @@ module Aria
                           :country,
                           :zip
 
+    validates_length_of :first_name, :maximum => 32
+    validates_length_of :middle_initial, :maximum => 1
+    validates_length_of :last_name, :maximum => 32
+    validates_length_of :address1, :maximum => 100
+    validates_length_of :address2, :maximum => 100
+    validates_length_of :address3, :maximum => 100
+    validates_length_of :city, :maximum => 32
+    validates_length_of :state, :maximum => 2
+    validates_length_of :country, :maximum => 2
+    validates_length_of :zip, :maximum => 14
+
     account_prefix :from => 'billing_',
                    :to => 'bill_',
                    :rename_to_save => {
