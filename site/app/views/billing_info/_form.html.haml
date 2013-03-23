@@ -22,6 +22,10 @@
 - content_for :stylesheets do
   = stylesheet_link_tag 'plan_upgrade', :media => :all
 
-= content_for :javascripts do
-  - unless Rails.configuration.respond_to?(:disable_dynamic_country_form) && Rails.configuration.disable_dynamic_country_form
+- content_for :javascripts do
+  - if dynamic_country_form
     = javascript_include_tag 'site/address'
+    :javascript
+      $(document).ready(function() {
+        $('form.plan_upgrade.billing').addressForm();
+      })

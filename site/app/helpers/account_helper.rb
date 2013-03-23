@@ -42,4 +42,8 @@ module AccountHelper
   def extended_cc_validation
     !(Rails.configuration.respond_to?(:disable_cc_validation) && Rails.configuration.disable_cc_validation)
   end
+
+  def dynamic_country_form
+   !(Rails.configuration.respond_to?(:disable_dynamic_country_form) && Rails.configuration.disable_dynamic_country_form)
+  end
 end
