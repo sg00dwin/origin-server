@@ -20,7 +20,7 @@
             %ul{ :class => 'card-types' }
               -# Do not try to change the order here, the sprites will not look right
               -# See config/credit_cards.yml for instructions
-              - Rails.configuration.credit_cards.each do |id,name|
+              - accepted_credit_cards.each do |id,name|
                 %li{ :class => "cc-card #{id}", :title => name }
                   %span= name
         = f.inputs :inline => true, :required => true, :name => 'Expiration Date' do
