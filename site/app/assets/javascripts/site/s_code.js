@@ -14,13 +14,13 @@ s.trackDownloadLinks=true
 s.trackExternalLinks=true
 s.trackInlineStats=true
 s.linkDownloadFileTypes="exe,zip,wav,mp3,mov,mpg,avi,wmv,doc,pdf,xls"
-s.linkInternalFilters="javascript:,openshift.redhat.com,redhat.com/openshift,www.openshift.redhat.com,www.redhat.com/openshift"
+s.linkInternalFilters="javascript:,openshift.redhat.com,redhat.com/openshift,www.openshift.redhat.com,www.redhat.com/openshift,www.openshift.com,openshift.com"
 s.linkLeaveQueryString=false
 s.linkTrackVars="None"
 s.linkTrackEvents="None"
 s.dynamicAccountSelection=true
 s.dynamicAccountMatch=window.location.host+window.location.pathname
-s.dynamicAccountList="redhatglobaltest,redhatdev=localhost,stg.openshift.redhat.com,int.openshift.redhat.com;redhatglobal,redhatcom,redhatopenshift=redhat.com/openshift,openshift.redhat.com"
+s.dynamicAccountList="redhatglobaltest,redhatdev=localhost,stg.openshift.redhat.com,int.openshift.redhat.com,int.openshift.com,stg.openshift.com;redhatglobal,redhatcom,redhatopenshift=redhat.com/openshift,openshift.redhat.com,www.openshift.com,openshift.com"
 /* WARNING: Changing any of the below variables will cause drastic
 changes to how your visitor data is collected.  Changes should only be
 made when instructed to do so by your account manager.*/
