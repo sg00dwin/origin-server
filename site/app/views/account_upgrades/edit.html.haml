@@ -69,3 +69,6 @@
     = link_to "Back to plans", account_plans_path, :class => 'btn'
     = f.commit_button "Update my account"
     = f.loading
+
+- content_for :stylesheets do
+  = stylesheet_link_tag 'plan_upgrade', :media => :all
