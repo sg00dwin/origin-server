@@ -1,4 +1,4 @@
-= semantic_form_for payment_method, :url => aria_direct_post_url, :html => {:class => 'form-horizontal plan_upgrade', :id => 'payment_method'} do |f|
+= semantic_form_for payment_method, :url => aria_direct_post_url, :html => {:class => 'form-horizontal plan_upgrade payment_form', :id => 'payment_method'} do |f|
   %section.row
     .span8
       = tag :meta, :name => 'accepted_card_types', :content => Rails.configuration.credit_cards.keys.join(':')
@@ -17,7 +17,7 @@
         = f.inputs :inline => true, :required => true, :name => 'Credit Card Number' do
           .clearfix
             = f.input :cc_no, :input_html => { :name => 'cc_no', :type => 'text', :class => 'pull-left input-large', :placeholder => "Card Number"}
-            %ul{ :class => 'card-types' }
+            %ul.card-types
               -# Do not try to change the order here, the sprites will not look right
               -# See config/credit_cards.yml for instructions
               - accepted_credit_cards.each do |id,name|
