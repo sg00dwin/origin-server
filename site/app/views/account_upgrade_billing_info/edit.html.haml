@@ -3,7 +3,7 @@
 
 = semantic_form_for @billing_info, :url => url_for(:action => :edit), :html => { :id => 'edit_aria_billing_info', :method => 'put' } do |f|
   = f.semantic_errors
-  %section{ :class => 'row' }
+  %section.row
     .span8
       = render :partial => 'billing_info/form', :locals => {:billing_info => @billing_info, :form => f}
     %aside.span4
