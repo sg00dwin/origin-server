@@ -38,4 +38,8 @@ module AccountHelper
       end
     end
   end
+
+  def extended_cc_validation
+    !(Rails.configuration.respond_to?(:disable_cc_validation) && Rails.configuration.disable_cc_validation)
+  end
 end

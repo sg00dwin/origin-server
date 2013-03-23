@@ -1,6 +1,3 @@
-:ruby
-  disable_cc_validation = Rails.configuration.respond_to?(:disable_cc_validation) && Rails.configuration.disable_cc_validation
-
 = semantic_form_for payment_method, :url => aria_direct_post_url, :html => {:class => 'form-horizontal plan_upgrade', :id => 'payment_method'} do |f|
   %section.row
     .span8
@@ -59,13 +56,24 @@
   = stylesheet_link_tag 'plan_upgrade', :media => :all
 
 - content_for :javascripts do
-  - unless disable_cc_validation
-    :javascript
-      window.extended_cc_validation = true
-
-  = javascript_include_tag 'site/credit_card'
   :javascript
+    // Set the extended validation flag so we can use it in the validations
+    window.extended_cc_validation = "#{extended_cc_validation}"
+
     $(document).ready(function() {
+      var cc_input = $('input[name="cc_no"]');
+      var cvv_input = $('input[name="cvv"]');
+
+      // Set the input types so we jquery.payment can format them properly
+      cc_input.payment('formatCardNumber');
+      cvv_input.payment('formatCardCVC');
+      // Change the classes for the sprites when we jquery.payment changes the card type
+      cc_input.on('payment.cardType', function(cardType) {
+        var type = arguments[1];
+        $('.cc-card').removeClass('selected');
+        $(".cc-card." + type).addClass('selected');
+      });
+
       var frame = $('#payment_frame');
       if (frame.length == 0) return;
       $('#payment_method')
