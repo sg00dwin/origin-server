@@ -1,0 +1,25 @@
+- usage_items ||= {} # { period => [item, item, item, ...] }
+- usage_types ||= {} # { name => { :units, :class_name } }
+
+%table.table.table-condensed.graph-horizontal.usage-charges
+  %caption Usage Charges
+  - max = usage_items.values.map { |items| items.map(&:total_cost).sum }.max
+  - usage_items.each do |period_name, usage_items|
+    %tr
+      %td.usage-period{:scope => 'row'}= period_name
+      %td.usage-data.graph-data
+        - usage_items.each do |item|
+          .graph-element{:class => usage_types[item.name].class_name, :style => "width: #{(100 * item.total_cost / max).floor}%;", :title => "#{item.name} - #{number_to_currency(item.total_cost)}"}> &nbsp;
+      %td.usage-amount= "#{number_to_currency(usage_items.map(&:total_cost).sum)}"
+
+- usage_types.each do |(type, type_data)|
+  %table.table.table-condensed.graph-horizontal.usage-charges
+    %caption= type
+    - max = usage_items.values.flatten.select{|i| i.name == type }.map(&:units).max
+    - usage_items.each do |period_name, usage_items|
+      - item = usage_items.detect{|i| i.name == type }
+      %tr
+        %td.usage-period{:scope => 'row'}= period_name
+        %td.usage-data.graph-data
+          .graph-element{:class => type_data.class_name, :style => "width: #{(100 * item.units / max).floor}%;"}> &nbsp;
+        %td.usage-amount= pluralize(item.units, type_data.units)

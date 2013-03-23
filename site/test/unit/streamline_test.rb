@@ -552,7 +552,7 @@ class StreamlineUnitTest < ActiveSupport::TestCase
     assert user_info[:intentionally_invalid_key] = 'foo'
     assert full_user = @streamline.full_user(user_info)
 
-    assert user = WebUser.new(:email_address => 'test@test.com', :password => user_info[:password])
+    assert user = WebUser::Integrated.new(:email_address => 'test@test.com', :password => user_info[:password])
     user.expects(:http_post).yields({'login' => 'test1', 'roles' => ['authenticated']})
     user.stubs(:rhlogin).returns('test1')
     assert_equal true, full_user.promote(user)

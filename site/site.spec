@@ -28,6 +28,7 @@ Requires:       %{?scl:%scl_prefix}rubygem(sqlite3)
 Requires:       %{?scl:%scl_prefix}rubygem(httparty)
 Requires:       rhc-site-static
 Requires:       openshift-origin-util-scl
+Requires:       %{?scl:%scl_prefix}rubygem(angular-rails)
 Requires:       %{?scl:%scl_prefix}rubygem(ci_reporter)
 Requires:       %{?scl:%scl_prefix}rubygem(coffee-rails)
 Requires:       %{?scl:%scl_prefix}rubygem(compass-rails)
@@ -49,9 +50,10 @@ BuildRequires:  scl-utils-build
 %endif
 
 BuildRequires:  %{?scl:%scl_prefix}ruby(abi) = %{rubyabi}
-BuildRequires:  %{?scl:%scl_prefix}ruby 
+BuildRequires:  %{?scl:%scl_prefix}ruby
 BuildRequires:  %{?scl:%scl_prefix}rubygems
 BuildRequires:  %{?scl:%scl_prefix}rubygems-devel
+BuildRequires:  %{?scl:%scl_prefix}rubygem(angular-rails)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(rails)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(compass-rails)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(mocha)

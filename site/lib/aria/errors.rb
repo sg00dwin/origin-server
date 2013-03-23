@@ -21,6 +21,7 @@ module Aria
     # through IP but also auth_key or client_no could be wrong.
     1004 => (AuthenticationError = Class.new(Error)),
 
+    1008 => (NoLineItemsProvided = Class.new(Error)),
     1009 => (AccountDoesNotExist = Class.new(Error)),
     1010 => (MissingRequiredParameter = Class.new(Error)),
     1011 => (InvalidSession = Class.new(Error)),
@@ -34,6 +35,10 @@ module Aria
 
   # The Aria method you have requested does not exist
   InvalidMethod = Class.new(StandardError)
+
+  # Expected resource does not exist
+  ResourceNotFound = Class.new(StandardError)
+
   # The Aria service is not responding
   class NotAvailable < StandardError
     attr_reader :response

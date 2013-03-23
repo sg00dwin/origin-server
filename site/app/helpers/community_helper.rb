@@ -31,4 +31,8 @@ module CommunityHelper
   def red_hat_account_url
     'https://www.redhat.com/wapps/ugc'
   end
+
+  def openshift_customer_portal_url
+    'https://access.redhat.com/support/offerings/openshift/'
+  end
 end

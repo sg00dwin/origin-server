@@ -14,4 +14,9 @@ class PlansController < ConsoleController
     @current_plan = @user.plan
     @smaller_plans, @bigger_plans = @plans.sort.split{ |p| p.id == @current_plan.id }
   end
+
+  protected
+    def active_tab
+      :account
+    end
 end

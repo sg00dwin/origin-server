@@ -37,6 +37,13 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     assert user.send(:has_account?)
   end
 
+  test 'should set bill day correctly' do
+    user = Aria::UserContext.new(WebUser.new :rhlogin => new_uuid)
+    assert user.create_account
+    assert user.errors.empty?
+    assert_equal '1', user.account_details.bill_day, "A new user's bill_day is not 1. Make sure 'Perform Prorated Initial Invoicing Upon Account Creation' is set to false in Aria"
+  end
+
   test 'should set and update billing info' do
     user = Aria::UserContext.new(WebUser.new :rhlogin => new_uuid)
 
@@ -134,5 +141,65 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     u = with_account_holder
     assert_equal u.account_details.bill_day, "1"
   end
-   
+
+  test "should record usage" do
+    u = with_account_holder
+    assert_difference 'Aria.get_usage_history(u.acct_no, :date_range_start => u.account_details.last_bill_date).count', 2 do
+      record_usage_for_user(u)
+    end
+    assert usage = Aria.get_unbilled_usage_summary(u.acct_no)
+    assert usage.ptd_balance_amount > 0
+    assert_equal 'usd', usage.currency_cd
+
+    assert u.unbilled_usage_line_items.present?
+    assert_equal usage.ptd_balance_amount, u.unbilled_usage_balance
+    assert_equal u.unbilled_usage_balance.round(2), u.unbilled_usage_line_items.map(&:total_cost).sum.round(2)
+  end
+
+  #
+  # 'aaa' is a user with an unpaid invoice that has usage records.
+  #
+  test "should calculate total cost for usage record from an unpaid invoice" do
+    user = Aria::UserContext.new(WebUser.new :rhlogin => 'aaa')
+    assert user.next_bill.line_items.map(&:total_cost), "The user 'aaa' must have an unbilled line item"
+  end
+
+  test "should get past invoices" do
+    u = record_usage_for_user(with_account_holder)
+    assert invoices = u.invoices
+    assert invoices.length > 0
+  end
+
+  test "should get past invoice line items" do
+    u = record_usage_for_user(with_account_holder)
+    assert invoices = u.invoices
+    assert invoices.length > 0
+    assert line_items = invoices.first.line_items
+    assert line_items.length > 0
+  end
+
+  test "should get a next bill" do
+    u = record_usage_for_user(with_account_holder)
+    assert bill = u.next_bill
+    assert bill.due_date > bill.end_date
+    assert bill.start_date <= Aria::DateTime.today.to_datetime
+    assert bill.line_items.present?
+    assert bill.line_items.select(&:recurring?).present?
+    assert bill.line_items.select(&:usage?).present?
+    assert bill.balance > 0
+    assert bill.estimated_balance > 0
+  end
+
+  test "should get recurring line items from plans" do
+    assert items = Aria::RecurringLineItem.find_all_by_plan_no(Aria::MasterPlan.find('megashift').plan_no)
+    assert items.length == 1
+    assert_equal "Plan: MegaShift", items[0].name
+    assert_equal 42, items[0].amount
+    assert_equal 42, items[0].total_cost
+    assert !items[0].prorated?
+    assert_equal 1.0, items[0].units
+
+    assert items = Aria::RecurringLineItem.find_all_by_plan_no(Aria::MasterPlan.find('freeshift').plan_no)
+    assert items.empty?
+  end
 end

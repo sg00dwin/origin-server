@@ -1,38 +1,91 @@
 - content_for :page_title, 'My Account'
 
-%h1 My Account
-= flashes
-.row
-  - unless @domain
-    .span12
-      .well
-        = render :partial => 'add_domain', :locals => {:domain => @domain}
 
-  - unless @keys.present?
-    .span12
-      .well
-        = render :partial => 'add_key', :locals => {:keys => @keys}
+.row-fluid
+  .span8
+    %h1
+      Account for
+      %small #{@user.login}
+  .span4
+    %div.right <strong>#{@plan.name}</strong> Plan
+    %div.right= link_to "Plan details", account_plan_path
 
-  .span6
-    %section
-      = render :partial => 'user', :locals => {:user => @user, :show_email => @show_email, :identities => @identities}
+- unless @has_valid_payment_method
+  .panel
+    %p
+      The payment method associated with your account is no longer valid. #{link_to "Please provide a valid credit card for this account", edit_account_payment_method_path}.
 
-    - if @domain
-      %section
-        = render :partial => 'domains', :locals => {:domain => @domain}
+    - if @bill.present?
+      %p
+        - if @bill.due_date > Aria::DateTime.today
+          You owe #{number_to_currency(@bill.balance)}, due on #{@bill.due_date.to_s(:billing_date)}.
+        - else
+          You owe #{number_to_currency(@bill.balance)} which was due on #{@bill.due_date.to_s(:billing_date)}.
 
-    - if @keys.present?
-      %section
-        = render :partial => 'keys', :locals => {:keys => @keys}
+.row-fluid
+  .span8
+    %section.panel
+      .pull-right= link_to "Billing history", account_bills_path
+      %h2 Next Bill
 
-  .span6
+      - if @bill
+        %p
+          Day #{@bill.day} of billing cycle #{@bill.start_date.to_s(:billing_date_no_year)} - #{@bill.end_date.to_s(:billing_date_no_year)}
 
-    %section
-      - if @plan
-        = render :partial => 'plan', :locals => {:plan => @plan}
+        - if @bill.empty?
+          %p
+            You have no recurring charges due for the next month and no recorded usage.
+
+        - if @is_downgrading
+          .alert.alert-info
+            You have access to OpenShift support until the end of the month. You will be billed for any usage
+            above the 750 included small gear-hours.
+
+        - else
+          - if not @plan.basic? and @usage_items.present?
+            .row-fluid
+              .span6
+                = render :partial => 'bill', :locals => {:bill => @bill}
+              .span6
+                = render :partial => 'usage_charges', :locals => {:usage_items => @usage_items, :usage_types => @usage_types}
+          - else
+            = render :partial => 'bill', :locals => {:bill => @bill, :show_details => true}
+
+        %p.disclaimer
+          - if @bill && !@bill.empty?
+            The amounts above may not accurately reflect discounts, applicable sales taxes, peaks in future usage, or recent 
+            activity.
+
+            Your first month is billed as soon as you subscribe - see your billing history for details.
+
       - else
-        = render :partial => 'plan_info'
 
-    %section
-      = render :partial => 'authorizations', :locals => {:authorizations => @authorizations}
+        %p You are not currently subscribed to a plan.
 
+      %p.payment_method
+        - if @payment_method.present?
+          Your credit card (ending in <span class="card_number">#{@payment_method.cc_no}</span> and expiring <span class="card_expiration">#{@payment_method.expiration_date.to_s(:credit_card)}</span>) will be charged on #{@bill.due_date.to_s(:billing_date)}.<br>
+        #{link_to @payment_method.blank? ? "Add a card to this account" : "Change card", edit_account_payment_method_path}
+        | #{link_to "Update address", edit_account_billing_info_path}
+
+      - if @is_test_user
+        .alert.alert-warning You are accessing OpenShift with a test user.  If this is in error, please contact the account support team immediately.
+      - if @virtual_time
+        .alert.alert-warning You are accessing an Aria test system. The virtual time is #{@virtual_time}.
+
+
+  .span4
+    %section.panel
+      = render :partial => 'settings', :locals => {:identity => @identity, :domain => @domain, :user => @user, :user_has_keys => @user_has_keys}
+
+    %section.panel
+      %h2 Got Questions?
+      %h3= link_to "Account Help", help_account_path
+      - if @plan.basic?
+        %h3= link_to "Community Support", help_account_path
+      - else
+        %h3= link_to "Technical Support", openshift_customer_portal_url
+
+- if @plan.basic?
+  %section.panel
+    = render :partial => 'upgrade', :locals => {:user => @user}

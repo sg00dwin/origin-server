@@ -67,7 +67,7 @@
                       - unless blog.summary =~ /<h[1-4]>/
                         %h4= blog.title
                       = sanitize blog.summary
-                      %aside Posted #{blog.date.to_s(:pretty_date)}
+                      %aside Posted #{blog.date.to_s(:pretty_time)}
             - else
               %ul.news.unstyled
                 %li 

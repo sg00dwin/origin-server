@@ -1,0 +1,41 @@
+- show_dates = false if show_dates.nil?
+- show_details = false if show_details.nil?
+- show_payments = false if show_payments.nil?
+
+:css
+  table.plan-items .plan-item-cost { text-align: right; }
+
+%table.table.table-striped.plan-items
+  - bill.line_items.sort_by(&Aria::LineItem.plan_sort).each do |li|
+
+    %tr.plan-item
+      - if show_dates
+        %td= li.date
+      %td
+        = li.name
+      - if show_details
+        %td.plan-item-rate
+          = line_item_details(li) || "&nbsp;"
+      %td.plan-item-cost{:title => (line_item_details(li) unless show_details)}
+        = number_to_currency(li.total_cost)
+
+  %tr.plan-total
+    %td.right{:colspan => ((show_dates ? 1 : 0) + (show_details ? 1 : 0) + 2)}
+      %strong Total charges:&nbsp; #{number_to_currency(bill.estimated_balance)}
+
+  - if show_payments and bill.payments.present?
+    %tr.plan-total
+      %td{:colspan => ((show_dates ? 1 : 0) + (show_details ? 1 : 0) + 2)}
+        - bill.payments.each do |p|
+          %div
+            = bill.show_payment_amounts ? "#{number_to_currency(p.applied_amount)} billed to" : "Billed to"
+            %strong= p.payment_src_description
+            - if p.payment_src_suffix
+              ending in 
+              %strong= p.payment_src_suffix
+            - if show_dates
+              on
+              = p.date.to_datetime.to_s(:billing_date)
+            &nbsp; 
+            #{link_to "Change card", edit_account_payment_method_path}
+

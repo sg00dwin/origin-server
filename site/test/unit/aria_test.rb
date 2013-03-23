@@ -29,15 +29,67 @@ class AriaUnitTest < ActiveSupport::TestCase
       request.headers['User-Agent'] == Rails.configuration.user_agent
     end
   end
-  def error_wddx(code, message)
-    {'error_code' => code, 'error_msg' => message}.to_wddx
+  def error_wddx(code, message, body={})
+    {'error_code' => code, 'error_msg' => message}.merge(body).to_wddx
   end
-  def ok_wddx
-    error_wddx(0, 'Ok')
+  def ok_wddx(body={})
+    error_wddx(0, 'Ok', body)
   end
   def resp(*args)
     opts = args.extract_options!
     {:status => 200, :body => args[0] || ok_wddx}.merge!(opts).merge!(:headers => {'Content-Type' => 'text/html;charset=UTF-8'}.merge(opts[:headers] || {}))
+  end
+
+  def stub_acct_details(acct_no, values)
+    stub_aria(:get_acct_details_all, {
+      :acct_no => acct_no.to_s
+    }).to_return(resp(ok_wddx(values)))
+  end
+
+  def stub_queued_plans(acct_no, plans)
+    stub_aria(:get_queued_service_plans, {
+      :account_number => acct_no.to_s
+    }).to_return(resp(ok_wddx({
+      :queued_plans => plans,
+    })))
+  end
+
+  def stub_acct_invoice_history(acct_no, invoices)
+    stub_aria(:get_acct_invoice_history, {
+      :acct_no => acct_no.to_s
+    }).to_return(resp(ok_wddx({
+      :invoice_history => invoices,
+    })))
+  end
+
+  def stub_acct_plans_all(acct_no, plans)
+    stub_aria(:get_acct_plans_all, {
+      :acct_no => acct_no.to_s
+    }).to_return(resp(ok_wddx({
+      :all_acct_plans => plans,
+    })))
+  end
+
+  def stub_client_plans_all(plans)
+    stub_aria(:get_client_plans_all, {
+    }).to_return(resp(ok_wddx({
+      :all_client_plans => plans,
+    })))
+  end
+
+  def stub_client_plans_basic(plans)
+    stub_aria(:get_client_plans_basic, {
+    }).to_return(resp(ok_wddx({
+      :plans_basic => plans,
+    })))
+  end
+
+  def stub_client_plan_services(plan_no, services)
+    stub_aria(:get_client_plan_services, {
+      :plan_no => plan_no.to_s
+    }).to_return(resp(ok_wddx({
+      :plan_services => services,
+    })))
   end
 
   test 'should not respond to object or module methods on Aria' do
@@ -213,6 +265,29 @@ class AriaUnitTest < ActiveSupport::TestCase
       :status_cd => 0.to_s,
       :master_plan_no => Rails.application.config.aria_default_plan_no.to_s,
       :userid => Digest::MD5::hexdigest('foo'),
+    }).to_return(resp(ok_wddx))
+
+    stub_aria(:get_acct_no_from_user_id, {
+      :user_id => Digest::MD5::hexdigest('foo'),
+    }).to_return(resp(ok_wddx({:acct_no => 123.to_s})))
+
+    stub_aria(:get_acct_details_all, {
+      :acct_no => 123.to_s
+    }).to_return(resp(ok_wddx({
+      :bill_day => 2.to_s,
+      :next_bill_date => '2013-01-02'
+    })))
+
+    stub_aria(:adjust_billing_dates, {
+      :acct_no => 123.to_s,
+      :action_directive => 1.to_s,
+      :adjustment_days => 27.to_s
+    }).to_return(resp(ok_wddx))
+
+    stub_aria(:adjust_billing_dates, {
+      :acct_no => 123.to_s,
+      :action_directive => 1.to_s,
+      :adjustment_days => 3.to_s
     }).to_return(resp(ok_wddx))
 
     user = TestUser.new
@@ -530,4 +605,198 @@ class AriaUnitTest < ActiveSupport::TestCase
     # Different features can't be sorted together
     assert_raise(Aria::MasterPlanFeature::ComparisonError) {[plan2_scale, plan1_gears].sort}
   end
+
+  def test_bill_should_be_blank
+    assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0).blank?
+    assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0.01).present?
+    assert Aria::Bill.new(nil, nil, nil, nil, nil, [Aria::RecurringLineItem.new({'amount' => 0.01}, 1)], [], 0).present?
+    assert Aria::Bill.new(nil, nil, nil, nil, nil, [Aria::RecurringLineItem.new({'amount' => 0.00}, 1)], [], 0).present?
+  end
+
+  def test_line_item_prorated
+    assert !Aria::RecurringLineItem.new({'units' => 1.0}, 1).prorated?
+    assert  Aria::RecurringLineItem.new({'units' => 0.1}, 1).prorated?
+  end
+
+  def test_sort_line_items
+    rec = Aria::RecurringLineItem.new({'amount' => 0.00, 'rate_per_unit' => 1.0, 'service_name' => 'Recurring'}, 1)
+    assert !rec.tax?
+    assert rec.recurring?
+    tx1 = Aria::RecurringLineItem.new({'amount' => 1.00, 'rate_per_unit' => nil, 'service_name' => 'State Taxes'}, 1)
+    assert tx1.tax?
+    tx2 = Aria::RecurringLineItem.new({'amount' => 2.00, 'rate_per_unit' => 1.0, 'service_name' => 'Taxes'}, 1)
+    assert tx2.tax?
+    use = Aria::UsageLineItem.new({'units' => 1, 'rate' => 1.0}, 1)
+    assert_equal [rec,use,tx2,tx1], [use,tx1,tx2,rec].sort_by(&Aria::LineItem.plan_sort)
+  end
+
+  def test_get_recurring_line_items
+    stub_client_plans_all([stub_plan_free, stub_plan_pay])
+
+    assert items = Aria::RecurringLineItem.find_all_by_plan_no(stub_plan_free['plan_no'])
+    assert items.length == 0
+
+    assert items = Aria::RecurringLineItem.find_all_by_plan_no(stub_plan_pay['plan_no'])
+    assert items.length == 1
+  end
+
+  def test_user_should_not_have_next_bill
+    u = TestUser.new
+    u.expects(:acct_no).at_least_once.returns('1')
+    stub_acct_details(1, {
+      :plan_no => Rails.configuration.aria_default_plan_no.to_s,
+      :next_bill_date => '2013-01-02'
+    })
+    stub_queued_plans(1, [])
+    assert_equal false, u.next_bill
+  end
+
+  def test_user_should_have_next_bill
+    u = TestUser.new
+    u.expects(:acct_no).at_least_once.returns('1')
+    stub_next_bill :plan_no => '2'
+    assert bill = u.next_bill
+    assert bill.present?
+    assert bill.line_items.present?
+    assert_equal 'Plan: SuperMockShift', bill.line_items.first.name
+  end
+
+  def test_user_should_have_bill_today
+    u = TestUser.new
+    u.expects(:acct_no).at_least_once.returns(1.to_s)
+    stub_next_bill(
+      :plan_no => '2',
+      :next_bill_date => (Date.today + 1.days).to_s,
+      :last_bill_date => (Date.today).to_s,
+    )
+    assert bill = u.next_bill
+    assert bill.present?
+  end
+
+  def test_user_should_have_empty_bill_if_downgraded
+    u = TestUser.new
+    u.expects(:acct_no).at_least_once.returns(1.to_s)
+    stub_next_bill(
+      :plan_no => '2',
+      :queued_plans => [{
+        'new_plan_no' => Rails.configuration.aria_default_plan_no,
+      }]
+    )
+    assert bill = u.next_bill
+    assert bill.empty?
+  end
+
+  def test_user_should_have_nonempty_bill_if_downgraded
+    u = TestUser.new
+    u.expects(:acct_no).at_least_once.returns(1.to_s)
+    stub_next_bill(
+      :plan_no => '2',
+      :unbilled_usage_balance_ptd => 1.0,
+      :queued_plans => [{
+        'new_plan_no' => Rails.configuration.aria_default_plan_no,
+      }]
+    )
+    assert bill = u.next_bill
+    assert !bill.empty?
+    assert_equal 1.0, bill.balance
+  end
+
+  def stub_next_bill(opts={})
+    acct_no = 1 || opts[:acct_no]
+    opts.reverse_merge!({
+      :next_bill_date => (Date.today + 2.days).to_s,
+      :last_bill_date => (Date.today + 1.day).to_s,
+    })
+    plan_no = opts[:plan_no] || Rails.application.aria_default_plan_no
+
+    stub_aria(:get_virtual_datetime, {
+    }).to_return(resp(ok_wddx({
+      :current_offset_hours => 0,
+    })))
+    stub_acct_details(acct_no, {:plan_no => plan_no}.merge(opts.slice(:next_bill_date, :last_bill_date)))
+    stub_queued_plans(acct_no, opts[:queued_plans] || [])
+    stub_acct_invoice_history(acct_no, opts[:invoice_history] || [])
+    stub_aria(:get_usage_history, {
+      :acct_no => acct_no.to_s,
+      :date_range_start => Date.today.to_s,
+    }).to_return(resp(ok_wddx({
+      :usage_history_records => opts[:usage_history] || [],
+    })))
+    stub_aria(:get_unbilled_usage_summary, {:acct_no => acct_no.to_s}).to_return(resp(ok_wddx({
+      :ptd_balance_amount => opts[:unbilled_usage_balance_ptd] || 0.0,
+    })))
+    acct_plan = 
+      if opts[:acct_plan]
+        opts[:acct_plan]
+      elsif plan_no != Rails.configuration.aria_default_plan_no
+        [stub_plan_pay]
+      else
+        [stub_plan_free]
+      end
+    stub_acct_plans_all(acct_no, acct_plan)
+    stub_client_plans_all([stub_plan_free, stub_plan_pay])
+  end
+
+  def stub_plan_pay
+    {
+      'plan_no' => '2',
+      'plan_name' => 'SuperMockShift',
+      'plan_services' => [
+        {
+          'service_desc' => 'Recurring',
+          'is_recurring_ind' => 1,
+          'is_usage_based_ind' => 0,
+          'plan_service_rates' => [
+            {
+              'monthly_fee' => 41,
+            }
+          ]
+        },
+        {
+          'service_desc' => 'State Tax',
+          'is_recurring_ind' => 0,
+          'is_usage_based_ind' => 0,
+          'plan_service_rates' => [],
+        },
+        {
+          'service_desc' => 'Usage',
+          'is_recurring_ind' => 0,
+          'is_usage_based_ind' => 1,
+          'plan_service_rates' => [],
+        },
+      ]
+    }
+  end
+  def stub_plan_free
+    {
+      'plan_no' => Rails.configuration.aria_default_plan_no,
+      'plan_name' => 'FreeMockShift',
+      'plan_services' => [
+        {
+          'service_desc' => 'Recurring',
+          'is_recurring_ind' => 1,
+          'is_usage_based_ind' => 0,
+          'plan_service_rates' => [
+            {
+              'monthly_fee' => 0.0,
+            }
+          ]
+        },
+        {
+          'service_desc' => 'State Tax',
+          'is_recurring_ind' => 0,
+          'is_usage_based_ind' => 0,
+          'plan_service_rates' => [],
+        },
+        {
+          'service_desc' => 'Usage',
+          'is_recurring_ind' => 0,
+          'is_usage_based_ind' => 1,
+          'plan_service_rates' => [],
+        },
+      ]
+    }
+  end
+
+
 end

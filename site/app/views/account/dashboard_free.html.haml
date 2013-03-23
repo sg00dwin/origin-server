@@ -1,0 +1,37 @@
+- content_for :page_title, 'My Account'
+
+.row
+  .span12
+    %h1
+      My Account
+      %small.pull-right
+        <strong>#{@plan.name}</strong> Plan
+
+.row-fluid
+  .span4
+    %section.panel
+      = render :partial => 'settings', :locals => {:identity => @identity, :domain => @domain, :user => @user, :user_has_keys => @user_has_keys}
+
+  .span8
+    %section.panel
+      %h2 Common Questions
+      %dl
+        %dt What are the benefits of upgrading my account?
+        %dd
+          An account gets you access to everything you need to run production applications:
+
+        %dd
+          %ul
+            %li 24/7 world-class technical support from Red Hat
+            %li Access to up to 16 gears for your applications
+            %li Additional disk storage for your gears
+            %li Custom SSL for your own domain names
+
+        %dd
+          For more information about upgrading see our #{link_to "plans and pricing page", pricing_url}.
+
+      %p= link_to "Get more help and information about OpenShift accounts", help_account_path, :class => 'action-more'
+
+- if user_can_upgrade_plan?
+  %section.panel
+    = render :partial => 'upgrade', :locals => {:user => @user}

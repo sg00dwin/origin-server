@@ -1,9 +1,8 @@
-class BlogPost < RestApi::Base
+class BlogPost < CommunityApi::Base
   include RestApi::Cacheable
   allow_anonymous
 
-  self.site = Console.config.community_url
-  self.prefix = URI.join(Console.config.community_url, 'blogs/').path
+  self.prefix = '/blogs/'
 
   schema do
     string :title, :summary, :href

@@ -10,6 +10,14 @@ class GenerateSiteViewTask < GenerateConsoleViewTask
         def user_signed_in?
           false
         end
+
+        def active_tab
+          nil
+        end
+
+        def account_settings_redirect
+          settings_account_path
+        end
       end
     end
 end

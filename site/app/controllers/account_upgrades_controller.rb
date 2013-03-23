@@ -48,6 +48,11 @@ class AccountUpgradesController < ConsoleController
 
     @user.plan_id = plan_id
 
+    unless @payment_method.persisted? and @billing_info.persisted?
+      @user.errors[:base] = "You must provide a method of payment and billing address for this account."
+      render :new and return
+    end
+
     if @user.save
       render :upgraded and return if (@current_plan.basic? and !@plan.basic?)
       redirect_to account_plan_path, :flash => {:success => 'upgraded'}
@@ -122,5 +127,9 @@ class AccountUpgradesController < ConsoleController
        :city, :state, :country, :postal_code
       ].each{ |s| attr = s == :postal_code ? :zip : s; billing.send(:"#{attr}=", full_user.send(s)) }
       billing
+    end
+
+    def active_tab
+      :account
     end
 end

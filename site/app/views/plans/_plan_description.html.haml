@@ -1,7 +1,7 @@
 :ruby
-  #Rails.logger.debug plan.to_yaml
   plan_items = Hash[plan.features.map{|x| [x.name,x.value] }]
   price = plan_items.delete('Price')
+
 .plan{:id => plan.name.downcase}
   %h4
     = plan.name
@@ -18,4 +18,4 @@
   - if select_button != ''
     %p
       = link_to "Plan details", pricing_url(:anchor => plan.name.downcase)
-    = link_to select_button, account_plan_upgrade_path(plan), :class => 'btn btn-primary'
+    = link_to select_button, account_plan_upgrade_path(plan), :class => defined?(primary_button) ? "btn btn-primary" : "btn"

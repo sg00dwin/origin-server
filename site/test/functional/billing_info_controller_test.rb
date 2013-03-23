@@ -27,6 +27,18 @@ class BillingInfoControllerTest < ActionController::TestCase
     assert_template :edit
   end
 
+  test "update should return to edit page if length validation errors" do
+    omit_if_aria_is_unavailable
+    with_account_holder
+    aria_billing_info = Aria::BillingInfo.test.attributes
+    aria_billing_info['middle_initial'] = 'ABC'
+    Aria.expects(:update_acct_complete).never()
+    post :update, :aria_billing_info => aria_billing_info
+    assert assigns(:billing_info)
+    assert assigns(:billing_info).errors[:middle_initial].length > 0
+    assert_template :edit
+  end
+
   test "should provide account path" do
     assert_equal account_path, @controller.next_path
     assert_equal account_path, @controller.previous_path

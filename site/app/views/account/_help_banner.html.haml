@@ -1,0 +1,7 @@
+%ul.nav
+  %li Dashboard
+  - unless user_on_basic_plan
+    %li= "Billing Details"
+  %li Your Plan
+  %li Settings
+  %li Account Help

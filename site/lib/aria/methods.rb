@@ -26,6 +26,14 @@ module Aria
       super.plans_basic
     end
 
+    def get_client_plans_all
+      super.all_client_plans
+    end
+
+    def get_client_plan_services(plan_no)
+      super(:plan_no => plan_no).plan_services
+    end
+
     def get_acct_no_from_user_id(user_id)
       super(:user_id => user_id).acct_no
     end
@@ -41,6 +49,10 @@ module Aria
 
     def get_acct_details_all(acct_no)
       super(:acct_no => acct_no)
+    end
+
+    def get_acct_plans_all(acct_no)
+      super(:acct_no => acct_no).all_acct_plans
     end
 
     def get_supp_field_values(acct_no, field_name)
@@ -77,6 +89,51 @@ module Aria
       end
     end
 
+    def get_usage_history(acct_no, opts)
+      opts[:acct_no] = acct_no
+      Array(super(opts).usage_history_records)
+    rescue Aria::NoLineItemsProvided
+      []
+    end
+
+    def get_acct_invoice_history(acct_no)
+      Array(super(:acct_no => acct_no).invoice_history)
+    end
+
+    def get_invoice_details(acct_no, src_transaction_id)
+      Array(super({:acct_no => acct_no, :src_transaction_id => src_transaction_id}).invoice_line_items)
+    end
+
+    def get_payments_on_invoice(acct_no, src_transaction_id)
+      Array(super({:acct_no => acct_no, :src_transaction_id => src_transaction_id}).invoice_payments)
+    rescue Aria::NoLineItemsProvided
+      []
+    end
+
+    def get_acct_statement_history(acct_no, opts={})
+      opts[:acct_no] = acct_no
+      Array(super(opts).statement_history)
+    end
+
+    def get_client_plan_service_rates(plan_no, service_no)
+      Array(super(:plan_no => plan_no, :service_no => service_no).plan_service_rates)
+    end
+
+    def get_unbilled_usage_summary(acct_no)
+      super(:acct_no => acct_no)
+    end
+
+    def get_queued_service_plans(acct_no)
+      Array(super(:account_number => acct_no).queued_plans)
+    end
+
+    def record_usage(acct_no, usage_type, usage_units, opts={})
+      opts[:acct_no] = acct_no
+      opts[:usage_type] = usage_type
+      opts[:usage_units] = usage_units
+      super(opts).usage_rec_no
+    end
+
     private
       def encode_supplemental(params, update=false)
         if supplemental = params.delete(:supplemental)
@@ -93,5 +150,5 @@ module Aria
         end
         params
       end
- end
+  end
 end

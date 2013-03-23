@@ -8,10 +8,13 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
 
   rescue_from AccessDeniedException, :with => :access_denied
+  rescue_from 'Aria::ResourceNotFound', :with => :resource_not_found
   rescue_from 'Streamline::Error',
               'Aria::Error', 'Aria::NotAvailable',
               :with => :generic_error
   rescue_from :with => :generic_error
+
+  helper_method :account_settings_redirect, :active_tab
 
   protected
     def handle_unverified_request
@@ -83,5 +86,13 @@ class ApplicationController < ActionController::Base
     end
     def console_access_denied(e)
       access_denied(e)
+    end
+
+    def account_settings_redirect
+      settings_account_path
+    end
+
+    def active_tab
+      nil
     end
 end

@@ -60,9 +60,19 @@ RedHatCloud::Application.routes.draw do
            :controller => :account,
            :only => [:new, :create, :show] do
 
+    get :settings, :on => :member
     get :complete, :on => :member
+    get :help, :on => :member
+    get :faqs, :on => :member
+    match 'contact' => 'account#contact_support', :via => :post
+
 
     if Rails.configuration.aria_enabled
+      resources :bills, :only => [:index, :show] do
+        get :print, :on => :member
+        get :export, :on => :collection
+        post :locate, :on => :collection
+      end
       resources :plans,   :only => :index do
         resource :upgrade, :controller => :account_upgrades, :only => [:edit, :new, :create, :show] do
           put  :edit, :action => :update, :on => :member
