@@ -48,7 +48,7 @@ Requires:  openshift-origin-cartridge-community-python-2.7
 Requires:  openshift-origin-cartridge-community-python-3.3
 Requires:  openshift-origin-cartridge-mock
 Requires:  openshift-origin-cartridge-mock-plugin
-#Requires:  openshift-origin-cartridge-jbosseap
+Requires:  openshift-origin-cartridge-jbosseap
 Requires:  openshift-origin-cartridge-php
 Requires:  openshift-origin-cartridge-perl
 Requires:  openshift-origin-cartridge-python
@@ -57,6 +57,7 @@ Requires:  openshift-origin-cartridge-jenkins
 Requires:  openshift-origin-cartridge-jenkins-client
 Requires:  openshift-origin-cartridge-mysql
 Requires:  openshift-origin-cartridge-jbossews
+#Requires:  openshift-origin-cartridge-cron
 Requires:  activemq
 Requires:  activemq-client
 #Requires:  qpid-cpp-server
