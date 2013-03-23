@@ -32,37 +32,39 @@ module CountryHelper
 
   class << self
     def countries
-      @@countries ||= preferred_sort(get_countries, config.preferred_countries, :alpha2, :name)
+      @@countries ||= 
+        preferred_sort(config.allowed_countries, config.preferred_countries, :alpha2, :name)
     end
 
     def currencies
-      @@currencies ||= config.allowed_currencies
+      @currencies ||= 
+        config.allowed_currencies
     end
 
     def subdivisions
-      @@subdivisions ||= Hash[countries.map{|c| [c, c.subdivisions] }]
+      @@subdivisions ||= 
+        Hash[countries.map{|c| [c, c.subdivisions] }]
     end
 
     def config
-      @@config ||= OpenStruct.new(YAML.load_file(File.join(Rails.root, 'config', 'countries.yml'))).tap do |c|
-        [:allowed_currencies, :allowed_countries, :preferred_countries].each do |x|
-          c.send("#{x}=",Rails.configuration.send(x).map{|y| y.to_s.upcase })
-        end
-        c.countries.keep_if{|id,_| c.allowed_countries.include?(id) }
+      @@config ||= 
+        OpenStruct.new(YAML.load_file(File.join(Rails.root, 'config', 'countries.yml'))).tap do |c|
+          [:allowed_currencies, :allowed_countries, :preferred_countries].each do |x|
+            c.send("#{x}=",Rails.configuration.send(x).map{|y| y.to_s.upcase })
+          end
+          c.allowed_countries.map! do |code|
+            Country[code].tap do |country|
+              unless (data = c.additional_info[code]).nil?
+                data.each do |key,val|
+                  country.send("#{key}=",val)
+                end
+              end
+            end
+          end
       end
     end
 
     private
-    def get_countries
-      config.countries.map do |code, data|
-        country = Country[code]
-        data.each do |key,val|
-          country.send("#{key}=",val)
-        end unless data.nil?
-        country
-      end
-    end
-
     # Sort the array by the position in the order array
     def preferred_sort(array, order, index = :to_s, sort_key = :to_s)
       array.sort_by do |x|

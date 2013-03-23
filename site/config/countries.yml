@@ -6,7 +6,7 @@
 #     subdivision_name: default is 'State'     (http://en.wikipedia.org/wiki/ISO_3166-2)
 #     postal_code_name: default is 'Postcode'  (http://en.wikipedia.org/wiki/Postal_code#Terms)
 ---
-:countries:
+:additional_info:
   CA:
     :subdivision_name: Province
     :postal_code_name: Postal Code
