@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.14.3
+Version: 3.14.4
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Mar 25 2013 Adam Miller <admiller@redhat.com> 3.14.4-1
+- Eloqua integration,Omniture updates,AdWords Conversion Tracker Update
+  (spurtell@redhat.com)
+
 * Fri Mar 22 2013 Adam Miller <admiller@redhat.com> 3.14.3-1
 - Final tweaks, last round of items (ccoleman@redhat.com)
 - Switch to div based layout, lock taxonomies.  Follow Rob's changes to views
