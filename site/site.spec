@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.6.5
+Version: 1.6.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -181,6 +181,147 @@ fi
 %{sitedir}/public
 
 %changelog
+* Mon Mar 25 2013 Adam Miller <admiller@redhat.com> 1.6.6-1
+- Clean up premium cart indicators (ccoleman@redhat.com)
+- Remove deep partials, expose trust provider from quickstart api
+  (ccoleman@redhat.com)
+- Merge pull request #1055 from fabianofranz/dev/ffranz/ssl
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1057 from smarterclayton/aria_dashboard
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1060 from smarterclayton/dont_logout_on_login
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1061 from spurtell/spurtell/analytics
+  (dmcphers@redhat.com)
+- Merge pull request #1059 from sg00dwin/0315dev
+  (dmcphers+openshiftbot@redhat.com)
+- Eloqua integration,Omniture updates,AdWords Conversion Tracker Update
+  (spurtell@redhat.com)
+- Stop resetting the auth token when the login page is visited
+  (ccoleman@redhat.com)
+- Default to the localhost url for resources (ccoleman@redhat.com)
+- Merge branch 'aria_dashboard' of github.com:smarterclayton/li into
+  aria_dashboard (ccoleman@redhat.com)
+- Additional fixes for accounts with unpaid usage items in an invoice
+  (ccoleman@redhat.com)
+- Add rules for displaying icons within definition list (sgoodwin@redhat.com)
+- Fix bug 924664 - validate max lengths on billing info fields
+  (jliggitt@redhat.com)
+- Merge pull request #18 from liggitt/bug/924539 (ccoleman@redhat.com)
+- Add .span12 (jliggitt@redhat.com)
+- Fix bug 924539 - make dashboard header layout work better on iPhone
+  (jliggitt@redhat.com)
+- Card #239: Added support to alias creation and deletion and SSL certificate
+  upload to the web console (ffranz@redhat.com)
+- Fix typo in dashboard display, skip usage checks if there is no next bill
+  (jliggitt@redhat.com)
+- Merge branch 'master' of github.com:openshift/li into 0315dev
+  (sgoodwin@redhat.com)
+- Fix bug 924550 - unpaid invoices with usage line items don't work
+  (jliggitt@redhat.com)
+- Show tax blurb if there are tax line items (jliggitt@redhat.com)
+- Merge branch 'aria_dashboard' of github.com:smarterclayton/li into
+  aria_dashboard (ccoleman@redhat.com)
+- Fix unit tests, ensure that users are correctly notified when they are in a
+  downgrade situation, as well as when there are no charges.
+  (ccoleman@redhat.com)
+- Add virtual time indicator, add tax help blurb (jliggitt@redhat.com)
+- Merge branch 'master' of github.com:openshift/li into 0315dev
+  (sgoodwin@redhat.com)
+- Merge remote-tracking branch 'origin/master' into aria_dashboard
+  (ccoleman@redhat.com)
+- Next plan is "false" if current and future == freeshift, empty? otherwise
+  (ccoleman@redhat.com)
+- Plan arrow was missing (ccoleman@redhat.com)
+- Unit test should pass (ccoleman@redhat.com)
+- Implement CSV export (jliggitt@redhat.com)
+- Refactor bills controller (jliggitt@redhat.com)
+- Refactor bills controller, add error handling for invoices not found
+  (jliggitt@redhat.com)
+- Add print support to billing (jliggitt@redhat.com)
+- add usage rules for alert headings w/ icons (sgoodwin@redhat.com)
+- Reuse usage items from next bill (jliggitt@redhat.com)
+- Expand usage graphs, add warning message for test users, render empty layout
+  if no bills (jliggitt@redhat.com)
+- Warn users if they are a test user. (ccoleman@redhat.com)
+- Be clearer about what charges are pending.  Stop checking for invoices in the
+  future. (ccoleman@redhat.com)
+- Remove bill_day hack, update test case (jliggitt@redhat.com)
+- Bill controller and layout (jliggitt@redhat.com)
+- Broken helper, clear instance variables, include plan details link
+  (ccoleman@redhat.com)
+- Integrate and cleanup the application dashboard (ccoleman@redhat.com)
+- Merge remote-tracking branch 'jtharris/ta3668' into aria_dashboard
+  (ccoleman@redhat.com)
+- Add methods for getting invoice payments (jliggitt@redhat.com)
+- Fix bug 921276 - manually set bill_day after creating user
+  (jliggitt@redhat.com)
+- Fix tests (jliggitt@redhat.com)
+- Tests are passing (ccoleman@redhat.com)
+- Use helper for forums URL (asari.ruby@gmail.com)
+- Implement memcached on devenv (ccoleman@redhat.com)
+- Provide an easier path to upgrade (asari.ruby@gmail.com)
+- Merge remote-tracking branch 'origin/master' into aria_dashboard
+  (ccoleman@redhat.com)
+- Fixing up test cases (ccoleman@redhat.com)
+- FAQ search UI tweaks. (jharris@redhat.com)
+- Tolerate short bills (ccoleman@redhat.com)
+- Merge pull request #1012 from liggitt/bug/921276_master (ccoleman@redhat.com)
+- Add correct breadcrumbs, make tabs active when users are on subpages, make
+  settings page flows go back to settings page (ccoleman@redhat.com)
+- More tweaks towards final account page (ccoleman@redhat.com)
+- Make dashboard accessible to unpaid users (ccoleman@redhat.com)
+- Add test for bill date of day 1, use month name for billing period, default
+  to bill on day 1 (jliggitt@redhat.com)
+- Make graph styles generic, avoid using usage names as class names
+  (jliggitt@redhat.com)
+- Handle user without account (ccoleman@redhat.com)
+- Usage graph work (jliggitt@redhat.com)
+- Add account summary information to the account dashboard
+  (ccoleman@redhat.com)
+- Model line items on a plan (ccoleman@redhat.com)
+- Add billing info retrieval to aria helpers (ccoleman@redhat.com)
+- Rearrange elements based on discussion with Clayton (asari.ruby@gmail.com)
+- No use in specifying :to here. (asari.ruby@gmail.com)
+- @user was not intialized. (asari.ruby@gmail.com)
+- Merge remote-tracking branch 'upstream/master' into ta3668
+  (jharris@redhat.com)
+- FAQ search matches body. (jharris@redhat.com)
+- Merge pull request #9 from sg00dwin/account-help (jharris@redhat.com)
+- why upgrade text (sgoodwin@redhat.com)
+- UI styling for account/help (sgoodwin@redhat.com)
+- Merge pull request #7 from BanzaiMan/ta3668 (jharris@redhat.com)
+- Use plain text email instead of HTML (asari.ruby@gmail.com)
+- Adding angular-rails to site spec. (jharris@redhat.com)
+- Merge remote-tracking branch 'upstream/master' into ta3668
+  (jharris@redhat.com)
+- Making faq service call relative. (jharris@redhat.com)
+- Merge remote-tracking branch 'upstream/master' into ta3668
+  (jharris@redhat.com)
+- Reworking community api models. (jharris@redhat.com)
+- UI adjustments for account/help page (sgoodwin@redhat.com)
+- contact_support test (asari.ruby@gmail.com)
+- AccountSupportContactMailer tests (asari.ruby@gmail.com)
+- Tabs to spaces (asari.ruby@gmail.com)
+- Clean up form handling (asari.ruby@gmail.com)
+- Bare minimum email form support, along with necessary routing support.
+  (asari.ruby@gmail.com)
+- Add plan upgrade blurb for free plan users (asari.ruby@gmail.com)
+- Make FAQ endpoint configurable. (asari.ruby@gmail.com)
+- Adding in FAQ rails proxy and additional tests. (jharris@redhat.com)
+- Adding in jasmine tests using testem. (jharris@redhat.com)
+- Make plan information available to views (asari.ruby@gmail.com)
+- Killing the scrolled div. (jharris@redhat.com)
+- More angular refactoring and rendering default no-js content.
+  (jharris@redhat.com)
+- Getting bare bones faq search in place (jharris@redhat.com)
+- Add tooltip with Bootstrap (asari.ruby@gmail.com)
+- Tidy up FAQ items into a list (asari.ruby@gmail.com)
+- Skeleton of FAQ display (asari.ruby@gmail.com)
+- Correct help nav bar position (asari.ruby@gmail.com)
+- Go partial-happy and start styling (asari.ruby@gmail.com)
+- Hard-wiring 'account/help'. (asari.ruby@gmail.com)
+
 * Fri Mar 22 2013 Adam Miller <admiller@redhat.com> 1.6.5-1
 - Merge pull request #1052 from smarterclayton/quickstarts_in_community
   (dmcphers+openshiftbot@redhat.com)
