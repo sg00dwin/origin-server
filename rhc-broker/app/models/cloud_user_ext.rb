@@ -170,17 +170,9 @@ class CloudUser
 
       billing_api = OpenShift::BillingService.instance
 
-      update_aria_plan = true
-      queued_plans = billing_api.get_queued_service_plans(self.usage_account_id)
-      if queued_plans
-        if queued_plans[0]["new_plan_no"] == plan_info[:plan_no]
-          update_aria_plan = false
-        else
-          billing_api.cancel_queued_service_plan(self.usage_account_id)
-        end
-      end
-      update_aria_plan = false if account["plan_no"].to_i == plan_info[:plan_no]
-      if update_aria_plan
+      if account["plan_no"].to_i == plan_info[:plan_no]
+        billing_api.cancel_queued_service_plan(self.usage_account_id)
+      else
         cur_plan_index = -1
         new_plan_index = -1
         billing_api.get_plans.each_with_index do |plan, index|
