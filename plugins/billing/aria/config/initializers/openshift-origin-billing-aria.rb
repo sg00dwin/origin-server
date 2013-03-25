@@ -12,33 +12,39 @@ Broker::Application.configure do
       end
     end
     conf = OpenShift::Config.new(conf_file)
-    
+
     aria_billing_info = {
       :config => {
-        :url => conf.get("BILLING_PROVIDER_URL", ""),
-        :auth_key => conf.get("BILLING_PROVIDER_AUTH_KEY", ""),
-        :client_no => conf.get("BILLING_PROVIDER_CLIENT_NO", "0").to_i,
+        :url =>       conf.get("BILLING_PROVIDER_URL"),
+        :auth_key =>  conf.get("BILLING_PROVIDER_AUTH_KEY"),
+        :client_no => conf.get("BILLING_PROVIDER_CLIENT_NO").to_i,
         :enable_event_notification => conf.get_bool("BILLING_PROVIDER_EVENT_NOTIFICATION", "false"),
         :event_remote_ipaddr_begin => conf.get("BILLING_PROVIDER_EVENT_REMOTE_IPADDR_BEGIN", ""),
-        :event_remote_ipaddr_end => conf.get("BILLING_PROVIDER_EVENT_REMOTE_IPADDR_END", ""),
-        :event_orders_team_email => conf.get("BILLING_PROVIDER_EVENT_ORDERS_TEAM_EMAIL", ""),
-        :event_peoples_team_email => conf.get("BILLING_PROVIDER_EVENT_PEOPLES_TEAM_EMAIL", "")
+        :event_remote_ipaddr_end   => conf.get("BILLING_PROVIDER_EVENT_REMOTE_IPADDR_END", ""),
+        :event_orders_team_email   => conf.get("BILLING_PROVIDER_EVENT_ORDERS_TEAM_EMAIL", ""),
+        :event_peoples_team_email  => conf.get("BILLING_PROVIDER_EVENT_PEOPLES_TEAM_EMAIL", "")
       },
       :usage_type => {
-        :gear => {:small => 10014123,
-                  :medium => 10014125,
-                  :large => 10014127,
-                  :xlarge => 10014151},
-        :storage => {:gigabyte => 10037755},
-        :cartridge => {:"jbosseap-6.0" => 10041319}
+        :gear => {
+          :small    => conf.get("BILLING_PROVIDER_USAGE_TYPE_GEAR_SMALL").to_i,
+          :medium   => conf.get("BILLING_PROVIDER_USAGE_TYPE_GEAR_MEDIUM").to_i,
+          :large    => conf.get("BILLING_PROVIDER_USAGE_TYPE_GEAR_LARGE").to_i,
+          :xlarge   => conf.get("BILLING_PROVIDER_USAGE_TYPE_GEAR_XLARGE").to_i,
+        },
+        :storage => {
+          :gigabyte => conf.get("BILLING_PROVIDER_USAGE_TYPE_STORAGE_GEAR").to_i,
+        },
+        :cartridge => {
+          :"jbosseap-6.0" => conf.get("BILLING_PROVIDER_USAGE_TYPE_GEAR_JBOSS_EAP").to_i,
+        }
       },
       :default_plan => :freeshift,
       # Maintain the order of plans from lowest to the highest
       # Upgrade or Downgrade is decided based on this order.
       :plans => {
         :freeshift => {
-          :plan_no => conf.get("FREESHIFT_PLAN_NO", 10044929).to_i,
-          :name => "FreeShift",
+          :plan_no => conf.get("BILLING_PROVIDER_FREE_PLAN_NO").to_i,
+          :name => "Free",
           :capabilities => {
             'subaccounts' => false,
             'max_gears' => 3,
@@ -48,8 +54,8 @@ Broker::Application.configure do
           }
         },
         :megashift => {
-          :plan_no => conf.get("MEGASHIFT_PLAN_NO", 10044931).to_i,
-          :name => "MegaShift",
+          :plan_no => conf.get("BILLING_PROVIDER_SILVER_PLAN_NO").to_i,
+          :name => "Silver",
           :capabilities => {
             'subaccounts' => false,
             'max_gears' => 16,

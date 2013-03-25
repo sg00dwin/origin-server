@@ -7,11 +7,15 @@ module Aria
     end
 
     def name
-      case usage_type_description
-      when /Small Gear/ then 'Gear: Small'
-      when /Medium Gear/ then 'Gear: Medium'
-      when /MegaShift Storage/ then 'Storage: Additional Gear'
-      else usage_type_description
+      if service
+        service.service_desc
+      else
+        case usage_type_description
+        when /Small Gear/ then 'Gear: Small'
+        when /Medium Gear/ then 'Gear: Medium'
+        when /MegaShift Storage/ then 'Storage: Additional Gear'
+        else usage_type_description
+        end
       end
     end
 
@@ -36,13 +40,22 @@ module Aria
     # The string label that applies to this usage line item: e.g. 'hours'
     #
     def units_label
-      case service.client_coa_code
-      when 'smallusage', 'mediumusage', 'largeusage'
-        "gear-hour"
-      when 'megastorage'
-        "gigabyte-hour"
+      if service
+        code = service.client_coa_code
+        if code.starts_with? 'usage_gear_'
+          "gear-hour"
+        elsif code == 'usage_storage_gear'
+          "gigabyte-hour"
+        else
+          "unit"
+        end
       else
-        "unit"
+        case usage_type_description
+        when /storage/
+          "gigabyte-hour"
+        else
+          "gear-hour"
+        end
       end
     rescue => e
       Rails.logger.error "#{e.message} (#{e.class})\n  #{e.backtrace.join("\n  ")}"

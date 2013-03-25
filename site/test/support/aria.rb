@@ -105,8 +105,8 @@ class ActiveSupport::TestCase
 
   def record_usage_for_user(u, small_usage=10, medium_usage=5, usage_date=nil)
     p = Aria::MasterPlan.find 'megashift'
-    assert s = Aria.get_client_plan_services(p.plan_no).find{ |s| s.client_coa_code == 'smallusage' }
-    assert m = Aria.get_client_plan_services(p.plan_no).find{ |s| s.client_coa_code == 'mediumusage' }
+    assert s = Aria.get_client_plan_services(p.plan_no).find{ |s| s.client_coa_code == 'usage_gear_small' }
+    assert m = Aria.get_client_plan_services(p.plan_no).find{ |s| s.client_coa_code == 'usage_gear_medium' }
     Aria.record_usage(u.acct_no, s.usage_type, small_usage, {:comments => "Test small gear hours usage", :usage_date => usage_date})
     Aria.record_usage(u.acct_no, m.usage_type, medium_usage, {:comments => "Test medium gear hours usage", :usage_date => usage_date})
     u.clear_cache!
