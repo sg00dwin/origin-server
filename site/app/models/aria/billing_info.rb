@@ -32,24 +32,38 @@ module Aria
                    :to => 'bill_',
                    :rename_to_save => {
                      'bill_zip' => 'bill_postal_cd',
-                     'bill_region' => Hash.new('bill_locality').merge({
-                       'US' => 'bill_state_prov',
-                       'CA' => 'bill_state_prov',
-                     }),
                      'bill_middle_initial' => 'bill_mi',
                    },
-                   :rename_to_load => {
-                     'region' => Hash.new('locality').merge({
-                       'US' => 'state',
-                       'CA' => 'state',
-                     }),
-                   },
+                   :rename_to_load => {},
                    :no_rename_to_update => ['bill_middle_initial'],
                    :no_prefix => ['currency_cd']
 
     #def tax_exempt?
     #  tax_exempt.present? and tax_exempt.to_i > 0
     #end
+
+    class << self
+      def rename_to_save(hash, action='save')
+        super(hash, action)
+        @save_map ||= Hash.new('bill_locality').merge({
+          'US' => 'bill_state_prov',
+          'CA' => 'bill_state_prov',
+        })
+        hash[@save_map[hash['bill_country']]] = hash['bill_region']
+        hash.delete('bill_region')
+      end
+
+      def rename_to_load(hash)
+        super(hash)
+        @load_map ||= Hash.new('locality').merge({
+          'US' => 'state',
+          'CA' => 'state',
+        })
+        load_key = @load_map[hash['country']]
+        hash['region'] = hash[load_key]
+        hash.delete(load_key)
+      end
+    end
 
     def can_change_currency?
       !@persisted
