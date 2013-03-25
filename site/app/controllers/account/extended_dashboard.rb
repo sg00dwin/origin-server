@@ -18,7 +18,7 @@ module Account
       @user = current_api_user
       @plan = @user.plan
 
-      unless user.has_account?
+      unless user_can_upgrade_plan? and user.has_account?
         render :dashboard_free and return
       end
 

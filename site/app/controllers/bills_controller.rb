@@ -4,6 +4,8 @@ class BillsController < ConsoleController
   include BillingAware
 
   before_filter :authenticate_user!
+  before_filter :user_can_upgrade_plan!
+  
   before_filter :require_aria_account
   before_filter :require_invoices
 

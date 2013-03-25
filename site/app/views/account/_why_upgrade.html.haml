@@ -5,5 +5,9 @@
   %li Additional gears
   %li Medium sized gears
   %li Add-Ons like storage and SSL for custom domains
-%span.icon-bolt.font-icon-green{"aria-hidden" => "true"}
-%a{:href => account_plan_path} Upgrade Now
+
+- if user_can_upgrade_plan?
+  %span.icon-bolt.font-icon-green{"aria-hidden" => "true"}
+  %a{:href => account_plan_path} Upgrade Now
+- else
+  For more information about upgrading see our #{link_to "plans and pricing page", pricing_url}.
