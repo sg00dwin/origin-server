@@ -49,10 +49,11 @@ class AccountUpgradesControllerTest < ActionController::TestCase
         },
         :aria_billing_info => {
           :city => 'Happyville',
-          :state => 'TX',
+          :region => 'TX',
           :country => 'US',
           :address1 => '12345 Test str',
-          :zip => '10001'
+          :zip => '10001',
+          :currency_cd => 'usd'
         }
       }
 

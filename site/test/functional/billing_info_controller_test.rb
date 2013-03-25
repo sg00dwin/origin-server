@@ -14,7 +14,7 @@ class BillingInfoControllerTest < ActionController::TestCase
     with_account_holder
     aria_billing_info = Aria::BillingInfo.test.attributes
     Aria::UserContext.any_instance.expects(:update_account).returns(true)
-    post :update, :aria_billing_info => aria_billing_info
+    post :update, :aria_billing_info => { :aria_billing_info => aria_billing_info }
     assert_redirected_to account_path
   end
 
@@ -23,7 +23,7 @@ class BillingInfoControllerTest < ActionController::TestCase
     with_account_holder
     aria_billing_info = Aria::BillingInfo.test.attributes
     Aria::UserContext.any_instance.expects(:update_account).returns(false)
-    post :update, :aria_billing_info => aria_billing_info
+    post :update, :aria_billing_info => { :aria_billing_info => aria_billing_info }
     assert_template :edit
   end
 
@@ -33,7 +33,7 @@ class BillingInfoControllerTest < ActionController::TestCase
     aria_billing_info = Aria::BillingInfo.test.attributes
     aria_billing_info['middle_initial'] = 'ABC'
     Aria.expects(:update_acct_complete).never()
-    post :update, :aria_billing_info => aria_billing_info
+    post :update, :aria_billing_info => { :aria_billing_info => aria_billing_info }
     assert assigns(:billing_info)
     assert assigns(:billing_info).errors[:middle_initial].length > 0
     assert_template :edit
