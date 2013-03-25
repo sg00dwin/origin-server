@@ -1,7 +1,7 @@
 = semantic_form_for payment_method, :url => aria_direct_post_url, :html => {:class => 'form-horizontal plan_upgrade payment_form', :id => 'payment_method'} do |f|
   %section.row
     .span8
-      = tag :meta, :name => 'accepted_card_types', :content => Rails.configuration.credit_cards.keys.join(':')
+      = tag :meta, :name => 'accepted_card_types', :content => accepted_credit_cards.keys.join(':')
       = f.semantic_errors :except => [:cc_no, :cvv, :cc_exp_mm]
       = f.hidden_field :form_of_payment, :name => :formOfPayment
       = f.hidden_field :session_id, :name => :inSessionID
