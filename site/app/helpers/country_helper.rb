@@ -2,6 +2,7 @@ require 'ostruct'
 require 'yaml'
 require 'countries'
 
+# These are additional attributes we define in countries.yml
 class Country
   attr_accessor :subdivision_name
   attr_accessor :postal_code_name
@@ -32,32 +33,28 @@ module CountryHelper
 
   class << self
     def countries
-      @@countries ||= 
-        preferred_sort(config.allowed_countries, config.preferred_countries, :alpha2, :name)
+      @@countries ||= preferred_sort(config.allowed_countries, config.preferred_countries, :alpha2, :name)
     end
 
     def currencies
-      @currencies ||= 
-        config.allowed_currencies
+      @@currencies ||= config.allowed_currencies
     end
 
     def subdivisions
-      @@subdivisions ||= 
-        Hash[countries.map{|c| [c, c.subdivisions] }]
+      @@subdivisions ||= Hash[countries.map{|c| [c, c.subdivisions] }]
     end
 
     def config
-      @@config ||= 
-        OpenStruct.new(YAML.load_file(File.join(Rails.root, 'config', 'countries.yml'))).tap do |c|
+      @@config ||= OpenStruct.new(YAML.load_file(File.join(Rails.root, 'config', 'countries.yml'))).tap do |c|
           [:allowed_currencies, :allowed_countries, :preferred_countries].each do |x|
             c.send("#{x}=",Rails.configuration.send(x).map{|y| y.to_s.upcase })
           end
+          # Loop through all of the allowed countries and set additional info from our countries.yml
           c.allowed_countries.map! do |code|
             Country[code].tap do |country|
-              unless (data = c.additional_info[code]).nil?
-                data.each do |key,val|
-                  country.send("#{key}=",val)
-                end
+              # Merge the additional info with the defaults
+              c.defaults.merge(c.additional_info[code] || {}).each do |key,val|
+                country.send("#{key}=",val)
               end
             end
           end

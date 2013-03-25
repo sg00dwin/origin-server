@@ -47,8 +47,8 @@ $ ->
 
       # Get options for the country
       currency    = selected.attr('data-currency')
-      subdivision = selected.attr('data-subdivision') || "State"
-      postal_code = selected.attr('data-postal_code') || "Postcode"
+      subdivision = selected.attr('data-subdivision')
+      postal_code = selected.attr('data-postal_code')
 
       # Replace the groups with our stored versions
       region_select.html(groups)
