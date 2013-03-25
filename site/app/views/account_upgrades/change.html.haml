@@ -13,10 +13,10 @@
   .row
     %section.span6
       %p Your method of payment is:
-      = render :partial => 'payment_methods/payment_method', :locals => {:payment_method => @payment_method}
+      = render :partial => 'payment_method_summary', :locals => {:payment_method => @payment_method}
     %section.span6
       %p Bill to:
-      = render :partial => 'billing_info/billing_info', :locals => {:billing_info => @billing_info}
+      = render :partial => 'billing_info_summary', :locals => {:billing_info => @billing_info}
 
   = link_to "Select a different plan", account_plans_path, :class => 'btn'
   = submit_tag "Yes, I want to change plans", :class => 'btn-primary'

@@ -50,7 +50,7 @@
       %h5 Current Billing Information
       %p
         If you are having problems submitting your payment information, please ensure that the following billing information is correct.
-        = render :partial => 'billing_info/billing_info', :locals => {:billing_info => @billing_info}
+        = render :partial => 'account_upgrades/billing_info_summary', :locals => {:billing_info => @billing_info}
 
 - content_for :stylesheets do
   = stylesheet_link_tag 'plan_upgrade', :media => :all

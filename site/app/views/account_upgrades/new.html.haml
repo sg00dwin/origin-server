@@ -6,10 +6,10 @@
   .row
     .span6.offset1
       %h3 Payment Method
-      = render :partial => 'payment_methods/payment_method', :locals => {:payment_method => @payment_method}
+      = render :partial => 'payment_method_summary', :locals => {:payment_method => @payment_method}
     .span5
       %h3 Billing Information
-      = render :partial => 'billing_info/billing_info', :locals => {:billing_info => @billing_info}
+      = render :partial => 'billing_info_summary', :locals => {:billing_info => @billing_info}
 %section
   %p.larger= "The following plan changes will take effect when you switch from #{@current_plan.name}  to #{@plan.name}."
   = render :partial => 'plans/plan_comparison', :locals => { :current_plan => @current_plan, :new_plan => @plan } 
