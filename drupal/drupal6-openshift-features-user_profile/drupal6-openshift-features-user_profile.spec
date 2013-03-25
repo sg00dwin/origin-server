@@ -5,7 +5,7 @@
 %global modname             user_profile
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.11.2
+Version: 1.11.3
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom User Profile Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,11 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Mon Mar 25 2013 Adam Miller <admiller@redhat.com> 1.11.3-1
+- Merge pull request #1053 from jtharris/features/Card226
+  (dmcphers+openshiftbot@redhat.com)
+- Dynamic partner view. (jharris@redhat.com)
+
 * Fri Mar 22 2013 Adam Miller <admiller@redhat.com> 1.11.2-1
 - Add left navigation for quickstart tags (ccoleman@redhat.com)
 - Add quickstart features, simplify markup for blogs and quickstarts to be
