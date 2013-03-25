@@ -450,10 +450,11 @@ other|Other',
     'active' => '1',
     'text_processing' => '0',
     'max_length' => '',
-    'allowed_values' => 'openshift|OpenShift Team
-partner|Partner
+    'allowed_values' => 'community|Community
 trusted|Reviewed
-community|Community',
+partner|Partner
+openshift|OpenShift Team
+',
     'allowed_values_php' => '',
     'widget' => array(
       'default_value' => array(
@@ -464,7 +465,7 @@ community|Community',
       'default_value_php' => NULL,
       'label' => 'Provider',
       'weight' => '33',
-      'description' => 'Controls the trust level associated with a cartridge.  Only partner carts should be identified as the highest trust level.',
+      'description' => 'Controls the trust level associated with a quickstart.  The default trust level is community, implying no relationship with OpenShift. Only partner and OpenShift quickstarts should ever be promoted to front page.',
       'type' => 'optionwidgets_select',
       'module' => 'optionwidgets',
     ),
