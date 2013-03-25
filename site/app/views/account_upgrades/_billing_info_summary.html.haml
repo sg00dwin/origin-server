@@ -1,7 +1,0 @@
-.billing_info
-  - if billing_info.present?
-    .name= billing_info.full_name
-    - billing_info.address.each do |line|
-      .address= line
-
-%p= link_to billing_info.blank? ? "Add a billing address to this account" : "Change billing address", edit_account_plan_upgrade_billing_info_path
