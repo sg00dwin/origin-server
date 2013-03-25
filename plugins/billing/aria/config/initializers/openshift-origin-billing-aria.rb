@@ -43,8 +43,7 @@ Broker::Application.configure do
             'subaccounts' => false,
             'max_gears' => 3,
             'gear_sizes' => ["small"],
-            'plan_upgrade_enabled' => true,
-            'private_ssl_certificates' => false
+            'plan_upgrade_enabled' => true
           }
         },
         :megashift => {
