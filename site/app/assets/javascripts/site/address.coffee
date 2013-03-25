@@ -17,7 +17,6 @@ $ ->
     # Store our selections for easier use
     country_select   = billing_selector_for('country')
     region_select    = billing_selector_for('region')
-    currency_select  = billing_selector_for('currency_cd')
 
     # Get the city/region/zip label
     region_label = billing_label_for(region_select)
@@ -46,7 +45,6 @@ $ ->
       code = selected.val()
 
       # Get options for the country
-      currency    = selected.attr('data-currency')
       subdivision = selected.attr('data-subdivision')
       postal_code = selected.attr('data-postal_code')
 
@@ -67,9 +65,6 @@ $ ->
       region_label.find('ul li.state').html(subdivision)
       region_label.find('ul li.zip').html(postal_code)
       billing_input_for('zip').attr('placeholder',postal_code)
-
-      # Change the currency to the default for the country
-      currency_select.val(currency) unless args.first_run
 
     # Update the form based on the current value
     country_select.trigger 'change', {first_run: true}

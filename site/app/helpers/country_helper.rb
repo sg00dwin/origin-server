@@ -28,7 +28,7 @@ module CountryHelper
 
   def currencies_for_select
     currencies = CountryHelper.currencies
-    currencies.zip(currencies.map(&:downcase))
+    [['Select a currency', nil, {:disabled => true, :selected => 'selected'}]] | currencies.zip(currencies.map(&:downcase))
   end
 
   class << self
