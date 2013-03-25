@@ -118,73 +118,72 @@ $ ->
         required: true
         cc_exp: true
 
-  ###
-  #  The following validations apply to the plan upgrade forms
-  ###
-
-  # Helper function to add simple validations to the form
-  $.fn.add_validations = (groups, namespace) ->
-    form = $(this)
-    for group,names of groups
-      for name in names
-        # Get the proper input field
-        input = form.find("[name$='[#{namespace}][#{name}]']")
-        # Add it to a group if specified
-        if group != 'nil'
-          form.data().validator.groups[input.attr('name')] = group
-        # Add the required rules
-        input.rules "add",
-          required: true
-    form
-
-  # The following groups of fields are required with no extra options
-  # The hash key is used to place them in groups for validator
-  contact_fields = {
-    'contact_name': ['first_name','last_name'],
-    'contact_company': ['title','company']
-  }
-
-  billing_fields = {
-    'billing_name': ['first_name', 'last_name'],
-    'billing_city': ['city', 'region', 'zip']
-    nil:            ['address1','country']
-  }
-
-  ###
-  # Create the validations for the forms
-  # - Call validate with base options and any specific fields
-  # - Call add_validations to add fields that are grouped and/or just have a 'required' rule
-  ###
-
-  # /account/plans/:id/upgrade/edit
-  streamline_full_user_form = $('form#upgrade_account_new_streamline_full_user')
-  if streamline_full_user_form.length > 0
-    $(streamline_full_user_form)
-      .validate
-        errorPlacement: (error, el) ->
-          help_inline_placement(el,error)
-        rules:
-          "streamline_full_user[streamline_full_user][phone_number]":
-            required:     true
-            rangelength:  [8,30]
-            intl_phone:   true
-          "streamline_full_user[streamline_full_user][password]":
-            required:   true
-            minlength:  6
-          "streamline_full_user[streamline_full_user][password_confirmation]":
-            required:   true
-            equalTo:    "#upgrade_account_upgrade_account_streamline_full_user_streamline_full_user_password"
-
-    streamline_full_user_form
-      .add_validations(contact_fields, 'streamline_full_user')
-      .add_validations(billing_fields, 'aria_billing_info')
-
-  # /account/plans/:id/upgrade/billing_info/edit
-  edit_aria_billing_info_form = $('form#edit_aria_billing_info')
-  if edit_aria_billing_info_form.length > 0
-    $(edit_aria_billing_info).validate
+  # /app/account/plans/<plan>/upgrade/edit
+  $('form#upgrade_account_new_streamline_full_user').validate
+      groups:
+        contact_name:    'streamline_full_user[streamline_full_user][first_name] streamline_full_user[streamline_full_user][last_name]'
+        contact_company: 'streamline_full_user[streamline_full_user][title] streamline_full_user[streamline_full_user][company]'
+        billing_name:    'streamline_full_user[aria_billing_info][first_name] streamline_full_user[aria_billing_info][last_name]'
+        billing_city:    'streamline_full_user[aria_billing_info][city] streamline_full_user[aria_billing_info][region] streamline_full_user[aria_billing_info][zip]'
       errorPlacement: (error, el) ->
         help_inline_placement(el,error)
+      rules:
+        "streamline_full_user[streamline_full_user][phone_number]":
+          required:     true
+          rangelength:  [8,30]
+          intl_phone:   true
+        "streamline_full_user[streamline_full_user][password]":
+          required:   true
+          minlength:  6
+        "streamline_full_user[streamline_full_user][password_confirmation]":
+          required:   true
+          equalTo:    "#upgrade_account_upgrade_account_streamline_full_user_streamline_full_user_password"
+        "streamline_full_user[streamline_full_user][first_name]":
+          required:     true
+        "streamline_full_user[streamline_full_user][last_name]":
+          required:     true
+        "streamline_full_user[streamline_full_user][title]":
+          required:     true
+        "streamline_full_user[streamline_full_user][company]":
+          required:     true
+        "streamline_full_user[aria_billing_info][first_name]":
+          required:     true
+        "streamline_full_user[aria_billing_info][last_name]":
+          required:     true
+        "streamline_full_user[aria_billing_info][address1]":
+          required:     true
+        "streamline_full_user[aria_billing_info][city]":
+          required:     true
+        "streamline_full_user[aria_billing_info][region]":
+          required:     true
+        "streamline_full_user[aria_billing_info][zip]":
+          required:     true
+        "streamline_full_user[aria_billing_info][country]":
+          required:     true
+        "streamline_full_user[aria_billing_info][currency_cd]":
+          required:     true
 
-    edit_aria_billing_info_form
-      .add_validations(billing_fields, 'aria_billing_info')
+  # /app/account/plans/<plan>/upgrade/billing_info/edit
+  $('form#edit_aria_billing_info').validate
+    groups:
+      billing_name:    'aria_billing_info[aria_billing_info][first_name] aria_billing_info[aria_billing_info][last_name]'
+      billing_city:    'aria_billing_info[aria_billing_info][city] aria_billing_info[aria_billing_info][region] aria_billing_info[aria_billing_info][zip]'
+    errorPlacement: (error, el) ->
+      help_inline_placement(el,error)
+    rules:
+      "aria_billing_info[aria_billing_info][first_name]":
+        required:     true
+      "aria_billing_info[aria_billing_info][last_name]":
+        required:     true
+      "aria_billing_info[aria_billing_info][address1]":
+        required:     true
+      "aria_billing_info[aria_billing_info][city]":
+        required:     true
+      "aria_billing_info[aria_billing_info][region]":
+        required:     true
+      "aria_billing_info[aria_billing_info][zip]":
+        required:     true
+      "aria_billing_info[aria_billing_info][country]":
+        required:     true
+      "aria_billing_info[aria_billing_info][currency_cd]":
+        required:     true
