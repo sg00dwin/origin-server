@@ -14,9 +14,10 @@ gem 'dalli'
 
 gem 'countries'
 
-if ENV['pry']
-  gem 'pry'
-  gem 'pry-rails'
+gem 'pry' if ENV['PRY']
+
+if ENV['BETTER_ERRORS']
+  gem 'pry-rails' if ENV['PRY']
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'meta_request'
