@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.6.4
+Version: 1.6.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -715,6 +715,9 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Mon Mar 25 2013 Adam Miller <admiller@redhat.com> 1.6.5-1
+- adding cron and eap (dmcphers@redhat.com)
+
 * Thu Mar 21 2013 Adam Miller <admiller@redhat.com> 1.6.4-1
 - Add openshift-origin-cartridge-jbossews v2 cart to Requires
   (ironcladlou@gmail.com)
