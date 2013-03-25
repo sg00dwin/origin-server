@@ -25,7 +25,6 @@ module Aria
     validates_length_of :address2, :maximum => 100
     validates_length_of :address3, :maximum => 100
     validates_length_of :city, :maximum => 32
-    validates_length_of :state, :maximum => 2
     validates_length_of :country, :maximum => 2
     validates_length_of :zip, :maximum => 14
 
