@@ -5,12 +5,7 @@
   :javascript
     $(function() {
       $('#id').change(function() {
-        $this = $(this);
-        var url = $this.find('option:selected').data("url");
-        var value = $this.val();
-        if (url)
-          window.location = url;
-        else if (value)
+        if ($(this).val())
           $("#bill_form").submit();
       })
     });
@@ -27,8 +22,9 @@
   .span8
     %h1.pull-left Bill Details
     %div.pull-right
-      = form_tag locate_account_bills_path, :id => 'bill_form' do |form|
+      = semantic_form_for current_user, :url => locate_account_bills_path, :html => { :id => 'bill_form', :method => 'post' } do |f|
         - if @invoice_options.count > 1
+          = f.loading
           = select_tag 'id', options_for_select([["Bill date:",""], *@invoice_options ], @id), {:title => 'Bill date'}
           %noscript
             = submit_tag 'View', :class => 'btn'

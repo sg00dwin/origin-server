@@ -6,6 +6,17 @@
   table.plan-items .plan-item-cost { text-align: right; }
 
 %table.table.table-striped.plan-items
+  - if bill.forwarded_balance != 0
+    %tr.plan-item
+      - if show_dates
+        %td &nbsp;
+      %td Forwarded balance
+      - if show_details
+        %td &nbsp;
+      %td.plan-item-cost
+        = number_to_currency(bill.forwarded_balance)
+
+
   - bill.line_items.sort_by(&Aria::LineItem.plan_sort).each do |li|
 
     %tr.plan-item

@@ -98,7 +98,8 @@ module Aria
         invoice.line_items,
         invoice.payments,
         [],
-        0
+        0,
+        forwarded_balance(invoice)
       )
     end
 
@@ -116,10 +117,11 @@ module Aria
               next_bill_date - 1.day,
               next_bill_date,
               (Aria::DateTime.today - start_date).to_i + 1,
-              unpaid_invoices.map(&:line_items).flatten(1).concat(next_plan_recurring_line_items),
+              next_plan_recurring_line_items,
               [],
               unbilled_usage_line_items,
-              unbilled_usage_balance
+              unbilled_usage_balance,
+              forwarded_balance
             )
           end
       end
@@ -158,6 +160,12 @@ module Aria
 
     def invoices
       @invoices ||= Aria.get_acct_invoice_history(acct_no).map {|i| Aria::Invoice.new(i, acct_no) }.sort_by(&:bill_date).reverse!
+    end
+
+    def forwarded_balance(invoice=nil)
+      invoices = unpaid_invoices
+      invoices = invoices.select {|i| i.bill_date <= invoice.bill_date and i.invoice_no < invoice.invoice_no } if invoice
+      invoices.inject(0) {|balance, i| balance + i.debit - i.credit}
     end
 
     def past_usage_line_items(periods=3)
