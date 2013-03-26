@@ -24,7 +24,7 @@ module AccountHelper
     if li.tax?
     elsif li.usage?
       if li.free_units and li.units <= li.free_units
-        "#{number_with_precision(li.units, :delimiter => ',', :precision => 0)} @ free up to #{number_with_delimiter(li.free_units)} #{li.units_label}"
+        "#{number_with_precision(li.units, :delimiter => ',', :precision => 0)} #{li.units_label} (free up to #{number_with_delimiter(li.free_units)})"
       else
         "#{number_with_precision(li.units, :delimiter => ',', :precision => 0)} @ #{number_to_currency(li.rate)} / #{li.units_label}"
       end
