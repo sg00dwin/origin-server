@@ -14,11 +14,11 @@ else
 end
 
 def mongo_connect
-  db = OpenShift::DataStore.db
-  $coll = db.collection('applications')
+  $db = OpenShift::DataStore.db
 end
 
 def migrate_apps
+  $coll = $db.collection('applications')
   query = {"aliases.0" => {"$exists" => true}}
   selection = {:fields => ["name",
                          "aliases",
@@ -40,6 +40,7 @@ def migrate_apps
       print "."
       print "Migrating app #{app['name']}/#{app['uuid']}.. " if $verbose
       $coll.update({ "uuid" => app["uuid"] }, { "$set" => { "aliases" => new_aliases } } ) if new_aliases.length > 0
+      total += 1
       print "done" if $verbose
     end
   end
@@ -47,7 +48,32 @@ def migrate_apps
   puts "Mongo migrated #{total} apps"
 end
 
+def migrate_users
+  $coll = $db.collection('cloud_users')
+  query = {"plan_id" => "megashift"}
+  selection = {:fields => ["login",
+                         "capabilities",
+                         "_id"], :timeout => false}
+
+  total = 0
+  $coll.find(query, selection) do |cursor| 
+    cursor.each do |user|
+      if user["capabilities"]["private_ssl_certificates"].nil? or user["capabilities"]["private_ssl_certificates"] == false
+        user["capabilities"]["private_ssl_certificates"] = true
+        print "."
+        print "Migrating user #{user['login']}/#{user['_id']}.. " if $verbose
+        $coll.update({ "_id" => user["_id"] }, { "$set" => { "capabilities" => user["capabilities"] } } )
+        total += 1
+        print "done" if $verbose
+      end
+    end
+  end
+  puts
+  puts "Mongo migrated #{total} users"
+end
+
 puts "Starting migration"
 mongo_connect
 migrate_apps
+migrate_users
 puts "Done!"
