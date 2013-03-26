@@ -199,6 +199,16 @@ module OpenShift
       end
     end
 
+    def revoke_entitlements(login, acct_no, plan_id, plan_upgrade)
+      send_entitlements(login, acct_no, plan_id, plan_upgrade,
+                        OpenShift::AriaEvent::ENTITLEMENTS[:revoke])
+    end
+
+    def assign_entitlements(login, acct_no, plan_id, plan_upgrade)
+      send_entitlements(login, acct_no, plan_id, plan_upgrade,
+                        OpenShift::AriaEvent::ENTITLEMENTS[:assign])
+    end
+
     ######################## ARIA API methods #######################
 
     def get_plans
@@ -331,6 +341,18 @@ module OpenShift
       else
         time
       end
+    end
+
+    def send_entitlements(login, acct_no, plan_id, plan_upgrade, entitlement_type)
+      return unless Rails.application.config.billing[:config][:enable_event_notification]
+      aria_plans = Rails.application.config.billing[:plans]
+      hash = {}
+      hash['login'] = login
+      hash['acct_no'] = acct_no
+      hash['plan_name'] = aria_plans[plan_id.to_sym][:name]
+      hash['plan_units'] = 1
+      hash['apply_end_of_month'] = (not plan_upgrade)
+      OpenShift::AriaEvent.send_entitlements(hash, entitlement_type) 
     end
 
     def send(request)

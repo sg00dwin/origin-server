@@ -144,6 +144,7 @@ class CloudUser
 
     old_plan_id = nil
     old_capabilities = nil
+    plan_upgrade = nil
     begin
       self.with(consistency: :strong).reload
 
@@ -172,6 +173,8 @@ class CloudUser
 
       if account["plan_no"].to_i == plan_info[:plan_no]
         billing_api.cancel_queued_service_plan(self.usage_account_id)
+        # This can only happen during plan upgrade
+        plan_upgrade = true
       else
         cur_plan_index = -1
         new_plan_index = -1
@@ -179,8 +182,9 @@ class CloudUser
           new_plan_index = index if plan[1][:plan_no] == plan_info[:plan_no]
           cur_plan_index = index if plan[0].to_s == old_plan_id
         end
-        #update plan in billing vendor
-        billing_api.update_master_plan(self.usage_account_id, plan_id.to_sym, (new_plan_index > cur_plan_index))
+        plan_upgrade = (new_plan_index > cur_plan_index)
+        # Update plan in billing vendor
+        billing_api.update_master_plan(self.usage_account_id, plan_id.to_sym, plan_upgrade)
       end
     rescue Exception => e
       Rails.logger.error e.message
@@ -203,5 +207,20 @@ class CloudUser
     self.pending_plan_uptime = nil
     self.plan_state = CloudUser::PLAN_STATES['active']
     self.assign_plan(plan_id, true)
+
+    # Revoke/Assign entitlements
+    begin
+      if old_plan_id != plan_id
+        billing_service = OpenShift::BillingService.instance
+        if billing_service.respond_to?('revoke_entitlements') and billing_service.respond_to?('assign_entitlements')
+          billing_service.revoke_entitlements(self.login, self.usage_account_id, old_plan_id, plan_upgrade)
+          billing_service.assign_entitlements(self.login, self.usage_account_id, plan_id, plan_upgrade)
+        end
+      end
+    rescue Exception => e
+      #Any entitlement failure should not cause user update failure
+      Rails.logger.error e.message
+      Rails.logger.error e.backtrace.inspect
+    end
   end
 end
