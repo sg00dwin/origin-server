@@ -258,10 +258,6 @@ rm -rf %{buildroot}
 # Ensure httpd can access static content in site/broker (symlinks)
 usermod -G libra_user -a apache
 
-# Setup node.conf for the devenv
-cp -f /etc/openshift/node.conf.libra /etc/openshift/node.conf
-restorecon /etc/openshift/node.conf || :
-
 echo "
 # Setup PATH, LD_LIBRARY_PATH and MANPATH for ruby-1.9
 ruby19_dir=\$(dirname \`scl enable ruby193 \"which ruby\"\`)
@@ -298,6 +294,15 @@ gem install httpclient --version 2.3.2 --no-rdoc --no-ri
 /bin/cp -rf %{devenvdir}/etc/* %{_sysconfdir}
 /bin/cp -rf %{devenvdir}/bin/* %{_bindir}
 /bin/cp -rf %{devenvdir}/var/* %{_var}
+
+# Setup node.conf for the devenv
+cp -f /etc/openshift/node.conf.libra /etc/openshift/node.conf
+restorecon /etc/openshift/node.conf || :
+/sbin/service libra-data restart > /dev/null 2>&1 || :
+
+# Setup OPENSHIFT_CLOUD_DOMAIN for the devenv
+mv -f /etc/openshift/env/OPENSHIFT_CLOUD_DOMAIN.libra /etc/openshift/env/OPENSHIFT_CLOUD_DOMAIN
+restorecon /etc/openshift/env/OPENSHIFT_CLOUD_DOMAIN || :
 
 # Add rsync key to authorized keys
 cat %{brokerdir}/config/keys/rsync_id_rsa.pub >> /root/.ssh/authorized_keys
@@ -708,11 +713,6 @@ oo-admin-cartridge --recursive -a install -s /usr/libexec/openshift/cartridges/v
 %{_initddir}/memcached-2
 %{policydir}/*
 /etc/openshift/development
-
-%triggerin -- rubygem-openshift-origin-node
-cp -f /etc/openshift/node.conf.libra /etc/openshift/node.conf
-restorecon /etc/openshift/node.conf || :
-/sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
 * Mon Mar 25 2013 Adam Miller <admiller@redhat.com> 1.6.5-1
