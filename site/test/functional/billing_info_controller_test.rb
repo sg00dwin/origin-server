@@ -32,6 +32,35 @@ class BillingInfoControllerTest < ActionController::TestCase
     assert_template :edit
   end
 
+  test "should update user account" do
+    omit_if_aria_is_unavailable
+    acct_info = {
+      'CA' => {
+        'zip' => 'K1A0B1',
+        'city' => 'Ottawa',
+        'region' => 'ON',
+        'country' => 'CA',
+      },
+      'US' => {
+        'zip' => '77001',
+        'city' => 'Houston',
+        'region' => 'TX',
+        'country' => 'US',
+      },
+    }
+    assert user = with_account_holder
+    assert initial_billing_info = user.billing_info.attributes
+    target_country = (initial_billing_info['country'] == 'US') ? 'CA' : 'US'
+    acct_info[target_country].each_pair do |k,v|
+      initial_billing_info[k] = v
+    end
+    post :update, :aria_billing_info => { :aria_billing_info => initial_billing_info }
+    assert_redirected_to account_path
+    acct_info[target_country].each_pair do |k,v|
+      assert user.billing_info.attributes[k] == v
+    end
+  end
+
   test "update should return to edit page if validation errors" do
     omit_if_aria_is_unavailable
     with_account_holder
