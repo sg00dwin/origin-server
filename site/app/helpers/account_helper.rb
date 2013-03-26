@@ -20,6 +20,10 @@ module AccountHelper
     wizard_steps(PlanUpgradeStepsCreate, active, options)
   end
 
+  def tax_exempt_help_status
+    community_base_url 'policy/tax-exemptions'
+  end
+
   def line_item_details(li)
     if li.tax?
     elsif li.usage?
