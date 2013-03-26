@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.6.5
+Version: 1.6.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -715,6 +715,14 @@ oo-admin-cartridge --recursive -a install -s /usr/libexec/openshift/cartridges/v
 /etc/openshift/development
 
 %changelog
+* Tue Mar 26 2013 Adam Miller <admiller@redhat.com> 1.6.6-1
+- getting jenkins working (dmcphers@redhat.com)
+- Merge pull request #1069 from
+  smarterclayton/hardcode_script_name_for_memcached
+  (dmcphers+openshiftbot@redhat.com)
+- Hardcode the script name for memcached init.d scripts - it changes depending
+  on runlevel (ccoleman@redhat.com)
+
 * Mon Mar 25 2013 Adam Miller <admiller@redhat.com> 1.6.5-1
 - adding cron and eap (dmcphers@redhat.com)
 
