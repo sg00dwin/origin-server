@@ -73,7 +73,7 @@ def migrate_users
 end
 
 def migrate_plans
-  $users = db.collection('cloud_users')
+  users = $db.collection('cloud_users')
   options = {
     "freeshift" => "free",
     "megashift" => "silver",
@@ -81,10 +81,8 @@ def migrate_plans
   options.each_pair do |from, to|
     total = 0
     print "Migrating user plan_id #{from} => #{to}.. "
-    while $users.find_and_modify(:query => {:plan_id => from}, :update => {'$set' => {:plan_id => to}})
-      total += 1
-    end      
-    puts "#{total} migrated"
+    users.update({:plan_id => from}, {'$set' => {:plan_id => to}}, :multi => true)
+    puts " migrated"
   end
 end
 
