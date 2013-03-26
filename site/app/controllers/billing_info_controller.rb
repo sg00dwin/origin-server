@@ -5,7 +5,8 @@ class BillingInfoController < ConsoleController
   before_filter :user_can_upgrade_plan!
 
   def edit
-    @billing_info = Aria::UserContext.new(current_user).billing_info
+    @user = Aria::UserContext.new(current_user)
+    @billing_info = @user.billing_info
   end
 
   def update
