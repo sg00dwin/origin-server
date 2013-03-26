@@ -10,6 +10,6 @@ service rhc-site restart
 
 echo "Disabling SSO for Drupal..."
 pushd /etc/drupal6/default/
-cp redhat_settings.php.orig redhat_settings.php
-chown .libra_user redhat_settings.php
+sed -i "s/redhat_sso_skip_password'\]\ \=\ false/redhat_sso_skip_password'\]\ \=\ true/" /etc/drupal6/default/redhat_settings.php
+service httpd restart
 popd
