@@ -11,6 +11,9 @@ module BillingAware
     # Is the current user authorized to upgrade their plan?  Will lazily
     # load and cache the capabilities for the user.
     #
+    # This is unrelated to the user's payment method, status_cd, etc
+    # It is only used as a gatekeeper to hide upgrade function prior to general release
+    #
     def user_can_upgrade_plan?
       Rails.configuration.aria_enabled && current_user && user_capabilities.plan_upgrade_enabled?
     rescue => e

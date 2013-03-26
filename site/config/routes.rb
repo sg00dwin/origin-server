@@ -67,39 +67,37 @@ RedHatCloud::Application.routes.draw do
     match 'contact' => 'account#contact_support', :via => :post
 
 
-    if Rails.configuration.aria_enabled
-      resources :bills, :only => [:index, :show] do
-        get :print, :on => :member
-        get :export, :on => :collection
-        post :locate, :on => :collection
-      end
-      resources :plans,   :only => :index do
-        resource :upgrade, :controller => :account_upgrades, :only => [:edit, :new, :create, :show] do
-          put  :edit, :action => :update, :on => :member
+    resources :bills, :only => [:index, :show] do
+      get :print, :on => :member
+      get :export, :on => :collection
+      post :locate, :on => :collection
+    end
+    resources :plans,   :only => :index do
+      resource :upgrade, :controller => :account_upgrades, :only => [:edit, :new, :create, :show] do
+        put  :edit, :action => :update, :on => :member
 
-          resource :payment_method,
-                   :controller => :account_upgrade_payment_method,
-                   :only => [:show, :new, :edit] do
-            get :direct_create, :on => :member
-            get :direct_update, :on => :member
-          end
-          resource :billing_info,
-                   :controller => :account_upgrade_billing_info,
-                   :only => :edit do
-            put :edit, :action => :update, :on => :member
-          end
+        resource :payment_method,
+                 :controller => :account_upgrade_payment_method,
+                 :only => [:show, :new, :edit] do
+          get :direct_create, :on => :member
+          get :direct_update, :on => :member
+        end
+        resource :billing_info,
+                 :controller => :account_upgrade_billing_info,
+                 :only => :edit do
+          put :edit, :action => :update, :on => :member
         end
       end
-      resource :payment_method, :only => [:edit] do
-        get :direct_update, :on => :member
-      end
-      resource :billing_info,
-               :controller => :billing_info,
-               :only => :edit do
-        put :edit, :action => :update, :on => :member
-      end
-      resource :plan, :only => [:update, :show]
     end
+    resource :payment_method, :only => [:edit] do
+      get :direct_update, :on => :member
+    end
+    resource :billing_info,
+             :controller => :billing_info,
+             :only => :edit do
+      put :edit, :action => :update, :on => :member
+    end
+    resource :plan, :only => [:update, :show]
 
     resource  :password, :controller => :password do
       match 'edit' => 'password#update', :via => :put

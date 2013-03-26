@@ -65,40 +65,84 @@ class BillingTest < ActiveSupport::TestCase
 test "update master plan and then revert to previous" do
     api = OpenShift::BillingService.instance
     acct_no = api.create_fake_acct(@user_id, :free)
+
     plans = api.get_acct_plans_all(acct_no)
+    queued = api.get_queued_service_plans(acct_no)
     assert(plans.length == 1)
+    assert_nil queued
     current_plan = plans[0]
     assert_equal(current_plan["plan_name"], "Free", "Current plan name #{current_plan["plan_name"]} expected Free")
       
     api.update_master_plan(acct_no, :silver, true)
       
     plans = api.get_acct_plans_all(acct_no)
+    queued = api.get_queued_service_plans(acct_no)
     assert(plans.length == 1)
+    assert_nil queued
     current_plan = plans[0]
     assert_equal(current_plan["plan_name"], "Silver", "Current plan name #{current_plan["plan_name"]} expected Silver")
       
     api.update_master_plan(acct_no, :free)
       
-    plans = api.get_queued_service_plans(acct_no)
+    plans = api.get_acct_plans_all(acct_no)
+    queued = api.get_queued_service_plans(acct_no)
     assert(plans.length == 1)
+    assert(queued.length == 1)
     current_plan = plans[0]
-    assert_equal(current_plan["new_plan"], "Free", "Current plan name #{current_plan["new_plan"]} expected Free")
+    assert_equal(current_plan["plan_name"], "Silver", "Current plan name #{current_plan["plan_name"]} expected Silver")
+    new_plan = queued[0]
+    assert_equal(new_plan["new_plan"], "Free", "New plan name #{new_plan["new_plan"]} expected Free")
+
+    api.update_master_plan(acct_no, :silver, true)
+      
+    plans = api.get_acct_plans_all(acct_no)
+    queued = api.get_queued_service_plans(acct_no)
+    assert(plans.length == 1)
+    assert_nil queued
+    current_plan = plans[0]
+    assert_equal(current_plan["plan_name"], "Silver", "Current plan name #{current_plan["plan_name"]} expected Silver")
   end
   
   test "update master plan to same plan" do
     api = OpenShift::BillingService.instance
     acct_no = api.create_fake_acct(@user_id, :silver)
     plans = api.get_acct_plans_all(acct_no)
+    queued = api.get_queued_service_plans(acct_no)
     assert(plans.length == 1)
+    assert_nil queued
     current_plan = plans[0]
     assert_equal(current_plan["plan_name"], "Silver", "Current plan name #{current_plan["plan_name"]} expected Silver")
       
     api.update_master_plan(acct_no, :silver)
       
     plans = api.get_acct_plans_all(acct_no)
+    queued = api.get_queued_service_plans(acct_no)
     assert(plans.length == 1)
+    assert_nil queued
     current_plan = plans[0]
     assert_equal(current_plan["plan_name"], "Silver", "Current plan name #{current_plan["plan_name"]} expected Silver")
+
+    api.update_master_plan(acct_no, :free)
+      
+    plans = api.get_acct_plans_all(acct_no)
+    queued = api.get_queued_service_plans(acct_no)
+    assert(plans.length == 1)
+    assert(queued.length == 1)
+    current_plan = plans[0]
+    assert_equal(current_plan["plan_name"], "Silver", "Current plan name #{current_plan["plan_name"]} expected Silver")
+    new_plan = queued[0]
+    assert_equal(new_plan["new_plan"], "Free", "New plan name #{new_plan["new_plan"]} expected Free")
+
+    api.update_master_plan(acct_no, :free)
+      
+    plans = api.get_acct_plans_all(acct_no)
+    queued = api.get_queued_service_plans(acct_no)
+    assert(plans.length == 1)
+    assert(queued.length == 1)
+    current_plan = plans[0]
+    assert_equal(current_plan["plan_name"], "Silver", "Current plan name #{current_plan["plan_name"]} expected Silver")
+    new_plan = queued[0]
+    assert_equal(new_plan["new_plan"], "Free", "New plan name #{new_plan["new_plan"]} expected Free")
   end
 
   def teardown
