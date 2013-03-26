@@ -73,7 +73,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     end
     info.country = 'FR'
     info.zip = 54321.to_s
-    info.state = 'Loraine'
+    info.state = 'ZZ'
     info.middle_initial = 'M'
     #info.tax_exempt = 2
     assert user.update_account(:billing_info => info), user.errors.inspect

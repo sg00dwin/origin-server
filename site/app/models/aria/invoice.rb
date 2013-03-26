@@ -19,13 +19,18 @@ module Aria
     end
 
     def line_items
-      @line_items ||= Aria.cached.get_invoice_details(acct_no, invoice_no).map {|li| 
-        if li.usage_type_no
-          Aria::UsageLineItem.new(li, master_plan_no)
-        else
-          Aria::RecurringLineItem.new(li, master_plan_no)
+      @line_items ||= begin
+        recurring = []
+        usage = []
+        Aria.cached.get_invoice_details(acct_no, invoice_no).each do |li| 
+          if li.usage_type_no
+            usage.push(li)
+          else
+            recurring.push(Aria::RecurringLineItem.new(li, master_plan_no))
+          end
         end
-      }.sort_by(&Aria::LineItem.plan_sort)
+        (recurring + UsageLineItem.for_usage(usage, master_plan_no)).sort_by(&Aria::LineItem.plan_sort)
+      end
     end
 
     protected
