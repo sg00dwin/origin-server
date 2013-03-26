@@ -26,7 +26,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     assert_response :ok
     body = JSON.parse(@response.body)
     user = body["data"]
-    assert_equal(user["plan_id"], "freeshift")
+    assert_equal(user["plan_id"], "free")
     assert_equal(user["usage_account_id"], nil)
     assert_equal(user["max_gears"], 3)
     assert_equal(user["capabilities"]["gear_sizes"], ["small"])
@@ -37,13 +37,13 @@ class UserApiTest < ActionDispatch::IntegrationTest
   def test_user_upgrade
     api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :freeshift)
+    acct_no = api.create_fake_acct(user_id, :free)
     api.update_acct_status(acct_no, 1)
-    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :megashift}, @headers)
+    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :silver}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
     user = body["data"]
-    assert_equal(user["plan_id"], "megashift")
+    assert_equal(user["plan_id"], "silver")
     assert_not_equal(user["usage_account_id"], nil)
     assert_equal(user["max_gears"], 16)
     assert_equal(user["capabilities"]["gear_sizes"].sort, ["medium", "small"])
@@ -56,7 +56,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     plans = api.get_acct_plans_all(acct_no)
     assert(plans.length == 1)
     current_plan = plans[0]
-    assert_equal(current_plan["plan_name"], "MegaShift", "Current plan name #{current_plan["plan_name"]} expected MegaShift")
+    assert_equal(current_plan["plan_name"], "Silver", "Current plan name #{current_plan["plan_name"]} expected Silver")
     plans = api.get_queued_service_plans(acct_no)
     assert(plans == nil)
   end
@@ -64,12 +64,12 @@ class UserApiTest < ActionDispatch::IntegrationTest
   def test_user_downgrade
     api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :megashift)
-    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :freeshift}, @headers)
+    acct_no = api.create_fake_acct(user_id, :silver)
+    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :free}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
     user = body["data"]
-    assert_equal(user["plan_id"], "freeshift")
+    assert_equal(user["plan_id"], "free")
     assert_not_equal(user["usage_account_id"], nil)
     assert_equal(user["max_gears"], 3)
     assert_equal(user["capabilities"]["gear_sizes"], ["small"])
@@ -82,7 +82,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     plans = api.get_queued_service_plans(acct_no)
     assert(plans.length == 1)
     current_plan = plans[0]
-    assert_equal(current_plan["new_plan"], "FreeShift", "Current plan name #{current_plan["new_plan"]} expected FreeShift")
+    assert_equal(current_plan["new_plan"], "Free", "Current plan name #{current_plan["new_plan"]} expected Free")
   end
  
   def test_user_downgrade_with_too_many_gears
@@ -90,7 +90,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     Lock.create_lock(user)
     user.consumed_gears = 10
     user.save!
-    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :freeshift}, @headers)
+    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :free}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 153)
@@ -115,7 +115,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     gear_profile = app["gear_profile"]
     assert_equal(gear_profile, "medium")
       
-    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :freeshift}, @headers)
+    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :free}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 154)
@@ -124,8 +124,8 @@ class UserApiTest < ActionDispatch::IntegrationTest
   def test_user_downgrade_with_additional_storage
     api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :freeshift)
-    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :megashift}, @headers)
+    acct_no = api.create_fake_acct(user_id, :free)
+    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :silver}, @headers)
     assert_response :ok
     #create app and add additional storage to the gear group
     request_via_redirect(:post, "/rest/domains", {:id=> @login[0..15]}, @headers)
@@ -137,7 +137,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     request_via_redirect(:put, "/rest/domains/#{domain_id}/applications/app/cartridges/php-5.3", {:additional_gear_storage => 1}, @headers)
     assert_response :ok
  
-    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :freeshift}, @headers)
+    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :free}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 159)
@@ -146,8 +146,8 @@ class UserApiTest < ActionDispatch::IntegrationTest
   def test_user_downgrade_with_certificates
     api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :freeshift)
-    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :megashift}, @headers)
+    acct_no = api.create_fake_acct(user_id, :free)
+    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :silver}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
     assert_equal(body["data"]["capabilities"]["private_ssl_certificates"], true)
@@ -162,7 +162,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     request_via_redirect(:post, "/rest/domains/#{domain_id}/applications/app/aliases", {:id => @login[0..15], :ssl_certificate => @ssl_certificate, :private_key => @private_key, :pass_phrase => @pass_phrase}, @headers)
     assert_response :created
  
-    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :freeshift}, @headers)
+    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :free}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 176)
@@ -171,9 +171,9 @@ class UserApiTest < ActionDispatch::IntegrationTest
   def test_user_upgrade_with_inactive_user
     api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :freeshift)
+    acct_no = api.create_fake_acct(user_id, :free)
     api.update_acct_status(acct_no, 0)
-    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :megashift}, @headers)
+    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :silver}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 152)
@@ -182,13 +182,13 @@ class UserApiTest < ActionDispatch::IntegrationTest
     plans = api.get_acct_plans_all(acct_no)
     assert(plans.length == 1)
     current_plan = plans[0]
-    assert_equal(current_plan["plan_name"], "FreeShift", "Current plan name #{current_plan["plan_name"]} expected FreeShift")
+    assert_equal(current_plan["plan_name"], "Free", "Current plan name #{current_plan["plan_name"]} expected Free")
     plans = api.get_queued_service_plans(acct_no)
     assert(plans == nil)
   end
   
   def test_billing_account_not_found
-    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :megashift}, @headers)
+    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :silver}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 155)
@@ -197,7 +197,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   def test_invalid_plan_id
     api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :freeshift)
+    acct_no = api.create_fake_acct(user_id, :free)
     api.update_acct_status(acct_no, 1)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :bogusplan}, @headers)
     assert_response :unprocessable_entity
@@ -208,20 +208,20 @@ class UserApiTest < ActionDispatch::IntegrationTest
   def test_plan_upgrade_free_to_mega_recovery
     api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :freeshift)
-    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :freeshift}, @headers)
+    acct_no = api.create_fake_acct(user_id, :free)
+    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :free}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
     user = body["data"]
-    assert_equal(user["plan_id"], "freeshift")
+    assert_equal(user["plan_id"], "free")
     assert_not_equal(user["usage_account_id"], nil)
     assert_equal(user["max_gears"], 3)
     assert_equal(user["capabilities"]["gear_sizes"], ["small"])
     assert_equal(user["capabilities"].has_key?("max_storage_per_gear"), false)
 
-    #simulate freeshift to megashift failure
+    #simulate free to silver failure
     user = CloudUser.find_by(login: @login)
-    user.pending_plan_id = "megashift"
+    user.pending_plan_id = "silver"
     user.pending_plan_uptime = Time.now.utc-1000
     user.plan_state = "PENDING"
     user.save!
@@ -230,7 +230,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
 
     user = CloudUser.find_by(login: @login)
     user_capabilities = user.get_capabilities
-    assert_equal(user.plan_id, "megashift")
+    assert_equal(user.plan_id, "silver")
     assert_not_equal(user.usage_account_id, nil)
     assert_equal(user.max_gears, 16)
     assert_equal(user_capabilities["gear_sizes"].sort, ["medium", "small"])
@@ -239,7 +239,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     assert_equal(user.pending_plan_uptime, nil)
     plans = api.get_acct_plans_all(acct_no)
     assert(plans.length == 1)
-    assert_equal(plans[0]["plan_name"], "MegaShift", "Current plan name #{plans[0]["plan_name"]} expected MegaShift")
+    assert_equal(plans[0]["plan_name"], "Silver", "Current plan name #{plans[0]["plan_name"]} expected Silver")
     plans = api.get_queued_service_plans(acct_no)
     assert(plans == nil)
   end
@@ -247,20 +247,20 @@ class UserApiTest < ActionDispatch::IntegrationTest
   def test_plan_upgrade_mega_to_free_recovery
     api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :megashift)
-    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :megashift}, @headers)
+    acct_no = api.create_fake_acct(user_id, :silver)
+    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :silver}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
     user = body["data"]
-    assert_equal(user["plan_id"], "megashift")
+    assert_equal(user["plan_id"], "silver")
     assert_not_equal(user["usage_account_id"], nil)
     assert_equal(user["max_gears"], 16)
     assert_equal(user["capabilities"]["gear_sizes"].sort, ["medium", "small"])
     assert_equal(user["capabilities"]["max_storage_per_gear"], 30)
 
-    #simulate megashift to freeshift failure
+    #simulate silver to free failure
     user = CloudUser.find_by(login: @login)
-    user.pending_plan_id = "freeshift"
+    user.pending_plan_id = "free"
     user.pending_plan_uptime = Time.now.utc-1000
     user.plan_state = "PENDING"
     user.save!
@@ -269,7 +269,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
 
     user = CloudUser.find_by(login: @login)
     user_capabilities = user.get_capabilities
-    assert_equal(user.plan_id, "freeshift")
+    assert_equal(user.plan_id, "free")
     assert_not_equal(user.usage_account_id, nil)
     assert_equal(user.max_gears, 3)
     assert_equal(user_capabilities["gear_sizes"], ["small"])
@@ -279,27 +279,27 @@ class UserApiTest < ActionDispatch::IntegrationTest
     plans = api.get_queued_service_plans(acct_no)
     assert(plans.length == 1)
     current_plan = plans[0]
-    assert_equal(current_plan["new_plan"], "FreeShift", "Current plan name #{current_plan["new_plan"]} expected FreeShift")
+    assert_equal(current_plan["new_plan"], "Free", "Current plan name #{current_plan["new_plan"]} expected Free")
   end
  
   def test_plan_upgrade_noplan_to_mega_recovery_success
     api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :freeshift)
+    acct_no = api.create_fake_acct(user_id, :free)
     request_via_redirect(:get, USER_COLLECTION_URL, {}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
     user = body["data"]
-    assert_equal(user["plan_id"], "freeshift")
+    assert_equal(user["plan_id"], "free")
     assert_equal(user["usage_account_id"], nil)
     assert_equal(user["max_gears"], 3)
     assert_equal(user["capabilities"]["gear_sizes"], ["small"])
     assert_equal(user["capabilities"].has_key?("max_storage_per_gear"), false)
 
-    #simulate noplan to megashift failure
+    #simulate noplan to silver failure
     user = CloudUser.find_by(login: @login)
-    assert_equal(user.plan_id, "freeshift")
-    user.pending_plan_id = "megashift"
+    assert_equal(user.plan_id, "free")
+    user.pending_plan_id = "silver"
     user.pending_plan_uptime = Time.now.utc-1000
     user.plan_state = "PENDING"
     user.save!
@@ -308,7 +308,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
 
     user = CloudUser.find_by(login: @login)
     user_capabilities = user.get_capabilities
-    assert_equal(user.plan_id, "megashift")
+    assert_equal(user.plan_id, "silver")
     assert_not_equal(user.usage_account_id, nil)
     assert_equal(user.max_gears, 16)
     assert_equal(user_capabilities["gear_sizes"].sort, ["medium", "small"])
@@ -317,7 +317,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     assert_equal(user.pending_plan_uptime, nil)
     plans = api.get_acct_plans_all(acct_no)
     assert(plans.length == 1)
-    assert_equal(plans[0]["plan_name"], "MegaShift", "Current plan name #{plans[0]["plan_name"]} expected MegaShift")
+    assert_equal(plans[0]["plan_name"], "Silver", "Current plan name #{plans[0]["plan_name"]} expected Silver")
     plans = api.get_queued_service_plans(acct_no)
     assert(plans == nil)
   end
@@ -325,12 +325,12 @@ class UserApiTest < ActionDispatch::IntegrationTest
   def test_fix_user_plan_capabilities_success
     api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :freeshift)
-    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :freeshift}, @headers)
+    acct_no = api.create_fake_acct(user_id, :free)
+    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :free}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
     user = body["data"]
-    assert_equal(user["plan_id"], "freeshift")
+    assert_equal(user["plan_id"], "free")
     assert_equal(user["max_gears"], 3)
 
     #simulate user with valid plan but has inconsistent capabilities that can be fixed
@@ -341,19 +341,19 @@ class UserApiTest < ActionDispatch::IntegrationTest
     `rhc-admin-ctl-plan --fix --login #{@login}`
 
     user = CloudUser.find_by(login: @login)
-    assert_equal(user.plan_id, "freeshift")
+    assert_equal(user.plan_id, "free")
     assert_equal(user.max_gears, 3)
   end
 
   def test_fix_user_plan_capabilities_failure
     api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :freeshift)
-    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :freeshift}, @headers)
+    acct_no = api.create_fake_acct(user_id, :free)
+    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :free}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
     user = body["data"]
-    assert_equal(user["plan_id"], "freeshift")
+    assert_equal(user["plan_id"], "free")
 
     #simulate user with valid plan but has inconsistent capabilities that can't be fixed
     user = CloudUser.find_by(login: @login)
@@ -373,43 +373,43 @@ class UserApiTest < ActionDispatch::IntegrationTest
 
     user = CloudUser.find_by(login: @login)
     user_capabilities = user.get_capabilities
-    assert_equal(user.plan_id, "freeshift")
+    assert_equal(user.plan_id, "free")
     assert_equal(user_capabilities["gear_sizes"].sort, ["c9", "small"])
   end
  
   def test_user_queued_plans
     api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :freeshift)
-    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :megashift}, @headers)
+    acct_no = api.create_fake_acct(user_id, :free)
+    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :silver}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
     user = body["data"]
-    assert_equal(user["plan_id"], "megashift")
+    assert_equal(user["plan_id"], "silver")
     acct_details = api.get_acct_details_all(acct_no)
-    assert_equal(acct_details["plan_name"], "MegaShift")
+    assert_equal(acct_details["plan_name"], "Silver")
     queued_plans = api.get_queued_service_plans(acct_no)
     assert_equal(queued_plans, nil)
 
     2.times do 
-      request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :freeshift}, @headers)
+      request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :free}, @headers)
       assert_response :ok
       body = JSON.parse(@response.body)
       user = body["data"]
-      assert_equal(user["plan_id"], "freeshift")
+      assert_equal(user["plan_id"], "free")
       acct_details = api.get_acct_details_all(acct_no)
-      assert_equal(acct_details["plan_name"], "MegaShift")
+      assert_equal(acct_details["plan_name"], "Silver")
       queued_plans = api.get_queued_service_plans(acct_no)
-      assert_equal(queued_plans[0]["new_plan"], "FreeShift")
+      assert_equal(queued_plans[0]["new_plan"], "Free")
     end
     2.times do 
-      request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :megashift}, @headers)
+      request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :silver}, @headers)
       assert_response :ok
       body = JSON.parse(@response.body)
       user = body["data"]
-      assert_equal(user["plan_id"], "megashift")
+      assert_equal(user["plan_id"], "silver")
       acct_details = api.get_acct_details_all(acct_no)
-      assert_equal(acct_details["plan_name"], "MegaShift")
+      assert_equal(acct_details["plan_name"], "Silver")
       queued_plans = api.get_queued_service_plans(acct_no)
       assert_equal(queued_plans, nil)
     end

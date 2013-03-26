@@ -117,11 +117,11 @@ Broker::Application.configure do
       :storage => {:gigabyte => 10037755},
       :cartridge => {:"jbosseap-6.0" => 10041319}
     },
-    :default_plan => :freeshift,
+    :default_plan => :free,
     :plans => {
-      :freeshift => {
+      :free => {
         :plan_no => 10044929,
-        :name => "FreeShift",
+        :name => "Free",
         :capabilities => {
           'subaccounts' => false,
           'max_gears' => 3,
@@ -130,9 +130,9 @@ Broker::Application.configure do
           'private_ssl_certificates' => false
         }
       },
-      :megashift => {
+      :silver => {
         :plan_no => 10044931,
-        :name => "MegaShift",
+        :name => "Silver",
         :capabilities => {
           'subaccounts' => false,
           'max_gears' => 16,

@@ -31,7 +31,7 @@ Specification
 -------------
 
 ###Entering the Downgrade Process:
-  Exit of the billing provider's dunning process in an arrears state is specified by an event from the billing provider (Aria).  When receiving the event, the user's account will be marked as canceled (this logic must be transactional) and pending_plan_id will be set to :freeshift.  In the long term an event should be scheduled to take the user's account through the downgrade process.  In the short term we will want to manage the downgrade via a cron job similar to rhc-admin-ctl-usage --sync.  Let's refer to this as rhc-admin-ctl-plan --process-canceled.
+  Exit of the billing provider's dunning process in an arrears state is specified by an event from the billing provider (Aria).  When receiving the event, the user's account will be marked as canceled (this logic must be transactional) and pending_plan_id will be set to :free.  In the long term an event should be scheduled to take the user's account through the downgrade process.  In the short term we will want to manage the downgrade via a cron job similar to rhc-admin-ctl-usage --sync.  Let's refer to this as rhc-admin-ctl-plan --process-canceled.
 
 ###User Downgrade:
   + Detected by plan_state of canceled

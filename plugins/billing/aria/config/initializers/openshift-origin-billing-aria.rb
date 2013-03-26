@@ -38,11 +38,11 @@ Broker::Application.configure do
           :"jbosseap-6.0" => conf.get("BILLING_PROVIDER_USAGE_TYPE_GEAR_JBOSS_EAP").to_i,
         }
       },
-      :default_plan => :freeshift,
+      :default_plan => :free,
       # Maintain the order of plans from lowest to the highest
       # Upgrade or Downgrade is decided based on this order.
       :plans => {
-        :freeshift => {
+        :free => {
           :plan_no => conf.get("BILLING_PROVIDER_FREE_PLAN_NO").to_i,
           :name => "Free",
           :capabilities => {
@@ -53,7 +53,7 @@ Broker::Application.configure do
             'private_ssl_certificates' => false
           }
         },
-        :megashift => {
+        :silver => {
           :plan_no => conf.get("BILLING_PROVIDER_SILVER_PLAN_NO").to_i,
           :name => "Silver",
           :capabilities => {

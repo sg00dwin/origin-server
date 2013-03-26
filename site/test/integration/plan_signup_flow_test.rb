@@ -65,8 +65,8 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     get '/account/plan'
     assert_response :redirect
 
-    get '/account/plans/megashift/upgrade'
-    assert_redirected_to new_account_path(:then => account_plan_upgrade_path('megashift'))
+    get '/account/plans/silver/upgrade'
+    assert_redirected_to new_account_path(:then => account_plan_upgrade_path('silver'))
   end
 
   test 'anonymous with signin redirected to login' do
@@ -78,8 +78,8 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     get '/account/plan'
     assert_response :redirect
 
-    get '/account/plans/megashift/upgrade'
-    assert_redirected_to login_path(:then => account_plan_upgrade_path('megashift'))
+    get '/account/plans/silver/upgrade'
+    assert_redirected_to login_path(:then => account_plan_upgrade_path('silver'))
   end
 
   test 'user can signup' do
@@ -96,29 +96,29 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     get '/account/plan'
     assert_response :success
 
-    get '/account/plans/megashift/upgrade'
-    assert_redirected_to '/account/plans/megashift/upgrade/edit'
+    get '/account/plans/silver/upgrade'
+    assert_redirected_to '/account/plans/silver/upgrade/edit'
 
-    get '/account/plans/megashift/upgrade/edit'
+    get '/account/plans/silver/upgrade/edit'
     assert_response :success
 
-    put '/account/plans/megashift/upgrade/edit', :streamline_full_user => user_params
-    assert_redirected_to '/account/plans/megashift/upgrade/payment_method'
+    put '/account/plans/silver/upgrade/edit', :streamline_full_user => user_params
+    assert_redirected_to '/account/plans/silver/upgrade/payment_method'
 
     omit_if_aria_is_unavailable
-    get '/account/plans/megashift/upgrade/payment_method'
-    assert_redirected_to '/account/plans/megashift/upgrade/payment_method/new'
+    get '/account/plans/silver/upgrade/payment_method'
+    assert_redirected_to '/account/plans/silver/upgrade/payment_method/new'
 
-    get '/account/plans/megashift/upgrade/payment_method/new'
+    get '/account/plans/silver/upgrade/payment_method/new'
     assert_response :success
 
     res = submit_form('form#payment_method', credit_card_params)
     assert Net::HTTPRedirection === res, res.inspect
     redirect = res['Location']
-    assert redirect.starts_with?(direct_create_account_plan_upgrade_payment_method_url('megashift')), redirect
+    assert redirect.starts_with?(direct_create_account_plan_upgrade_payment_method_url('silver')), redirect
 
     get redirect
-    assert_redirected_to '/account/plans/megashift/upgrade/new'
+    assert_redirected_to '/account/plans/silver/upgrade/new'
 
     # Do some direct checking here just to validate
     omit_if_aria_is_unavailable
@@ -133,17 +133,17 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     rest_user = User.find :one, :as => user
     plan = rest_user.plan
     assert plan
-    assert_equal "freeshift", plan.id, "The user plan is not freeshift prior to upgrade\n#{rest_user.inspect}\n#{user.inspect}\n#{plan.inspect}"
+    assert_equal "free", plan.id, "The user plan is not free prior to upgrade\n#{rest_user.inspect}\n#{user.inspect}\n#{plan.inspect}"
 
-    get '/account/plans/megashift/upgrade/new'
+    get '/account/plans/silver/upgrade/new'
     assert_response :success
 
-    post '/account/plans/megashift/upgrade', {:plan_id => 'megashift'}
+    post '/account/plans/silver/upgrade', {:plan_id => 'silver'}
     assert_response :success
-    assert_select 'h1', 'You have upgraded to MegaShift!'
+    assert_select 'h1', 'You have upgraded to Silver!'
     assert_template :upgraded
 
-    assert_equal 'megashift', User.find(:one, :as => user).plan_id
+    assert_equal 'silver', User.find(:one, :as => user).plan_id
 
     get '/account/plan'
     assert_response :success

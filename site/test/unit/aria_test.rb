@@ -307,8 +307,8 @@ class AriaUnitTest < ActiveSupport::TestCase
 
   def mock_plans
     ActiveResource::HttpMock.respond_to do |mock|
-      mock.get '/broker/rest/plans/freeshift.json', anonymous_json_header, {:id => 'freeshift', :plan_no => '1'}.to_json
-      mock.get '/broker/rest/plans/megashift.json', anonymous_json_header, {:id => 'megashift', :plan_no => '2'}.to_json
+      mock.get '/broker/rest/plans/free.json', anonymous_json_header, {:id => 'free', :plan_no => '1'}.to_json
+      mock.get '/broker/rest/plans/silver.json', anonymous_json_header, {:id => 'silver', :plan_no => '2'}.to_json
     end
     Aria::Client.any_instance.expects(:invoke).once.
       with(:get_client_plans_basic).
@@ -316,13 +316,13 @@ class AriaUnitTest < ActiveSupport::TestCase
         'plans_basic' => [
           Aria::WDDX::Struct.new({
             'plan_no' => '1',
-            'plan_name' => 'FreeShift',
-            'plan_desc' => 'FreeShift plan description'
+            'plan_name' => 'Free',
+            'plan_desc' => 'Free plan description'
           }),
           Aria::WDDX::Struct.new({
             'plan_no' => '2',
-            'plan_name' => 'MegaShift',
-            'plan_desc' => 'MegaShift plan description'
+            'plan_name' => 'Silver',
+            'plan_desc' => 'Silver plan description'
           })
         ]
       }))
@@ -332,17 +332,17 @@ class AriaUnitTest < ActiveSupport::TestCase
     mock_plans
     assert Aria.cached.get_client_plans_basic
     assert_equal 2, Aria.cached.get_client_plans_basic.length
-    assert_equal 'FreeShift', Aria::MasterPlan.cached.find('freeshift').name
-    assert_equal 'FreeShift', Aria::MasterPlan.cached.find('freeshift').name
+    assert_equal 'Free', Aria::MasterPlan.cached.find('free').name
+    assert_equal 'Free', Aria::MasterPlan.cached.find('free').name
 
-    assert_equal 'MegaShift', Aria::MasterPlan.cached.find('megashift').name
+    assert_equal 'Silver', Aria::MasterPlan.cached.find('silver').name
   end
 
   test 'Aria::MasterPlan can lazy load aria_plan with cache' do
     mock_plans
-    base_plan = Aria::MasterPlan.cached.find('freeshift')
-    cached_plan = Aria::MasterPlan.cached.find('freeshift')
-    assert_equal 'FreeShift', cached_plan.name
+    base_plan = Aria::MasterPlan.cached.find('free')
+    cached_plan = Aria::MasterPlan.cached.find('free')
+    assert_equal 'Free', cached_plan.name
   end
 
   test 'should throw when non hash passed' do
@@ -451,13 +451,13 @@ class AriaUnitTest < ActiveSupport::TestCase
         'plans_basic' => [
           Aria::WDDX::Struct.new({
             'plan_no' => '1',
-            'plan_name' => 'FreeShift',
-            'plan_desc' => 'FreeShift description'
+            'plan_name' => 'Free',
+            'plan_desc' => 'Free description'
           }),
           Aria::WDDX::Struct.new({
             'plan_no' => '2',
-            'plan_name' => 'MegaShift',
-            'plan_desc' => 'MegaShift description'
+            'plan_name' => 'Silver',
+            'plan_desc' => 'Silver description'
           })
         ]
       }))
@@ -466,8 +466,8 @@ class AriaUnitTest < ActiveSupport::TestCase
       :plan_no => '1',
       :capabilities => { :max_gears => 3, :gear_sizes => ['small'] }
     )
-    assert_equal 'FreeShift', plan.name
-    assert_equal 'FreeShift description', plan.description
+    assert_equal 'Free', plan.name
+    assert_equal 'Free description', plan.description
     assert_equal 3, plan.max_gears
     assert_equal ['small'], plan.gear_sizes
 

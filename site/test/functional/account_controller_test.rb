@@ -79,7 +79,7 @@ class AccountControllerTest < ActionController::TestCase
 
       assert assigns(:plan).present?, assigns(:user).inspect
       assert_select 'a', 'Upgrade Now'
-      assert_select 'h1', /FreeShift/, response.inspect
+      assert_select 'h1', /Free/, response.inspect
     end
   end
 
@@ -95,7 +95,7 @@ class AccountControllerTest < ActionController::TestCase
 
       assert assigns(:plan)
       assert_select 'a', /Get more help and information/
-      assert_select 'h1', /FreeShift/, response.inspect
+      assert_select 'h1', /Free/, response.inspect
     end
   end
 

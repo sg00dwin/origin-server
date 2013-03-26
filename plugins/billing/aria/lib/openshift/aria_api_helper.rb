@@ -274,7 +274,7 @@ module OpenShift
     private
 
     def get_plan_no(plan_id=nil)
-      plan_no = @plans[:freeshift][:plan_no]
+      plan_no = @plans[:free][:plan_no]
       if plan_id
         if @plans.include?(plan_id)
           plan_no = @plans[plan_id][:plan_no]

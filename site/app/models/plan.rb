@@ -11,7 +11,7 @@ class Plan < RestApi::Base
   has_one :capabilities, :class_name => 'plan/capability'
 
   def basic?
-    id == 'freeshift'
+    id == 'free'
   end
 
   cache_method :find_single, lambda{ |*args| [Plan.name, :find_single, args[0]] }, :before => remove_authorization_from_model

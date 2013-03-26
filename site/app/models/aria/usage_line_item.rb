@@ -13,7 +13,7 @@ module Aria
         case usage_type_description
         when /Small Gear/ then 'Gear: Small'
         when /Medium Gear/ then 'Gear: Medium'
-        when /MegaShift Storage/ then 'Storage: Additional Gear'
+        when /Silver Storage/ then 'Storage: Additional Gear'
         else usage_type_description
         end
       end

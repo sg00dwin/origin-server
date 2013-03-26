@@ -1,5 +1,6 @@
-%h1= "You have upgraded to #{@plan.name}!"
+%h1= "You have upgraded to the #{@plan.name} plan!"
 %p Explore the benefits of your new plan
+
 = render :partial => "upgrade_#{@plan.id}"
 %section
   %h3 Ready to get started?

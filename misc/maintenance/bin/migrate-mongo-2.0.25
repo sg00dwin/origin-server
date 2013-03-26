@@ -16,6 +16,7 @@ end
 def mongo_connect
   db = OpenShift::DataStore.db
   $coll = db.collection('applications')
+  $users = db.collection('cloud_users')
 end
 
 def migrate_apps
@@ -47,7 +48,23 @@ def migrate_apps
   puts "Mongo migrated #{total} apps"
 end
 
+def migrate_plans
+  options = {
+    "freeshift" => "free",
+    "megashift" => "silver",
+  }
+  options.each_pair do |from, to|
+    total = 0
+    print "Migrating user plan_id #{from} => #{to}.. "
+    while $users.find_and_modify(:query => {:plan_id => from}, :update => {'$set' => {:plan_id => to}})
+      total += 1
+    end      
+    puts "#{total} migrated"
+  end
+end
+
 puts "Starting migration"
 mongo_connect
 migrate_apps
+migrate_plans
 puts "Done!"

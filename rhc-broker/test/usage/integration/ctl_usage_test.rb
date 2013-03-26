@@ -12,7 +12,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
 
     cu = CloudUser.new(login: @login)
     @user_id = cu._id
-    cu.plan_id = "megashift"
+    cu.plan_id = "silver"
     user_capabilities = cu.get_capabilities
     user_capabilities['max_storage_per_gear'] = 20
     cu.set_capabilities(user_capabilities)
@@ -48,7 +48,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     ensure
       Rails.configuration.msg_broker[:districts][:enabled] = @districts_enabled
     end
-    acct_no = @billing_api.create_fake_acct(@billing_user_id, :megashift)
+    acct_no = @billing_api.create_fake_acct(@billing_user_id, :silver)
     cu = CloudUser.find_by(_id: @user_id)
     cu.usage_account_id = acct_no
     cu.save!
@@ -173,7 +173,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     ensure
       Rails.configuration.msg_broker[:districts][:enabled] = @districts_enabled
     end
-    acct_no = @billing_api.create_fake_acct(@billing_user_id, :megashift)
+    acct_no = @billing_api.create_fake_acct(@billing_user_id, :silver)
     cu = CloudUser.find_by(_id: @user_id)
     cu.usage_account_id = acct_no
     cu.save!

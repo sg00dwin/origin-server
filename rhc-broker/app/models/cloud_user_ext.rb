@@ -164,7 +164,7 @@ class CloudUser
 
       old_plan_id = self.plan_id
       old_capabilities = self.get_capabilities
-      #to minimize the window where the user can create gears without being on megashift plan
+      #to minimize the window where the user can create gears without being on silver plan
       self.assign_plan(default_plan_id) if old_plan_id && (old_plan_id != default_plan_id)
       self.save!
 
