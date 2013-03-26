@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.6.4
+Version: 1.6.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -151,6 +151,13 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Tue Mar 26 2013 Adam Miller <admiller@redhat.com> 1.6.5-1
+- Fix bug 927893 - calculate is_premium? by checking for usage rates
+  (jliggitt@redhat.com)
+- Bug 924666 (lnader@redhat.com)
+- Bug 923801 - add unit tests and cancel queued plan changes
+  (jliggitt@redhat.com)
+
 * Thu Mar 21 2013 Adam Miller <admiller@redhat.com> 1.6.4-1
 - fixed bz924308 (admiller@redhat.com)
 - Merge pull request #1048 from abhgupta/abhgupta-dev
