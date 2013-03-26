@@ -50,7 +50,7 @@ end
 
 def migrate_users
   $coll = $db.collection('cloud_users')
-  query = {"plan_id" => "Silver"}
+  query = {"plan_id" => "silver"}
   selection = {:fields => ["login",
                          "capabilities",
                          "_id"], :timeout => false}
@@ -89,6 +89,6 @@ end
 puts "Starting migration"
 mongo_connect
 migrate_apps
-migrate_users
 migrate_plans
+migrate_users
 puts "Done!"
