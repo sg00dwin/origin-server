@@ -237,8 +237,7 @@ module Aria
       return false unless validates
 
       Aria.update_acct_complete(acct_no, params)
-      (instance_variables - [:@delegate_sd_obj, :@acct_no]).each{ |s| remove_instance_variable(s) }
-      #@tax_exempt = nil
+      clear_cache!
       true
     rescue Aria::Error => e
       errors.add(:base, e.to_s)
@@ -254,17 +253,8 @@ module Aria
       set_reg_uss_params('redirecturl', url)
     end
 
-    # Mostly for test use
     def clear_cache!
-      @queued_plans = nil
-      @billing_info = nil
-      @account_details = nil
-      @invoices = nil
-      @next_plan_recurring_line_items = nil
-      @unbilled_usage_balance = nil
-      @unbilled_usage_line_items = nil
-      @next_bill = nil
-      @payment_method = nil
+      (instance_variables - [:@delegate_sd_obj, :@acct_no]).each{ |s| remove_instance_variable(s) }
     end
 
     private

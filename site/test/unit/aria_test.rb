@@ -701,6 +701,31 @@ class AriaUnitTest < ActiveSupport::TestCase
     assert_equal 1.0, bill.balance
   end
 
+  def test_usage_line_item_should_have_partial_rate
+    plan = stub_plan_pay
+    plan['plan_services'].last['plan_service_rates'] = [
+      {
+        'rate_per_unit' => 0.00001,
+        'to_unit' => 1,
+      },
+      {
+        'rate_per_unit' => 0.0,
+        'to_unit' => 0,
+      },
+      {
+        'rate_per_unit' => 1.0,
+        'to_unit' => 0,
+      },
+      {
+        'rate_per_unit' => 0.0,
+        'to_unit' => 10,
+      },
+    ]
+    stub_client_plans_all([plan])
+    li = Aria::UsageLineItem.new({'usage_type_no' => 10}, 2)
+    assert_equal 10, li.free_units
+  end
+
   def stub_next_bill(opts={})
     acct_no = 1 || opts[:acct_no]
     opts.reverse_merge!({
@@ -745,6 +770,7 @@ class AriaUnitTest < ActiveSupport::TestCase
         {
           'service_desc' => 'Recurring',
           'is_recurring_ind' => 1,
+          'usage_type' => nil,
           'is_usage_based_ind' => 0,
           'plan_service_rates' => [
             {
@@ -755,11 +781,13 @@ class AriaUnitTest < ActiveSupport::TestCase
         {
           'service_desc' => 'State Tax',
           'is_recurring_ind' => 0,
+          'usage_type' => nil,
           'is_usage_based_ind' => 0,
           'plan_service_rates' => [],
         },
         {
           'service_desc' => 'Usage',
+          'usage_type' => 10,
           'is_recurring_ind' => 0,
           'is_usage_based_ind' => 1,
           'plan_service_rates' => [],
@@ -775,6 +803,7 @@ class AriaUnitTest < ActiveSupport::TestCase
         {
           'service_desc' => 'Recurring',
           'is_recurring_ind' => 1,
+          'usage_type' => nil,
           'is_usage_based_ind' => 0,
           'plan_service_rates' => [
             {
@@ -785,11 +814,13 @@ class AriaUnitTest < ActiveSupport::TestCase
         {
           'service_desc' => 'State Tax',
           'is_recurring_ind' => 0,
+          'usage_type' => nil,
           'is_usage_based_ind' => 0,
           'plan_service_rates' => [],
         },
         {
           'service_desc' => 'Usage',
+          'usage_type' => 10,
           'is_recurring_ind' => 0,
           'is_usage_based_ind' => 1,
           'plan_service_rates' => [],

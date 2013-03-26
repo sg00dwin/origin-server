@@ -62,6 +62,18 @@ module Aria
       '<unknown>'
     end
 
+    def free_units
+      service.plan_service_rates.each do |r| 
+        to_unit = r.to_unit
+        return to_unit if r.rate_per_unit == 0.0 && to_unit && to_unit > 0
+      end if service
+      false
+    end
+
+    def usage_type_description
+      attributes['usage_type_description'] || attributes['service_name']
+    end
+
     #
     # Given a range of usage, calculate a set of usage line items for
     # that usage period.
@@ -75,10 +87,6 @@ module Aria
         end
         h
       end.values
-    end
-
-    def usage_type_description
-      attributes['usage_type_description'] || attributes['service_name']
     end
 
     #
@@ -118,7 +126,7 @@ module Aria
                                 :date_range_start]
 
       def service
-        @service ||= Aria.cached.get_client_plan_services(plan_no).find{ |s| s.usage_type == usage_type_no }
+        @service ||= Aria.cached.get_client_plans_all.find{ |s| s.plan_no.to_s == plan_no.to_s }.plan_services.find{ |s| s.usage_type == usage_type_no }
       end
   end
 end
