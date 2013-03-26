@@ -2,7 +2,8 @@
 
 = semantic_form_for @billing_info, :url => url_for(:action => :edit) do |f|
   = render :partial => 'billing_info/form', :locals => {:billing_info => @billing_info, :form => f}
+
   = f.buttons do
-    = link_to "Cancel", @previous_path, :class => 'btn'
+    = link_to "Cancel", account_path, :class => 'btn'
     = f.commit_button
     = f.loading

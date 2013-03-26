@@ -1,15 +1,8 @@
 - content_for :title, 'Update your Billing Info'
-= plan_upgrade_steps 4, :and => {:name => 'Change billing info'}
+= plan_upgrade_steps 1
 
 = semantic_form_for @billing_info, :url => url_for(:action => :edit), :html => { :id => 'edit_aria_billing_info', :method => 'put' } do |f|
-  = f.semantic_errors
-  %section.row
-    .span8
-      = render :partial => 'billing_info/form', :locals => {:billing_info => @billing_info, :form => f}
-    %aside.span4
-      %h5 Why Can't I Change My Currency?
-      %p
-        Once your account is created, you are unable to change the currency you are billed in.
+  = render :partial => 'billing_info/form', :locals => {:billing_info => @billing_info, :form => f}
 
   = f.buttons do
     = link_to "Cancel", controller.previous_path, :class => 'btn'

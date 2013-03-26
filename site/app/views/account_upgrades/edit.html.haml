@@ -40,31 +40,8 @@
           Red Hat or OpenShift contact you differently as part of this upgrade.  A Red Hat
           account is necessary for contacting Red Hat Support.
 
-  %section.row
-    .span8
-      = render :partial => 'billing_info/form', :locals => {:billing_info => @billing_info, :form => f}
-    %aside.span4
-      %h5 Your contact information is safe
-      %p
-        Read our
-        = link_to 'Privacy Policy', community_security_policy_url
+  = render :partial => 'billing_info/form', :locals => {:billing_info => @billing_info, :form => f}
 
-      %h5 Don't see your country in the list?
-      %p
-        At this time paid OpenShift access is only available to customers in certain countries.
-        We plan on expanding availability in the future.
-        Please contact us at #{link_to_account_mailto} if you are interested in subscribing from another country.
-
-      %h5 Choosing Your Currency
-      %p
-        You may choose to be billed in any of our available currencies.
-        However, once you choose a currency, you cannot change it.
-
-      %h5 Tax exempt?
-      %p
-        To qualify for tax exempt status you must submit a certificate to Red Hat.
-        Upon reciept of your certificate we will refund all previously paid taxes to your credit card.
-        #{link_to "Learn more about filing for tax exempt status", tax_exempt_help_status, :target => '_blank', :class => 'external'}.
   = f.buttons do
     = link_to "Back to plans", account_plans_path, :class => 'btn'
     = f.commit_button "Update my account"

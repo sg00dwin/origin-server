@@ -31,7 +31,7 @@ class AccountUpgradePaymentMethodController < PaymentMethodsController
 
   protected
     def next_path
-      new_account_plan_upgrade_path
+      account_plan_upgrade_path
     end
     def post_name
       "edit_#{params[:plan_id]}"

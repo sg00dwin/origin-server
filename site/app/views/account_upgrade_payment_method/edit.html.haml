@@ -1,5 +1,5 @@
 - content_for :title, 'Change your method of payment'
-= plan_upgrade_steps 4, :and => {:name => 'Change payment'}
+= plan_upgrade_steps 2
 
 = flashes
-= render :partial => 'payment_methods/form', :locals => {:payment_method => @payment_method, :previous_payment_method => @previous_payment_method, :previous_link => ['Cancel', new_account_plan_upgrade_path, {:class => 'btn'}]}
+= render :partial => 'payment_methods/form', :locals => {:payment_method => @payment_method, :previous_payment_method => @previous_payment_method, :previous_link => ['Cancel', new_account_plan_upgrade_path, {:class => 'btn'}], :billing_link => edit_account_plan_upgrade_billing_info_path }

@@ -60,8 +60,10 @@ module Aria
       end
     end
 
+    # A pay_method of 0 is "Other/None", 1 is "Credit Card"
+    # This may need to be changed if we accept other payment methods
     def has_valid_payment_method?
-      account_details.status_cd.to_i > 0
+      account_details.pay_method.to_i != 0
     end
 
     def payment_method
