@@ -1,25 +1,6 @@
 $ = jQuery
 
 $ ->
-  # We need this function to detect when the refresh button is dynamically created
-  $.fn.waitUntilExists = (handler, shouldRunHandlerOnce, isChild) ->
-    found = "found"
-    $this = $(@selector)
-    $elements = $this.not(->
-      $(this).data found
-    ).each(handler).data(found, true)
-    unless isChild
-      (window.waitUntilExists_Intervals = window.waitUntilExists_Intervals or {})[@selector] = window.setInterval(->
-        $this.waitUntilExists handler, shouldRunHandlerOnce, true
-      , 500)
-    else window.clearInterval window.waitUntilExists_Intervals[@selector]  if shouldRunHandlerOnce and $elements.length
-    $this
-
-  # This will make the refresh link look like a button
-  $('#picatcha a.picatchaRefreshButton').waitUntilExists (->
-    $(this).addClass('btn btn-mini')
-  ), true
-
   # Helper to see if we've selected any Picatcha images
   picatcha_selected = ->
     $('#picatcha_table img.selected').length > 0
