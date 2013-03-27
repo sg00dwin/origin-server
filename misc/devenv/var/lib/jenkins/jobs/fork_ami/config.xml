@@ -326,6 +326,13 @@ popd</command>
       <keepLongStdio>false</keepLongStdio>
       <testDataPublishers/>
     </hudson.tasks.junit.JUnitResultArchiver>
+    <hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
+      <regexp>TAG_NAME=(.*)</regexp>
+      <regexpForFailed>TAG_NAME=(.*)</regexpForFailed>
+      <description>Tag \1</description>
+      <descriptionForFailed>Tag \1</descriptionForFailed>
+      <setForMatrix>false</setForMatrix>
+    </hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
   </publishers>
   <buildWrappers/>
 </project>

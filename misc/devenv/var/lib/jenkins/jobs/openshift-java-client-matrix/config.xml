@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <matrix-project>
   <actions/>
-  <description></description>
+  <description>deactivated since STG and INT cannot be reached from OpenShift jenkins. The very same test suite is now run from jboss jenkins</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <hudson.model.ParametersDefinitionProperty>
