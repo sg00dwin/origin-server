@@ -57,10 +57,11 @@ module OpenShift
         usages = get_usage_history(urec['acct_no'], billing_usage_type)
         usages.each do |usage|
           gear_id = usage["qualifier_1"]
-          created_at = usage["qualifier_2"]
+          app_name = usage["qualifier_2"]
           sync_time = usage["qualifier_3"]
-          if (urec['sync_time'].to_i == sync_time.to_i) &&
-             (urec['gear_id'].to_s == gear_id) && (urec['created_at'].to_i == created_at.to_i)
+          created_at = usage["qualifier_4"]
+          if (urec['sync_time'].to_i == sync_time.to_i) && (urec['app_name'] == app_name) &&
+             (urec['gear_id'].to_s == gear_id.to_s) && (urec['created_at'].to_i == created_at.to_i)
             found = true
             break
           end
@@ -125,6 +126,7 @@ module OpenShift
       usage_units = []
       usage_dates = []
       gear_ids = []
+      app_names = []
       created_times = []
       continue_user_ids = []
       ended_srecs = []
@@ -142,11 +144,12 @@ module OpenShift
         usage_units << srec['usage']
         usage_dates << srec['usage_date']
         gear_ids << srec['gear_id'].to_s
+        app_names << srec['app_name']
         created_times << srec['created_at'].to_i
       end
       # Send usage in bulk to billing vendor
       update_query = {"$set" => {event: UsageRecord::EVENTS[:continue], time: sync_time, sync_time: nil}}
-      if (acct_nos.size == 0) or bulk_record_usage(acct_nos, usage_types, usage_units, gear_ids, created_times, sync_time, usage_dates)
+      if (acct_nos.size == 0) or bulk_record_usage(acct_nos, usage_types, usage_units, gear_ids, app_names, sync_time, created_times, usage_dates)
         # For non-ended usage records: set event to 'continue'
         session.with(safe:true)[:usage_records].find({_id: {"$in" => continue_user_ids}}).update_all(update_query) unless continue_user_ids.empty?
         # For ended usage records: delete from mongo
@@ -177,7 +180,7 @@ module OpenShift
         user_srecs.each do |srec|
           if (srec['usage'] == 0) or
              record_usage(srec['acct_no'], srec['billing_usage_type'], srec['usage'], srec['gear_id'].to_s,
-                          srec['created_at'].to_i, sync_time, srec['usage_date'])
+                          srec['app_name'], sync_time, srec['created_at'], srec['usage_date'])
             if srec['no_update']
               # Ignore
             elsif !srec['ended']

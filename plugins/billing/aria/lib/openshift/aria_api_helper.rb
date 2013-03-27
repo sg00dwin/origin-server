@@ -110,7 +110,11 @@ module OpenShift
     end
 
     def record_usage(acct_no, usage_type, usage_unit, gear_id, app_name,
-                     sync_time, usage_date) 
+                     sync_time, created_at, usage_date)
+      if acct_no.nil? or usage_type.nil? or usage_unit.nil? or gear_id.nil? or
+         app_name.nil? or sync_time.nil? or created_at.nil? or usage_date.nil?
+        raise OpenShift::AriaException.new "Invalid input: One of the arg has nil"
+      end 
       args = {
         'acct_no' => acct_no,
         'usage_type' => usage_type,
@@ -119,6 +123,7 @@ module OpenShift
         'qualifier_1' => gear_id,
         'qualifier_2' => app_name,
         'qualifier_3' => sync_time.to_i,
+        'qualifier_4' => created_at.to_i,
         'client_no' => @client_no,
         'auth_key' => @auth_key,
         'rest_call' => "record_usage"
@@ -127,14 +132,15 @@ module OpenShift
     end
 
     def bulk_record_usage(acct_nos, usage_types, usage_units, gear_ids, app_names,
-                          sync_time, usage_dates)
+                          sync_time, created_times, usage_dates)
       len = acct_nos.size
-      if (usage_types.size != len) or (usage_units.size != len) or
-         (gear_ids.size != len) or (app_names.size != len)
+      if (usage_types.size != len) or (usage_units.size != len) or (gear_ids.size != len) or 
+         (app_names.size != len) or (created_times.size != len) or (usage_dates.size != len)
         raise OpenShift::AriaException.new "Invalid input: array length mismatch"
       end
       if acct_nos.include?(nil) or usage_types.include?(nil) or usage_units.include?(nil) or
-         gear_ids.include?(nil) or app_names.include?(nil)
+         gear_ids.include?(nil) or app_names.include?(nil) or sync_time.nil? or
+         created_times.include?(nil) or usage_dates.include?(nil)
         raise OpenShift::AriaException.new "Invalid input: array has nil"
       end
       sync_times = []
@@ -148,6 +154,7 @@ module OpenShift
         'qualifier_1' => gear_ids.join('|'),
         'qualifier_2' => app_names.join('|'),
         'qualifier_3' => sync_times.join('|'),
+        'qualifier_4' => created_times.join('|'),
         'client_no' => @client_no,
         'auth_key' => @auth_key,
         'rest_call' => "bulk_record_usage"
