@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.4.5
+Version: 1.4.6
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,23 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Wed Mar 27 2013 Adam Miller <admiller@redhat.com> 1.4.6-1
+- Update plan # (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into update_to_new_plan_values
+  (ccoleman@redhat.com)
+- Merge pull request #1065 from liggitt/bug/924791
+  (dmcphers+openshiftbot@redhat.com)
+- Bad initializer file (ccoleman@redhat.com)
+- Remove test default config, billing config loaded in dev/test env
+  (ccoleman@redhat.com)
+- Fix bug 924791 - Use aria virtual datetime when reporting usage
+  (jliggitt@redhat.com)
+- Merge remote-tracking branch 'origin/master' into update_to_new_plan_values
+  (ccoleman@redhat.com)
+- Rename freeshift/megashift to free/silver everywhere (ccoleman@redhat.com)
+- Allow broker plan values to be configured.  Change devenv defaults to match
+  new 'Free' and 'Silver' plans. (ccoleman@redhat.com)
+
 * Tue Mar 26 2013 Adam Miller <admiller@redhat.com> 1.4.5-1
 - Bug 924666 (lnader@redhat.com)
 - Bug 923801 - add unit tests and cancel queued plan changes
