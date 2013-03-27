@@ -337,8 +337,8 @@ class AriaUnitTest < ActiveSupport::TestCase
     assert info = Aria::BillingInfo.from_account_details(attr)
     assert info.persisted?
     assert_equal 'Houston', info.city
-    assert_equal({'city' => 'Houston', 'address1' => '1 test'}, info.attributes.select{|_,v| !v.nil?})
-    assert_equal({'bill_city' => 'Houston', 'bill_address1' => '1 test'}, info.to_aria_attributes.select{|_,v| !v.nil?})
+    assert_equal({'city' => 'Houston', 'address1' => '1 test', 'region' => nil}, info.attributes)
+    assert_equal({'bill_city' => 'Houston', 'bill_address1' => '1 test', 'bill_locality' => nil, 'bill_state_prov' => '~'}, info.to_aria_attributes)
     #assert_nil info.tax_exempt
     #assert !info.tax_exempt?
   end
