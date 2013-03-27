@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.6.6
+Version: 1.6.7
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -728,6 +728,18 @@ oo-admin-cartridge --recursive -a install -s /usr/libexec/openshift/cartridges/v
 /etc/openshift/development
 
 %changelog
+* Wed Mar 27 2013 Adam Miller <admiller@redhat.com> 1.6.7-1
+- Fixed spec for user with SSL certificate capabilities (ffranz@redhat.com)
+- More tests to SSL certificates (ffranz@redhat.com)
+- cleanup unused snapshots and volumes (dmcphers@redhat.com)
+- adding haproxy to devenv (dmcphers@redhat.com)
+- Merge pull request #1079 from abhgupta/bad_response_threshold
+  (dmcphers@redhat.com)
+- Increasing bad response threshold to fix broker_extended tests
+  (abhgupta@redhat.com)
+- Fix for bug 924717 (abhgupta@redhat.com)
+- adding diy (dmcphers@redhat.com)
+
 * Tue Mar 26 2013 Adam Miller <admiller@redhat.com> 1.6.6-1
 - getting jenkins working (dmcphers@redhat.com)
 - Merge pull request #1069 from
