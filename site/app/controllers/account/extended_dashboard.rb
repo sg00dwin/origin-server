@@ -16,12 +16,12 @@ module Account
       user = Aria::UserContext.new(current_user)
 
       @user = current_api_user
-      @plan = @user.plan
 
       unless user_can_upgrade_plan? and user.has_account?
         render :dashboard_free and return
       end
 
+      @plan = @user.plan
       @is_test_user = user.test_user?
       @is_downgrading = user.default_plan_pending?
       @virtual_time = Aria::DateTime.now if Aria::DateTime.virtual_time?
