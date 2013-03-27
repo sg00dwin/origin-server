@@ -27,22 +27,22 @@
         #promo_code{:class => (@user.promo_code == nil or @user.promo_code.empty?) ? 'hidden' : ''}
           = form.input :promo_code, :label => 'Promotional Code', :required => false, :input_html => { :class => 'max', :placeholder => 'Promo code' }
 
-      = form.inputs do
-        - unless controller.skip_captcha?
-          %input{:type => "hidden", :name => "captcha_secret", :value => @captcha_secret }
-          %input{:type => "hidden", :name => "captcha_type", :value => @captcha_type }
-          %input{:type => "hidden", :name => "captcha_status", :value => @captcha_status }
-          = render :partial => "captcha/#{@captcha_type}", :locals => {:errors => @user.errors[:captcha].present?, :form => form}
- 
-        %p{:style => "font-size: 12px"}
-          By signing up you agree to the 
-          = link_to 'Terms of Service', terms_of_service_url
-          and the
-          = link_to 'Privacy Policy', privacy_policy_url
+      #captcha_inputs
+        = form.inputs do
+          - unless controller.skip_captcha?
+            %input{:type => "hidden", :name => "captcha_secret", :value => @captcha_secret }
+            %input{:type => "hidden", :name => "captcha_type", :value => @captcha_type }
+            %input{:type => "hidden", :name => "captcha_status", :value => @captcha_status }
+            = render :partial => "captcha/#{@captcha_type}", :locals => {:errors => @user.errors[:captcha].present?, :form => form}
 
-        .form-actions
-          = form.commit_button 'Sign Up', :button_html => {:class => 'btn btn-primary btn-block-phone btn-large'}
+          %p{:style => "font-size: 12px"}
+            By signing up you agree to the 
+            = link_to 'Terms of Service', terms_of_service_url
+            and the
+            = link_to 'Privacy Policy', privacy_policy_url
 
+          .form-actions
+            = form.commit_button 'Sign Up', :button_html => {:class => 'btn btn-primary btn-block-phone btn-large'}
 .column-2
   %h2{:style => "margin-top: 6px"}
     Already have an account?
