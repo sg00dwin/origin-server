@@ -24,6 +24,18 @@ class Prune < Thor
       flag_old_qe_devenvs(region)
     end
   end
+  
+  desc "volumes", "prune detached volumes"
+  def volumes
+    conn = connect
+    conn.regions.each do |region|
+      puts "Deleting detached volumes in region=#{region.name}"
+      get_detached_volumes(region).each do |volume|
+        puts "Deleting #{volume.size}GB detached volume: #{volume.id}"
+        volume.delete
+      end
+    end
+  end
 
   desc "amis", "prune old devenv AMIs"
   def amis
