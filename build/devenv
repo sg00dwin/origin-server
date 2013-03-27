@@ -641,6 +641,7 @@ service openshift-port-proxy restart
                   retry_test_failures(hostname, [singleton_queue], 2) if 0 != exit_code
                 when 'site'
                 when 'rhc'
+                when 'runtime_other'
                 else
                   puts "Not supported for extended: #{extended_test}"
                   exit 1
