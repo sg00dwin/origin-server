@@ -668,6 +668,17 @@ else
   echo "user_with_multiple_gear_sizes could not be created!"
 fi
 
+# Create a test user with additional storage capabilities
+echo "Creating test user:  user_with_extra_storage@test.com"
+curl -k https://localhost/broker/rest/user -u user_with_extra_storage@test.com:pass
+if [ $? -eq 0 ]
+then
+  echo "Adding additional storage to user"
+  /usr/sbin/oo-admin-ctl-user -l user_with_extra_storage@test.com --setmaxstorage 10 --setmaxgears 10
+else
+  echo "user_with_extra_storage could not be created!"
+fi
+
 # Create a test user with ssl certificates capabilities
 echo "Creating test user:  user_with_certificate_capabilities@test.com"
 curl -k https://localhost/broker/rest/user -u user_with_certificate_capabilities@test.com:pass
@@ -677,19 +688,6 @@ then
   /usr/sbin/oo-admin-ctl-user -l user_with_certificate_capabilities@test.com ----allowprivatesslcertificates true
 else
   echo "user_with_certificate_capabilities could not be created!"
-fi
-
-# Create a known test user with medium-sized gears - nhr
-# This must be done before the deployment of application templates!
-cd /var/www/openshift/broker
-echo "Creating named test user"
-curl -k https://localhost/broker/rest/user -u user_with_multiple_gear_sizes@test.com:pass
-if [ $? -eq 0 ]
-then
-  echo "Adding medium gear size to user"
-  /usr/sbin/oo-admin-ctl-user -l user_with_multiple_gear_sizes@test.com --addgearsize medium
-else
-  echo "user_with_multiple_gear_sizes could not be created!"
 fi
 
 # Hack to resolve parser error
