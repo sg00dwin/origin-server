@@ -14,13 +14,16 @@ gem 'dalli'
 
 gem 'countries'
 
-gem 'pry' if ENV['PRY']
+# Do not include these gems while testing or compiling assets
+group :development, :production do
+  gem 'pry' if ENV['PRY']
 
-if ENV['BETTER_ERRORS']
-  gem 'pry-rails' if ENV['PRY']
-  gem 'better_errors'
-  gem 'binding_of_caller'
-  gem 'meta_request'
+  if ENV['BETTER_ERRORS']
+    gem 'pry-rails' if ENV['PRY']
+    gem 'better_errors'
+    gem 'binding_of_caller'
+    gem 'meta_request'
+  end
 end
 
 # Bundle gems for the local environment. Make sure to
