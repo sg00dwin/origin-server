@@ -634,7 +634,7 @@ service openshift-port-proxy restart
               extended_tests.each do |extended_test|
                 case extended_test
                 when 'broker'
-                when 'runtime', 'runtime_other'
+                when 'runtime'
                   idle_all_gears(hostname)
                   singleton_queue = ['Singletons', "cucumber #{CUCUMBER_OPTIONS} -t @singleton openshift-test/tests"]
                   output, exit_code = run_ssh(hostname, singleton_queue[0], singleton_queue[1])
