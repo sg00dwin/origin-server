@@ -679,6 +679,17 @@ else
   echo "user_with_extra_storage could not be created!"
 fi
 
+# Create a test user with ssl certificates capabilities
+echo "Creating test user:  user_with_certificate_capabilities@test.com"
+curl -k https://localhost/broker/rest/user -u user_with_certificate_capabilities@test.com:pass
+if [ $? -eq 0 ]
+then
+  echo "Adding ssh certificate capabilities to user"
+  /usr/sbin/oo-admin-ctl-user -l user_with_certificate_capabilities@test.com ----allowprivatesslcertificates true
+else
+  echo "user_with_certificate_capabilities could not be created!"
+fi
+
 # Hack to resolve parser error
 # See https://github.com/cucumber/gherkin/issues/182
 if [ -f /usr/lib/ruby/gems/1.8/gems/gherkin-2.2.4/lib/gherkin/i18n.rb ]
