@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.6.5
+Version: 1.6.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -151,6 +151,19 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Wed Mar 27 2013 Adam Miller <admiller@redhat.com> 1.6.6-1
+- Merge remote-tracking branch 'origin/master' into update_to_new_plan_values
+  (ccoleman@redhat.com)
+- Merge pull request #1065 from liggitt/bug/924791
+  (dmcphers+openshiftbot@redhat.com)
+- Remove test default config, billing config loaded in dev/test env
+  (ccoleman@redhat.com)
+- Fix bug 924791 - Use aria virtual datetime when reporting usage
+  (jliggitt@redhat.com)
+- Merge remote-tracking branch 'origin/master' into update_to_new_plan_values
+  (ccoleman@redhat.com)
+- Rename freeshift/megashift to free/silver everywhere (ccoleman@redhat.com)
+
 * Tue Mar 26 2013 Adam Miller <admiller@redhat.com> 1.6.5-1
 - Fix bug 927893 - calculate is_premium? by checking for usage rates
   (jliggitt@redhat.com)
