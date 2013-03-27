@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.6.7
+Version: 1.6.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -181,6 +181,28 @@ fi
 %{sitedir}/public
 
 %changelog
+* Wed Mar 27 2013 Adam Miller <admiller@redhat.com> 1.6.8-1
+- Added fixtures for certificate tests (ffranz@redhat.com)
+- Fix bug 924589 - dashboard cannot show when aria_enabled=false
+  (jliggitt@redhat.com)
+- Merge remote-tracking branch 'origin/master' into update_to_new_plan_values
+  (ccoleman@redhat.com)
+- Merge pull request #1076 from liggitt/invoice_styleguide
+  (dmcphers@redhat.com)
+- Merge pull request #1075 from jtharris/bugs/BZ923170 (dmcphers@redhat.com)
+- Merge pull request #1074 from liggitt/bug/927628 (dmcphers@redhat.com)
+- Add an invoice styleguide page (jliggitt@redhat.com)
+- Account/help responsive support. (jharris@redhat.com)
+- Fix bug 927628 - collapse identical usage line items (jliggitt@redhat.com)
+- Bug 923746 - Fix tax exemption link (ccoleman@redhat.com)
+- Alter usage line item reporting for free line items (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into update_to_new_plan_values
+  (ccoleman@redhat.com)
+- Rename freeshift/megashift to free/silver everywhere (ccoleman@redhat.com)
+- Show free rate total (ccoleman@redhat.com)
+- Allow broker plan values to be configured.  Change devenv defaults to match
+  new 'Free' and 'Silver' plans. (ccoleman@redhat.com)
+
 * Tue Mar 26 2013 Adam Miller <admiller@redhat.com> 1.6.7-1
 - Merge pull request #1064 from liggitt/bug/927187
   (dmcphers+openshiftbot@redhat.com)
