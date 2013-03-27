@@ -24,7 +24,7 @@ module Aria
     end
 
     def rate
-      attributes['pre_rated_rate'] || attributes['rate_per_unit']
+      UsageLineItem.rate(attributes)
     end
     alias_method :pre_rated_rate, :rate
     alias_method :rate_per_unit, :rate
@@ -80,10 +80,11 @@ module Aria
     #
     def self.for_usage(usage, plan_no)
       usage.inject({}) do |h, u|
-        if item = h[u.usage_type_no]
+        key = "#{u.usage_type_no}@#{UsageLineItem.rate(u).round(2)}"
+        if item = h[key]
           item << u
         else
-          h[u.usage_type_no] = new(u, plan_no)
+          h[key] = new(u, plan_no)
         end
         h
       end.values
@@ -96,24 +97,20 @@ module Aria
     # "other" must be an Aria usage_history record item.
     #
     def <<(other)
-      @total_cost = total_cost + other.units * other.pre_rated_rate
+      @total_cost = total_cost + other.units * UsageLineItem.rate(other)
       self.units = self.units + other.units
       self.recorded_units = nil
       self.specific_record_charge_amount = nil
     end
 
     def self.type_info (items)
-      Hash[
-        items
-          .uniq(&:name)
-          .sort_by(&Aria::LineItem.plan_sort)
-          .each_with_index.map { |item,index| 
-            [
-              item.name,
-              OpenStruct.new({:units => item.units_label, :class_name => "type-#{index+1}" })
-            ]
-          }
-      ]
+      items
+        .uniq(&:name)
+        .sort_by(&Aria::LineItem.plan_sort)
+        .inject({}) { |type_info, item| 
+          type_info[item.name] = OpenStruct.new({:units => item.units_label, :class_name => "type-#{type_info.count+1}" })
+          type_info
+        }
     end
 
     protected
@@ -124,6 +121,10 @@ module Aria
                                 :specific_record_charge_amount,
                                 :billable_account_no,
                                 :date_range_start]
+
+      def self.rate attributes
+        attributes['pre_rated_rate'] || attributes['rate_per_unit']
+      end
 
       def service
         @service ||= Aria.cached.get_client_plans_all.find{ |s| s.plan_no.to_s == plan_no.to_s }.plan_services.find{ |s| s.usage_type == usage_type_no }

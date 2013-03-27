@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.6.5
+Version: 1.6.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -57,6 +57,7 @@ Requires:  openshift-origin-cartridge-jenkins
 Requires:  openshift-origin-cartridge-jenkins-client
 Requires:  openshift-origin-cartridge-mysql
 Requires:  openshift-origin-cartridge-jbossews
+Requires:  openshift-origin-cartridge-diy
 #Requires:  openshift-origin-cartridge-cron
 Requires:  activemq
 Requires:  activemq-client
@@ -258,10 +259,6 @@ rm -rf %{buildroot}
 # Ensure httpd can access static content in site/broker (symlinks)
 usermod -G libra_user -a apache
 
-# Setup node.conf for the devenv
-cp -f /etc/openshift/node.conf.libra /etc/openshift/node.conf
-restorecon /etc/openshift/node.conf || :
-
 echo "
 # Setup PATH, LD_LIBRARY_PATH and MANPATH for ruby-1.9
 ruby19_dir=\$(dirname \`scl enable ruby193 \"which ruby\"\`)
@@ -298,6 +295,15 @@ gem install httpclient --version 2.3.2 --no-rdoc --no-ri
 /bin/cp -rf %{devenvdir}/etc/* %{_sysconfdir}
 /bin/cp -rf %{devenvdir}/bin/* %{_bindir}
 /bin/cp -rf %{devenvdir}/var/* %{_var}
+
+# Setup node.conf for the devenv
+cp -f /etc/openshift/node.conf.libra /etc/openshift/node.conf
+restorecon /etc/openshift/node.conf || :
+/sbin/service libra-data restart > /dev/null 2>&1 || :
+
+# Setup OPENSHIFT_CLOUD_DOMAIN for the devenv
+mv -f /etc/openshift/env/OPENSHIFT_CLOUD_DOMAIN.libra /etc/openshift/env/OPENSHIFT_CLOUD_DOMAIN
+restorecon /etc/openshift/env/OPENSHIFT_CLOUD_DOMAIN || :
 
 # Add rsync key to authorized keys
 cat %{brokerdir}/config/keys/rsync_id_rsa.pub >> /root/.ssh/authorized_keys
@@ -709,12 +715,15 @@ oo-admin-cartridge --recursive -a install -s /usr/libexec/openshift/cartridges/v
 %{policydir}/*
 /etc/openshift/development
 
-%triggerin -- rubygem-openshift-origin-node
-cp -f /etc/openshift/node.conf.libra /etc/openshift/node.conf
-restorecon /etc/openshift/node.conf || :
-/sbin/service libra-data restart > /dev/null 2>&1 || :
-
 %changelog
+* Tue Mar 26 2013 Adam Miller <admiller@redhat.com> 1.6.6-1
+- getting jenkins working (dmcphers@redhat.com)
+- Merge pull request #1069 from
+  smarterclayton/hardcode_script_name_for_memcached
+  (dmcphers+openshiftbot@redhat.com)
+- Hardcode the script name for memcached init.d scripts - it changes depending
+  on runlevel (ccoleman@redhat.com)
+
 * Mon Mar 25 2013 Adam Miller <admiller@redhat.com> 1.6.5-1
 - adding cron and eap (dmcphers@redhat.com)
 

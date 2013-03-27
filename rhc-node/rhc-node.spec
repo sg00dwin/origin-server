@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.6.2
+Version: 1.6.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -227,8 +227,7 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-node-application
 %attr(0750,-,-) %{_bindir}/rhc-watchman
 %attr(0700,-,-) %{_bindir}/migration-symlink-as-user
-%attr(0644,-,-) %config(noreplace) %{_sysconfdir}/openshift/node.conf.libra
-%attr(0644,-,-) %config(noreplace) %{_sysconfdir}/openshift/resource_limits.con*
+%attr(0644,-,-) %config(noreplace) %{_sysconfdir}/openshift/resource_limits.conf*
 %attr(0750,-,-) %config(noreplace) %{_sysconfdir}/cron.daily/openshift_tmpwatch.sh
 %attr(0750,root,root) %config(noreplace) %{_sysconfdir}/httpd/conf.d/000000_default.conf
 #%attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/openshift
@@ -237,6 +236,9 @@ fi
 
 
 %changelog
+* Tue Mar 26 2013 Adam Miller <admiller@redhat.com> 1.6.3-1
+- getting jenkins working (dmcphers@redhat.com)
+
 * Thu Mar 21 2013 Adam Miller <admiller@redhat.com> 1.6.2-1
 - One-off tool for fixing the front-end configuration. (rmillner@redhat.com)
 - update migration to current release (dmcphers@redhat.com)

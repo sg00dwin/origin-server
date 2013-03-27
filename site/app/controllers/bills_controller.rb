@@ -86,8 +86,7 @@ class BillsController < ConsoleController
 
       @invoice_options = invoices.map {|i| [
         "#{i.bill_date.to_datetime.to_s(:billing_date)}",
-        i.invoice_no.to_s,
-        {"data-url" => account_bill_path(i.invoice_no)}
+        i.invoice_no.to_s
       ]}
       @id = invoice.invoice_no.to_s
       @bill = @user.bill_for(invoice)

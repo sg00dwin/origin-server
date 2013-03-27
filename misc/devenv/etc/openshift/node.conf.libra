@@ -1,6 +1,6 @@
 # These should not be left at default values, even for a demo.
 # "PUBLIC" networking values are ones that end-users should be able to reach.
-PUBLIC_HOSTNAME='localhost.localdomain'                      # The node host's public hostname
+PUBLIC_HOSTNAME='localhost'                                  # The node host's public hostname
 PUBLIC_IP="127.0.0.1"                                        # The node host's public IP address
 BROKER_HOST="localhost"                                      # IP or DNS name of broker server for REST API
 

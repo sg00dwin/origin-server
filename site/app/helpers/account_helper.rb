@@ -20,14 +20,14 @@ module AccountHelper
     wizard_steps(PlanUpgradeStepsCreate, active, options)
   end
 
+  def tax_exempt_help_status
+    community_base_url 'policy/tax-exemptions'
+  end
+
   def line_item_details(li)
     if li.tax?
     elsif li.usage?
-      if li.free_units and li.units <= li.free_units
-        "#{number_with_precision(li.units, :delimiter => ',', :precision => 0)} #{li.units_label} (free up to #{number_with_delimiter(li.free_units)})"
-      else
-        "#{number_with_precision(li.units, :delimiter => ',', :precision => 0)} @ #{number_to_currency(li.rate)} / #{li.units_label}"
-      end
+      "#{number_with_precision(li.units, :precision => (li.units < 1 ? 2 : 0))} @ #{number_to_currency(li.rate)} / #{li.units_label}"
     elsif li.recurring?
       if li.rate
         "#{number_to_currency(li.rate)} / month#{" (prorated)" if li.total_cost < 0}"

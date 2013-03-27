@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.6.6
+Version: 1.6.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -181,6 +181,12 @@ fi
 %{sitedir}/public
 
 %changelog
+* Tue Mar 26 2013 Adam Miller <admiller@redhat.com> 1.6.7-1
+- Merge pull request #1064 from liggitt/bug/927187
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 927187 - show dashboard correctly if aria_enabled=false
+  (jliggitt@redhat.com)
+
 * Mon Mar 25 2013 Adam Miller <admiller@redhat.com> 1.6.6-1
 - Clean up premium cart indicators (ccoleman@redhat.com)
 - Remove deep partials, expose trust provider from quickstart api

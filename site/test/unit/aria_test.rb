@@ -271,25 +271,6 @@ class AriaUnitTest < ActiveSupport::TestCase
       :user_id => Digest::MD5::hexdigest('foo'),
     }).to_return(resp(ok_wddx({:acct_no => 123.to_s})))
 
-    stub_aria(:get_acct_details_all, {
-      :acct_no => 123.to_s
-    }).to_return(resp(ok_wddx({
-      :bill_day => 2.to_s,
-      :next_bill_date => '2013-01-02'
-    })))
-
-    stub_aria(:adjust_billing_dates, {
-      :acct_no => 123.to_s,
-      :action_directive => 1.to_s,
-      :adjustment_days => 27.to_s
-    }).to_return(resp(ok_wddx))
-
-    stub_aria(:adjust_billing_dates, {
-      :acct_no => 123.to_s,
-      :action_directive => 1.to_s,
-      :adjustment_days => 3.to_s
-    }).to_return(resp(ok_wddx))
-
     user = TestUser.new
     user.expects(:random_password).returns('passw0rd')
     user.expects(:login).returns('foo').at_least_once
@@ -608,9 +589,13 @@ class AriaUnitTest < ActiveSupport::TestCase
 
   def test_bill_should_be_blank
     assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0).blank?
+    assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0, 0).blank?
     assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0.01).present?
+    assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0.01, 0.01).present?
+    assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0.01, -0.01).present?
     assert Aria::Bill.new(nil, nil, nil, nil, nil, [Aria::RecurringLineItem.new({'amount' => 0.01}, 1)], [], 0).present?
     assert Aria::Bill.new(nil, nil, nil, nil, nil, [Aria::RecurringLineItem.new({'amount' => 0.00}, 1)], [], 0).present?
+
   end
 
   def test_line_item_prorated
@@ -639,6 +624,43 @@ class AriaUnitTest < ActiveSupport::TestCase
     assert items = Aria::RecurringLineItem.find_all_by_plan_no(stub_plan_pay['plan_no'])
     assert items.length == 1
   end
+
+  def test_collapse_identical_usage_line_items
+    usage = [
+      Aria::WDDX::Struct.new({'usage_type_no' => 1, 'rate_per_unit' => 1, 'units' => 1}),
+      Aria::WDDX::Struct.new({'usage_type_no' => 1, 'rate_per_unit' => 1, 'units' => 2}),
+      Aria::WDDX::Struct.new({'usage_type_no' => 2, 'rate_per_unit' => 1, 'units' => 4}),
+      Aria::WDDX::Struct.new({'usage_type_no' => 2, 'rate_per_unit' => 1, 'units' => 8})
+    ]
+    assert line_items = Aria::UsageLineItem.for_usage(usage, 1)
+    assert_equal 2, line_items.length
+
+    assert_equal 1, line_items.first.usage_type_no
+    assert_equal 3, line_items.first.total_cost
+
+    assert_equal 2, line_items.last.usage_type_no
+    assert_equal 12, line_items.last.total_cost
+  end
+
+  def test_collapse_close_rate_usage_line_items
+    # Invoice line items use rate_per_unit'
+    # Unbilled usage items use 'pre_rated_rate'
+    usage = [
+      Aria::WDDX::Struct.new({'usage_type_no' => 1, 'rate_per_unit' => 1, 'units' => 1}),
+      Aria::WDDX::Struct.new({'usage_type_no' => 1, 'pre_rated_rate' => 1.001, 'units' => 2}),
+      Aria::WDDX::Struct.new({'usage_type_no' => 1, 'rate_per_unit' => 2, 'units' => 4}),
+      Aria::WDDX::Struct.new({'usage_type_no' => 1, 'pre_rated_rate' => 2.001, 'units' => 8})
+    ]
+    assert line_items = Aria::UsageLineItem.for_usage(usage, 1)
+    assert_equal 2, line_items.length
+
+    assert_equal 1, line_items.first.usage_type_no
+    assert_equal 3.002, line_items.first.total_cost
+
+    assert_equal 1, line_items.last.usage_type_no
+    assert_equal 24.008, line_items.last.total_cost
+  end
+
 
   def test_user_should_not_have_next_bill
     u = TestUser.new
