@@ -23,7 +23,7 @@ module Aria
     end
 
     def line_items
-      @line_items ||= invoice_line_items.concat(unbilled_usage_line_items)
+      @line_items ||= invoice_line_items + unbilled_usage_line_items
     end
 
     def balance

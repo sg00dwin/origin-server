@@ -2,7 +2,7 @@ require File.expand_path('../../test_helper', __FILE__)
 
 class PlansControllerTest < ActionController::TestCase
   def known_plans
-    ['freeshift','megashift']
+    ['free','silver']
   end
 
   # This will also return 'true' for an empty list.

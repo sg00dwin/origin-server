@@ -7,11 +7,15 @@ module Aria
     end
 
     def name
-      case usage_type_description
-      when /Small Gear/ then 'Gear: Small'
-      when /Medium Gear/ then 'Gear: Medium'
-      when /MegaShift Storage/ then 'Storage: Additional Gear'
-      else usage_type_description
+      if service
+        service.service_desc
+      else
+        case usage_type_description
+        when /Small Gear/ then 'Gear: Small'
+        when /Medium Gear/ then 'Gear: Medium'
+        when /Silver Storage/ then 'Storage: Additional Gear'
+        else usage_type_description
+        end
       end
     end
 
@@ -36,17 +40,38 @@ module Aria
     # The string label that applies to this usage line item: e.g. 'hours'
     #
     def units_label
-      case service.client_coa_code
-      when 'smallusage', 'mediumusage', 'largeusage'
-        "gear-hour"
-      when 'megastorage'
-        "gigabyte-hour"
+      if service
+        code = service.client_coa_code
+        if code.starts_with? 'usage_gear_'
+          "gear-hour"
+        elsif code == 'usage_storage_gear'
+          "gigabyte-hour"
+        else
+          "unit"
+        end
       else
-        "unit"
+        case usage_type_description
+        when /storage/
+          "gigabyte-hour"
+        else
+          "gear-hour"
+        end
       end
     rescue => e
       Rails.logger.error "#{e.message} (#{e.class})\n  #{e.backtrace.join("\n  ")}"
       '<unknown>'
+    end
+
+    def free_units
+      service.plan_service_rates.each do |r| 
+        to_unit = r.to_unit
+        return to_unit if r.rate_per_unit == 0.0 && to_unit && to_unit > 0
+      end if service
+      false
+    end
+
+    def usage_type_description
+      attributes['usage_type_description'] || attributes['service_name']
     end
 
     #
@@ -63,10 +88,6 @@ module Aria
         end
         h
       end.values
-    end
-
-    def usage_type_description
-      attributes['usage_type_description'] || attributes['service_name']
     end
 
     #
@@ -106,7 +127,7 @@ module Aria
       end
 
       def service
-        @service ||= Aria.cached.get_client_plan_services(plan_no).find{ |s| s.usage_type == usage_type_no }
+        @service ||= Aria.cached.get_client_plans_all.find{ |s| s.plan_no.to_s == plan_no.to_s }.plan_services.find{ |s| s.usage_type == usage_type_no }
       end
   end
 end

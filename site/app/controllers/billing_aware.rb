@@ -25,7 +25,7 @@ module BillingAware
     # Is the user on the lowest plan tier?
     #
     def user_on_basic_plan?
-      user_capabilities.plan_id == 'freeshift'
+      user_capabilities.plan_id == 'free'
     end
 
     #

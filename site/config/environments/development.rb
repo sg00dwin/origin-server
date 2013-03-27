@@ -46,7 +46,7 @@ RedHatCloud::Application.configure do
   config.aria_uri = "https://streamline-proxy1.ops.rhcloud.com/api/ws/api_ws_class_dispatcher.php"
   config.aria_auth_key = "sRvjFqjSadu3AFB8jRAR3tqeH5Qf6XjW"
   config.aria_client_no = 3754655
-  config.aria_default_plan_no = 10044929
+  config.aria_default_plan_no = 10330329
   config.aria_force_test_users = true
   # Aria direct post configuration - uses public URL
   config.aria_direct_post_uri = "https://secure.current.stage.ariasystems.net/api/direct_post.php"

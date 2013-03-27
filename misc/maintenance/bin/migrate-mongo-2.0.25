@@ -50,7 +50,7 @@ end
 
 def migrate_users
   $coll = $db.collection('cloud_users')
-  query = {"plan_id" => "megashift"}
+  query = {"plan_id" => "silver"}
   selection = {:fields => ["login",
                          "capabilities",
                          "_id"], :timeout => false}
@@ -72,8 +72,23 @@ def migrate_users
   puts "Mongo migrated #{total} users"
 end
 
+def migrate_plans
+  users = $db.collection('cloud_users')
+  options = {
+    "freeshift" => "free",
+    "megashift" => "silver",
+  }
+  options.each_pair do |from, to|
+    total = 0
+    print "Migrating user plan_id #{from} => #{to}.. "
+    users.update({:plan_id => from}, {'$set' => {:plan_id => to}}, :multi => true)
+    puts " migrated"
+  end
+end
+
 puts "Starting migration"
 mongo_connect
 migrate_apps
+migrate_plans
 migrate_users
 puts "Done!"

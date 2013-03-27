@@ -22,6 +22,7 @@ module Aria
   cache_method :get_client_plans_basic
   cache_method :get_client_plan_service_rates
   cache_method :get_client_plan_services
+  cache_method :get_client_plans_all
 
   def self.available?(message='Aria is not available:')
     return false unless Rails.configuration.aria_enabled

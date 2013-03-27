@@ -7,7 +7,7 @@ class ActiveSupport::TestCase
         :ticket => '1'
       })).tap do |u|
         begin
-          create_megashift_user(u)
+          create_silver_user(u)
           record_usage_for_user(u)
         rescue Aria::AccountExists
         end
@@ -71,7 +71,7 @@ class ActiveSupport::TestCase
   def upgrade_user(user)
     # TODO: pass through broker
     old = user.account_details
-    assert mega = Aria::MasterPlan.find('megashift')
+    assert mega = Aria::MasterPlan.find('silver')
     assert user.update_account :master_plan_no => mega.plan_no,
                                :master_plan_assign_directive => 2
     assert_equal old.bill_day, user.account_details.bill_day
@@ -95,18 +95,18 @@ class ActiveSupport::TestCase
     omit("Aria not available; omitting test.") unless Aria.available?
   end
 
-  def create_megashift_user(u)
+  def create_silver_user(u)
     assert u.create_account :billing_info => Aria::BillingInfo.test,
                             :payment_method => Aria::PaymentMethod.test,
                             :test_acct_ind => 0,
                             :status_cd => 1
-    User.find(:one, :as => u).tap{ |a| a.plan_id = :megashift; assert a.save }
+    User.find(:one, :as => u).tap{ |a| a.plan_id = :silver; assert a.save }
   end
 
   def record_usage_for_user(u, small_usage=10, medium_usage=5, usage_date=nil)
-    p = Aria::MasterPlan.find 'megashift'
-    assert s = Aria.get_client_plan_services(p.plan_no).find{ |s| s.client_coa_code == 'smallusage' }
-    assert m = Aria.get_client_plan_services(p.plan_no).find{ |s| s.client_coa_code == 'mediumusage' }
+    p = Aria::MasterPlan.find 'silver'
+    assert s = Aria.get_client_plan_services(p.plan_no).find{ |s| s.client_coa_code == 'usage_gear_small' }
+    assert m = Aria.get_client_plan_services(p.plan_no).find{ |s| s.client_coa_code == 'usage_gear_medium' }
     Aria.record_usage(u.acct_no, s.usage_type, small_usage, {:comments => "Test small gear hours usage", :usage_date => usage_date})
     Aria.record_usage(u.acct_no, m.usage_type, medium_usage, {:comments => "Test medium gear hours usage", :usage_date => usage_date})
     u.clear_cache!

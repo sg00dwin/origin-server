@@ -29,20 +29,20 @@ class PlansApiTest < ActionDispatch::IntegrationTest
 
   def test_plan_show
     [@headers, @unauthenticated_headers].each do |header_list|
-      request_via_redirect(:get, PLANS_COLLECTION_URL + "/#{:freeshift}", {}, header_list)
+      request_via_redirect(:get, PLANS_COLLECTION_URL + "/#{:free}", {}, header_list)
       assert_response :ok
       body = JSON.parse(@response.body)
       plan = body["data"]
-      assert_equal(plan["id"], "freeshift", "Plan id #{plan["id"]} expected freeshift")
-      assert_equal(plan["name"], "FreeShift", "Plan name #{plan["name"]} expected FreeShift")
+      assert_equal(plan["id"], "free", "Plan id #{plan["id"]} expected free")
+      assert_equal(plan["name"], "Free", "Plan name #{plan["name"]} expected Free")
       assert_not_nil(plan["plan_no"])
 
-      request_via_redirect(:get, PLANS_COLLECTION_URL + "/#{:megashift}", {}, header_list)
+      request_via_redirect(:get, PLANS_COLLECTION_URL + "/#{:silver}", {}, header_list)
       assert_response :ok
       body = JSON.parse(@response.body)
       plan = body["data"]
-      assert_equal(plan["id"], "megashift", "Plan id #{plan["id"]} expected megashift")
-      assert_equal(plan["name"], "MegaShift", "Plan name #{plan["name"]} expected MegaShift")
+      assert_equal(plan["id"], "silver", "Plan id #{plan["id"]} expected silver")
+      assert_equal(plan["name"], "Silver", "Plan name #{plan["name"]} expected Silver")
       assert_not_nil(plan["plan_no"])
     end
   end

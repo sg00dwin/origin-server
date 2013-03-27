@@ -159,7 +159,7 @@ MSG
         end
         Rails.logger.error "Unable to find 'RHLogin' field for the event: #{h}" unless login
         filter = {:login => login, :pending_plan_id => nil, :pending_plan_uptime => nil}
-        update = {"$set" => {:pending_plan_id => :freeshift, :pending_plan_uptime => Time.now.utc, :plan_state => CloudUser::PLAN_STATES['canceled']}}
+        update = {"$set" => {:pending_plan_id => :free, :pending_plan_uptime => Time.now.utc, :plan_state => CloudUser::PLAN_STATES['canceled']}}
         user = nil
         OpenShift::AriaEvent::PLAN_STATE_UPDATE_RETRIES.times do 
           user = CloudUser.with(consistency: :strong).where(filter).find_and_modify(update, {:new => true})

@@ -3,7 +3,7 @@ require File.expand_path('../../test_helper', __FILE__)
 class AccountUpgradesControllerTest < ActionController::TestCase
 
   def plan
-    {:plan_id => :megashift}
+    {:plan_id => :silver}
   end
   def with_user(user)
     @user ||= begin
@@ -22,7 +22,7 @@ class AccountUpgradesControllerTest < ActionController::TestCase
 
   test "should show an unchanged plan when the current plan matches the new one" do
     user = with_user(full)
-    get :new, :plan_id => 'freeshift'
+    get :new, :plan_id => 'free'
     assert_not_nil assigns[:user]
     assert_not_nil assigns[:plan]
     assert_not_nil assigns[:current_plan]
@@ -34,7 +34,7 @@ class AccountUpgradesControllerTest < ActionController::TestCase
   test "should upgrade a full user in streamline" do
     with_confirmed_user
     put :update,
-      :plan_id => 'megashift',
+      :plan_id => 'silver',
       :streamline_full_user => {
         :streamline_full_user => {
           :first_name => 'Bob',
@@ -72,7 +72,7 @@ class AccountUpgradesControllerTest < ActionController::TestCase
   test "should redirect if the user lacks capabilities" do
     user = with_user(full)
     OnlineCapabilities.any_instance.expects(:plan_upgrade_enabled?).returns(false)
-    get :new, :plan_id => 'freeshift'
+    get :new, :plan_id => 'free'
     assert_redirected_to account_path
   end
 

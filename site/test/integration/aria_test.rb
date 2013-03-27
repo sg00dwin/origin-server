@@ -116,7 +116,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     assert r.data.plans_basic.length > 0
 
     assert p = plans.find{ |p| p.plan_no == Aria.default_plan_no }
-    assert p['plan_name'] =~ /freeshift/i, p.inspect
+    assert p['plan_name'] =~ /free/i, p.inspect
   end
 
   test 'should raise when missing parameter' do
@@ -191,15 +191,15 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   test "should get recurring line items from plans" do
-    assert items = Aria::RecurringLineItem.find_all_by_plan_no(Aria::MasterPlan.find('megashift').plan_no)
+    assert items = Aria::RecurringLineItem.find_all_by_plan_no(Aria::MasterPlan.find('silver').plan_no)
     assert items.length == 1
-    assert_equal "Plan: MegaShift", items[0].name
+    assert_equal "Plan: Silver", items[0].name
     assert_equal 42, items[0].amount
     assert_equal 42, items[0].total_cost
     assert !items[0].prorated?
     assert_equal 1.0, items[0].units
 
-    assert items = Aria::RecurringLineItem.find_all_by_plan_no(Aria::MasterPlan.find('freeshift').plan_no)
+    assert items = Aria::RecurringLineItem.find_all_by_plan_no(Aria::MasterPlan.find('free').plan_no)
     assert items.empty?
   end
 end

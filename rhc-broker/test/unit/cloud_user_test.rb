@@ -28,17 +28,17 @@ class CloudUserUnitTest < ActiveSupport::TestCase
   test "match plan capabilities" do
     @user = CloudUser.new(login: @login)
     @user.save
-    @user.match_plan_capabilities("freeshift")
+    @user.match_plan_capabilities("free")
     @user.delete
   end
 
   test "negative assign and update plan" do
     @user = CloudUser.new(login: @login)
     @user.save
-    @user.check_plan_compatibility("megashift") 
+    @user.check_plan_compatibility("silver") 
     @user.capabilities['plan_upgrade_enabled'] = false
     begin
-      @user.update_plan("megashift") 
+      @user.update_plan("silver") 
     rescue Exception=>e
       assert e
     end
@@ -58,11 +58,11 @@ class CloudUserUnitTest < ActiveSupport::TestCase
     @user = CloudUser.new(login: @login)
     @user.save
     @user.get_billing_account_no
-    @user.assign_plan("megashift")
-    @user.check_plan_compatibility("megashift") 
+    @user.assign_plan("silver")
+    @user.check_plan_compatibility("silver") 
     @user.get_billing_details
     @user.capabilities['plan_upgrade_enabled'] = true
-    @user.update_plan("megashift")
+    @user.update_plan("silver")
     @user.delete
   end
 

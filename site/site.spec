@@ -236,7 +236,7 @@ fi
   (sgoodwin@redhat.com)
 - Merge remote-tracking branch 'origin/master' into aria_dashboard
   (ccoleman@redhat.com)
-- Next plan is "false" if current and future == freeshift, empty? otherwise
+- Next plan is "false" if current and future == free, empty? otherwise
   (ccoleman@redhat.com)
 - Plan arrow was missing (ccoleman@redhat.com)
 - Unit test should pass (ccoleman@redhat.com)
