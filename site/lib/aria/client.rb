@@ -26,6 +26,7 @@ module Aria
       meth = meth.to_s
       raw = true if meth.sub!(/_raw$/, '')
 
+      raise Aria::Error.new('Aria is not enabled') unless Rails.configuration.aria_enabled
       raise ArgumentError, "Aria::Client#<method> requires no arguments, or a hash of options. Remove #{args.inspect}" unless args.empty?
 
       ActiveSupport::Notifications.instrument("request.aria",

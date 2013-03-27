@@ -77,7 +77,7 @@ class AccountControllerTest < ActionController::TestCase
       assert assigns(:identity)
       assert assigns(:domain).nil?
 
-      assert assigns(:plan).present?, assigns(:user).inspect
+      assert assigns(:plan).nil?, assigns(:user).inspect
       assert_select 'a', 'Upgrade Now'
       assert_select 'h1', /Free/, response.inspect
     end
@@ -93,7 +93,7 @@ class AccountControllerTest < ActionController::TestCase
       assert assigns(:identity)
       assert assigns(:domain).nil?
 
-      assert assigns(:plan)
+      assert assigns(:plan).nil?
       assert_select 'a', /Get more help and information/
       assert_select 'h1', /Free/, response.inspect
     end
