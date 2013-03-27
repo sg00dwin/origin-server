@@ -1,0 +1,62 @@
+@import "variables";
+@import "bootstrap/variables";
+
+@import "bootstrap/mixins";
+@import "mixins";
+
+@import "console/buttons";
+
+#picatcha_widget {
+  #picatcha {
+    background-color: transparent !important;
+    border: 0 !important;
+    margin-bottom: 10px !important;
+    margin-top: 0 !important;
+    padding: 0 0 20px !important;
+    position: relative !important;
+    width: 350px !important;
+
+    @media (max-width: 479px) {
+      width: auto !important;
+    }
+
+    @media (min-width: 767px) and (max-width: 979px) {
+      width: 275px !important;
+    }
+  }
+
+  a#picatcha_mini_top_link {
+    display: none !important;
+  }
+
+  p.picatcha_question {
+    font-size: 100% !important;
+    margin: 0 !important;
+    text-align: left !important;
+  }
+
+  .picatcha .img_btn {
+    border: 2px solid #333 !important;
+
+    &:hover {
+      border-color: #aaa !important;
+    }
+  }
+
+  .picatchaRefreshButton {
+    @extend .btn;
+    @extend .btn-mini;
+    /* Need to explicitly declare these here because Picatcha adds them to the element */
+    background-color: #3c3c3c !important;
+    border: 1px solid #010101 !important;
+  }
+
+  .refresh_str {
+    background-color: #7FC3E1 !important;
+    color: #000 !important;
+  }
+}
+
+.control-group.error.error-client .picatcha_question {
+  color: #cd1e25 !important
+}
