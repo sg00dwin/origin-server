@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.6.9
+Version: 1.6.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -181,6 +181,10 @@ fi
 %{sitedir}/public
 
 %changelog
+* Thu Mar 28 2013 Adam Miller <admiller@redhat.com> 1.6.10-1
+- Make forum login to post links buttons so they are recognizable/standout,
+  since it's a key path to submitting questions. (sgoodwin@redhat.com)
+
 * Thu Mar 28 2013 Adam Miller <admiller@redhat.com> 1.6.9-1
 - Fix bug 928793 - Billing page does not tolerate missing bills or plan items
   (jliggitt@redhat.com)
