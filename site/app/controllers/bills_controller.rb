@@ -99,14 +99,16 @@ class BillsController < ConsoleController
       @virtual_time = Aria::DateTime.now if Aria::DateTime.virtual_time?
 
       @next_bill = user.next_bill
-      current_usage_items = @next_bill.unbilled_usage_line_items
-      past_usage_items = invoice.line_items.select(&:usage?)
-      if current_usage_items.present? and past_usage_items.present?
-        @usage_items = {
-          "Current" => current_usage_items,
-          "This bill" => past_usage_items
-        }
+      if @next_bill
+        current_usage_items = @next_bill.unbilled_usage_line_items
+        past_usage_items = invoice.line_items.select(&:usage?)
+        if current_usage_items.present? or past_usage_items.present?
+          @usage_items = {
+            "Current" => current_usage_items || [],
+            "This bill" => past_usage_items || []
+          }
+        end
+        @usage_types = Aria::UsageLineItem.type_info(@usage_items.values.flatten) if @usage_items
       end
-      @usage_types = Aria::UsageLineItem.type_info(@usage_items.values.flatten) if @usage_items
     end
 end

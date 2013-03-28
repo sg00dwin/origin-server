@@ -26,7 +26,7 @@
         = li.name
       - if show_details
         %td.plan-item-rate
-          = line_item_details(li) || "&nbsp;"
+          = line_item_details(li) || "&nbsp;".html_safe
       %td.plan-item-cost{:title => (line_item_details(li) unless show_details)}
         = number_to_currency(li.total_cost)
 
