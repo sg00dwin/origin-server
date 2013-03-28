@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.6.8
+Version: 1.6.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -181,6 +181,13 @@ fi
 %{sitedir}/public
 
 %changelog
+* Thu Mar 28 2013 Adam Miller <admiller@redhat.com> 1.6.9-1
+- Fix bug 928793 - Billing page does not tolerate missing bills or plan items
+  (jliggitt@redhat.com)
+- Fix bug 928793 - &nbsp; shows in bill column (jliggitt@redhat.com)
+- Restyle refresh link based on CSS (fotios@redhat.com)
+- Client side picatcha checking (fotios@redhat.com)
+
 * Wed Mar 27 2013 Adam Miller <admiller@redhat.com> 1.6.8-1
 - Added fixtures for certificate tests (ffranz@redhat.com)
 - Fix bug 924589 - dashboard cannot show when aria_enabled=false
