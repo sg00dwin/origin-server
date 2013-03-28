@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.5.0
+Version: 1.5.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,14 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Thu Mar 28 2013 Adam Miller <admiller@redhat.com> 1.5.1-1
+- bump_minor_versions for sprint 26 (admiller@redhat.com)
+- Merge pull request #1083 from pravisankar/dev/ravi/bug928205_917961_aria-
+  sync-fix (dmcphers@redhat.com)
+- Fix conf variable in openshift-origin-billing-aria.rb (rpenta@redhat.com)
+- Fix sync usage in Aria plugin: pass app_name as qualifier and added
+  additional guards (rpenta@redhat.com)
+
 * Wed Mar 27 2013 Adam Miller <admiller@redhat.com> 1.4.6-1
 - Update plan # (ccoleman@redhat.com)
 - Merge remote-tracking branch 'origin/master' into update_to_new_plan_values
