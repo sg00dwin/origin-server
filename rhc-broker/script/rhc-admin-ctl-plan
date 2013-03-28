@@ -149,7 +149,7 @@ def process_user(user, list, fix)
     $total_count += 1
     $skip_count += 1
     puts "Skipping User '#{user.login}', plan state not in ['ACTIVE', 'PENDING']." 
-  elsif user.pending_plan_id && ((Time.now.utc - user.pending_plan_uptime) <= PLAN_UPDATE_THRESHOLD)
+  elsif user.pending_plan_id and user.pending_plan_uptime and ((Time.now.utc - user.pending_plan_uptime) <= PLAN_UPDATE_THRESHOLD)
     $total_count += 1
     $progress_count += 1
   elsif user.pending_plan_id
@@ -202,7 +202,7 @@ else
         user = get_user_obj(login)
         process_user(user, list, fix)
       else
-        CloudUser.with_plan do |user|
+        CloudUser.with_plan.each do |user|
           process_user(user, list, fix)
         end
         print_summary(fix)

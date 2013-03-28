@@ -34,7 +34,7 @@ Broker::Application.configure do
         :gigabyte => conf.get("BILLING_PROVIDER_USAGE_TYPE_STORAGE_GEAR").to_i,
       },
       :cartridge => {
-        :"jbosseap-6.0" => conf.get("BILLING_PROVIDER_USAGE_TYPE_GEAR_JBOSS_EAP").to_i,
+        :"jbosseap-6.0" => conf.get("BILLING_PROVIDER_USAGE_TYPE_CARTRIDGE_JBOSS_EAP").to_i,
       }
     },
     :default_plan => :free,
