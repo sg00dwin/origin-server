@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.6.6
+Version: 1.6.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -151,6 +151,9 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Thu Mar 28 2013 Adam Miller <admiller@redhat.com> 1.6.7-1
+- Bug 928205 - Fix rhc-admin-ctl-plan typo/checks (rpenta@redhat.com)
+
 * Wed Mar 27 2013 Adam Miller <admiller@redhat.com> 1.6.6-1
 - Merge remote-tracking branch 'origin/master' into update_to_new_plan_values
   (ccoleman@redhat.com)
