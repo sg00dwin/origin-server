@@ -62,7 +62,7 @@ class Release < Thor
     end
   end
   
-  desc "release_jenkins_plugin", "Brew build the jenkins plugin"
+  desc "release_jenkins_plugin COMMIT_MESSAGE COMMITTER_NAME COMMITTER_EMAIL", "Brew build the jenkins plugin"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def release_jenkins_plugin(commit_message, committer_name="Dan McPherson", committer_email="dmcphers@redhat.com")
     if File.exists?("../jenkins-cloud-plugin")
