@@ -14,7 +14,7 @@ DEVENV_NAME = 'devenv'
 
 IMAGES = {DEVENV_NAME => {:branches => ['stage']},
           'enterprise' => {:branches => ['enterprise-1.0']},
-          'oso-fedora' => {:branches => []}}
+          'oso' => {:branches => []}}
 
 DEVENV_AMI_WILDCARDS = {}
 IMAGES.each do |image, opts|
