@@ -127,7 +127,13 @@ module Aria
       end
 
       def service
-        @service ||= Aria.cached.get_client_plans_all.find{ |s| s.plan_no.to_s == plan_no.to_s }.plan_services.find{ |s| s.usage_type == usage_type_no }
+        if @service.nil?
+          # Tolerate missing plans or services
+          plan = Aria.cached.get_client_plans_all.find{ |s| s.plan_no.to_s == plan_no.to_s }
+          @service = plan.plan_services.find{ |s| s.usage_type == usage_type_no } if plan
+          @service ||= false
+        end
+        @service
       end
   end
 end
