@@ -39,9 +39,10 @@ module Aria
     end
 
     def name
-      if service_name == 'Recurring' && plan_name
+      if (service_name == 'Recurring' || service_name == 'Plan: Recurring') && plan_name
         "Plan: #{plan_name}"
-      else description
+      else 
+        description
       end
     end
 
