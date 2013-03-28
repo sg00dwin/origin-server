@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.7.0
+Version: 1.7.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -181,6 +181,13 @@ fi
 %{sitedir}/public
 
 %changelog
+* Thu Mar 28 2013 Adam Miller <admiller@redhat.com> 1.7.1-1
+- bump_minor_versions for sprint 26 (admiller@redhat.com)
+- Merge pull request #1077 from fotioslindiakos/picatcha_fix
+  (dmcphers+openshiftbot@redhat.com)
+- Restyle refresh link based on CSS (fotios@redhat.com)
+- Client side picatcha checking (fotios@redhat.com)
+
 * Wed Mar 27 2013 Adam Miller <admiller@redhat.com> 1.6.8-1
 - Added fixtures for certificate tests (ffranz@redhat.com)
 - Fix bug 924589 - dashboard cannot show when aria_enabled=false
