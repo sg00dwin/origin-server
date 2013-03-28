@@ -108,7 +108,10 @@ class Prune < Thor
             # Deregister the rest
             group.each do |i| 
               puts "Removing old AMI: #{i.name}"
-              i.deregister
+              begin
+                i.deregister
+              rescue AWS::EC2::Errors::InvalidAMIID::Unavailable => e
+              end
             end
           end
           
