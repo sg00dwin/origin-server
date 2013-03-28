@@ -64,13 +64,13 @@ if(module_exists('og_comment_perms')) {
 <div class="post-to-forum">
 <?php print $forum['feed']; ?>
 <?php if ($do->perm == 'post'): ?>
-<div class="new-post-button"><a class='action-more'
+<div class="new-post-button"><a class='btn'
 	href="<?php print base_path(); ?>node/add/discussion/<?php print $forum['alias']; ?>?gids[]=<?php print $forum['nid']; ?>">Post
 New Thread</a></div>
 <?php elseif ($do->perm == 'join'): ?>
-<div><?php print t('You need to !join this group before you can post a new thread.', array('!join' => l(t('join'), 'og/subscribe/'. $do->group->nid))); ?></div>
+<div><?php print t('You need to !join this group before you can post a new thread.', array('!join this group' => l(t('join this group'), 'og/subscribe/'. $do->group->nid))); ?></div>
 <?php elseif (!$user->uid): ?>
-<div><?php print t('!Login to post a new thread.', array('!Login' => l(t('Login'), 'user'))); ?></div>
+<div><?php print t('!Login to post a new thread', array('!Login to post a new thread' => l(t('Login to post a new thread'), 'user', array('attributes' => array('class' => 'btn'))))); ?></div>
 <?php endif; ?></div>
 <!--div class="forum-header-right"> Place holder for Pager </div-->
 </div>
