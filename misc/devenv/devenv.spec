@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.7.0
+Version: 1.7.1
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -728,6 +728,9 @@ oo-admin-cartridge --recursive -a install -s /usr/libexec/openshift/cartridges/v
 /etc/openshift/development
 
 %changelog
+* Thu Mar 28 2013 Adam Miller <admiller@redhat.com> 1.7.1-1
+- bump_minor_versions for sprint 26 (admiller@redhat.com)
+
 * Wed Mar 27 2013 Adam Miller <admiller@redhat.com> 1.6.7-1
 - Fixed spec for user with SSL certificate capabilities (ffranz@redhat.com)
 - More tests to SSL certificates (ffranz@redhat.com)
