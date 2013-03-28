@@ -685,7 +685,7 @@ curl -k https://localhost/broker/rest/user -u user_with_certificate_capabilities
 if [ $? -eq 0 ]
 then
   echo "Adding ssh certificate capabilities to user"
-  /usr/sbin/oo-admin-ctl-user -l user_with_certificate_capabilities@test.com ----allowprivatesslcertificates true
+  /usr/sbin/oo-admin-ctl-user -l user_with_certificate_capabilities@test.com --allowprivatesslcertificates true
 else
   echo "user_with_certificate_capabilities could not be created!"
 fi
