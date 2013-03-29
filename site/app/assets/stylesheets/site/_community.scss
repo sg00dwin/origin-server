@@ -736,7 +736,7 @@ html.js fieldset.collapsible .fieldset-wrapper {
   color: #9F9F9F;
 }
 
-#edit-type-group-wrapper {display: none;} /* wraps the forum group checkbox, no need to show since there's only one forum type */
+#edit-type-group-wrapper, .forum-navigation-links {display: none;} /* wraps the forum group checkbox, no need to show since there's only one forum type */
 
 /* FAQs */
 
