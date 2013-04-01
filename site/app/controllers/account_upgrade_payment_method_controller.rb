@@ -1,15 +1,16 @@
 class AccountUpgradePaymentMethodController < PaymentMethodsController
+  before_filter :aria_user, :only => [:show, :new]
+  before_filter :payment_method, :only => [:show, :new]
+  before_filter :billing_info, :only => [:new]
+  before_filter :process_async
+
   def show
-    @user = Aria::UserContext.new(current_user)
-    @payment_method = @user.payment_method
     redirect_to url_for(:action => :new) and return unless @payment_method.persisted?
     redirect_to next_path
   end
 
   def new
-    @user = Aria::UserContext.new(current_user)
-    @billing_info = @user.billing_info
-    @payment_method = @user.payment_method || Aria::PaymentMethod.new
+    @payment_method ||= Aria::PaymentMethod.new
 
     @payment_method = Aria::PaymentMethod.test if Rails.env.development?
 

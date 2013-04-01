@@ -4,13 +4,15 @@ class BillingInfoController < ConsoleController
   before_filter :authenticate_user!
   before_filter :user_can_upgrade_plan!
 
+  before_filter :aria_user, :only => [:edit, :update]
+  before_filter :billing_info, :only => [:edit]
+
+  before_filter :process_async
+
   def edit
-    @user = Aria::UserContext.new(current_user)
-    @billing_info = @user.billing_info
   end
 
   def update
-    @user = Aria::UserContext.new(current_user)
     @billing_info = Aria::BillingInfo.new params[:aria_billing_info][:aria_billing_info]
     redirect_to next_path and return if @user.update_account(:billing_info => @billing_info)
     @user.errors[:base].each { |e| @billing_info.errors[:base] << e }
@@ -20,6 +22,7 @@ class BillingInfoController < ConsoleController
   def next_path
     account_path
   end
+
   def previous_path
     next_path
   end

@@ -5,12 +5,12 @@ class AccountUpgradesController < ConsoleController
   before_filter :authenticate_user_for_upgrade!, :only => :show
   before_filter :user_can_upgrade_plan!
 
+  # These filters set the user, aria, plan, etc instance variables
   before_filter :streamline_type, :only => :show
-
-  before_filter :get_aria_user, :only => [:new, :create, :edit]
-  before_filter :get_plan, :only => [:new, :create]
-  before_filter :get_billing, :only => [:new, :create, :edit]
-  before_filter :get_payment, :only => [:new, :create, :edit]
+  before_filter :aria_user, :only => [:new, :create, :edit]
+  before_filter :plan, :only => [:new, :create]
+  before_filter :billing_info, :only => [:new, :create, :edit]
+  before_filter :payment_method, :only => [:new, :create, :edit]
 
   before_filter :process_async
 
@@ -94,57 +94,6 @@ class AccountUpgradesController < ConsoleController
   end
 
   protected
-    def get_aria_user
-      add_async(:aria_user => current_user)
-    end
-
-    def streamline_type
-      user = current_user
-      user.streamline_type!
-      add_async(:aria_user => user)
-    end
-
-    def get_plan
-      add_async(:plan)
-    end
-
-    def get_billing
-      add_async(:billing_info)
-    end
-
-    def get_payment
-      add_async(:payment_method)
-    end
-
-    def add_async(*args)
-      @async ||= {}
-      options = args.extract_options!
-      @async.merge!(options)
-      args.each do |arg|
-        @async[arg] = true
-      end
-    end
-
-    def process_async(*args)
-      args = @async if args.empty?
-
-      unless args.empty?
-        async do
-          @user = User.find :one, :as => current_user
-          @plan = Aria::MasterPlan.cached.find params[:plan_id]
-          @current_plan = @user.plan
-        end if args[:plan]
-
-        async do
-          @aria_user = Aria::UserContext.new(args[:aria_user])
-          @payment_method = @aria_user.payment_method if args[:payment_method]
-          @billing_info = @aria_user.billing_info if args[:billing_info]
-        end
-
-        join!
-      end
-    end
-
     def authenticate_user_for_upgrade!
       redirect_to login_or_signup_path(account_plan_upgrade_path) unless user_signed_in?
     end
