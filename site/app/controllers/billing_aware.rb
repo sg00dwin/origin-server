@@ -91,7 +91,7 @@ module BillingAware
     def process_async(*args)
       args = @async if args.empty?
 
-      unless args.empty?
+      unless args.nil?
         async do
           @user = User.find :one, :as => current_user
           @plan = Aria::MasterPlan.cached.find(args[:plan])
