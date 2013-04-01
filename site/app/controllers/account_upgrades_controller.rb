@@ -6,10 +6,11 @@ class AccountUpgradesController < ConsoleController
   before_filter :user_can_upgrade_plan!
 
   before_filter :streamline_type, :only => :show
-  before_filter :get_aria_user, :only => [:new, :create, :edit]
 
+  before_filter :get_aria_user, :only => [:new, :create, :edit]
   before_filter :get_plan, :only => [:new, :create]
   before_filter :get_billing, :only => [:new, :create, :edit]
+  before_filter :get_payment, :only => [:new, :create, :edit]
 
   before_filter :process_async
 
@@ -80,7 +81,7 @@ class AccountUpgradesController < ConsoleController
     end
 
     current_user_changed!
-    get_aria_user
+    process_async(:aria_user => current_user)
 
     begin
       render :edit and return unless @aria_user.create_account(:billing_info => @billing_info)
@@ -93,35 +94,46 @@ class AccountUpgradesController < ConsoleController
   end
 
   protected
-    def get_aria_user(user = current_user)
-      @aria_user = Aria::UserContext.new(user)
+    def get_aria_user
+      @async[:aria_user] = current_user
     end
 
     def streamline_type
       user = current_user
       user.streamline_type!
-      get_aria_user(user)
+      @async[:aria_user] = user
     end
 
     def get_plan
-      async do
-        @user = User.find :one, :as => current_user
-        @plan = Aria::MasterPlan.cached.find params[:plan_id]
-        @current_plan = @user.plan
-      end
-      @async = true
+      @async[:plan] = true
     end
 
     def get_billing
-      async do
-        @payment_method = @aria_user.payment_method
-        @billing_info = @aria_user.billing_info
-      end
-      @async = true
+      @async[:billing_info] = true
     end
 
-    def process_async
-      join! if @async
+    def get_payment
+      @async[:payment_method] = true
+    end
+
+    def process_async(*args)
+      args = @async if args.empty?
+
+      unless args.empty?
+        async do
+          @user = User.find :one, :as => current_user
+          @plan = Aria::MasterPlan.cached.find params[:plan_id]
+          @current_plan = @user.plan
+        end if args[:plan]
+
+        async do
+          @aria_user = Aria::UserContext.new(args[:aria_user])
+          @payment_method = @aria_user.payment_method if args[:payment_method]
+          @billing_info = @aria_user.billing_info if args[:billing_info]
+        end
+
+        join!
+      end
     end
 
     def authenticate_user_for_upgrade!
