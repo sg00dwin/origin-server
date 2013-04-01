@@ -68,7 +68,7 @@ module BillingAware
     end
 
     def plan
-      add_async(:plan)
+      add_async(:plan => params[:plan_id])
     end
 
     def billing_info
@@ -94,7 +94,7 @@ module BillingAware
       unless args.empty?
         async do
           @user = User.find :one, :as => current_user
-          @plan = Aria::MasterPlan.cached.find params[:plan_id]
+          @plan = Aria::MasterPlan.cached.find(args[:plan])
           @current_plan = @user.plan
         end if args[:plan]
 
