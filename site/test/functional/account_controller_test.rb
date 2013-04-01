@@ -81,6 +81,20 @@ class AccountControllerTest < ActionController::TestCase
       assert_select 'a', 'Upgrade Now'
       assert_select 'h1', /Free/, response.inspect
     end
+
+    test "should render dashboard with no next bill" do
+      omit_if_aria_is_unavailable
+      with_account_holder
+      Aria::UserContext.any_instance.expects(:next_bill).returns(false)
+      get :show
+      assert_response :success
+      assert assigns(:user)
+      assert assigns(:identity)
+      assert assigns(:domain).nil?
+      assert assigns(:plan)
+      assert_select 'a', 'Upgrade Now'
+      assert_select 'p', /not currently subscribed/
+    end
   end
 
   test "should render dashboard without aria" do
