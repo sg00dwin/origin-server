@@ -107,7 +107,6 @@ RedHatCloud::Application.configure do
                                  common.css
                                  console.css
                                  site.css
-                                 openshift-icon.css
                                  overpass.css
                                 )
 
