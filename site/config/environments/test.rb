@@ -70,7 +70,7 @@ RedHatCloud::Application.configure do
   # Add a corresponding value in config/countries.yml if the country uses something other than:
   #  - 'State' for the locality
   #  - 'Postcode' for the postal code
-  config.allowed_countries = [:US, :DE, :CA]
+  config.allowed_countries = %w(AT BE CA CH DE DK ES FI FR GB IE IS IT LU NL NO PT SE US).map(&:to_sym)
   # Preferred countries will show up first in the countries list
   config.preferred_countries = [:US]
   # Specify allowed currencies here

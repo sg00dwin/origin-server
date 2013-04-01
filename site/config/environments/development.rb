@@ -28,7 +28,7 @@ RedHatCloud::Application.configure do
   ############################################
   # OpenShift Configuration Below this point #
   ############################################
-  config.integrated = false
+  config.integrated = true
   config.streamline = {
     :host => 'https://streamline-proxy1.ops.rhcloud.com',
     :base_url => '/wapps/streamline',
@@ -63,7 +63,7 @@ RedHatCloud::Application.configure do
   # Add a corresponding value in config/countries.yml if the country uses something other than:
   #  - 'State' for the locality
   #  - 'Postcode' for the postal code
-  config.allowed_countries = [:US, :DE, :CA]
+  config.allowed_countries = %w(AT BE CA CH DE DK ES FI FR GB IE IS IT LU NL NO PT SE US).map(&:to_sym)
   config.preferred_countries = [:US]
 
   # Specify accepted cards here. Keys can be found in config/credit_cards.yml
