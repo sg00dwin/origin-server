@@ -309,7 +309,7 @@ function _openshift_heading(&$vars) {
   case 'wikis': $heading = "Open Source Wiki"; break;
   case 'discussion':
   case 'groups':
-  case 'group': $heading = "Forum"; $vars['head_title'] = $heading; break;
+  case 'group': $heading = "Forum"; break;
   #case 'documentation': $heading = "Documentation"; break; // no title for some reason
   case 'community': $heading = "Welcome to OpenShift"; break; // override the default link title
   case 'calendar':
