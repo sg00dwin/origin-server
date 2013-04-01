@@ -32,7 +32,7 @@ end
 DEVENV_AMI_WILDCARDS["fork_ami_*"] = {:keep => 50, :keep_per_sub_group => 1, :regex => /(fork_ami_.*)_(\d+)/}
 
 VERIFIER_REGEXS = {/^(devenv).*_(\d+)$/ => {:multiple => true},
-                   /^(oso-fedora).*_(\d+)$/ => {:multiple => true},
+                   /^(oso).*_(\d+)$/ => {:multiple => true},
                    /^(enterprise).*_(\d+)$/ => {:multiple => true},
                    /^((test|merge)_pull_requests).*_(\d+)$/ => {:multiple => true, :max_run_time => (60*60*2)},
                    /^(fork_ami)_.*_(\d+)$/ => {:multiple => true}}
