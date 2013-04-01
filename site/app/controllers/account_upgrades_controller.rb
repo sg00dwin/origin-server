@@ -5,6 +5,14 @@ class AccountUpgradesController < ConsoleController
   before_filter :authenticate_user_for_upgrade!, :only => :show
   before_filter :user_can_upgrade_plan!
 
+  before_filter :streamline_type, :only => :show
+  before_filter :get_aria_user, :only => [:new, :create, :edit]
+
+  before_filter :get_plan, :only => [:new, :create]
+  before_filter :get_billing, :only => [:new, :create, :edit]
+
+  before_filter :process_async
+
   rescue_from Aria::Error do |e|
     @message = case e
       when Aria::UserIdCollision; "Your account encountered a problem during the create account step.  Please contact technical support about the error: IDCOLLISION."
@@ -15,38 +23,13 @@ class AccountUpgradesController < ConsoleController
   end
 
   def new
-    plan_id = params[:plan_id]
-
-    aria_user = Aria::UserContext.new(current_user)
-
-    async do
-      @user = User.find :one, :as => current_user
-      @plan = Aria::MasterPlan.cached.find plan_id
-      @current_plan = @user.plan
-    end
-    async do
-      @payment_method = aria_user.payment_method
-      @billing_info = aria_user.billing_info
-    end
-    join!
-
     render :unchanged and return if @plan == @current_plan
     render :downgrade and return if @plan.basic?
     render :change and return unless @current_plan.basic?
   end
 
   def create
-    plan_id = params[:plan_id]
-
-    aria_user = Aria::UserContext.new(current_user)
-    @payment_method = aria_user.payment_method
-    @billing_info = aria_user.billing_info
-
-    @user = User.find :one, :as => current_user
-    @plan = Aria::MasterPlan.cached.find plan_id
-    @current_plan = @user.plan
-
-    @user.plan_id = plan_id
+    @user.plan_id = params[:plan_id]
 
     unless @payment_method.persisted? and @billing_info.persisted?
       @user.errors[:base] = "You must provide a method of payment and billing address for this account."
@@ -65,21 +48,15 @@ class AccountUpgradesController < ConsoleController
   end
 
   def show
-    user = current_user
-    user.streamline_type!
-    @user = Aria::UserContext.new(user)
-
-    redirect_to edit_account_plan_upgrade_path and return unless @user.full_user? && @user.has_complete_account?
-    redirect_to account_plan_upgrade_payment_method_path and return unless @user.has_valid_payment_method?
+    redirect_to edit_account_plan_upgrade_path and return unless @aria_user.full_user? && @aria_user.has_complete_account?
+    redirect_to account_plan_upgrade_payment_method_path and return unless @aria_user.has_valid_payment_method?
     redirect_to new_account_plan_upgrade_path
   end
 
   def edit
-    user = Aria::UserContext.new(current_user)
-    @full_user = user.full_user
+    @full_user = @aria_user.full_user
     @full_user = Streamline::FullUser.test if !@full_user.persisted? && Rails.env.development?
 
-    @billing_info = user.billing_info
     copy_user_to_billing(@full_user, @billing_info) unless @billing_info.persisted?
   end
 
@@ -103,19 +80,50 @@ class AccountUpgradesController < ConsoleController
     end
 
     current_user_changed!
+    get_aria_user
 
-    user = Aria::UserContext.new(user)
     begin
-      render :edit and return unless user.create_account(:billing_info => @billing_info)
+      render :edit and return unless @aria_user.create_account(:billing_info => @billing_info)
     rescue Aria::AccountExists
-      render :edit and return unless user.update_account(:billing_info => @billing_info)
+      render :edit and return unless @aria_user.update_account(:billing_info => @billing_info)
     end
 
-    redirect_to account_plan_upgrade_payment_method_path and return unless user.has_valid_payment_method?
+    redirect_to account_plan_upgrade_payment_method_path and return unless @aria_user.has_valid_payment_method?
     redirect_to new_account_plan_upgrade_path
   end
 
   protected
+    def get_aria_user(user = current_user)
+      @aria_user = Aria::UserContext.new(user)
+    end
+
+    def streamline_type
+      user = current_user
+      user.streamline_type!
+      get_aria_user(user)
+    end
+
+    def get_plan
+      async do
+        @user = User.find :one, :as => current_user
+        @plan = Aria::MasterPlan.cached.find params[:plan_id]
+        @current_plan = @user.plan
+      end
+      @async = true
+    end
+
+    def get_billing
+      async do
+        @payment_method = @aria_user.payment_method
+        @billing_info = @aria_user.billing_info
+      end
+      @async = true
+    end
+
+    def process_async
+      join! if @async
+    end
+
     def authenticate_user_for_upgrade!
       redirect_to login_or_signup_path(account_plan_upgrade_path) unless user_signed_in?
     end
@@ -132,7 +140,7 @@ class AccountUpgradesController < ConsoleController
                when :state
                  :region
                else
-                  s
+                 s
                end
         billing.send(:"#{attr}=", full_user.send(s))
       end
