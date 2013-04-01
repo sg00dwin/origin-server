@@ -94,6 +94,7 @@ command :report do |c|
   c.syntax = "#{name} report"
 
   c.option "--report-type NAME" , "Available report types: %s" % CONFIG.reports.keys.join(', ')
+  c.option "--send-email" , "Send email?"
 
   c.description = "An assortment of Trello reporting utilities"
   c.action do |args, options|
@@ -129,7 +130,7 @@ command :report do |c|
       { :capitalize => true, :sort => 0, :separator => ':' }
     )
     
-    report.send_email
+    report.send_email if options.send_email
     
   end
 end
