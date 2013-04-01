@@ -95,25 +95,34 @@ class AccountUpgradesController < ConsoleController
 
   protected
     def get_aria_user
-      @async[:aria_user] = current_user
+      add_async(:aria_user => current_user)
     end
 
     def streamline_type
       user = current_user
       user.streamline_type!
-      @async[:aria_user] = user
+      add_async(:aria_user => user)
     end
 
     def get_plan
-      @async[:plan] = true
+      add_async(:plan)
     end
 
     def get_billing
-      @async[:billing_info] = true
+      add_async(:billing_info)
     end
 
     def get_payment
-      @async[:payment_method] = true
+      add_async(:payment_method)
+    end
+
+    def add_async(*args)
+      @async ||= {}
+      options = args.extract_options!
+      @async.merge!(options)
+      args.each do |arg|
+        @async[arg] = true
+      end
     end
 
     def process_async(*args)
