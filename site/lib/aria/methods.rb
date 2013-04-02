@@ -115,6 +115,11 @@ module Aria
       Array(super(opts).statement_history)
     end
 
+    def get_acct_trans_history(acct_no, opts={})
+      opts[:account_no] = acct_no
+      Array(super(opts).history)
+    end
+
     def get_client_plan_service_rates(plan_no, service_no)
       Array(super(:plan_no => plan_no, :service_no => service_no).plan_service_rates)
     end
@@ -132,6 +137,16 @@ module Aria
       opts[:usage_type] = usage_type
       opts[:usage_units] = usage_units
       super(opts).usage_rec_no
+    end
+
+    def advance_virtual_datetime(hours)
+      if Rails.env.production?
+        raise "advance_virtual_datetime not allowed in production environments"
+      elsif !ENV['ARIA_ADVANCE_VIRTUAL_DATETIME_ALLOWED']
+        raise "ARIA_ADVANCE_VIRTUAL_DATETIME_ALLOWED is not set"
+      else
+        super({:offset_hours => hours})
+      end
     end
 
     private
