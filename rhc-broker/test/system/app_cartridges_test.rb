@@ -241,7 +241,7 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
 
     # delete the embedded mysql cartridge
     request_via_redirect(:delete, APP_CARTRIDGE_URL_FORMAT % [ns, "app1", "mysql-5.1"], {}, @headers)
-    assert_response :ok
+    assert_response :no_content
     body = JSON.parse(@response.body)
     assert(!body["data"]["embedded"].key?("mysql-5.1"))
   end
