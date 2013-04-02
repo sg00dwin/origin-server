@@ -144,7 +144,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
 
   test "should record usage" do
     u = with_account_holder
-    assert_difference 'Aria.get_usage_history(u.acct_no, :date_range_start => u.account_details.last_bill_date).count', 2 do
+    assert_difference 'Aria.get_usage_history(u.acct_no, :date_range_start => u.account_details.last_arrears_bill_thru_date).count', 2 do
       record_usage_for_user(u)
     end
     assert usage = Aria.get_unbilled_usage_summary(u.acct_no)
