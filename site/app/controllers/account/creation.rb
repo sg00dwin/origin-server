@@ -44,7 +44,7 @@ module Account
           unless (valid = valid?({:request => request, :params => params}))
             logger.debug "Captcha check failed"
             @captcha_status = "Failed"
-            @user.errors[:captcha] = "Captcha text didn't match"
+            @user.errors[:captcha] = "Incorrect captcha submitted"
           else
             logger.debug "Captcha check passed"
           end
