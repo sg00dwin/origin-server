@@ -65,7 +65,7 @@ class AppCartridgeEventsTest < ActionDispatch::IntegrationTest
 
     # specify an invalid cartridge event
     request_via_redirect(:post, APP_CARTRIDGE_EVENTS_URL_FORMAT % [ns, "app1", "mysql-5.1"], {:event => "invalid"}, @headers)
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 126)
   end
