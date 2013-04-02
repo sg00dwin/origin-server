@@ -652,7 +652,7 @@ service openshift-port-proxy restart
             
             ssh(hostname, "mkdir -p /var/lib/openshift/.settings; touch /var/lib/openshift/.settings/v2_cartridge_format; echo 'Rails.cache.clear' | /var/www/openshift/broker/script/rails console development && service rhc-broker restart")
             begin
-              run_tests(secondary_test_queues, hostname)
+              #run_tests(secondary_test_queues, hostname)
             ensure
               ssh(hostname, "mkdir -p /var/lib/openshift/.settings; rm -rf /var/lib/openshift/.settings/v2_cartridge_format; echo 'Rails.cache.clear' | /var/www/openshift/broker/script/rails console development && service rhc-broker restart")
             end
