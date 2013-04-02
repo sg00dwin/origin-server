@@ -88,6 +88,8 @@ class AccountUpgradesControllerTest < ActionController::TestCase
 
   test "should make a copy of billing info for editing" do
     user = with_confirmed_user
+    # We are testing #edit; calling #new forces necessary before_filter calls to run
+    get :new, :plan_id => 'free'
     @controller.edit
     assert_not_nil assigns[:full_user]
     assert_not_nil assigns[:billing_info]

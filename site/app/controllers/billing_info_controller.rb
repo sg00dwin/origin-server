@@ -14,8 +14,8 @@ class BillingInfoController < ConsoleController
 
   def update
     @billing_info = Aria::BillingInfo.new params[:aria_billing_info][:aria_billing_info]
-    redirect_to next_path and return if @user.update_account(:billing_info => @billing_info)
-    @user.errors[:base].each { |e| @billing_info.errors[:base] << e }
+    redirect_to next_path and return if @aria_user.update_account(:billing_info => @billing_info)
+    @aria_user.errors[:base].each { |e| @billing_info.errors[:base] << e }
     render :edit
   end
 

@@ -41,8 +41,7 @@
       %h5 Why Can't I Change My Currency?
       %p
         Once your account is created, you are unable to change the currency you are billed in.
-
-    - if user.has_valid_payment_method?
+    - if @aria_user and @aria_user.has_account? and @aria_user.has_valid_payment_method?
       %h5 Already Have A Payment Method Registered?
       %p
         Please make sure this address matches the address on file with your credit card company.

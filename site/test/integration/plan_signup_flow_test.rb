@@ -118,7 +118,7 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     assert redirect.starts_with?(direct_create_account_plan_upgrade_payment_method_url('silver')), redirect
 
     get redirect
-    assert_redirected_to '/account/plans/silver/upgrade/new'
+    assert_redirected_to '/account/plans/silver/upgrade'
 
     # Do some direct checking here just to validate
     omit_if_aria_is_unavailable

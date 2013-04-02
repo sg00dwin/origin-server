@@ -89,19 +89,19 @@ module BillingAware
     end
 
     def process_async(*args)
-      args = @async if args.empty?
+      add_async(*args)
 
-      unless args.nil?
+      unless @async.empty?
         async do
           @user = User.find :one, :as => current_user
-          @plan = Aria::MasterPlan.cached.find(args[:plan])
+          @plan = Aria::MasterPlan.cached.find(@async[:plan])
           @current_plan = @user.plan
-        end if args[:plan]
+        end if @async[:plan]
 
         async do
-          @aria_user = Aria::UserContext.new(args[:aria_user])
-          @payment_method = @aria_user.payment_method if args[:payment_method]
-          @billing_info = @aria_user.billing_info if args[:billing_info]
+          @aria_user = Aria::UserContext.new(@async[:aria_user])
+          @payment_method = @aria_user.payment_method if @async[:payment_method]
+          @billing_info = @aria_user.billing_info if @async[:billing_info]
         end
 
         join!

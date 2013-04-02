@@ -27,7 +27,7 @@ class BillingInfoControllerTest < ActionController::TestCase
     aria_billing_info = assigns(:billing_info).attributes
     aria_billing_info['currency_cd'] = aria_billing_info['currency_cd'] == 'usd' ? 'eur' : 'usd'
     post :update, :aria_billing_info => { :aria_billing_info => aria_billing_info }
-    assert assigns(:user)
+    assert assigns(:aria_user)
     assert assigns(:billing_info).errors[:base].length > 0
     assert_template :edit
   end

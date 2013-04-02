@@ -24,7 +24,7 @@ class AccountUpgradePaymentMethodControllerTest < ActionController::TestCase
     with_account_holder
     Aria::UserContext.any_instance.expects(:has_valid_payment_method?).returns(true)
     get :direct_update, :plan_id => :silver
-    assert_redirected_to new_account_plan_upgrade_path
+    assert_redirected_to account_plan_upgrade_path
   end
 
   test "should redirect when aria reports an error" do

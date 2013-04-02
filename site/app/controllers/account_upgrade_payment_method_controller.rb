@@ -1,7 +1,7 @@
 class AccountUpgradePaymentMethodController < PaymentMethodsController
-  before_filter :aria_user, :only => [:show, :new]
-  before_filter :payment_method, :only => [:show, :new]
-  before_filter :billing_info, :only => [:new]
+  before_filter :aria_user, :only => [:edit, :show, :new]
+  before_filter :payment_method, :only => [:edit, :show, :new]
+  before_filter :billing_info, :only => [:edit, :new]
   before_filter :process_async
 
   def show
@@ -17,7 +17,7 @@ class AccountUpgradePaymentMethodController < PaymentMethodsController
     update_errors(@payment_method.errors, (params[:payment_method] || {})[:errors] || {})
 
     @payment_method.mode = Aria::DirectPost.get_or_create(params[:plan_id], url_for(:action => :direct_create))
-    @payment_method.session_id = @user.create_session
+    @payment_method.session_id = @aria_user.create_session
   end
 
   def direct_create

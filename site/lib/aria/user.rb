@@ -272,7 +272,7 @@ module Aria
       end
       return false unless validates
 
-      if self.billing_info.attributes['currency_cd'].present? and self.billing_info.attributes['currency_cd'] != params['currency_cd']
+      if self.billing_info.attributes['currency_cd'].present? and params.has_key?('currency_cd') and self.billing_info.attributes['currency_cd'] != params['currency_cd']
         raise Aria::Error, 'Contact customer support if you need to change your payment currency'
       end
 
