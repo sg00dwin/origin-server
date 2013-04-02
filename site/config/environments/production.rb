@@ -62,6 +62,9 @@ RedHatCloud::Application.configure do
   config.sso_verify_interval = 60
   config.captcha_types = [:recaptcha,:picatcha]
 
+  # Customer Support Links
+  config.customer_support_new_ticket_url = 'https://access.redhat.com/support/cases/new/'
+
   # Aria API information
   config.aria_enabled = true
   config.aria_uri = "https://secure.current.stage.ariasystems.net/api/ws/api_ws_class_dispatcher.php"

@@ -26,6 +26,10 @@ module AccountHelper
     community_base_url 'policy/tax-exemptions'
   end
 
+  def customer_support_new_ticket_url
+    @customer_support_new_ticket_url ||= Rails.configuration.customer_support_new_ticket_url
+  end
+
   def line_item_details(li)
     if li.tax?
     elsif li.usage?
