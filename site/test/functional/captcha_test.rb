@@ -57,7 +57,7 @@ class CaptchaTest < ActionController::TestCase
 		@controller.expects(:valid?).returns(false)
 		post(:create, {:web_user => {}})
 
-		assert_equal ["Captcha text didn't match"], Array(assigns(:user).errors[:captcha])
+		assert_equal ["Incorrect captcha submitted"], Array(assigns(:user).errors[:captcha])
     assert_nil assigns(:captcha_secret)
 	end
 
