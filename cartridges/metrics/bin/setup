@@ -1,0 +1,16 @@
+#!/bin/bash -e
+set -x
+
+source /usr/lib/openshift/node/util
+
+# Create additional directories required by JENKINS
+mkdir -p ${OPENSHIFT_METRICS_DIR}/{logs,data}
+
+client_result ""
+client_result "metrics added."
+client_result ""
+client_result "URL: https://$OPENSHIFT_GEAR_DNS/metrics/"
+
+cart_props "connection_url=https://$OPENSHIFT_GEAR_DNS/metrics/"
+
+set_app_info "URL: https://$OPENSHIFT_GEAR_DNS/metrics/"

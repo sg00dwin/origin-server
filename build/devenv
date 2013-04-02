@@ -430,6 +430,35 @@ service openshift-port-proxy restart
         end
         puts "Done"
       end
+      
+      def run_tests(test_queues, hostname)
+        threads = []
+        failures = []
+
+        test_queues.each do |test_queue|
+          titles = []
+          cmds = []
+          retry_individually = []
+          timeouts = []
+          test_queue.each do |test|
+            titles << test[0]
+            cmds << test[1]
+            opts = test[2] || {}
+            retry_individually << opts[:retry_individually] ? true : false
+            timeouts << opts[:timeout] ? opts[:timeout] : @@SSH_TIMEOUT
+          end
+          add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, retry_individually, timeouts)
+        end
+
+        threads.each do |t|
+          t[0].join
+        end
+        
+        if failures.length > 0
+          idle_all_gears(hostname)
+          retry_test_failures(hostname, failures, 2)
+        end
+      end
 
       def test_impl(tag, hostname, instance, conn, options, image_id=nil)
         begin
@@ -447,6 +476,7 @@ service openshift-port-proxy restart
           broker_profiler(hostname) if options.profile_broker?
 
           test_queues = [[], [], [], []]
+          secondary_test_queues = [[], [], [], []]
 
           extended_tests = nil
           if options.include_extended
@@ -474,7 +504,7 @@ service openshift-port-proxy restart
                 test_queues[1] << ["Extended Runtime Group 2", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended2 openshift-test/tests"]
                 test_queues[2] << ["Extended Runtime Group 3", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended3 openshift-test/tests"]
               when 'runtime_other'
-                output = ssh(hostname, "mkdir -p /var/lib/openshift/.settings; touch /var/lib/openshift/.settings/v2_cartridge_format; echo 'Rails.cache.clear' | /var/www/openshift/broker/script/rails console development && service rhc-broker restart")
+                ssh(hostname, "mkdir -p /var/lib/openshift/.settings; touch /var/lib/openshift/.settings/v2_cartridge_format; echo 'Rails.cache.clear' | /var/www/openshift/broker/script/rails console development && service rhc-broker restart")
                 test_queues[0] << ["Extended Runtime Other Group 1", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended_other1 openshift-test/tests"]
                 test_queues[1] << ["Extended Runtime Other Group 2", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended_other2 openshift-test/tests"]
                 test_queues[2] << ["Extended Runtime Other Group 3", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended_other3 openshift-test/tests"]
@@ -482,7 +512,6 @@ service openshift-port-proxy restart
                 (1..4).each do |i|
                   test_queues[3] << ["Runtime Other Group #{i.to_s}", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_other_#{i.to_s} openshift-test/tests"]
                 end
-                test_queues[3] << ["Runtime Other Group", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_other openshift-test/tests"]
               when 'site'
                 test_queues[0] << ["Site Extended", "cd openshift-test/site; rake test:extended"]
               when 'rhc'
@@ -580,6 +609,7 @@ service openshift-port-proxy restart
               (1..4).each do |i|
                 test_queues[i-1] << ["Runtime Group #{i.to_s}", "cucumber #{CUCUMBER_OPTIONS} -t @runtime#{i.to_s} openshift-test/tests"]
               end
+              secondary_test_queues[0] << ["Runtime Other Group", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_other openshift-test/tests"]
             end
 
             unless options.exclude_site?
@@ -591,43 +621,14 @@ service openshift-port-proxy restart
             end
 
             unless options.exclude_rhc?
-                test_queues[0].unshift(["RHC Spec", 'cd openshift-test/rhc; bundle install --path=/tmp/rhc_bundle && bundle exec rake spec'])
+              test_queues[0].unshift(["RHC Spec", 'cd openshift-test/rhc; bundle install --path=/tmp/rhc_bundle && bundle exec rake spec'])
             end
           end
 
-          threads = []
-          failures = []
-
-          retry_threshold = 0
-          test_queues.each do |test_queue|
-            titles = []
-            cmds = []
-            retry_individually = []
-            timeouts = []
-            test_queue.each do |test|
-              titles << test[0]
-              cmds << test[1]
-              opts = test[2] || {}
-              retry_individually << opts[:retry_individually] ? true : false
-              timeouts << opts[:timeout] ? opts[:timeout] : @@SSH_TIMEOUT
-              retry_threshold += 8
-            end
-            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, retry_individually, timeouts)
-          end
-
-          threads.each do |t|
-            t[0].join
-          end
-
-          failures.uniq!
+          
 
           begin
-            if failures.length > 0 && failures.length <= retry_threshold
-              idle_all_gears(hostname)
-              retry_test_failures(hostname, failures, 2)
-            elsif failures.length > retry_threshold
-              exit 1
-            end
+            run_tests(test_queues, hostname)
 
             # These are special tests that cannot be written to work concurrently
             if options.include_extended
@@ -647,6 +648,13 @@ service openshift-port-proxy restart
                   exit 1
                 end
               end
+            end
+            
+            ssh(hostname, "mkdir -p /var/lib/openshift/.settings; touch /var/lib/openshift/.settings/v2_cartridge_format; echo 'Rails.cache.clear' | /var/www/openshift/broker/script/rails console development && service rhc-broker restart")
+            begin
+              #run_tests(secondary_test_queues, hostname)
+            ensure
+              ssh(hostname, "mkdir -p /var/lib/openshift/.settings; rm -rf /var/lib/openshift/.settings/v2_cartridge_format; echo 'Rails.cache.clear' | /var/www/openshift/broker/script/rails console development && service rhc-broker restart")
             end
 
             validate_instance(hostname, 4)

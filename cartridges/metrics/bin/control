@@ -1,0 +1,60 @@
+#!/bin/bash -e
+
+source /usr/lib/openshift/node/util
+
+export PHPRC="${OPENSHIFT_METRICS_DIR}/conf/php.ini"
+
+CART_CONF_DIR=${OPENSHIFT_METRICS_DIR}/configuration/etc/conf
+HTTPD_CFG_FILE=$CART_CONF_DIR/httpd_nolog.conf
+HTTPD_PID_FILE=${OPENSHIFT_METRICS_DIR}/run/httpd.pid
+
+cartridge_type="metrics"
+
+function start() {
+    if [ -f ${metrics_dir}/run/stop_lock ]
+    then
+        echo "Application is explicitly stopped!  Use 'rhc cartridge start -a ${OPENSHIFT_APP_NAME} -c ${cartridge_type}' to start back up." 1>&2
+        exit 0
+    else
+        ensure_valid_httpd_process "$HTTPD_PID_FILE" "$HTTPD_CFG_FILE"
+        /usr/sbin/httpd -C "Include ${OPENSHIFT_METRICS_DIR}/conf.d/*.conf" -f $HTTPD_CFG_FILE -k start
+    fi
+}
+
+function stop() {
+    # Don't exit on errors on stop.
+    set +e
+    httpd_pid=`cat "$HTTPD_PID_FILE" 2> /dev/null`
+    ensure_valid_httpd_process "$HTTPD_PID_FILE" "$HTTPD_CFG_FILE"
+    /usr/sbin/httpd -C "Include ${OPENSHIFT_METRICS_DIR}/conf.d/*.conf" -f $HTTPD_CFG_FILE -k stop
+    wait_for_stop $httpd_pid
+}
+
+function restart() {
+    ensure_valid_httpd_process "$HTTPD_PID_FILE" "$HTTPD_CFG_FILE"
+    /usr/sbin/httpd -C "Include ${OPENSHIFT_METRICS_DIR}/conf.d/*.conf" -f $HTTPD_CFG_FILE -k reload
+}
+
+function status() {
+   if isrunning
+   then
+      echo "Application is running"
+   else
+      echo "Application is either stopped or inaccessible"
+   fi
+}
+
+function reload() {
+    echo "Reloading $cartridge_type cart"
+    restart
+}
+
+case "$1" in
+  start)      start ;;
+  stop)       stop ;;
+  restart)    restart ;;
+  status)     status ;;
+  reload)     reload ;;
+  *)          exit 0
+esac
+
