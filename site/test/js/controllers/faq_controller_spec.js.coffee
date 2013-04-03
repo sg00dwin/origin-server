@@ -1,3 +1,4 @@
+#= require application
 
 describe 'FAQ Controller', ->
 
@@ -11,7 +12,7 @@ describe 'FAQ Controller', ->
       scope.filter()
 
       # Then
-      expect(scope.questions).toBe(scope.topten)
+      expect(scope.questions).to.equal(scope.topten)
 
     it 'should find a single name match', ->
       # Given
@@ -29,7 +30,7 @@ describe 'FAQ Controller', ->
       scope.filter()
 
       # Then
-      expect(scope.questions).toEqual([faq.faq[0]])
+      expect(scope.questions).to.eql([faq.faq[0]])
 
     it 'should find case insensitive name matches', ->
       # Given
@@ -49,7 +50,7 @@ describe 'FAQ Controller', ->
       scope.filter()
 
       # Then
-      expect(scope.questions).toEqual([faq.faq[3], faq.faq[2]])
+      expect(scope.questions).to.eql([faq.faq[3], faq.faq[2]])
 
     it 'should find a body match', ->
 
@@ -68,7 +69,7 @@ describe 'FAQ Controller', ->
       scope.filter()
 
       # Then
-      expect(scope.questions).toEqual([faq.faq[1]])
+      expect(scope.questions).to.eql([faq.faq[1]])
 
     it 'should weight name matches higher', ->
 
@@ -87,7 +88,7 @@ describe 'FAQ Controller', ->
       scope.filter()
 
       # Then
-      expect(scope.questions).toEqual([faq.faq[1], faq.faq[0]])
+      expect(scope.questions).to.eql([faq.faq[1], faq.faq[0]])
 
     it 'should weight name and body matches highest', ->
 
@@ -108,5 +109,5 @@ describe 'FAQ Controller', ->
       scope.filter()
 
       # Then
-      expect(scope.questions).toEqual([faq.faq[1], faq.faq[3], faq.faq[0]])
+      expect(scope.questions).to.eql([faq.faq[1], faq.faq[3], faq.faq[0]])
 
