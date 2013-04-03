@@ -134,7 +134,7 @@ class CloudUser
     plan_info = self.get_plan_info(plan_id)
 
     cur_time = Time.now.utc
-    filter = {:_id => self._id, :pending_plan_id => nil, :pending_plan_uptime => nil, :plan_state => PLAN_STATES['active']}
+    filter = {:_id => self._id, :pending_plan_id => nil, :pending_plan_uptime => nil, "$or" => [{:plan_state => nil}, {:plan_state => PLAN_STATES['active']}]}
     update = {"$set" => {:pending_plan_id => plan_id, :pending_plan_uptime => cur_time, :plan_state => CloudUser::PLAN_STATES['pending']}}
     user = CloudUser.with(consistency: :strong).where(filter).find_and_modify(update, {:new => true})
 
