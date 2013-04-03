@@ -12,11 +12,11 @@ $ ->
   # TODO: For some reason, the checkbox was not being checked when the image was clicked
   #       This was causing the Picatcha logic to not deselect images
   #       This worked on their demo page, so I believe it has something to do with validator
-  $('#captcha_inputs').on 'click', '#picatcha_widget img', (ev) ->
+  $('#picatcha').on 'click', 'img', (ev) ->
     img  = $(ev.target)
     ckbx = img.closest('.picatcha_td').find('input[type=checkbox]')
     ckbx.attr('checked', img.hasClass('selected') )
-    true # Allow this to bubble up
+    this # Allow this to bubble up
 
   $('#captcha_inputs').on 'click', '#picatcha_widget:has(p.help-inline[generated=true]) img', (ev) ->
     selected = picatcha_selected()
