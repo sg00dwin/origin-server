@@ -68,10 +68,10 @@ namespace :aria do
 
   private
 
-  def assert condition
+  def check condition
     raise Error unless condition
   end
-  def assert_equal a, b
+  def check_equal a, b
     raise "#{a} != #{b}" unless a == b
   end
 
@@ -95,15 +95,15 @@ namespace :aria do
       if user.has_account?
         puts "\t\tAccount already exists, updating broker user to match current plan"
         next_plan = Aria::MasterPlan.for_plan_no(user.next_plan_no.to_i)
-        User.find(:one, :as => user).tap{ |a| a.plan_id = next_plan.id; assert a.save }
+        User.find(:one, :as => user).tap{ |a| a.plan_id = next_plan.id; check a.save }
       else
         create_data[:test_acct_ind] ||= 0
         create_data[:billing_info] ||= Aria::BillingInfo.test
-        assert user.create_account create_data
-        User.find(:one, :as => user).tap{ |a| a.plan_id = :free; assert a.save }
-        assert_equal '1', user.account_details.bill_day
-        assert_equal '0', user.account_details.status_cd
-        assert_equal Aria.default_plan_no.to_s, user.account_details.plan_no
+        check user.create_account create_data
+        User.find(:one, :as => user).tap{ |a| a.plan_id = :free; check a.save }
+        check_equal '1', user.account_details.bill_day
+        check_equal '0', user.account_details.status_cd
+        check_equal Aria.default_plan_no.to_s, user.account_details.plan_no
       end
     end
 
@@ -132,14 +132,13 @@ namespace :aria do
       puts "#{"(dry-run) " if dry_run}Set date to #{date}"
       return if dry_run
       virtual_date = Aria.get_virtual_datetime.virtual_date.to_date
-      case virtual_date
-      when virtual_date > date
+      if virtual_date > date
         raise "Cannot travel back in time from #{virtual_date} to #{date}" if date < virtual_date
-      when virtual_date < date
+      elsif virtual_date < date
         days = (date - virtual_date).to_i
         if days > 0
-          puts "Advancing #{days*24} hours"
-          #Aria.advance_virtual_datetime(days * 24)
+          puts "\t\tAdvancing #{days*24} hours"
+          Aria.advance_virtual_datetime(days * 24)
         end
       end
     end
@@ -150,17 +149,17 @@ namespace :aria do
       # Have to pass test_acct_ind to keep aria from turning this into a test user
       p = Aria::PaymentMethod.test
       old = user.account_details
-      assert user.update_account :pay_method => 1,
+      check user.update_account :pay_method => 1,
                                  :cc_number => p.cc_no,
                                  :cc_expire_mm => p.cc_expire_mm,
                                  :cc_expire_yyyy => p.cc_expire_yyyy,
                                  :status_cd => 1
       # Hack needed when setting payment info to a test credit card
-      assert user.update_account :test_acct_ind => 0
-      assert_equal old.bill_day, user.account_details.bill_day
-      assert_equal old.plan_no, user.account_details.plan_no
-      assert_equal '1', user.account_details.status_cd
-      assert !user.test_user?
+      check user.update_account :test_acct_ind => 0
+      check_equal old.bill_day, user.account_details.bill_day
+      check_equal old.plan_no, user.account_details.plan_no
+      check_equal '1', user.account_details.status_cd
+      check !user.test_user?
       user.clear_cache!
     end
 
@@ -168,27 +167,27 @@ namespace :aria do
       puts "#{"(dry-run) " if dry_run}\t#{user.login}: Upgrade" 
       return if dry_run
       old = user.account_details
-      assert silver = Aria::MasterPlan.find('silver')
-      User.find(:one, :as => user).tap{ |a| a.plan_id = :silver; assert a.save }
+      check silver = Aria::MasterPlan.find('silver')
+      User.find(:one, :as => user).tap{ |a| a.plan_id = :silver; check a.save }
       user.clear_cache!
-      assert_equal old.bill_day, user.account_details.bill_day
-      assert_equal silver.name, user.account_details.plan_name
+      check_equal old.bill_day, user.account_details.bill_day
+      check_equal silver.name, user.account_details.plan_name
     end
 
     downgrade = lambda do |dry_run,user,date,interval| 
       puts "#{"(dry-run) " if dry_run}\t#{user.login}: Downgrade" 
       return if dry_run
       old = user.account_details
-      assert free = Aria::MasterPlan.find('free')
-      User.find(:one, :as => user).tap{ |a| a.plan_id = :free; assert a.save }
+      check free = Aria::MasterPlan.find('free')
+      User.find(:one, :as => user).tap{ |a| a.plan_id = :free; check a.save }
       user.clear_cache!
-      assert_equal old.bill_day, user.account_details.bill_day
-      assert_equal old.plan_name, user.account_details.plan_name
-      assert_equal free.plan_no, user.next_plan_no
+      check_equal old.bill_day, user.account_details.bill_day
+      check_equal old.plan_name, user.account_details.plan_name
+      check_equal free.plan_no, user.next_plan_no
     end
 
     free = Aria::MasterPlan.find 'free'
-    assert free_s = Aria.get_client_plan_services(free.plan_no).find{ |s| s.client_coa_code == 'usage_gear_small' }
+    check free_s = Aria.get_client_plan_services(free.plan_no).find{ |s| s.client_coa_code == 'usage_gear_small' }
     record_free_usage = lambda do |dry_run,user, date, interval|
       small_amount = 1000 + [interval.to_i/3600, 1250].min
       usage_date = "#{date.to_s} 12:00:00"
@@ -199,8 +198,8 @@ namespace :aria do
     end
 
     silver = Aria::MasterPlan.find 'silver'
-    assert silver_s = Aria.get_client_plan_services(silver.plan_no).find{ |s| s.client_coa_code == 'usage_gear_small' }
-    assert silver_m = Aria.get_client_plan_services(silver.plan_no).find{ |s| s.client_coa_code == 'usage_gear_medium' }
+    check silver_s = Aria.get_client_plan_services(silver.plan_no).find{ |s| s.client_coa_code == 'usage_gear_small' }
+    check silver_m = Aria.get_client_plan_services(silver.plan_no).find{ |s| s.client_coa_code == 'usage_gear_medium' }
     record_silver_usage_under = lambda do |dry_run,user, date, interval|
       small_amount = 1000 + [interval.to_i/3600, 1250].min
       usage_date = "#{date.to_s} 12:00:00"
