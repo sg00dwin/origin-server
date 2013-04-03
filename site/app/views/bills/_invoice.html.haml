@@ -39,9 +39,9 @@
 
     %section.panel
       - if @prev_no
-        %span.pull-left= link_to "< Previous bill", account_bill_path(@prev_no)
+        %span.pull-left= link_to "< Previous bill", account_bill_path(@prev_no), :class => 'previous-link'
       - if @next_no
-        %span.pull-right= link_to "Next bill >", account_bill_path(@next_no)
+        %span.pull-right= link_to "Next bill >", account_bill_path(@next_no), :class => 'next-link'
       &nbsp;
 
   .span4

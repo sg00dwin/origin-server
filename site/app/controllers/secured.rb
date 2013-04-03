@@ -95,11 +95,11 @@ module Secured
             logger.warn "Notifying user about pending account access"
             #flash[:notice] = "We are still working on getting your access setup..."
             #FIXME: redirect to a page indicating that they don't have access yet
-            render 'access/pending.html.haml'
+            render 'access/pending'
           else
             logger.error "Auto-request access for user #{user.rhlogin} failed, #{user.errors}"
             #FIXME: display a page indicating to the user that an error occurred while requesting access
-            render 'access/error.html.haml'
+            render 'access/error'
           end
           false
         end

@@ -598,6 +598,48 @@ class AriaUnitTest < ActiveSupport::TestCase
 
   end
 
+  def test_bill_shows_payment_details_correctly
+    payment1 = Aria::Payment.new(Aria::WDDX::Struct.new({
+      "transaction_id"=>1,
+      "transaction_type"=>3,
+      "description"=>"Credit Card",
+      "amount"=>100.00,
+      "applied_amount"=>100.00,
+      "currency_code"=>"usd",
+      "transaction_date"=>"2010-01-01",
+      "is_voided"=>"false",
+      "statement_no"=>0,
+      "payment_type"=>"1",
+      "payment_src_description"=>"Credit Card",
+      "payment_src_suffix"=>"1111",
+      "client_receipt_id"=>nil
+    }))
+
+    payment2 = Aria::Payment.new(Aria::WDDX::Struct.new({
+      "transaction_id"=>1,
+      "transaction_type"=>3,
+      "description"=>"Credit Card",
+      "amount"=>100.00,
+      "applied_amount"=>50.00,
+      "currency_code"=>"usd",
+      "transaction_date"=>"2010-01-01",
+      "is_voided"=>"false",
+      "statement_no"=>0,
+      "payment_type"=>"1",
+      "payment_src_description"=>"Credit Card",
+      "payment_src_suffix"=>"1111",
+      "client_receipt_id"=>nil
+    }))
+
+    assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0).show_payment_amounts
+    assert Aria::Bill.new(nil, nil, nil, nil, nil, [payment1], [], 0).show_payment_amounts, "A payment that doesn't match the balance should show the amount"
+    assert Aria::Bill.new(nil, nil, nil, nil, nil, [payment2], [], 50).show_payment_amounts, "A payment that is partially applied should show the amount"
+    assert Aria::Bill.new(nil, nil, nil, nil, nil, [payment2], [], 100).show_payment_amounts, "A payment that is partially applied should show the amount"
+    assert Aria::Bill.new(nil, nil, nil, nil, nil, [payment1, payment2], [], 100).show_payment_amounts, "When there are multiple payments, they should show their amounts"
+    
+    assert_false Aria::Bill.new(nil, nil, nil, nil, nil, [payment1], [], 100).show_payment_amounts, "A payment that is fully applied and matches the balance due shouldn't show its amount"
+  end
+
   def test_line_item_prorated
     assert !Aria::RecurringLineItem.new({'units' => 1.0}, 1).prorated?
     assert  Aria::RecurringLineItem.new({'units' => 0.1}, 1).prorated?
@@ -623,6 +665,16 @@ class AriaUnitTest < ActiveSupport::TestCase
 
     assert items = Aria::RecurringLineItem.find_all_by_plan_no(stub_plan_pay['plan_no'])
     assert items.length == 1
+  end
+
+  def test_tolerate_missing_plans
+    stub_client_plans_all([])
+    assert items = Aria::RecurringLineItem.find_all_by_plan_no(1)
+    assert_equal 0, items.length
+
+    stub_acct_plans_all(1, [])
+    assert items = Aria::RecurringLineItem.find_all_by_current_plan(1)
+    assert_equal 0, items.length
   end
 
   def test_collapse_identical_usage_line_items
@@ -666,8 +718,7 @@ class AriaUnitTest < ActiveSupport::TestCase
     u = TestUser.new
     u.expects(:acct_no).at_least_once.returns('1')
     stub_acct_details(1, {
-      :plan_no => Rails.configuration.aria_default_plan_no.to_s,
-      :next_bill_date => '2013-01-02'
+      :plan_no => Rails.configuration.aria_default_plan_no.to_s
     })
     stub_queued_plans(1, [])
     assert_equal false, u.next_bill
@@ -683,16 +734,98 @@ class AriaUnitTest < ActiveSupport::TestCase
     assert_equal 'Plan: SuperMockShift', bill.line_items.first.name
   end
 
-  def test_user_should_have_bill_today
+  def test_user_should_have_bill_today_when_billed_through_yesterday
     u = TestUser.new
     u.expects(:acct_no).at_least_once.returns(1.to_s)
     stub_next_bill(
       :plan_no => '2',
       :next_bill_date => (Date.today + 1.days).to_s,
-      :last_bill_date => (Date.today).to_s,
+      :last_arrears_bill_thru_date => (Date.yesterday).to_s,
     )
     assert bill = u.next_bill
     assert bill.present?
+    assert_equal 1, bill.day
+    assert_equal Date.today, bill.start_date
+    assert_equal Date.today, bill.end_date
+  end
+
+  def test_user_should_have_bill_when_created_today
+    u = TestUser.new
+    u.expects(:acct_no).at_least_once.returns(1.to_s)
+    stub_next_bill(
+      :plan_no => '2',
+      :next_bill_date => (Date.today + 1.days).to_s,
+      :last_arrears_bill_thru_date => nil,
+      :created => Date.today.to_s
+    )
+    assert bill = u.next_bill
+    assert bill.present?
+    assert_equal 1, bill.day
+    assert_equal Date.today, bill.start_date
+    assert_equal Date.today, bill.end_date
+  end
+
+  def test_new_user_current_period
+    u = TestUser.new
+    u.expects(:acct_no).at_least_once.returns('1')
+    
+    # Created and upgraded on 1/5
+    stub_acct_details(1, {
+      :bill_day => "1",
+      :created => "2010-01-05",
+      :date_to_expire => nil,
+      :date_to_suspend => nil,
+      :last_arrears_bill_thru_date => nil,
+      :last_bill_date => nil,
+      :last_bill_thru_date => "2010-01-31",
+      :next_bill_date => "2010-02-01",
+      :plan_date => "2010-01-05",
+      :status_date => "2010-01-05"
+    })
+    assert_equal '2010-01-05', u.current_period_start_date
+    assert_equal '2010-01-31', u.current_period_end_date
+  end
+
+  def test_upgraded_user_current_period_start_date
+    u = TestUser.new
+    u.expects(:acct_no).at_least_once.returns('1')
+    
+    # Created on 1/5, added payment info on 1/10, upgraded on 1/15
+    stub_acct_details(1, {
+      :bill_day => "1",
+      :created => "2010-01-05",
+      :date_to_expire => nil,
+      :date_to_suspend => nil,
+      :last_arrears_bill_thru_date => nil,
+      :last_bill_date => nil,
+      :last_bill_thru_date => "2010-01-31",
+      :next_bill_date => "2010-02-01",
+      :plan_date => "2010-01-15",
+      :status_date => "2010-01-10"
+    })
+    assert_equal '2010-01-05', u.current_period_start_date
+    assert_equal '2010-01-31', u.current_period_end_date
+  end
+
+  def test_existing_user_current_period_start_date
+    u = TestUser.new
+    u.expects(:acct_no).at_least_once.returns('1')
+    
+    # Created on 1/5, added payment info on 1/10, upgraded on 1/15, last billed on 2/1
+    stub_acct_details(1, {
+      :bill_day => "1",
+      :created => "2010-01-05",
+      :date_to_expire => nil,
+      :date_to_suspend => nil,
+      :last_arrears_bill_thru_date => "2010-01-31",
+      :last_bill_date => "2010-02-01",
+      :last_bill_thru_date => "2010-02-28",
+      :next_bill_date => "2010-03-01",
+      :plan_date => "2010-01-15",
+      :status_date => "2010-01-10"
+    })
+    assert_equal '2010-02-01', u.current_period_start_date
+    assert_equal '2010-02-28', u.current_period_end_date
   end
 
   def test_user_should_have_empty_bill_if_downgraded
@@ -752,7 +885,7 @@ class AriaUnitTest < ActiveSupport::TestCase
     acct_no = 1 || opts[:acct_no]
     opts.reverse_merge!({
       :next_bill_date => (Date.today + 2.days).to_s,
-      :last_bill_date => (Date.today + 1.day).to_s,
+      :last_arrears_bill_thru_date => (Date.yesterday).to_s,
     })
     plan_no = opts[:plan_no] || Rails.application.aria_default_plan_no
 
@@ -760,7 +893,7 @@ class AriaUnitTest < ActiveSupport::TestCase
     }).to_return(resp(ok_wddx({
       :current_offset_hours => 0,
     })))
-    stub_acct_details(acct_no, {:plan_no => plan_no}.merge(opts.slice(:next_bill_date, :last_bill_date)))
+    stub_acct_details(acct_no, {:plan_no => plan_no}.merge(opts.slice(:next_bill_date, :last_arrears_bill_thru_date, :created)))
     stub_queued_plans(acct_no, opts[:queued_plans] || [])
     stub_acct_invoice_history(acct_no, opts[:invoice_history] || [])
     stub_aria(:get_usage_history, {

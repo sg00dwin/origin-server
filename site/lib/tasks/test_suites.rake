@@ -27,6 +27,8 @@ namespace :test do
       'test/**/plan_signup_flow_test.rb',
       'test/**/payment_methods_controller_test.rb',
       'test/**/billing_info_controller_test.rb',
+      'test/**/bills_controller_test.rb',
+      'test/**/account_controller_test.rb',
       'test/**/account_upgrade*_test.rb',
     ]
   end

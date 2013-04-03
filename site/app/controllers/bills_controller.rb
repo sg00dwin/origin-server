@@ -22,7 +22,7 @@ class BillsController < ConsoleController
     h["Content-Transfer-Encoding"] = "binary"
     self.response_body = Enumerator.new do |y|
       y << columns.to_csv
-      transactions = Array(Aria.get_acct_trans_history(:account_no => @user.acct_no).history).sort_by(&:transaction_create_date)
+      transactions = @user.transactions
       transactions.each do |t|
         case t.transaction_type
         when 1
@@ -65,6 +65,10 @@ class BillsController < ConsoleController
 
 
   protected
+    def active_tab
+      :account
+    end
+
     def require_aria_account
       @user = Aria::UserContext.new(current_user)
       redirect_to account_path and return false unless @user.has_account?

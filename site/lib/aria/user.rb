@@ -111,10 +111,11 @@ module Aria
             false
           else
             start_date = aria_datetime(current_period_start_date)
+            end_date = aria_datetime(current_period_end_date)
             next_bill_date = aria_datetime(account_details.next_bill_date)
             Aria::Bill.new(
               start_date,
-              next_bill_date - 1.day,
+              end_date,
               next_bill_date,
               (Aria::DateTime.today - start_date).to_i + 1,
               next_plan_recurring_line_items,
@@ -129,7 +130,15 @@ module Aria
     end
 
     def current_period_start_date
-      [(account_details.last_bill_date || account_details.last_bill_thru_date), today].min
+      if account_details.last_arrears_bill_thru_date
+        (account_details.last_arrears_bill_thru_date.to_date + 1.day).to_s
+      else
+        account_details.created
+      end
+    end
+
+    def current_period_end_date
+      (account_details.next_bill_date.to_date - 1.day).to_s
     end
 
     def unbilled_usage_line_items
@@ -162,10 +171,23 @@ module Aria
       @invoices ||= Aria.get_acct_invoice_history(acct_no).map {|i| Aria::Invoice.new(i, acct_no) }.sort_by(&:bill_date).reverse!
     end
 
+    def transactions
+      @transactions ||= Aria.get_acct_trans_history(acct_no).sort_by(&:transaction_create_date)
+    end
+
+    def statements
+      @statements ||= Aria.get_acct_statement_history(acct_no)
+    end
+
     def forwarded_balance(invoice=nil)
-      invoices = unpaid_invoices
-      invoices = invoices.select {|i| i.bill_date <= invoice.bill_date and i.invoice_no < invoice.invoice_no } if invoice
-      invoices.inject(0) {|balance, i| balance + i.debit - i.credit}
+      if invoice
+        transaction = transactions.find {|t| t.transaction_type == 1 && t.transaction_source_id == invoice.invoice_no }
+        statement = statements.find {|s| s.statement_no == transaction.statement_no } if transaction
+        return statement.balance_forward_amount if statement
+        return 0
+      else
+        unpaid_invoices.inject(0) {|balance, i| balance + i.debit - i.credit}
+      end
     end
 
     def past_usage_line_items(periods=3)
@@ -295,10 +317,6 @@ module Aria
 
       def aria_datetime(s)
         Date.strptime(s, '%Y-%m-%d').to_datetime
-      end
-
-      def today
-        @today ||= Aria::DateTime.today.to_s
       end
   end
 
