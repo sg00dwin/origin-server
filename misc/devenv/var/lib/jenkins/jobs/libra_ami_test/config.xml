@@ -100,7 +100,7 @@ pushd li
   then
     build/devenv test devenv-test_${BUILD_NUMBER} --include_extended=&quot;$EXTENDED_TESTS&quot; --terminate
   else
-    build/devenv terminate devenv-test_${BUILD_NUMBER}
+    build/devenv terminate devenv-test_${BUILD_NUMBER} --download_artifacts
     exit $RESULT
   fi
 

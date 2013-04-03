@@ -59,7 +59,7 @@ popd
 
 # terminate
 pushd li
-build/devenv devenv_broker_extended_${BUILD_NUMBER}
+build/devenv terminate devenv_broker_extended_${BUILD_NUMBER} --download_artifacts
 popd
 
 set +x

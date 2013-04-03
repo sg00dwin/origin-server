@@ -686,9 +686,7 @@ service openshift-port-proxy restart
           puts "Done"
 
         ensure
-          if options.terminate? || options.official?
-            download_artifacts(hostname)
-          end
+          download_artifacts(hostname) if options.terminate?
           if options.terminate?
             terminate_instance(instance)
           end
@@ -869,7 +867,7 @@ yum -y install rubygem-commander rubygem-highline rubygem-httpclient rubygem-net
 
             manifest = rpm_manifest(hostname)
           rescue SystemExit => e
-            download_artifacts(hostname) if options.terminate? || options.official?
+            download_artifacts(hostname) if options.terminate?
             raise
           end
 
