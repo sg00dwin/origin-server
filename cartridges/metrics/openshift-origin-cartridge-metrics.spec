@@ -1,4 +1,4 @@
-%define cartridgedir %{_libexecdir}/openshift/cartridges/metrics
+%define cartridgedir %{_libexecdir}/openshift/cartridges/v2/metrics
 
 Name: openshift-origin-cartridge-metrics
 Version: 1.7.4
@@ -12,7 +12,6 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
-Requires: openshift-origin-cartridge-abstract
 Requires: rubygem(openshift-origin-node)
 
 %description

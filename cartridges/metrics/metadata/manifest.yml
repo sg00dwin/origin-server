@@ -1,4 +1,4 @@
-Name: metrics-0.1
+Name: metrics
 Cartridge-Short-Name: METRICS
 Display-Name: OpenShift Metrics
 Description: "An experimental cartridge that demonstrates retrieving real-time statistics from your application. May be removed or replaced in the future."
