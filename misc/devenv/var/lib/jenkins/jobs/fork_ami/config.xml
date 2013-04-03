@@ -307,10 +307,10 @@ set -e
       # Run the extended tests
       build/devenv test ${TAG_NAME}_${BUILD_NUMBER} --include_extended=&quot;$EXTENDED_TESTS&quot; --terminate 
     else
-      build/devenv terminate ${TAG_NAME}_${BUILD_NUMBER}
+      build/devenv terminate ${TAG_NAME}_${BUILD_NUMBER} --download_artifacts
     fi
   else
-    build/devenv terminate ${TAG_NAME}_${BUILD_NUMBER}
+    build/devenv terminate ${TAG_NAME}_${BUILD_NUMBER} --download_artifacts
     exit $RESULT
   fi
 popd</command>
