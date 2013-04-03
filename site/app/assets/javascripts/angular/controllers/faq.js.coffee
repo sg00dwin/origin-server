@@ -24,3 +24,5 @@ class @FaqController
         $scope.questions = (item[1] for item in questions.sort().reverse())
       else
         $scope.questions = $scope.topten
+
+@FaqController.$inject = ['$scope', 'faq']
