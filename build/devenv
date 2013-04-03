@@ -454,6 +454,8 @@ service openshift-port-proxy restart
           t[0].join
         end
         
+        failures.uniq!
+        
         if failures.length > 0
           idle_all_gears(hostname)
           retry_test_failures(hostname, failures, 2)
