@@ -3,7 +3,8 @@ module Aria
 
     def self.find_all_by_plan_no(plan_no)
       plan = Aria.cached.get_client_plans_all.find{ |plan| plan.plan_no.to_s == plan_no.to_s }
-      plan.plan_services.inject([]) do |a, s|
+      plan_services = plan ? plan.plan_services : []
+      plan_services.inject([]) do |a, s|
         next a if s.is_usage_based_ind == 1 || s.plan_service_rates.empty?
         rate = s.plan_service_rates.first.monthly_fee
         a << Aria::RecurringLineItem.new({
@@ -19,7 +20,8 @@ module Aria
 
     def self.find_all_by_current_plan(acct_no)
       plan = Aria.get_acct_plans_all(acct_no).last
-      plan.plan_services.inject([]) do |a, s|
+      plan_services = plan ? plan.plan_services : []
+      plan_services.inject([]) do |a, s|
         a << Aria::RecurringLineItem.new({
           'service_name' => s.service_desc,
           'description' => s.service_desc,

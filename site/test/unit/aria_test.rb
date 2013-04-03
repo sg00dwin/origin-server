@@ -667,6 +667,16 @@ class AriaUnitTest < ActiveSupport::TestCase
     assert items.length == 1
   end
 
+  def test_tolerate_missing_plans
+    stub_client_plans_all([])
+    assert items = Aria::RecurringLineItem.find_all_by_plan_no(1)
+    assert_equal 0, items.length
+
+    stub_acct_plans_all(1, [])
+    assert items = Aria::RecurringLineItem.find_all_by_current_plan(1)
+    assert_equal 0, items.length
+  end
+
   def test_collapse_identical_usage_line_items
     usage = [
       Aria::WDDX::Struct.new({'usage_type_no' => 1, 'rate_per_unit' => 1, 'units' => 1}),
