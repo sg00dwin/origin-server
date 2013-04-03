@@ -37,7 +37,7 @@
         <string>uploadpack</string>
         <string>git-upload-pack</string>
         <string>url</string>
-        <string>git@github.com:fotioslindiakos/li.git</string>
+        <string>git@github.com:openshift/li.git</string>
         <string>tagopt</string>
         <string></string>
       </org.spearce.jgit.transport.RemoteConfig>
@@ -71,21 +71,19 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd misc/sprint_status_report;
+      <command>cd misc/trello;
 
-report_string=&quot;-r ${REPORT}&quot;                                                                                                                                                                   
+report_string=&quot;--report-type ${REPORT}&quot;                                                                                                                                                                   
 if [ &quot;${EMAIL}&quot; == true ]; then                                                                                                                                                                
-  report_string=&quot;${report_string} --email&quot;                                                                                                                                                     
-else                                                                                                                                                                                           
-  report_string=&quot;${report_string} --no-email&quot;                                                                                                                                                  
+  report_string=&quot;${report_string} --send-email&quot;                                                                                                                                           
 fi           
 
-bundle exec ruby sprint_status_report ${report_string}</command>
+bundle exec ruby trello report ${report_string} --trace</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.Mailer>
-      <recipients>fotios+broken_report@redhat.com</recipients>
+      <recipients>dmcphers+broken_status_report@redhat.com</recipients>
       <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
     </hudson.tasks.Mailer>
