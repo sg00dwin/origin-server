@@ -11,6 +11,7 @@ module OpenShift
       @login_url = URI.parse(service_base_url + "/login.html")
       @roles_url = URI.parse(service_base_url + "/cloudVerify.html")
       @user_info_url = URI.parse(service_base_url + "/userInfo.html")
+      @user_info_secret = Rails.configuration.auth[:auth_service][:user_info_secret]
     end
 
     def authenticate_request(controller)
@@ -31,6 +32,14 @@ module OpenShift
       end
     end
 
+    def get_user_info(login)
+      if Rails.configuration.auth[:integrated]
+        http_get(@user_info_url, login)
+      else
+        {}
+      end
+    end
+ 
     private
 
     def check_login(ticket, user, password)
@@ -111,6 +120,47 @@ module OpenShift
         if res.body and !res.body.empty?
           json = JSON.parse(res.body)
           return json, ticket
+        else
+          Rails.logger.error "Empty response from streamline - #{res.code}"
+          raise OpenShift::AuthServiceException
+        end
+      when Net::HTTPForbidden, Net::HTTPUnauthorized
+        raise OpenShift::AccessDeniedException
+      else
+        Rails.logger.error "Invalid HTTP response from streamline - #{res.code}"
+        Rails.logger.error "Response body:\n#{res.body}"
+        raise OpenShift::AuthServiceException
+      end
+    rescue OpenShift::AccessDeniedException, OpenShift::UserValidationException, OpenShift::AuthServiceException
+      raise
+    rescue Exception => e
+      Rails.logger.error "Exception occurred while calling streamline - #{e.message}"
+      Rails.logger.error e.backtrace
+      raise OpenShift::AuthServiceException
+    end
+
+    def http_get(url, login)
+      escaped_login = URI.escape(login.to_s, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
+      req = Net::HTTP::Get.new(url.request_uri + "?login=#{escaped_login}&secretKey=#{@user_info_secret}")
+
+      http = Net::HTTP.new(url.host, url.port)
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+      # Add timing code
+      start_time = Time.now
+      res = http.start {|http| http.request(req)}
+      end_time = Time.now
+      Rails.logger.debug "Response from Streamline took (#{url.request_uri}): #{(end_time - start_time)*1000} ms"
+
+      case res
+      when Net::HTTPSuccess, Net::HTTPRedirection
+        Rails.logger.debug("GET Response code = #{res.code}")
+
+        # Parse and yield the body if a block is supplied
+        if res.body and !res.body.empty?
+          json = JSON.parse(res.body)
+          return json
         else
           Rails.logger.error "Empty response from streamline - #{res.code}"
           raise OpenShift::AuthServiceException

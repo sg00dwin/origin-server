@@ -21,8 +21,7 @@ module OpenShift
                )
     end
 
-    def self.report_event(event_id, response, email_to)
-      subject = "Aria Event Notification: #{event_id}"
+    def self.report_event(subject, response, email_to)
       email_from = "openshift.billing@gmail.com"
       password = "vostok08"
 
