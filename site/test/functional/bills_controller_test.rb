@@ -2,6 +2,10 @@ require File.expand_path('../../test_helper', __FILE__)
 
 class BillsControllerTest < ActionController::TestCase
 
+  setup {
+    Aria.expects(:gen_random_string).at_least(0).returns("123")
+  }
+
   def plan
     Aria::WDDX::Struct.new({
       'plan_no' => 1,
@@ -32,6 +36,7 @@ class BillsControllerTest < ActionController::TestCase
       'balance' => '0'
     }))
     Aria.expects(:get_acct_trans_history).at_least(0).returns([])
+    Aria.expects(:get_client_plans_all).at_least(0).returns([])
 
     WebUser.new :rhlogin => 'rhnuser', :email_address => 'rhnuser@redhat.com', :streamline_type => :full
   end
@@ -354,6 +359,8 @@ class BillsControllerTest < ActionController::TestCase
   end
 
   test "should redirect to show invoice" do
+    omit_if_aria_is_unavailable
+
     user = with_user(full)
     Aria::UserContext.any_instance.expects(:invoices).at_least_once.returns([stub_invoice])
 
