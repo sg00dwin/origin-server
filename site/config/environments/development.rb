@@ -57,6 +57,7 @@ RedHatCloud::Application.configure do
   config.aria_direct_post_name = nil
   config.aria_direct_post_redirect_base = nil
 
+
   # Currency
   # Specify allowed currencies here, use ISO4217 format
   config.allowed_currencies = [:usd, :cad, :eur]

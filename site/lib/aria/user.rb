@@ -250,6 +250,10 @@ module Aria
       end if opts
       return false unless validates
 
+      # Associate the account with a functional account group for invoicing
+      functional_group = Aria::FunctionalGroup.find_by_country(params['bill_country'])
+      params['functional_acct_groups'] = functional_group.group_no if functional_group
+
       Aria.create_acct_complete(params)
       true
     rescue Aria::AccountExists
@@ -274,6 +278,13 @@ module Aria
 
       if self.billing_info.attributes['currency_cd'].present? and params.has_key?('currency_cd') and self.billing_info.attributes['currency_cd'] != params['currency_cd']
         raise Aria::Error, 'Contact customer support if you need to change your payment currency'
+      end
+
+      if self.billing_info.attributes['country'] != params['bill_country']
+        # Associate the account with a functional account group for invoicing
+        functional_group = Aria::FunctionalGroup.find_by_country(params['bill_country'])
+        puts "BI: #{self.billing_info.attributes.inspect}\n\nFG: #{functional_group.inspect}"
+        params['update_acct_func_group'] = functional_group.group_no if functional_group
       end
 
       Aria.update_acct_complete(acct_no, params)

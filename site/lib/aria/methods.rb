@@ -38,6 +38,10 @@ module Aria
       super(:user_id => user_id).acct_no
     end
 
+    def get_acct_groups_by_client
+      Array(super.acct_groups)
+    end
+
     def create_acct_complete(params)
       super encode_supplemental(params)
     end
