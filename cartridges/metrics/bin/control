@@ -2,23 +2,17 @@
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-export PHPRC="${OPENSHIFT_METRICS_DIR}/conf/php.ini"
+#export PHPRC="${OPENSHIFT_METRICS_DIR}/configuration/etc/conf/php.ini"
 
-CART_CONF_DIR=${OPENSHIFT_METRICS_DIR}/configuration/etc/conf
-HTTPD_CFG_FILE=$CART_CONF_DIR/httpd_nolog.conf
+CART_CONFD_DIR=${OPENSHIFT_METRICS_DIR}/configuration/etc/conf.d
+HTTPD_CFG_FILE=${OPENSHIFT_METRICS_DIR}/configuration/etc/conf/httpd_nolog.conf
 HTTPD_PID_FILE=${OPENSHIFT_METRICS_DIR}/run/httpd.pid
 
 cartridge_type="metrics"
 
 function start() {
-    if [ -f ${metrics_dir}/run/stop_lock ]
-    then
-        echo "Application is explicitly stopped!  Use 'rhc cartridge start -a ${OPENSHIFT_APP_NAME} -c ${cartridge_type}' to start back up." 1>&2
-        exit 0
-    else
-        ensure_valid_httpd_process "$HTTPD_PID_FILE" "$HTTPD_CFG_FILE"
-        /usr/sbin/httpd -C "Include ${OPENSHIFT_METRICS_DIR}/conf.d/*.conf" -f $HTTPD_CFG_FILE -k start
-    fi
+    ensure_valid_httpd_process "$HTTPD_PID_FILE" "$HTTPD_CFG_FILE"
+    /usr/sbin/httpd -C "Include ${CART_CONFD_DIR}/*.conf" -f $HTTPD_CFG_FILE -k start
 }
 
 function stop() {
@@ -26,22 +20,22 @@ function stop() {
     set +e
     httpd_pid=`cat "$HTTPD_PID_FILE" 2> /dev/null`
     ensure_valid_httpd_process "$HTTPD_PID_FILE" "$HTTPD_CFG_FILE"
-    /usr/sbin/httpd -C "Include ${OPENSHIFT_METRICS_DIR}/conf.d/*.conf" -f $HTTPD_CFG_FILE -k stop
+    /usr/sbin/httpd -C "Include ${CART_CONFD_DIR}/*.conf" -f $HTTPD_CFG_FILE -k stop
     wait_for_stop $httpd_pid
 }
 
 function restart() {
     ensure_valid_httpd_process "$HTTPD_PID_FILE" "$HTTPD_CFG_FILE"
-    /usr/sbin/httpd -C "Include ${OPENSHIFT_METRICS_DIR}/conf.d/*.conf" -f $HTTPD_CFG_FILE -k reload
+    /usr/sbin/httpd -C "Include ${CART_CONFD_DIR}/*.conf" -f $HTTPD_CFG_FILE -k restart
 }
 
 function status() {
-   if isrunning
-   then
-      echo "Application is running"
-   else
-      echo "Application is either stopped or inaccessible"
-   fi
+  if ps --no-headers --pid $(< $HTTPD_PID_FILE) > /dev/null
+  then
+    client_result 'Metrics is running'
+  else
+    client_result 'Metrics is either stopped or inaccessible'
+  fi
 }
 
 function reload() {

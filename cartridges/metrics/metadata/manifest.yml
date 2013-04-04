@@ -2,7 +2,7 @@ Name: metrics
 Cartridge-Short-Name: METRICS
 Display-Name: OpenShift Metrics
 Description: "An experimental cartridge that demonstrates retrieving real-time statistics from your application. May be removed or replaced in the future."
-Version: '1.1.0'
+Version: '0.1'
 License: GPLv2
 Cartridge-Version: 0.0.1
 Cartridge-Vendor: redhat
@@ -22,11 +22,14 @@ Native-Requires:
 Architecture: noarch
 Reservations:
   - MEM >= 100MB
-Publishes:
-  get-proxy-path:
-    Type: "STRING:proxy-path"
-  get-serve-info:
-    Type: "NET_TCP:db-config:url"
 Scaling:
   Min: 1
   Max: 1
+Endpoints:
+  - Private-IP-Name:   IP
+    Private-Port-Name: PORT
+    Private-Port:      8080
+    Public-Port-Name:  PROXY_PORT
+    Mappings:
+      - Frontend:      "/metrics"
+        Backend:       "/metrics"
