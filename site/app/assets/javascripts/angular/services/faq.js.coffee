@@ -5,3 +5,5 @@ class @FaqService
     @faq = []
     $http.get('../account/faqs').success (data) =>
       @faq = data
+
+@FaqService.$inject = ['$http']
