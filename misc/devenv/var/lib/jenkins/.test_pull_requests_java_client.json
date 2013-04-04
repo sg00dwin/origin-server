@@ -1,0 +1,32 @@
+{
+  "proxy_host": null,
+  "proxy_port": null,
+  "jenkins_host": "https://ci.dev.openshift.redhat.com",
+  "jenkins_url": "https://ci.dev.openshift.redhat.com/jenkins/",
+  "hub_config": "~/.config/hub",
+  "github_user": "openshift",
+  "irc_channel": "#openshift-dev",
+  "bot_github_user": "openshift-bot",
+  "product": "JavaClient",
+  "action_required_prefix": "Java Client Action Required:",
+
+  "repo_groups": {
+    "openshift-java-client": "javaclient"
+  },
+
+  "settings": {
+    "merge_test_settings": {
+      "name": "merge",
+      "test_prefix": "Java Client Merge Results:",
+      "allow_multiple": false,
+      "branches": { "master": {"jenkins_job_name": "merge-openshift-java-client",
+                               "build_token": "libra1"} },
+      "repo_to_teams": {
+        "openshift-java-client": ["147136"]
+      },
+      "repo_to_pull_id_param": {
+        "openshift-java-client": "JAVA_CLIENT_PULL_ID"
+      }
+    }
+  }
+}
