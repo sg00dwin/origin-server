@@ -10,10 +10,15 @@ function start() {
 }
 
 function stop() {
-  local PID=$(<$HTTPD_PID_FILE)
-  if [[ -n $PID && -n $(pgrep -u $(id -u $OPENSHIFT_GEAR_UUID) httpd |grep $PID) ]]
+  if [ -f $HTTPD_PID_FILE ]
   then
-    /usr/sbin/httpd -C "Include ${OPENSHIFT_ROCKMONGO_DIR}etc/conf.d/*.conf" -f $HTTPD_CFG_FILE -k stop
+    local PID=$(<$HTTPD_PID_FILE)
+    if [[ -n $PID && -n $(pgrep -u $(id -u $OPENSHIFT_GEAR_UUID) httpd |grep $PID) ]]
+    then
+      /usr/sbin/httpd -C "Include ${OPENSHIFT_ROCKMONGO_DIR}etc/conf.d/*.conf" -f $HTTPD_CFG_FILE -k stop
+    fi
+  else
+    exit 0
   fi
 }
 
@@ -29,6 +34,7 @@ function status() {
   else
     client_result 'Rockmongo is either stopped or inaccessible'
   fi
+  exit 0
 }
 
 case "$1" in

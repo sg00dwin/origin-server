@@ -11,6 +11,7 @@ Source0:   %{name}-%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 Requires:  openshift-origin-cartridge-mongodb
+Requires:  rubygem(openshift-origin-node)
 
 %description
 Provides RockMongo V2 cartridge support
@@ -33,20 +34,16 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%dir %{cartridgedir}
 %dir %{cartridgedir}/env
 %dir %{cartridgedir}/etc
 %dir %{cartridgedir}/html
 %dir %{cartridgedir}/logs
 %dir %{cartridgedir}/metadata
-%dir %{cartridgedir}/rockmongo
 %dir %{cartridgedir}/run
 %dir %{cartridgedir}/sessions
-
 %attr(0755,-,-) %{cartridgedir}/bin/
-%attr(0750,-,-) %{cartridgedir}/hooks/
+%attr(0755,-,-) %{cartridgedir}
 %{cartridgedir}/metadata/manifest.yml
-
 %doc %{cartridgedir}/COPYRIGHT
 %doc %{cartridgedir}/LICENSE
 %doc %{cartridgedir}/changelog
