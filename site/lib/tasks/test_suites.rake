@@ -106,6 +106,7 @@ namespace :test do
         # Aria and some Streamline
         'test/integration/aria_test.rb',
         'test/functional/account_controller_test.rb',
+        'test/functional/bills_controller_test.rb',
         'test/integration/plan_signup_flow_test.rb',
         'test/functional/email_confirm_controller_test.rb',
         'test/functional/billing_info_controller_test.rb',
