@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <logRotator>
+    <daysToKeep>100</daysToKeep>
+    <numToKeep>100</numToKeep>
+    <artifactDaysToKeep>-1</artifactDaysToKeep>
+    <artifactNumToKeep>-1</artifactNumToKeep>
+  </logRotator>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>JAVA_CLIENT_PULL_ID</name>
+          <description></description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>true</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <authToken>libra1</authToken>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command># Delete the previous repo clone directories
+rm -rf li origin-dev-tools openshift-java-client
+
+# Clone the repos
+git clone git@github.com:openshift/li.git
+git clone git@github.com:openshift/origin-dev-tools.git
+git clone git@github.com:openshift/openshift-java-client.git
+
+if [ -n &quot;$JAVA_CLIENT_PULL_ID&quot; ]
+then
+set +x
+  echo &quot;
+
+*****Locally Merging Pull Request: https://github.com/openshift/openshift-java-client/pull/$JAVA_CLIENT_PULL_ID&quot;
+set -x
+  test_pull_requests --local_merge_pull_request $JAVA_CLIENT_PULL_ID --repo openshift-java-client --config ~/.test_pull_requests_java_client.json
+fi
+
+
+set +x
+echo &quot;
+
+&quot;
+set -x
+
+
+# Build and install HEAD for the tests
+pushd li
+build/devenv launch devenv_jboss_tools_${BUILD_NUMBER} --verifier
+instance_hostname=`build/devenv print_hostname devenv_jboss_tools_${BUILD_NUMBER}`
+popd
+
+# Run the tests
+pushd openshift-java-client
+set +e
+mvn clean package -Pintegration-tests -Dlibra_server=$instance_hostname -Ddefault_rhlogin=toolsjboss@gmail.com -Drhpassword=1q2w3e -Dsun.net.client.defaultConnectTimeout=600000 -Dsun.net.client.defaultReadTimeout=600000
+RESULT=$?
+set -e
+popd
+
+# terminate 
+pushd li
+build/devenv terminate devenv_jboss_tools_${BUILD_NUMBER} --download_artifacts
+popd
+
+if [ $RESULT -ne 0 ]
+then
+  exit $RESULT
+fi
+
+
+# Make sure all the pull requests will merge cleanly
+if [ -n &quot;$JAVA_CLIENT_PULL_ID&quot; ]
+then
+  test_pull_requests --test_merge_pull_request $JAVA_CLIENT_PULL_ID --repo openshift-java-client --config ~/.test_pull_requests_java_client.json
+fi
+
+# Do the merge
+if [ -n &quot;$JAVA_CLIENT_PULL_ID&quot; ]
+then
+  test_pull_requests --merge_pull_request $JAVA_CLIENT_PULL_ID --repo openshift-java-client --config ~/.test_pull_requests_java_client.json
+fi
+
+
+</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>li/rhc/log/**,openshift-java-client/target/surefire-reports/*</artifacts>
+      <latestOnly>false</latestOnly>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.tasks.junit.JUnitResultArchiver>
+      <testResults>li/rhc/log/**/*.xml,openshift-java-client/target/surefire-reports/*.xml</testResults>
+      <keepLongStdio>false</keepLongStdio>
+      <testDataPublishers/>
+    </hudson.tasks.junit.JUnitResultArchiver>
+  </publishers>
+  <buildWrappers/>
+</project>

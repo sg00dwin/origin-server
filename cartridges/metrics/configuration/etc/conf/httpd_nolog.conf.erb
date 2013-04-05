@@ -256,4 +256,4 @@ ExtendedStatus On
 #    Allow from .example.com
 #</Location>
 
-include /usr/libexec/openshift/cartridges/embedded/metrics-0.1/info/configuration/etc/conf.d/php.conf
+include <%= "#{ENV['OPENSHIFT_METRICS_DIR']}/configuration/etc/conf.d/php.conf" %>

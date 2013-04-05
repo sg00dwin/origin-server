@@ -23,7 +23,18 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>/usr/bin/test_pull_requests</command>
+      <command>set +x
+echo &quot;OpenShift Online and Enterprise Pulls:&quot;
+echo
+set -x
+/usr/bin/test_pull_requests
+set +x
+echo
+echo
+echo &quot;Java Client Pulls:&quot;
+echo
+set -x
+/usr/bin/test_pull_requests --config ~/.test_pull_requests_java_client.json</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
