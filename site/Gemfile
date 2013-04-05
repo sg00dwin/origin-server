@@ -36,7 +36,6 @@ group :test, :development do
   gem 'simplecov',     '~> 0.6.4', :require => nil if RUBY_VERSION.to_f >= 1.9
   gem 'webmock',       '~> 1.6.4'
   gem 'konacha',       '~> 2.5.1'
-  gem 'phantomjs',     '~> 1.8.1.1', :require => 'phantomjs/poltergeist'
   gem 'poltergeist',   '~> 1.1.0'
 
   # Note this is just to get the Konacha CI reporter
