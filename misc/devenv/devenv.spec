@@ -61,6 +61,7 @@ Requires:  openshift-origin-cartridge-diy
 Requires:  openshift-origin-cartridge-haproxy
 Requires:  openshift-origin-cartridge-mongodb
 Requires:  openshift-origin-cartridge-metrics
+Requires:  openshift-origin-cartridge-nodejs
 #Requires:  openshift-origin-cartridge-cron
 Requires:  activemq
 Requires:  activemq-client
