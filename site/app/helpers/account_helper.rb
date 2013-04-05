@@ -27,10 +27,10 @@ module AccountHelper
   def line_item_details(li)
     if li.tax?
     elsif li.usage?
-      "#{number_with_precision(li.units, :precision => (li.units < 1 ? 2 : 0))} @ #{number_to_currency(li.rate)} / #{li.units_label}"
+      "#{number_with_precision(li.units, :precision => (li.units < 1 ? 2 : 0))} @ #{number_to_user_currency(li.rate)} / #{li.units_label}"
     elsif li.recurring?
       if li.rate
-        "#{number_to_currency(li.rate)} / month#{" (prorated)" if li.total_cost < 0}"
+        "#{number_to_user_currency(li.rate)} / month#{" (prorated)" if li.units != 1}"
       elsif li.total_cost < 0
         "Service Credit"
       end

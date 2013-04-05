@@ -2,11 +2,21 @@ module BillingAware
   extend ActiveSupport::Concern
 
   included do
+    include Secured
     include CapabilityAware
-    helper_method :user_can_upgrade_plan?, :user_on_basic_plan?
+    helper_method :user_currency_cd, :user_can_upgrade_plan?, :user_on_basic_plan?
+  end
+
+  # Must be public for use in application_helper.rb
+  def user_currency_cd
+    if session[:currency_cd].blank? and user_can_upgrade_plan?
+      session[:currency_cd] = Aria::UserContext.new(current_user).currency_cd rescue nil
+    end
+    session[:currency_cd] || 'usd'
   end
 
   protected
+
     #
     # Is the current user authorized to upgrade their plan?  Will lazily
     # load and cache the capabilities for the user.

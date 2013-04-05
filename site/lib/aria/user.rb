@@ -48,6 +48,10 @@ module Aria
       end
     end
 
+    def currency_cd
+      account_details.currency_cd
+    end
+
     def billing_info
       @billing_info ||= begin
         Aria::BillingInfo.from_account_details(account_details)

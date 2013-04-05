@@ -12,8 +12,8 @@
           - usage_types.each do |type, type_data|
             - item_cost = usage_items.select {|i| i.name == type }.map(&:total_cost).sum
             - if item_cost != 0
-              .graph-element{:class => type_data.class_name, :style => "width: #{(100 * item_cost / max).floor}%;", :title => "#{type} (#{number_to_currency(item_cost)})"}> &nbsp;
-        %td.usage-amount= "#{number_to_currency(usage_items.map(&:total_cost).sum)}"
+              .graph-element{:class => type_data.class_name, :style => "width: #{(100 * item_cost / max).floor}%;", :title => "#{type} (#{number_to_user_currency(item_cost)})"}> &nbsp;
+        %td.usage-amount= "#{number_to_user_currency(usage_items.map(&:total_cost).sum)}"
 
 - usage_types.each do |type, type_data|
   - max = usage_items.values.map {|v| v.select{|i| i.name == type }.map(&:units).sum }.max

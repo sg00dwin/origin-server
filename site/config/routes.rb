@@ -69,7 +69,7 @@ RedHatCloud::Application.routes.draw do
 
     resources :bills, :only => [:index, :show] do
       get :print, :on => :member
-      get :export, :on => :collection
+      get :export, :on => :collection, :defaults => {:format => 'csv'}
       post :locate, :on => :collection
     end
     resources :plans,   :only => :index do

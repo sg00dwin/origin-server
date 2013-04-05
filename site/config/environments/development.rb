@@ -48,6 +48,7 @@ RedHatCloud::Application.configure do
   config.aria_client_no = 3754655
   config.aria_default_plan_no = 10330329
   config.aria_force_test_users = true
+  config.aria_max_parallel_requests = 5
   # Aria direct post configuration - uses public URL
   config.aria_direct_post_uri = "https://secure.current.stage.ariasystems.net/api/direct_post.php"
   config.aria_direct_post_name = nil

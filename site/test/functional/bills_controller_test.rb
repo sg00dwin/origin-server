@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require File.expand_path('../../test_helper', __FILE__)
 
 class BillsControllerTest < ActionController::TestCase
@@ -22,11 +24,12 @@ class BillsControllerTest < ActionController::TestCase
   def simple
     WebUser.new :rhlogin => 'outside_user@gmail.com', :email_address => 'outside_user@gmail.com', :streamline_type => :full
   end
-  def full
+  def full(acct_details={})
     Aria::MasterPlan.any_instance.expects(:aria_plan).at_least(0).returns(plan)
     Aria::DateTime.expects(:virtual_time?).at_least(0).returns(false)
     Aria.expects(:get_acct_no_from_user_id).at_least(0).returns(123)
     Aria.expects(:get_acct_details_all).at_least(0).returns(Aria::WDDX::Struct.new({
+      'currency_cd' => 'usd',
       'userid' => '123',
       'is_test_acct' => 'N',
       'bill_day' => '1',
@@ -34,7 +37,7 @@ class BillsControllerTest < ActionController::TestCase
       'plan_no' => '1',
       'plan_name' => 'Silver',
       'balance' => '0'
-    }))
+    }.merge(acct_details)))
     Aria.expects(:get_acct_trans_history).at_least(0).returns([])
     Aria.expects(:get_client_plans_all).at_least(0).returns([])
 
@@ -238,75 +241,12 @@ class BillsControllerTest < ActionController::TestCase
     assert_select "h1", "Invoice #9 does not exist"    
   end
 
-  test "should compare usage between bill and current period" do
-    omit_if_aria_is_unavailable
+  test "should compare usage between bill and current period in usd" do
+    do_usage_test("usd", "$")
+  end
 
-    user = with_user(full)
-
-    invoices = [
-      stub_invoice({'invoice_no' => 3, 'date' => '2010-03-01'}),
-      stub_invoice({'invoice_no' => 2, 'date' => '2010-02-01'}),
-      stub_invoice({'invoice_no' => 1, 'date' => '2010-01-01'})
-    ]
-    invoices.first.expects(:line_items).at_least_once.returns([
-      Aria::UsageLineItem.new({'usage_type_description' => 'Small Gear', 'units' => 1.00, 'rate_per_unit' => 1.0}, 1),
-      Aria::UsageLineItem.new({'usage_type_description' => 'Small Gear', 'units' => 0.10, 'rate_per_unit' => 1.0}, 1),
-      Aria::UsageLineItem.new({'usage_type_description' => 'Small Gear', 'units' => 0.01, 'rate_per_unit' => 1.0}, 1)
-    ])
-    invoices.first.expects(:payments).at_least_once.returns([])
-    Aria::UserContext.any_instance.expects(:invoices).at_least_once.returns(invoices)
-    Aria::UserContext.any_instance.expects(:next_bill).at_least_once.returns(
-      Aria::Bill.new(Date.today, Date.today, Date.today, 1, [], [], [
-        Aria::UsageLineItem.new({'usage_type_description' => 'Medium Gear', 'units' => 2.00, 'rate_per_unit' => 2.0}, 1),
-        Aria::UsageLineItem.new({'usage_type_description' => 'Medium Gear', 'units' => 0.20, 'rate_per_unit' => 2.0}, 1),
-        Aria::UsageLineItem.new({'usage_type_description' => 'Medium Gear', 'units' => 0.02, 'rate_per_unit' => 2.0}, 1)
-      ], 0, 0)
-    )
-
-    get :show, :id => 3
-    assert usage_items = assigns[:usage_items]
-    assert usage_types = assigns[:usage_types]
-    assert_template :show
-    assert_select "h2", "Compare Usage"
-
-    assert_select "table.usage-charges" do
-      assert_select "caption", :text => "Usage Charges"
-      assert_select "tr", 2 do |tr|
-        assert_select tr[0], 'td:content(?)', 'Current'
-        assert_select tr[0], 'div.graph-element.type-2[style*="100%"]'
-        assert_select tr[0], 'td:content(?)', '$4.44'
-
-        assert_select tr[1], 'td:content(?)', 'This bill'
-        assert_select tr[1], 'div.graph-element.type-1[style*="25%"]'
-        assert_select tr[1], 'td:content(?)', '$1.11'
-      end
-    end
-
-    assert_select "table.usage-type-1" do
-      assert_select "caption", :text => "Gear: Small"
-      assert_select "tr", 2 do |tr|
-        assert_select tr[0], 'td:content(?)', 'Current'
-        assert_select tr[0], 'div.graph-element.type-1[style*="0%"]'
-        assert_select tr[0], 'td:content(?)', '0.0 gear-hours'
-
-        assert_select tr[1], 'td:content(?)', 'This bill'
-        assert_select tr[1], 'div.graph-element.type-1[style*="100%"]'
-        assert_select tr[1], 'td:content(?)', '1.11 gear-hours'
-      end
-    end
-
-    assert_select "table.usage-type-2" do
-      assert_select "caption", :text => "Gear: Medium"
-      assert_select "tr", 2 do |tr|
-        assert_select tr[0], 'td:content(?)', 'Current'
-        assert_select tr[0], 'div.graph-element.type-2[style*="100%"]'
-        assert_select tr[0], 'td:content(?)', '2.22 gear-hours'
-
-        assert_select tr[1], 'td:content(?)', 'This bill'
-        assert_select tr[1], 'div.graph-element.type-2[style*="0%"]'
-        assert_select tr[1], 'td:content(?)', '0.0 gear-hours'
-      end
-    end
+  test "should compare usage between bill and current period in eur" do
+    do_usage_test("eur", "€ ")
   end
 
   test "should show different title for bill without payments" do
@@ -314,48 +254,12 @@ class BillsControllerTest < ActionController::TestCase
     # TODO: Not "You were charged $X"
   end
 
-  test "should show forwarded balance based on statements" do
-    omit_if_aria_is_unavailable
+  test "should show forwarded balance based on statements in usd" do
+    do_forwarded_balance_test("usd", "$")
+  end
 
-    user = with_user(full)
-
-    invoices = [
-      stub_invoice({'invoice_no' => 3, 'date' => '2010-03-01', 'paid_date' => nil, 'debit' => 100, 'credit' => 200}),
-      stub_invoice({'invoice_no' => 2, 'date' => '2010-02-01', 'paid_date' => nil, 'debit' => 100, 'credit' => 100}),
-      stub_invoice({'invoice_no' => 1, 'date' => '2010-01-01'})
-    ]
-    Aria::Invoice.any_instance.expects(:line_items).at_least_once.returns([])
-    Aria::Invoice.any_instance.expects(:payments).at_least_once.returns([])
-    Aria::UserContext.any_instance.expects(:invoices).at_least_once.returns(invoices)
-    Aria::UserContext.any_instance.expects(:next_bill).at_least_once.returns(false)
-
-    Aria.expects(:get_acct_trans_history).at_least_once.returns([
-      stub_invoice_transaction({"transaction_source_id"=>3, "statement_no" => 33}),
-      stub_invoice_transaction({"transaction_source_id"=>2, "statement_no" => 22}),
-      stub_invoice_transaction({"transaction_source_id"=>1, "statement_no" => 11})
-    ])
-    Aria.expects(:get_acct_statement_history).at_least_once.returns([
-      Aria::WDDX::Struct.new({"statement_no" => 33, "balance_forward_amount" => 333}),
-      Aria::WDDX::Struct.new({"statement_no" => 22, "balance_forward_amount" => 0})
-    ])
-
-    # Statement with balance
-    get :show, :id => 3
-    assert_template :show
-    assert_select "td:content(?)", "Forwarded balance"
-    assert_select "td:content(?)", "$333.00"
-
-    # Statement without balance
-    get :show, :id => 2
-    assert_template :show
-    assert_select "td:content(?)", "Forwarded balance", false
-    assert_select "td:content(?)", "$0.00", false
-
-    # No statement
-    get :show, :id => 1
-    assert_template :show
-    assert_select "td:content(?)", "Forwarded balance", false
-    assert_select "td:content(?)", "$0.00", false    
+  test "should show forwarded balance based on statements in eur" do
+    do_forwarded_balance_test("eur", "€ ")
   end
 
   test "should redirect to show invoice" do
@@ -397,10 +301,135 @@ class BillsControllerTest < ActionController::TestCase
     assert_template :error
   end
 
-  test "should export invoice successfully" do
+  test "should export invoice successfully in usd" do
+    do_export_test("eur", "€ ")
+  end
+
+  test "should export invoice successfully in eur" do
+    do_export_test("eur", "€ ")
+  end
+
+  private
+
+  def do_usage_test(currency_cd = "usd", currency_symbol = "$")
     omit_if_aria_is_unavailable
 
-    user = with_user(full)
+    user = with_user(full({'currency_cd' => currency_cd}))
+
+    invoices = [
+      stub_invoice({'invoice_no' => 3, 'date' => '2010-03-01'}),
+      stub_invoice({'invoice_no' => 2, 'date' => '2010-02-01'}),
+      stub_invoice({'invoice_no' => 1, 'date' => '2010-01-01'})
+    ]
+    invoices.first.expects(:line_items).at_least_once.returns([
+      Aria::UsageLineItem.new({'usage_type_description' => 'Small Gear', 'units' => 1.00, 'rate_per_unit' => 1.0}, 1),
+      Aria::UsageLineItem.new({'usage_type_description' => 'Small Gear', 'units' => 0.10, 'rate_per_unit' => 1.0}, 1),
+      Aria::UsageLineItem.new({'usage_type_description' => 'Small Gear', 'units' => 0.01, 'rate_per_unit' => 1.0}, 1)
+    ])
+    invoices.first.expects(:payments).at_least_once.returns([])
+    Aria::UserContext.any_instance.expects(:invoices).at_least_once.returns(invoices)
+    Aria::UserContext.any_instance.expects(:next_bill).at_least_once.returns(
+      Aria::Bill.new(Date.today, Date.today, Date.today, 1, [], [], [
+        Aria::UsageLineItem.new({'usage_type_description' => 'Medium Gear', 'units' => 2.00, 'rate_per_unit' => 2.0}, 1),
+        Aria::UsageLineItem.new({'usage_type_description' => 'Medium Gear', 'units' => 0.20, 'rate_per_unit' => 2.0}, 1),
+        Aria::UsageLineItem.new({'usage_type_description' => 'Medium Gear', 'units' => 0.02, 'rate_per_unit' => 2.0}, 1)
+      ], 0, 0)
+    )
+
+    get :show, :id => 3
+    assert usage_items = assigns[:usage_items]
+    assert usage_types = assigns[:usage_types]
+    assert_template :show
+    assert_select "h2", "Compare Usage"
+
+    assert_select "table.usage-charges" do
+      assert_select "caption", :text => "Usage Charges"
+      assert_select "tr", 2 do |tr|
+        assert_select tr[0], 'td:content(?)', 'Current'
+        assert_select tr[0], 'div.graph-element.type-2[style*="100%"]'
+        assert_select tr[0], 'td:content(?)', "#{currency_symbol}4.44"
+
+        assert_select tr[1], 'td:content(?)', 'This bill'
+        assert_select tr[1], 'div.graph-element.type-1[style*="25%"]'
+        assert_select tr[1], 'td:content(?)', "#{currency_symbol}1.11"
+      end
+    end
+
+    assert_select "table.usage-type-1" do
+      assert_select "caption", :text => "Gear: Small"
+      assert_select "tr", 2 do |tr|
+        assert_select tr[0], 'td:content(?)', 'Current'
+        assert_select tr[0], 'div.graph-element.type-1[style*="0%"]'
+        assert_select tr[0], 'td:content(?)', '0.0 gear-hours'
+
+        assert_select tr[1], 'td:content(?)', 'This bill'
+        assert_select tr[1], 'div.graph-element.type-1[style*="100%"]'
+        assert_select tr[1], 'td:content(?)', '1.11 gear-hours'
+      end
+    end
+
+    assert_select "table.usage-type-2" do
+      assert_select "caption", :text => "Gear: Medium"
+      assert_select "tr", 2 do |tr|
+        assert_select tr[0], 'td:content(?)', 'Current'
+        assert_select tr[0], 'div.graph-element.type-2[style*="100%"]'
+        assert_select tr[0], 'td:content(?)', '2.22 gear-hours'
+
+        assert_select tr[1], 'td:content(?)', 'This bill'
+        assert_select tr[1], 'div.graph-element.type-2[style*="0%"]'
+        assert_select tr[1], 'td:content(?)', '0.0 gear-hours'
+      end
+    end
+  end
+
+  def do_forwarded_balance_test(currency_cd = "usd", currency_symbol = "$")
+    omit_if_aria_is_unavailable
+
+    user = with_user(full({'currency_cd' => currency_cd}))
+
+    invoices = [
+      stub_invoice({'invoice_no' => 3, 'date' => '2010-03-01', 'paid_date' => nil, 'debit' => 100, 'credit' => 200}),
+      stub_invoice({'invoice_no' => 2, 'date' => '2010-02-01', 'paid_date' => nil, 'debit' => 100, 'credit' => 100}),
+      stub_invoice({'invoice_no' => 1, 'date' => '2010-01-01'})
+    ]
+    Aria::Invoice.any_instance.expects(:line_items).at_least_once.returns([])
+    Aria::Invoice.any_instance.expects(:payments).at_least_once.returns([])
+    Aria::UserContext.any_instance.expects(:invoices).at_least_once.returns(invoices)
+    Aria::UserContext.any_instance.expects(:next_bill).at_least_once.returns(false)
+
+    Aria.expects(:get_acct_trans_history).at_least_once.returns([
+      stub_invoice_transaction({"transaction_source_id"=>3, "statement_no" => 33}),
+      stub_invoice_transaction({"transaction_source_id"=>2, "statement_no" => 22}),
+      stub_invoice_transaction({"transaction_source_id"=>1, "statement_no" => 11})
+    ])
+    Aria.expects(:get_acct_statement_history).at_least_once.returns([
+      Aria::WDDX::Struct.new({"statement_no" => 33, "balance_forward_amount" => 333}),
+      Aria::WDDX::Struct.new({"statement_no" => 22, "balance_forward_amount" => 0})
+    ])
+
+    # Statement with balance
+    get :show, :id => 3
+    assert_template :show
+    assert_select "td:content(?)", "Forwarded balance"
+    assert_select "td:content(?)", "#{currency_symbol}333.00"
+
+    # Statement without balance
+    get :show, :id => 2
+    assert_template :show
+    assert_select "td:content(?)", "Forwarded balance", false
+    assert_select "td:content(?)", "#{currency_symbol}0.00", false
+
+    # No statement
+    get :show, :id => 1
+    assert_template :show
+    assert_select "td:content(?)", "Forwarded balance", false
+    assert_select "td:content(?)", "#{currency_symbol}0.00", false    
+  end
+
+  def do_export_test(currency_cd = "usd", currency_symbol = "$")
+    omit_if_aria_is_unavailable
+
+    user = with_user(full({'currency_cd' => currency_cd}))
     invoice = stub_invoice
     Aria::UserContext.any_instance.expects(:invoices).at_least_once.returns([invoice])
     Aria::UserContext.any_instance.expects(:transactions).at_least_once.returns([
@@ -408,31 +437,29 @@ class BillsControllerTest < ActionController::TestCase
       stub_invoice_transaction
     ])
     Aria.expects(:get_invoice_details).at_least_once.returns([
-      Aria::WDDX::Struct.new({"line_no"=>1, "service_no"=>1, "service_name"=>"Recurring",      "units"=>1,"rate_per_unit"=>1,   "amount"=>1,    "description"=>"Recurring",                   "date_range_start"=>'2010-01-01',"date_range_end"=>'2010-01-31',"usage_type_no"=>nil,"plan_no"=>1,  "plan_name"=>'Silver'}),
-      Aria::WDDX::Struct.new({"line_no"=>2, "service_no"=>2, "service_name"=>"Small Gear",     "units"=>1,"rate_per_unit"=>1.23,"amount"=>1.23, "description"=>"Small Gear (1 hour @ $1.23)", "date_range_start"=>'2010-01-01',"date_range_end"=>'2010-01-31',"usage_type_no"=>123,"plan_no"=>1,  "plan_name"=>'Silver'}),
-      Aria::WDDX::Struct.new({"line_no"=>3, "service_no"=>3, "service_name"=>"State Sales Tax","units"=>1,"rate_per_unit"=>nil, "amount"=>16.38,"description"=>"State Sales Taxes",           "date_range_start"=>nil,         "date_range_end"=>nil,         "usage_type_no"=>nil,"plan_no"=>nil,"plan_name"=>nil})
+      Aria::WDDX::Struct.new({"line_no"=>1, "service_no"=>1, "service_name"=>"Plan: Silver",     "units"=>1,"rate_per_unit"=>1,   "amount"=>1,    "description"=>"Plan: Silver",                "date_range_start"=>'2010-01-01',"date_range_end"=>'2010-01-31',"usage_type_no"=>nil,"plan_no"=>1,  "plan_name"=>'Silver'}),
+      Aria::WDDX::Struct.new({"line_no"=>2, "service_no"=>2, "service_name"=>"Gear: Small",      "units"=>1,"rate_per_unit"=>1.23,"amount"=>1.23, "description"=>"Small Gear (1 hour @ #{currency_symbol}1.23)", "date_range_start"=>'2010-01-01',"date_range_end"=>'2010-01-31',"usage_type_no"=>123,"plan_no"=>1,  "plan_name"=>'Silver'}),
+      Aria::WDDX::Struct.new({"line_no"=>3, "service_no"=>3, "service_name"=>"State Sales Taxes","units"=>1,"rate_per_unit"=>nil, "amount"=>16.38,"description"=>"State Sales Taxes",           "date_range_start"=>nil,         "date_range_end"=>nil,         "usage_type_no"=>nil,"plan_no"=>nil,"plan_name"=>nil})
     ])
 
-    get :export
+    get :export, :format => "csv"
 
     # Have to fetch body to trigger streaming generation
     assert body = response.body
 
     assert_response :success
-    assert_equal 'text/csv', response.headers['Content-Type']
+    assert_equal 'text/csv; charset=utf-8', response.headers['Content-Type']
 
     assert_equal body, <<-eos
 Transaction Date,Transaction ID,Transaction Description,Description,Date Range Start,Date Range End,Units,Rate,Amount
-2010-01-01,543,Electronic Payment #321,,,,,,-100
+2010-01-01,543,Electronic Payment #321,,,,,,-#{currency_symbol}100.00
 
-2010-01-01,345,Invoice #123,Silver,2010-01-01,2010-01-31,1,1,1
-2010-01-01,345,Invoice #123,Silver,2010-01-01,2010-01-31,1,1.23,1.23
-2010-01-01,345,Invoice #123,State Sales Taxes,,,1,,16.38
+2010-01-01,345,Invoice #123,Plan: Silver,2010-01-01,2010-01-31,1,#{currency_symbol}1.00,#{currency_symbol}1.00
+2010-01-01,345,Invoice #123,Gear: Small,2010-01-01,2010-01-31,1,#{currency_symbol}1.23,#{currency_symbol}1.23
+2010-01-01,345,Invoice #123,State Sales Taxes,,,1,,#{currency_symbol}16.38
 
     eos
   end
-
-  private
 
   def stub_invoice(opts = {}, acct_no=123)
     date = opts['date'] || '2010-01-01'

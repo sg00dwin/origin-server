@@ -22,6 +22,8 @@ class CartridgeRatesTest < ActionDispatch::IntegrationTest
       ur.each { |rate|
         assert_equal true, (rate.has_key? "plan_id")
         assert_equal true, (rate.has_key? :usd)
+        assert_equal true, (rate.has_key? :cad)
+        assert_equal true, (rate.has_key? :eur)
         assert_equal true, (rate.has_key? :duration)
       }
     end
