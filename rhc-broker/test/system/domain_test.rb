@@ -189,6 +189,14 @@ class DomainTest < ActionDispatch::IntegrationTest
 
     # update domain name
     request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:id => new_ns, :nolinks => true}, @headers)
+    assert_response :unprocessable_entity
+    
+    # create an application under the user's domain
+    request_via_redirect(:delete, DOMAIN_COLLECTION_URL + "/#{ns}/applications/app1", {:nolinks => true}, @headers)
+    assert_response :no_content
+    
+        # update domain name
+    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:id => new_ns, :nolinks => true}, @headers)
     assert_response :ok
 
     # test fetching domain by name
@@ -246,7 +254,7 @@ class DomainTest < ActionDispatch::IntegrationTest
 
     # delete the domain without force option
     request_via_redirect(:delete, DOMAIN_COLLECTION_URL + "/#{ns}", {}, @headers)
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 128)
 
