@@ -103,9 +103,6 @@ namespace :test do
     Rake::TestTask.new :external_integration => ['test:prepare'] do |t|
       t.libs << 'test'
       covered.concat(t.test_files = FileList[
-        # Moved to extended temporarily because of random failures
-        'test/unit/aria_test.rb',
-
         # Aria and some Streamline
         'test/integration/aria_test.rb',
         'test/functional/account_controller_test.rb',

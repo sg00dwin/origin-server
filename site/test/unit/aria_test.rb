@@ -740,7 +740,7 @@ class AriaUnitTest < ActiveSupport::TestCase
     stub_next_bill(
       :plan_no => '2',
       :next_bill_date => (Date.today + 1.days).to_s,
-      :last_arrears_bill_thru_date => (Date.yesterday).to_s,
+      :last_arrears_bill_thru_date => (Date.today - 1.day).to_s,
     )
     assert bill = u.next_bill
     assert bill.present?
@@ -885,7 +885,7 @@ class AriaUnitTest < ActiveSupport::TestCase
     acct_no = 1 || opts[:acct_no]
     opts.reverse_merge!({
       :next_bill_date => (Date.today + 2.days).to_s,
-      :last_arrears_bill_thru_date => (Date.yesterday).to_s,
+      :last_arrears_bill_thru_date => (Date.today - 1.day).to_s,
     })
     plan_no = opts[:plan_no] || Rails.application.aria_default_plan_no
 
