@@ -1,7 +1,7 @@
-redhat-metrics/
-redhat-metrics/metadata/
-redhat-metrics/configuration/
-redhat-metrics/sessions/
-redhat-metrics/tmp/
-redhat-metrics/conf/
-redhat-metrics/env/
+metrics/
+metrics/metadata/
+metrics/configuration/
+metrics/sessions/
+metrics/tmp/
+metrics/conf/
+metrics/env/
