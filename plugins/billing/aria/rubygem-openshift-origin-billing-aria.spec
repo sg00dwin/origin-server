@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.5.1
+Version: 1.5.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,18 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Mon Apr 08 2013 Adam Miller <admiller@redhat.com> 1.5.2-1
+- Billing entitlement email notification changes:  - Don't capture all events
+  from aria  - Plan change (upgrade/downgrade) will send revoke/assign
+  entitlement email without depending on aria events.  - Only handle aria
+  events in case of account status changes due to dunning or account
+  supplemental field changes.  - Don't send revoke/assign entitlements if the
+  modified plan is free plan.  - Fetch account contact address by querying
+  streamline  - Don't use 'RHLogin' supplemental field for login, instead query
+  mongo with aria acct_no to fetch login.    Reason: Any special chars in
+  RHLogin is not properly escaped by aria.  - Bug fixes  - Cleanup
+  (rpenta@redhat.com)
+
 * Thu Mar 28 2013 Adam Miller <admiller@redhat.com> 1.5.1-1
 - bump_minor_versions for sprint 26 (admiller@redhat.com)
 - Merge pull request #1083 from pravisankar/dev/ravi/bug928205_917961_aria-
