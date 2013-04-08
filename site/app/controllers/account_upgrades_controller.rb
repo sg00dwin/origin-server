@@ -69,7 +69,10 @@ class AccountUpgradesController < ConsoleController
 
     # Attempt to promote the streamline user to a full streamline user
     # if they aren't already
-    unless @full_user.persisted?
+    if @full_user.persisted?
+      @contact_info = Aria::ContactInfo.from_full_user(@full_user)
+    else
+      @contact_info = Aria::ContactInfo.from_billing_info(@billing_info)
 
       @full_user = Streamline::FullUser.new(
         {:postal_code => user_params[:aria_billing_info][:zip]}.
@@ -84,7 +87,7 @@ class AccountUpgradesController < ConsoleController
     process_async(:aria_user => current_user)
 
     begin
-      render :edit and return unless @aria_user.create_account(:billing_info => @billing_info)
+      render :edit and return unless @aria_user.create_account(:billing_info => @billing_info, :contact_info => @contact_info)
     rescue Aria::AccountExists
       render :edit and return unless @aria_user.update_account(:billing_info => @billing_info)
     end
