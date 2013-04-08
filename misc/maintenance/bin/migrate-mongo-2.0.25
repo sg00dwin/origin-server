@@ -30,9 +30,14 @@ def migrate_apps
       new_aliases = []
       app["aliases"].each do |old_alias|
         if old_alias.is_a?(Hash) and old_alias.has_key? "_id" and old_alias.has_key? "fqdn"
-          new_aliases << old_alias
+          if old_alias.has_key? "has_private_ssl_certificate"
+            new_alias = { "_id" => old_alias["_id"], "fqdn" => old_alias["fqdn"], "certificate_added_at" => old_alias["certificate_added_at"], "has_private_ssl_certificate" => old_alias["has_private_ssl_certificate"]} 
+          else
+            new_alias = { "_id" => old_alias["_id"], "fqdn" => old_alias["fqdn"], "has_private_ssl_certificate" => false} 
+          end
+          new_aliases << new_alias 
         elsif old_alias.is_a?(String)
-          new_aliases << { "_id" => BSON::ObjectId.new, "fqdn" => old_alias,  "has_private_certificate" => false }
+          new_aliases << { "_id" => BSON::ObjectId.new, "fqdn" => old_alias,  "has_private_ssl_certificate" => false }
         else
           raise Exception.new("Alias #{old_alias} for app #{app["name"]} does not follow any of the expected formats")
         end
