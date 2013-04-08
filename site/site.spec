@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.7.1
+Version: 1.7.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -181,6 +181,52 @@ fi
 %{sitedir}/public
 
 %changelog
+* Mon Apr 08 2013 Adam Miller <admiller@redhat.com> 1.7.2-1
+- Stop using Date.yesterday, move aria unit tests back into test:base
+  (jliggitt@redhat.com)
+- Move aria unit test to site_extended temporarily (jliggitt@redhat.com)
+- Merge pull request #1126 from fabianofranz/master
+  (dmcphers+openshiftbot@redhat.com)
+- OpenShift and Shadowman logos for the invoice (ffranz@redhat.com)
+- OpenShift and Shadowman logos for the invoice (ffranz@redhat.com)
+- Move bills controller test to extended (jliggitt@redhat.com)
+- Fix bug 948328 - stub remaining network calls to aria for
+  billing_controller_test (jliggitt@redhat.com)
+- Adding explicit injection annotations for uglifier (jharris@redhat.com)
+- Merge pull request #1093 from liggitt/aria_functional_tests
+  (dmcphers+openshiftbot@redhat.com)
+- Enable advancing virtual time (jliggitt@redhat.com)
+- Tolerate missing plans in RecurringLineItem (jliggitt@redhat.com)
+- Fixing captcha test (fotios@redhat.com)
+- Add bills and account controllers to aria:test (jliggitt@redhat.com)
+- Refactor user transactions, add advance_virtual_datetime, make Account tab
+  active, add current_period_end_date, use last_arrears_bill_thru_date to
+  compute starting date (jliggitt@redhat.com)
+- Add aria functional tests, test user generation, current period start date,
+  forwarded balance (jliggitt@redhat.com)
+- Fix for picatcha not being submitted properly (fotios@redhat.com)
+- Merge branch 'master' of github.com:openshift/li into 401dev
+  (sgoodwin@redhat.com)
+- Removed the openshift-icon inclusion in stylesheet since it's not included
+  through common Updates to iconfont usage styleguide Remove openshift-icon
+  from config/environments/production.rb (sgoodwin@redhat.com)
+- Fix bug 947081 - display dashboard for accounts with payment info and no next
+  bill (jliggitt@redhat.com)
+- Make forum login to post links buttons so they are recognizable/standout,
+  since it's a key path to submitting questions. (sgoodwin@redhat.com)
+- Merge pull request #1091 from liggitt/bug/928821 (dmcphers@redhat.com)
+- Merge pull request #1090 from smarterclayton/line_item_plan_name_wrong
+  (dmcphers@redhat.com)
+- Merge pull request #1088 from liggitt/aria_test
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 928821 - tweak signup success message for new plan name
+  (jliggitt@redhat.com)
+- Line item plan names say "Plan: Recurring" instead of "Plan: {{plan_name}}"
+  (ccoleman@redhat.com)
+- Fix bug 928793 - Billing page does not tolerate missing bills or plan items
+  (jliggitt@redhat.com)
+- Fix bug 928793 - &nbsp; shows in bill column (jliggitt@redhat.com)
+
 * Thu Mar 28 2013 Adam Miller <admiller@redhat.com> 1.7.1-1
 - bump_minor_versions for sprint 26 (admiller@redhat.com)
 - Merge pull request #1077 from fotioslindiakos/picatcha_fix
