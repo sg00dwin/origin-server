@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/openshift/cartridges/v2/metrics
 
 Name: openshift-origin-cartridge-metrics
-Version: 1.7.4
+Version: 1.7.5
 Release: 1%{?dist}
 Summary: Metrics cartridge
 
@@ -42,6 +42,11 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/README.md
 
 %changelog
+* Mon Apr 08 2013 Adam Miller <admiller@redhat.com> 1.7.5-1
+- metrics WIP (dmcphers@redhat.com)
+- Refactor v2 cartridge SDK location and accessibility (ironcladlou@gmail.com)
+- metrics WIP (dmcphers@redhat.com)
+
 * Tue Apr 02 2013 Dan McPherson <dmcphers@redhat.com> 1.7.4-1
 - new package built with tito
 
