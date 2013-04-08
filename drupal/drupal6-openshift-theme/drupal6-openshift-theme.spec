@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.15.1
+Version: 3.15.2
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,12 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Apr 08 2013 Adam Miller <admiller@redhat.com> 3.15.2-1
+- replace favicon.ico with new (sgoodwin@redhat.com)
+- Bug 928970: fixes Forums heading (ffranz@redhat.com)
+- Make forum login to post links buttons so they are recognizable/standout,
+  since it's a key path to submitting questions. (sgoodwin@redhat.com)
+
 * Thu Mar 28 2013 Adam Miller <admiller@redhat.com> 3.15.1-1
 - bump_minor_versions for sprint 26 (admiller@redhat.com)
 
