@@ -2,12 +2,11 @@
 :dev:
   :reports:
   - :not_approved
-  - :rejected
   - :dcut
   :to: libra-devel@redhat.com
 :qe:
   :reports:
   - :not_qe_ready
-  - :rejected
+  - :not_approved
   :to: libra-devel@redhat.com
   :nag: false

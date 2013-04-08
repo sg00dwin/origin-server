@@ -25,12 +25,7 @@ class Sprint
         :function => lambda{|x| check_comments(x, 'tcms') }
       },
       :approved => {
-        :parent => :not_rejected,
-        :function => lambda{|x| check_labels(x, 'tc-approved') }
-      },
-      :rejected => {
-        :parent => :qe_ready,
-        :function => lambda{|x| !check_labels(x, 'tc-approved') && !check_labels(x, 'no-qe') }
+        :function => lambda{|x| check_labels(x, 'tc-approved') || !check_labels(x, 'no-qe') }
       },
       :accepted   => {
         :function => lambda{|x| trello.boards[x.board_id].name == 'Accepted' }

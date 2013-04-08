@@ -1,9 +1,4 @@
 ---
-:rejected:
-  :title:     Test Cases Needing QE Re-submission
-  :function:  :rejected
-  :sort_key:  :short_id
-
 :not_qe_ready:
   :title:     User Stories Requiring Test Cases
   :friendly:  Create Test Cases for User Stories
