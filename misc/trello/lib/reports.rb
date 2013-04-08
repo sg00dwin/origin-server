@@ -23,15 +23,13 @@ module SprintReport
   end
 
   def offenders
-    #TODO use email in trello 0.6.1
-    data.map{|x| x.members.map{|member| member.full_name} }.flatten.uniq
+    data.map{|x| x.members.map{|member| member.email} }.flatten.uniq
   end
 
   def rows(user = nil)
     _data = data
     if user
-      #TODO use email in trello 0.6.1
-      _data = data.select{|x| x.members.map{|member| member.full_name}.include?(user)}
+      _data = data.select{|x| x.members.map{|member| member.email}.include?(user)}
     end
     _data.map do |row|
       # Get data for each column
