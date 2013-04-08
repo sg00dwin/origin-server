@@ -149,7 +149,7 @@ fi
 /sbin/service libra-watchman restart || :
 # /usr/bin/rhc-restorecon || :    # Takes too long and shouldn't be needded
 /sbin/service libra-data start > /dev/null 2>&1 || :
-[ $(/usr/sbin/semanage node -l | /bin/grep -c 255.255.255.128) -lt 1000 ] && /usr/bin/rhc-ip-prep.sh || :
+[ $(/usr/sbin/semanage node -l | /bin/grep -c 255.255.255.128) -lt 1000 ] && /usr/bin/rhc-ip-prep || :
 
 # Ensure the default users have a more restricted shell then normal.
 #semanage login -m -s guest_u __default__ || :
@@ -200,7 +200,7 @@ fi
 %attr(0750,-,-) %{_initddir}/libra-data
 %attr(0750,-,-) %{_initddir}/libra-tc
 %attr(0750,-,-) %{_initddir}/libra-watchman
-%attr(0750,-,-) %{_bindir}/rhc-ip-prep.sh
+%attr(0750,-,-) %{_bindir}/rhc-ip-prep
 %attr(0750,-,-) %{_bindir}/rhc-iptables.sh
 %attr(0750,-,-) %{_bindir}/rhc-mcollective-log-profile
 %attr(0750,-,-) %{_bindir}/rhc-profiler-merge-report
