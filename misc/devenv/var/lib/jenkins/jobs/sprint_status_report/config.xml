@@ -44,7 +44,7 @@
     </remoteRepositories>
     <branches>
       <hudson.plugins.git.BranchSpec>
-        <name>sprint_status_report</name>
+        <name>master</name>
       </hudson.plugins.git.BranchSpec>
     </branches>
     <mergeOptions/>
@@ -71,19 +71,19 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd misc/trello;
+      <command>cd misc/trello
 
 report_string=&quot;--report-type ${REPORT}&quot;                                                                                                                                                                   
 if [ &quot;${EMAIL}&quot; == true ]; then                                                                                                                                                                
   report_string=&quot;${report_string} --send-email&quot;                                                                                                                                           
-fi           
+fi
 
 bundle exec ruby trello report ${report_string} --trace</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.Mailer>
-      <recipients>dmcphers+broken_status_report@redhat.com</recipients>
+      <recipients>dmcphers+status_report@redhat.com</recipients>
       <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
     </hudson.tasks.Mailer>
