@@ -22,7 +22,7 @@ class TrelloHelper
   end
   
   def board_ids
-    return [broker_id, origin_broker_id, documentation_id,  enterprise_id, runtime_id, origin_runtime_id, ui_id, origin_ui_id]
+    return [broker_id, origin_broker_id, enterprise_id, runtime_id, origin_runtime_id, ui_id, origin_ui_id]
   end
   
   def team_boards(team_name)

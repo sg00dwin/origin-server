@@ -13,30 +13,25 @@ class Sprint
   def queries
     {
       :needs_qe => {
-        :function => lambda{|x|
-          # Make sure the project is not docs
-          !(x.name == 'Documentation') &&
-            # Check the tags for no-qe
-          !check_labels(x, 'no-qe')
-        }
+        :function => lambda{ |x| !check_labels(x, 'no-qe') }
       },
       :qe_ready => {
         :parent => :needs_qe,
-        :function => lambda{|x| check_comments(x, 'tcms') }
+        :function => lambda{ |x| check_comments(x, 'tcms') }
       },
       :approved => {
-        :function => lambda{|x| check_labels(x, 'tc-approved') || !check_labels(x, 'no-qe') }
+        :function => lambda{ |x| check_labels(x, 'tc-approved') || check_labels(x, 'no-qe') }
       },
       :accepted   => {
-        :function => lambda{|x| trello.boards[x.board_id].name == 'Accepted' }
+        :function => lambda{ |x| x.list.name == 'Accepted' }
       },
-      :completed   => {
+      :completed  => {
         :parent   => :not_accepted,
-        :function => lambda{|x| trello.boards[x.board_id].name == 'Complete' }
+        :function => lambda{ |x| list = x.list.name == 'Complete' }
       },
       :not_dcut_complete => {
         :parent   => :not_completed,
-        :function => lambda{|x| check_labels(x, 'devcut')}
+        :function => lambda{ |x| check_labels(x, 'devcut')}
       }
     }
   end

@@ -89,6 +89,7 @@ class Sprint
       lists.each do |list|
         if list.name == 'In Progress' || list.name == 'Complete' || list.name == 'Accepted'
           cards = list.cards.target
+          cards = cards.delete_if {|card| card.name =~ /^Sprint \d+/ && !card.due.nil?}
           @stories += cards
         end
       end

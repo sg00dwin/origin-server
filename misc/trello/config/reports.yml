@@ -8,5 +8,5 @@
   :reports:
   - :not_qe_ready
   - :not_approved
-  :to: libra-devel@redhat.com
+  :to: libra-qe@redhat.com
   :nag: false
