@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.7.1
+Version: 1.7.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -732,6 +732,20 @@ oo-admin-cartridge --recursive -a install -s /usr/libexec/openshift/cartridges/v
 /etc/openshift/development
 
 %changelog
+* Mon Apr 08 2013 Adam Miller <admiller@redhat.com> 1.7.2-1
+- syncing jenkins jobs (dmcphers@redhat.com)
+- adding v2 10gen mms agent (dmcphers@redhat.com)
+- Merge pull request #1123 from ironcladlou/nodejs_v2
+  (dmcphers+openshiftbot@redhat.com)
+- Add nodejs v2 package (ironcladlou@gmail.com)
+- adding java client merge testing (dmcphers@redhat.com)
+- syncing jenkins jobs (dmcphers@redhat.com)
+- metrics WIP (dmcphers@redhat.com)
+- syncing jenkins jobs (dmcphers@redhat.com)
+- syncing jenkins jobs (dmcphers@redhat.com)
+- Fix for bug 928625  - Removing extra dashes from command argument
+  (abhgupta@redhat.com)
+
 * Thu Mar 28 2013 Adam Miller <admiller@redhat.com> 1.7.1-1
 - bump_minor_versions for sprint 26 (admiller@redhat.com)
 
