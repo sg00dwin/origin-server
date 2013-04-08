@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.7.1
+Version: 1.7.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -151,6 +151,29 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Mon Apr 08 2013 Adam Miller <admiller@redhat.com> 1.7.2-1
+- Card 536 (lnader@redhat.com)
+- Fix user plan update: To handle old existing users, while acquiring the lock
+  check plan_sate to be nil or active. (rpenta@redhat.com)
+- Billing entitlement email notification changes:  - Don't capture all events
+  from aria  - Plan change (upgrade/downgrade) will send revoke/assign
+  entitlement email without depending on aria events.  - Only handle aria
+  events in case of account status changes due to dunning or account
+  supplemental field changes.  - Don't send revoke/assign entitlements if the
+  modified plan is free plan.  - Fetch account contact address by querying
+  streamline  - Don't use 'RHLogin' supplemental field for login, instead query
+  mongo with aria acct_no to fetch login.    Reason: Any special chars in
+  RHLogin is not properly escaped by aria.  - Bug fixes  - Cleanup
+  (rpenta@redhat.com)
+- Fixing extended broker tests (abhgupta@redhat.com)
+- Merge pull request #1103 from rajatchopra/master
+  (dmcphers+openshiftbot@redhat.com)
+- fixed broker extended test (lnader@redhat.com)
+- default read should be from primary (rchopra@redhat.com)
+- Merge pull request #1087 from lnader/improve_test_coverage
+  (dmcphers+openshiftbot@redhat.com)
+- improve test coverage (lnader@redhat.com)
+
 * Thu Mar 28 2013 Adam Miller <admiller@redhat.com> 1.7.1-1
 - bump_minor_versions for sprint 26 (admiller@redhat.com)
 - Merge pull request #1083 from pravisankar/dev/ravi/bug928205_917961_aria-
