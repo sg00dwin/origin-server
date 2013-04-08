@@ -44,7 +44,7 @@ def migrate_apps
       end
       print "."
       print "Migrating app #{app['name']}/#{app['uuid']}.. " if $verbose
-      $coll.update({ "uuid" => app["uuid"] }, { "$set" => { "aliases" => new_aliases } } ) if new_aliases.length > 0
+      $coll.update({ "_id" => app["_id"] }, { "$set" => { "aliases" => new_aliases } } ) if new_aliases.length > 0 and app["_id"]
       total += 1
       print "done" if $verbose
     end
