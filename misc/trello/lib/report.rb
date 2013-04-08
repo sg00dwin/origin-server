@@ -155,7 +155,7 @@ class Report
       end
     end
 
-    if options.email
+    if options.send_email
       heading "Sending Emails" do
         emails.each do |email|
           _progress email.mail.to do
