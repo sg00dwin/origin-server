@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.6.12
+Version: 1.6.13
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -181,6 +181,9 @@ fi
 %{sitedir}/public
 
 %changelog
+* Tue Apr 09 2013 Adam Miller <admiller@redhat.com> 1.6.13-1
+- Adding explicit injection annotations for uglifier (jharris@redhat.com)
+
 * Tue Apr 02 2013 Adam Miller <admiller@redhat.com> 1.6.12-1
 - Fixed test (fotios@redhat.com)
 - Fix for picatcha not being submitted properly (fotios@redhat.com)
