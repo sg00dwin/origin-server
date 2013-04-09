@@ -1,5 +1,5 @@
 ServerTokens OS
-PidFile run/httpd.pid
+PidFile <%= ENV['OPENSHIFT_ROCKMONGO_DIR'] %>run/httpd.pid
 Timeout 5
 KeepAlive Off
 MaxKeepAliveRequests 100
@@ -86,18 +86,18 @@ DirectoryIndex index.html index.html.var
 TypesConfig /etc/mime.types
 DefaultType text/plain
 <IfModule mod_mime_magic.c>
-    MIMEMagicFile conf/magic
+    MIMEMagicFile <%= ENV['OPENSHIFT_ROCKMONGO_DIR'] %>/etc/conf/magic
 </IfModule>
 HostnameLookups Off
 #EnableMMAP off
 #EnableSendfile off
-#ErrorLog logs/error_log
+#ErrorLog <%= ENV['OPENSHIFT_ROCKMONGO_DIR'] %>logs/error_log
 LogLevel error
 LogFormat "%{X-Client-IP}i %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
 LogFormat "%h %l %u %t \"%r\" %>s %b" common
 LogFormat "%{Referer}i -> %U" referer
 LogFormat "%{User-agent}i" agent
-#CustomLog logs/access_log combined
+#CustomLog <%= ENV['OPENSHIFT_ROCKMONGO_DIR'] %>logs/access_log combined
 ServerSignature On
 # BZ840030 (addendum to BZ785050): Alias /icons/ "/var/www/icons/"
 

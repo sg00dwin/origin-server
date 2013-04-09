@@ -27,11 +27,10 @@ Configure-Order:
   - mongodb
   - rockmongo
 Endpoints:
-  - Private-IP-Name:   ROCKMONGO_IP
-    Private-Port-Name: ROCKMONGO_PORT
+  - Private-IP-Name:   IP
+    Private-Port-Name: PORT
     Private-Port:      8080
-    Public-Port-Name:  ROCKMONGO_PROXY_PORT
+    Public-Port-Name:  PROXY_PORT
     Mappings:
-      - Frontend:      ""
+      - Frontend:      "/rockmongo"
         Backend:       "/rockmongo"
-        Options:       { websocket: true }
