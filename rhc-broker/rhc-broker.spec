@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.6.7
+Version: 1.6.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -151,6 +151,10 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Tue Apr 09 2013 Adam Miller <admiller@redhat.com> 1.6.8-1
+- Fix user plan update: To handle old existing users, while acquiring the lock
+  check plan_sate to be nil or active. (rpenta@redhat.com)
+
 * Thu Mar 28 2013 Adam Miller <admiller@redhat.com> 1.6.7-1
 - Bug 928205 - Fix rhc-admin-ctl-plan typo/checks (rpenta@redhat.com)
 
