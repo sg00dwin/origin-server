@@ -66,13 +66,11 @@ Broker::Application.configure do
           :gear => { 
                     :small => { 
                                :usd => 0.05, #$/hr
-                               :cad => 0.05,
                                :eur => 0.04,
                                :duration => :hour
                               },
                     :medium => {
                                 :usd => 0.12, #$/hr
-                                :cad => 0.12,
                                 :eur => 0.09,
                                 :duration => :hour
                                }
@@ -81,14 +79,12 @@ Broker::Application.configure do
                        :gigabyte => {
                                      :usd => 1.00, #$/month
                                      :eur => 1.00,
-                                     :cad => 1.00,
                                      :duration => :month
                                     }
                       },
           :cartridge => {
                          :'jbosseap-6.0' => {
                                              :usd => 0.03, #$/hr
-                                             :cad => 0.03,
                                              :eur => 0.02,
                                              :duration => :hour
                                             }
