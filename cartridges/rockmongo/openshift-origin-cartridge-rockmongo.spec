@@ -2,7 +2,7 @@
 
 Summary:   Embedded RockMongo support
 Name:      openshift-origin-cartridge-rockmongo
-Version:   0.0.3
+Version:   0.0.4
 Release:   1%{?dist}
 Group:     Applications/Internet
 License:   ASL 2.0
@@ -50,6 +50,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/README.md
 
 %changelog
+* Mon Apr 08 2013 Dan McPherson <dmcphers@redhat.com> 0.0.4-1
+- new package built with tito
+
 * Mon Apr 08 2013 Jhon Honce <jhonce@redhat.com> 0.0.3-1
 - WIP Cartridge Refactor - RockMongo cartridge (jhonce@redhat.com)
 - Automatic commit of package [openshift-origin-cartridge-rockmongo] release
