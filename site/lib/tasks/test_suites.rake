@@ -135,6 +135,7 @@ namespace :test do
       require 'rspec/core'
       ENV['FORMAT'] = 'CI::Reporter::RSpec'
       ENV['CI_REPORTS'] = 'rhc/log/js/test/reports/'
+
       Rake::Task['konacha:run'].invoke
     end
   end

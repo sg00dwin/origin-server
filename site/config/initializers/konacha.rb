@@ -6,7 +6,4 @@ Konacha.configure do |config|
   config.spec_matcher = /_spec\.|_test\./
   config.driver       = :poltergeist
   config.stylesheets  = %w(application)
-
-  # Temp??
-  WebMock.disable_net_connect!(:allow_localhost => true)
 end if defined?(Konacha)
