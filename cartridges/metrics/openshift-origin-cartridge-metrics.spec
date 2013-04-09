@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/openshift/cartridges/v2/metrics
 
 Name: openshift-origin-cartridge-metrics
-Version: 1.7.5
+Version: 1.7.6
 Release: 1%{?dist}
 Summary: Metrics cartridge
 
@@ -42,6 +42,11 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/README.md
 
 %changelog
+* Mon Apr 08 2013 Dan McPherson <dmcphers@redhat.com> 1.7.6-1
+- Merge pull request #1132 from ironcladlou/dev/v2carts/vendor-changes
+  (dmcphers+openshiftbot@redhat.com)
+- Remove vendor name from installed V2 cartridge path (ironcladlou@gmail.com)
+
 * Mon Apr 08 2013 Adam Miller <admiller@redhat.com> 1.7.5-1
 - metrics WIP (dmcphers@redhat.com)
 - Refactor v2 cartridge SDK location and accessibility (ironcladlou@gmail.com)
