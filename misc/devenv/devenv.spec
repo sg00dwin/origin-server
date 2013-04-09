@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.7.2
+Version: 1.7.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -733,6 +733,12 @@ oo-admin-cartridge --recursive -a install -s /usr/libexec/openshift/cartridges/v
 /etc/openshift/development
 
 %changelog
+* Tue Apr 09 2013 Adam Miller <admiller@redhat.com> 1.7.3-1
+- Adding openshift-origin-cartridge-cron (calfonso@redhat.com)
+- Merge pull request #1133 from jwhonce/wip/rockmongo
+  (dmcphers+openshiftbot@redhat.com)
+- WIP Cartridge Refactor - RockMongo cartridge (jhonce@redhat.com)
+
 * Mon Apr 08 2013 Adam Miller <admiller@redhat.com> 1.7.2-1
 - syncing jenkins jobs (dmcphers@redhat.com)
 - adding v2 10gen mms agent (dmcphers@redhat.com)
