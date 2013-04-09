@@ -37,6 +37,7 @@ Requires:  openshift-origin-cartridge-jenkins-client-1.4
 Requires:  openshift-origin-cartridge-metrics-0.1
 Requires:  openshift-origin-cartridge-mongodb-2.2
 Requires:  openshift-origin-cartridge-rockmongo-1.1
+Requires:  openshift-origin-cartridge-rockmongo
 Requires:  openshift-origin-cartridge-10gen-mms-agent-0.1
 Requires:  openshift-origin-cartridge-postgresql-8.4
 Requires:  openshift-origin-cartridge-cron-1.4

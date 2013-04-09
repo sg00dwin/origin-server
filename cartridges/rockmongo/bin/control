@@ -1,0 +1,46 @@
+#!/bin/bash -e
+source $OPENSHIFT_CARTRIDGE_SDK_BASH
+set -u
+
+HTTPD_CFG_FILE=${OPENSHIFT_ROCKMONGO_DIR}etc/conf/httpd_nolog.conf
+HTTPD_PID_FILE=${OPENSHIFT_ROCKMONGO_DIR}run/httpd.pid
+
+function start() {
+  /usr/sbin/httpd -C "Include ${OPENSHIFT_ROCKMONGO_DIR}etc/conf.d/*.conf" -f $HTTPD_CFG_FILE -k start
+}
+
+function stop() {
+  if [ -f $HTTPD_PID_FILE ]
+  then
+    local PID=$(<$HTTPD_PID_FILE)
+    if [[ -n $PID && -n $(pgrep -u $(id -u $OPENSHIFT_GEAR_UUID) httpd |grep $PID) ]]
+    then
+      /usr/sbin/httpd -C "Include ${OPENSHIFT_ROCKMONGO_DIR}etc/conf.d/*.conf" -f $HTTPD_CFG_FILE -k stop
+    fi
+  else
+    exit 0
+  fi
+}
+
+function restart() {
+  /usr/sbin/httpd -C "Include ${OPENSHIFT_ROCKMONGO_DIR}etc/conf.d/*.conf" -f $HTTPD_CFG_FILE -k restart
+}
+
+# Is the packaged software really running?
+function status() {
+  if ps --no-headers --pid $(< $HTTPD_PID_FILE) > /dev/null
+  then
+    client_result 'Rockmongo is running'
+  else
+    client_result 'Rockmongo is either stopped or inaccessible'
+  fi
+  exit 0
+}
+
+case "$1" in
+  start)            start ;;
+  stop)             stop ;;
+  restart|reload)   restart ;;
+  status)           status ;;
+  *)                exit 0
+esac
