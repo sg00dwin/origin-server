@@ -104,10 +104,12 @@ RedHatCloud::Application.configure do
                                  site/tracking.js
                                  site/omniture.js
                                  site/s_code.js
+                                 site/picatcha.js
                                  common.css
                                  console.css
                                  site.css
                                  overpass.css
+                                 picatcha.css
                                 )
 
   # Account Support contact
