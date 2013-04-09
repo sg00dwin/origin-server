@@ -132,6 +132,7 @@ namespace :test do
 
     # Run javascript unit tests in check
     task :js do |t|
+      require 'rspec/core'
       ENV['FORMAT'] = 'CI::Reporter::RSpec'
       ENV['CI_REPORTS'] = 'rhc/log/js/test/reports/'
       Rake::Task['konacha:run'].invoke
