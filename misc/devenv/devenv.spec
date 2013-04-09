@@ -64,7 +64,7 @@ Requires:  openshift-origin-cartridge-mongodb
 Requires:  openshift-origin-cartridge-metrics
 Requires:  openshift-origin-cartridge-nodejs
 Requires:  openshift-origin-cartridge-10gen-mms-agent
-#Requires:  openshift-origin-cartridge-cron
+Requires:  openshift-origin-cartridge-cron
 Requires:  activemq
 Requires:  activemq-client
 #Requires:  qpid-cpp-server
