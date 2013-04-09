@@ -2,7 +2,6 @@ module BillingAware
   extend ActiveSupport::Concern
 
   included do
-    include Secured
     include CapabilityAware
     helper_method :user_currency_cd, :user_can_upgrade_plan?, :user_on_basic_plan?
   end
