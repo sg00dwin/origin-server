@@ -8,7 +8,7 @@ set -u
 if [ ${OPENSHIFT_MONGODB_DB_HOST:-'Not Installed'} == 'Not Installed' ]
 then
   client_error ""
-  client_error "MongoDB must be embedded before rockmongo."
+  client_error "MongoDB must be added before rockmongo."
   client_error ""
   exit 137
 fi
