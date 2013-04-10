@@ -57,7 +57,7 @@
       %h2 Got Questions?
       %h3= link_to "Account Help", help_account_path
       - if @plan.basic?
-        %h3= link_to "Community Support", help_account_path
+        %h3= link_to "Community Support", console_help_path
       - else
         %h3= link_to "Technical Support", openshift_customer_portal_url
 
