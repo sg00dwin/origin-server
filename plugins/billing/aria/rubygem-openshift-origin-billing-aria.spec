@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.5.2
+Version: 1.5.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,12 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Wed Apr 10 2013 Adam Miller <admiller@redhat.com> 1.5.3-1
+- Remove CAD rates from broker config (jliggitt@redhat.com)
+- Currency display story number_to_user_currency helper method Make CSV export
+  async, refactor csv to view Add tests for eur display Cache currency_cd in
+  session (jliggitt@redhat.com)
+
 * Mon Apr 08 2013 Adam Miller <admiller@redhat.com> 1.5.2-1
 - Billing entitlement email notification changes:  - Don't capture all events
   from aria  - Plan change (upgrade/downgrade) will send revoke/assign
