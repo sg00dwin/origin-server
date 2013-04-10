@@ -6,13 +6,11 @@
 .row
   - unless @domain
     .span12
-      .well
-        = render :partial => 'add_domain', :locals => {:domain => @domain}
+      = render :partial => 'add_domain', :locals => {:domain => @domain}
 
   - unless @keys.present?
     .span12
-      .well
-        = render :partial => 'add_key', :locals => {:keys => @keys}
+      = render :partial => 'add_key', :locals => {:keys => @keys}
 
   .span6
     %section

@@ -70,9 +70,9 @@ module Account
       join!(30)
 
       if not @domain
-        flash[:info] = "You need to set a namespace before you can create applications"
+        flash.now[:info] = "You need to set a namespace before you can create applications"
       elsif @keys.blank?
-        flash[:info] = "You need to set a public key before you can work with application code"
+        flash.now[:info] = "You need to set a public key before you can work with application code"
       end
     end
   end
