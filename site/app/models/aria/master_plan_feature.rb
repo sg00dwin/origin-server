@@ -1,6 +1,6 @@
 module Aria
   class MasterPlanFeature
-    attr_accessor :name, :value, :type, :rank
+    attr_accessor :name, :value, :type, :rank, :currency_cd
 
     # We'll throw this when someone tries to compare different features.
     ComparisonError = Class.new(Aria::Error)
@@ -53,15 +53,19 @@ module Aria
         type = 'text'
         rank = ranking.nil? ? 0 : ranking.length
         count = 0
+        currency_cd = nil
         if data =~ /^\d+$/
           count = data
           type  = 'numeric'
+        elsif currency_match = /\s*\((#{Rails.configuration.allowed_currencies.join('|')})\)\s*/i.match(data)
+          data.gsub!(currency_match[0], " ").strip!
+          currency_cd = currency_match[1].downcase
         end
         if (name.nil? or name =~ /^\s*$/ or data.nil? or data =~ /^\s*$/)
           raise MalformedFeatureError.new("Improperly defined plan feature: '#{feature}'")
         end
 
-        feature_list << Aria::MasterPlanFeature.new({ :name => name, :value => data, :type => type, :count => count, :rank => rank })
+        feature_list << Aria::MasterPlanFeature.new({ :name => name, :value => data, :type => type, :count => count, :rank => rank, :currency_cd => currency_cd })
       end
       feature_list
     end

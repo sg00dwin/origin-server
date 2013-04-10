@@ -75,6 +75,10 @@ RedHatCloud::Application.configure do
   config.twitter_oauth_token = '17620820-rm2UBzOWYrETRh2Ut4rjkGISqmkfdlVKSYcmmAOGt'
   config.twitter_oauth_token_secret = 'aFfOPRBJBckWarMxlWYg3MljK6EgoaKUW9CjFSsaG8'
 
+  # Currency
+  config.allowed_currencies = [:usd, :eur] 
+  config.default_currency = :usd
+
   # Promo code Email notification setup
   config.email_from = 'OpenShift <noreply@openshift.redhat.com>'
   config.marketing_mailing_list = 'Marketing Mailing List <jgurrero@redhat.com>'

@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require File.expand_path('../../test_helper', __FILE__)
 
 require 'aria'
@@ -480,6 +482,53 @@ class AriaUnitTest < ActiveSupport::TestCase
     assert_equal 3, plan.feature('Free Gears').count
     assert_equal nil, plan.feature('NotAFeature').count
     assert_equal true, plan.feature('NotAFeature').not_available?
+  end
+
+  test 'master plan parses complex aria description text into currency specific plan features' do
+    Aria::Client.any_instance.expects(:invoke).once.
+      with(:get_client_plans_basic).
+      returns(Aria::WDDX::Struct.new({
+        'plans_basic' => [
+          Aria::WDDX::Struct.new({
+            'plan_no' => '3',
+            'plan_name' => 'MockShift',
+            'plan_desc' => """This is the MockShift plan.
+
+Features:
+* Price: € 33/Month (EUR) *
+* Price: $42/Month (USD) *
+* Free Gears: 3
+* Support: By Red Hat
+* Scaling: 3 Included
+* Additional Storage: € 1/GB per month (EUR) *
+* Additional Storage: $1/GB per month (USD) *
+* SSL: For custom domains *
+* Java EE6 Full Profile & CDI: 3 gears free; € 0.02/hr per additional gear (EUR) *
+* Java EE6 Full Profile & CDI: 3 gears free; $0.03/hr per additional gear (USD) *
+"""
+          })
+        ]
+      }))
+
+    assert plan = Aria::MasterPlan.new(
+      :plan_no => '3',
+      :capabilities => { :max_gears => 16, :gear_sizes => ['small','medium'] }
+    )
+
+    assert_equal 'This is the MockShift plan.', plan.description
+    assert features = plan.features
+
+    assert_equal "By Red Hat", plan.feature("Support").value
+    assert_nil plan.feature("Support").currency_cd
+
+    assert_equal "$42/Month", plan.feature("Price").value
+    assert_equal "usd", plan.feature("Price").currency_cd
+
+    assert_equal "$42/Month", plan.feature("Price", "usd").value
+    assert_equal "usd", plan.feature("Price", "usd").currency_cd
+
+    assert_equal "€ 33/Month", plan.feature("Price", "eur").value
+    assert_equal "eur", plan.feature("Price", "eur").currency_cd
   end
 
   test 'should raise an error when an aria description can not be parsed into plan features' do

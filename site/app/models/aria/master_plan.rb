@@ -32,13 +32,15 @@ module Aria
       @services ||= Aria.cached.get_client_plan_services(plan_no)
     end
 
-    def features
+    def features(currency_cd=nil)
+      currency_cd ||= Rails.configuration.default_currency.to_s
       @features ||= Aria::MasterPlanFeature.from_description(aria_plan.plan_desc)
+      @features.select {|f| f.currency_cd.nil? or f.currency_cd == currency_cd }
     end
 
     # Find a feature of the given name or create a new 'null' feature to represent it
-    def feature(name)
-      features.each do |feat|
+    def feature(name, currency_cd=nil)
+      features(currency_cd).each do |feat|
         if feat.name == name
           return feat
         end
