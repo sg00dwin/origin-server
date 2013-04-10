@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.7.2
+Version: 1.7.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -181,6 +181,26 @@ fi
 %{sitedir}/public
 
 %changelog
+* Wed Apr 10 2013 Adam Miller <admiller@redhat.com> 1.7.3-1
+- Merge pull request #1147 from
+  smarterclayton/redirect_new_users_to_get_started
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1151 from
+  smarterclayton/bug_948371_fix_flash_to_be_now_only (dmcphers@redhat.com)
+- Merge pull request #1146 from smarterclayton/set_no_default_community_url
+  (dmcphers@redhat.com)
+- Bug 948371 - Fixes to settings page (ccoleman@redhat.com)
+- Do not set a default community URL (ccoleman@redhat.com)
+- Add currency filtering to plan feature descriptions (jliggitt@redhat.com)
+- Signup takes users to the get-started page (ccoleman@redhat.com)
+- Merge pull request #1140 from liggitt/currency_display (dmcphers@redhat.com)
+- Fix test failure caused by including Secured in BillingAware
+  (jliggitt@redhat.com)
+- Currency display story number_to_user_currency helper method Make CSV export
+  async, refactor csv to view Add tests for eur display Cache currency_cd in
+  session (jliggitt@redhat.com)
+- Add picatcha to asset compilation (ccoleman@redhat.com)
+
 * Mon Apr 08 2013 Adam Miller <admiller@redhat.com> 1.7.2-1
 - Stop using Date.yesterday, move aria unit tests back into test:base
   (jliggitt@redhat.com)
