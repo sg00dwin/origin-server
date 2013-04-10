@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      openshift-origin-cartridge-zend-5.6
-Version: 1.7.1
+Version: 1.7.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -108,6 +108,10 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Apr 10 2013 Adam Miller <admiller@redhat.com> 1.7.2-1
+- Delete move/pre-move/post-move hooks and any references to these hooks
+  (rpenta@redhat.com)
+
 * Thu Mar 28 2013 Adam Miller <admiller@redhat.com> 1.7.1-1
 - bump_minor_versions for sprint 26 (admiller@redhat.com)
 
