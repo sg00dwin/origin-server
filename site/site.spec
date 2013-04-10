@@ -43,7 +43,12 @@ Requires:       %{?scl:%scl_prefix}rubygem(therubyracer)
 Requires:       %{?scl:%scl_prefix}rubygem(rack-recaptcha)
 Requires:       %{?scl:%scl_prefix}rubygem(rack-picatcha)
 Requires:       %{?scl:%scl_prefix}rubygem(dalli)
+<<<<<<< HEAD
 Requires:       %{?scl:%scl_prefix}rubygem(countries)
+=======
+Requires:       %{?scl:%scl_prefix}rubygem(poltergeist)
+Requires:       %{?scl:%scl_prefix}rubygem(konacha)
+>>>>>>> Add js testing gem dependencies.
 
 %if 0%{?fedora}%{?rhel} <= 6
 BuildRequires:  ruby193-build
@@ -78,6 +83,8 @@ BuildRequires:  %{?scl:%scl_prefix}rubygem(rack-recaptcha)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(rack-picatcha)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(dalli)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(countries)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(poltergeist)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(konacha)
 
 BuildArch:      noarch
 
