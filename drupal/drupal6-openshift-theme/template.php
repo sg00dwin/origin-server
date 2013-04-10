@@ -153,16 +153,15 @@ function _openshift_whitelist_css(&$vars)
 function openshift_social_sharing($url, $title = NULL) {
   $share_url = url($url, array('absolute' => TRUE));
   if (isset($title)) {
-    $share_text = 'From OpenShift by Red Hat: '.$title.' '.$share_url;
+    $share_text = 'From OpenShift by Red Hat: '.$title.' ';
   } else {
-    $share_text = 'From OpenShift by Red Hat: '.$share_url;
+    $share_text = 'From OpenShift by Red Hat';
   }
   $share_url = drupal_urlencode($share_url);
   $share_text = drupal_urlencode($share_text);
   return '<div class="social-sharing">'.
-      'Share this on '.
-      '<a target="_blank" href="http://twitter.com/intent/tweet?text='. $share_text .'" aria-hidden="true" data-icon="&#xee04;" title="Post to Twitter"> </a>'.
-      '<a target="_blank" href="http://www.facebook.com/sharer.php?u='. $share_url .'" aria-hidden="true" data-icon="&#xee05;" title="Post to Facebook"> </a>'.
+      '<a target="_blank" href="http://twitter.com/intent/tweet?text='. $share_text .' '. $share_url .' '. urlencode('@openshift').'" aria-hidden="true" data-icon="&#xee04;" title="Post to Twitter"> </a>'.
+      '<a target="_blank" href="http://www.facebook.com/sharer.php?p[url]='. $share_url .'&p[title]='. $share_text .'" aria-hidden="true" data-icon="&#xee05;" title="Post to Facebook"> </a>'.
       '<a target="_blank" href="https://plus.google.com/share?url='. $share_url .'" aria-hidden="true" data-icon="&#xee06;" title="Post to Google+"> </a>'.
     '</div>';
 }
