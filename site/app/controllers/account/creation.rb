@@ -63,7 +63,6 @@ module Account
         end
       end
 
-      # FIXME: Need to pass signin destination through confirmation link
       confirmationUrl = url_for(:action => 'confirm',
                                 :controller => 'email_confirm',
                                 :only_path => false,
