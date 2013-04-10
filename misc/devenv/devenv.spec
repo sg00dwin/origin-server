@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.7.3
+Version: 1.7.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -737,6 +737,12 @@ oo-admin-cartridge --recursive -a install -s /usr/libexec/openshift/cartridges/v
 /etc/openshift/development
 
 %changelog
+* Wed Apr 10 2013 Adam Miller <admiller@redhat.com> 1.7.4-1
+- Merge pull request #1141 from sosiouxme/bz949543 (dmcphers@redhat.com)
+- <rhc-node> bug 949543 transfer RPM ownership of resource_limits.conf to
+  rubygem-o-o-node additionally, have devenv cp the one from rhc-node so it
+  will be the same. (lmeyer@redhat.com)
+
 * Tue Apr 09 2013 Adam Miller <admiller@redhat.com> 1.7.3-1
 - Adding openshift-origin-cartridge-cron (calfonso@redhat.com)
 - Merge pull request #1133 from jwhonce/wip/rockmongo
