@@ -76,7 +76,7 @@ RedHatCloud::Application.configure do
   config.twitter_oauth_token_secret = 'aFfOPRBJBckWarMxlWYg3MljK6EgoaKUW9CjFSsaG8'
 
   # Currency
-  config.allowed_currencies = [:usd, :eur] 
+  config.allowed_currencies = [:usd, :cad, :eur] 
   config.default_currency = :usd
 
   # Promo code Email notification setup

@@ -245,6 +245,10 @@ class BillsControllerTest < ActionController::TestCase
     do_usage_test("usd", "$")
   end
 
+  test "should compare usage between bill and current period in cad" do
+    do_usage_test("cad", "$")
+  end
+
   test "should compare usage between bill and current period in eur" do
     do_usage_test("eur", "€ ")
   end
@@ -256,6 +260,10 @@ class BillsControllerTest < ActionController::TestCase
 
   test "should show forwarded balance based on statements in usd" do
     do_forwarded_balance_test("usd", "$")
+  end
+
+  test "should show forwarded balance based on statements in cad" do
+    do_forwarded_balance_test("cad", "$")
   end
 
   test "should show forwarded balance based on statements in eur" do
@@ -302,7 +310,11 @@ class BillsControllerTest < ActionController::TestCase
   end
 
   test "should export invoice successfully in usd" do
-    do_export_test("eur", "€ ")
+    do_export_test("usd", "$")
+  end
+
+  test "should export invoice successfully in cad" do
+    do_export_test("cad", "$")
   end
 
   test "should export invoice successfully in eur" do

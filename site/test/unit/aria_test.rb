@@ -495,16 +495,19 @@ class AriaUnitTest < ActiveSupport::TestCase
             'plan_desc' => """This is the MockShift plan.
 
 Features:
-* Price: € 33/Month (EUR) *
+* Price: €33/Month (EUR) *
+* Price: €43.05/Month (CAD) *
 * Price: $42/Month (USD) *
 * Free Gears: 3
 * Support: By Red Hat
 * Scaling: 3 Included
-* Additional Storage: € 1/GB per month (EUR) *
+* Additional Storage: €1/GB per month (EUR) *
+* Additional Storage: $1/GB per month (CAD) *
 * Additional Storage: $1/GB per month (USD) *
 * SSL: For custom domains *
 * Java EE6 Full Profile & CDI: 3 gears free; € 0.02/hr per additional gear (EUR) *
 * Java EE6 Full Profile & CDI: 3 gears free; $0.03/hr per additional gear (USD) *
+* Java EE6 Full Profile & CDI: 3 gears free; $0.03/hr per additional gear (CAD) *
 """
           })
         ]
@@ -527,7 +530,10 @@ Features:
     assert_equal "$42/Month", plan.feature("Price", "usd").value
     assert_equal "usd", plan.feature("Price", "usd").currency_cd
 
-    assert_equal "€ 33/Month", plan.feature("Price", "eur").value
+    assert_equal "$43.05/Month", plan.feature("Price", "cad").value
+    assert_equal "cad", plan.feature("Price", "cad").currency_cd
+
+    assert_equal "€33/Month", plan.feature("Price", "eur").value
     assert_equal "eur", plan.feature("Price", "eur").currency_cd
   end
 

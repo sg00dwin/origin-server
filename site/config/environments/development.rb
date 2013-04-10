@@ -55,7 +55,7 @@ RedHatCloud::Application.configure do
   config.aria_direct_post_redirect_base = nil
 
   # Currency
-  config.allowed_currencies = [:usd, :eur] 
+  config.allowed_currencies = [:usd, :cad, :eur] 
   config.default_currency = :usd
 
   # Promo code Email notification setup
