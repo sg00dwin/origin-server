@@ -11,6 +11,45 @@ function application_quickstarts_ctools_plugin_api() {
 }
 
 /**
+ * Implementation of hook_imagecache_default_presets().
+ */
+function application_quickstarts_imagecache_default_presets() {
+  $items = array(
+    'generic_icon_150_50' => array(
+      'presetname' => 'generic_icon_150_50',
+      'actions' => array(
+        '0' => array(
+          'weight' => '0',
+          'module' => 'imagecache',
+          'action' => 'imagecache_scale',
+          'data' => array(
+            'width' => '150',
+            'height' => '75',
+            'upscale' => 0,
+          ),
+        ),
+      ),
+    ),
+    'generic_icon_256_256' => array(
+      'presetname' => 'generic_icon_256_256',
+      'actions' => array(
+        '0' => array(
+          'weight' => '0',
+          'module' => 'imagecache',
+          'action' => 'imagecache_scale',
+          'data' => array(
+            'width' => '256',
+            'height' => '256',
+            'upscale' => 0,
+          ),
+        ),
+      ),
+    ),
+  );
+  return $items;
+}
+
+/**
  * Implementation of hook_node_info().
  */
 function application_quickstarts_node_info() {
