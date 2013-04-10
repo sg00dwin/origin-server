@@ -702,6 +702,14 @@ html.js fieldset.collapsible .fieldset-wrapper {
     }
   }
 
+  tr:hover td {
+    background-color: transparent;
+  }
+  tr.views-row-extra > td {
+    border-top: 0;
+  }
+
+
   .view-footer {
     padding-top: 12px;
   }

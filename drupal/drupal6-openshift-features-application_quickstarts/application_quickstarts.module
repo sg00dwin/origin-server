@@ -97,11 +97,11 @@ function application_quickstarts_all_tags_block() {
 function application_quickstarts_page() {
   global $base_url;
   $count = db_result(db_query("SELECT COUNT(*) FROM {node} WHERE type = 'quickstart' and status = 1"));
-  $content .= '<p>Quickstarts allow you to easily launch a new application on OpenShift by combining code and one or more cartridges.  You can see the top rated and recent quickstarts below, or <a href="/node/add/quickstart">submit a new one</a> today!</p>';
-  $content .= '<p>NOTE: Quickstarts are not maintained by the OpenShift team, and can be created by anyone. You\'re responsible for keeping up to date with security issues as needed.  If you find a problem with a quickstart, please report it in the comments so others can be aware!</p>';
+  $content .= '<p>QuickStarts allow you to easily launch a new application on OpenShift by combining code and one or more cartridges.  You can see the top rated and recent quickstarts below, or <a href="/node/add/quickstart">submit a new one</a> today!</p>';
+  $content .= '<p>NOTE: QuickStarts are not maintained by the OpenShift team, and can be created by anyone. You\'re responsible for keeping up to date with security issues as needed.  If you find a problem with a quickstart, please report it in the comments so others can be aware!</p>';
   $content .= '<form action="/search/node" method="post" class="form-search custom-form-search">';
-  $content .= '<input class="span6" placeholder="Search quickstarts..." type="text" value="" name="keys" />';
-  $content .= '<input type="submit" value="" name="op" title="Search OpenShift quickstarts" alt="Search OpenShift quickstarts" />';
+  $content .= '<input class="span6" placeholder="Search QuickStarts..." type="text" value="" name="keys" />';
+  $content .= '<input type="submit" value="" name="op" title="Search OpenShift QuickStarts" alt="Search OpenShift QuickStarts" />';
   $content .= '<input type="hidden" value="';
   $content .= drupal_get_token('search_form');
   $content .= '" name="form_token" />';
@@ -111,13 +111,13 @@ function application_quickstarts_page() {
   #if ($count > 20) {
   #  $content .= '<p class="meta">Browse all  '.$count.' quickstarts</p>';
   #}
-  $content .= '<div class="row-fluid"><div class="span6"><h2>Top Quickstarts</h2>';
+  $content .= '<div class="row-fluid"><div class="span6"><h2>Top QuickStarts</h2>';
   $content .= '</h2>';
   $content .= views_embed_view('application_quickstarts_content', 'block_1');
   $content .= '</div><section class="span6">';
-  $content .= '<h2>Partner Quickstarts</h2>';
+  $content .= '<h2>Partner QuickStarts</h2>';
   $content .= views_embed_view('application_quickstarts_content', 'block_2');
-  $content .= '<h2>Recent Quickstarts</h2>';
+  $content .= '<h2>Recent QuickStarts</h2>';
   $content .= views_embed_view('application_quickstarts_content', 'block_3');
   $content .= '</section></div>';
   $content .= '<section>';
