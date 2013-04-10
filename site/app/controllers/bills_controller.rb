@@ -2,6 +2,10 @@ require 'csv'
 
 class BillsController < ConsoleController
   include BillingAware
+  include AsyncAware
+
+  # trigger synchronous module load 
+  [Aria, Aria::UserContext] if Rails.env.development?
 
   before_filter :authenticate_user!
   before_filter :user_can_upgrade_plan!
@@ -14,35 +18,25 @@ class BillsController < ConsoleController
   end
 
   def export
-    columns = ['Transaction Date', 'Transaction ID', 'Transaction Description', 'Description', 'Date Range Start', 'Date Range End', 'Units', 'Rate', 'Amount']
-    filename = "history.csv"
-    h = self.response.headers
-    h["Content-Type"] ||= 'text/csv'
-    h["Content-Disposition"] = "attachment; filename=#{filename}"
-    h["Content-Transfer-Encoding"] = "binary"
-    self.response_body = Enumerator.new do |y|
-      y << columns.to_csv
-      transactions = @user.transactions
-      transactions.each do |t|
-        case t.transaction_type
-        when 1
-          Aria.get_invoice_details(@user.acct_no, t.transaction_source_id).each do |li|
-            y << [
-              t.transaction_create_date, t.transaction_source_id, t.transaction_desc,
-              li.plan_name || li.description, li.date_range_start, li.date_range_end, li.units, li.rate_per_unit,
-              li.amount
-            ].to_csv
-          end
-        else
-          y << [
-            t.transaction_create_date, t.transaction_source_id, t.transaction_desc,
-            nil, nil, nil, nil, nil,
-            t.transaction_amount
-          ].to_csv
+    @filename = "history"
+    @transactions = @user.transactions
+    @transaction_details = {}
+    @transactions.select {|t| t.transaction_type == 1 }.each_slice(Rails.configuration.aria_max_parallel_requests) do |slice|
+      slice.each do |t|
+        async do
+          @transaction_details[t.transaction_source_id] = Aria.get_invoice_details(@user.acct_no, t.transaction_source_id)
         end
-        y << "\n"
       end
-    end    
+      join!
+    end
+
+    respond_to do |format|
+      format.csv do
+        h = self.response.headers
+        h["Content-Disposition"] = "attachment; filename=#{@filename}.csv"
+        h["Content-Transfer-Encoding"] = "binary"
+      end
+    end
   end
 
   def locate

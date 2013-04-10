@@ -34,7 +34,7 @@
 .row-fluid
   .span8
     %section.panel
-      %h2 You were charged #{number_to_currency(@bill.balance)} on #{@bill.due_date.to_s(:billing_date)}
+      %h2 You were charged #{number_to_user_currency(@bill.balance)} on #{@bill.due_date.to_s(:billing_date)}
       = render :partial => '/account/bill', :locals => {:bill => @bill, :show_dates => true, :show_details => true, :show_payments => true}
 
     %section.panel

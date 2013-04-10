@@ -14,7 +14,7 @@
       - if show_details
         %td &nbsp;
       %td.plan-item-cost
-        = number_to_currency(bill.forwarded_balance)
+        = number_to_user_currency(bill.forwarded_balance)
 
 
   - bill.line_items.sort_by(&Aria::LineItem.plan_sort).each do |li|
@@ -28,18 +28,18 @@
         %td.plan-item-rate
           = line_item_details(li) || "&nbsp;".html_safe
       %td.plan-item-cost{:title => (line_item_details(li) unless show_details)}
-        = number_to_currency(li.total_cost)
+        = number_to_user_currency(li.total_cost)
 
   %tr.plan-total
     %td.right{:colspan => ((show_dates ? 1 : 0) + (show_details ? 1 : 0) + 2)}
-      %strong Total charges:&nbsp; #{number_to_currency(bill.estimated_balance)}
+      %strong Total charges:&nbsp; #{number_to_user_currency(bill.estimated_balance)}
 
   - if show_payments and bill.payments.present?
     %tr.plan-total
       %td{:colspan => ((show_dates ? 1 : 0) + (show_details ? 1 : 0) + 2)}
         - bill.payments.each do |p|
           %div
-            = bill.show_payment_amounts ? "#{number_to_currency(p.applied_amount)} billed to" : "Billed to"
+            = bill.show_payment_amounts ? "#{number_to_user_currency(p.applied_amount)} billed to" : "Billed to"
             %strong= p.payment_src_description
             - if p.payment_src_suffix
               ending in 

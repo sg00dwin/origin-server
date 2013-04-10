@@ -1,0 +1,35 @@
+Transaction Date,Transaction ID,Transaction Description,Description,Date Range Start,Date Range End,Units,Rate,Amount
+<%
+@transactions.each do |t|
+  if (details = @transaction_details[t.transaction_source_id])
+    details.each do |d|
+      concat([
+        t.transaction_create_date,
+        t.transaction_source_id,
+        t.transaction_desc,
+        d.service_name,
+        d.date_range_start,
+        d.date_range_end,
+        d.units,
+        number_to_user_currency(d.rate_per_unit),
+        number_to_user_currency(d.amount)
+      ].to_csv.html_safe)
+    end
+  else
+    concat([
+      t.transaction_create_date,
+      t.transaction_source_id,
+      t.transaction_desc,
+      nil,
+      nil,
+      nil,
+      nil,
+      nil,
+      number_to_user_currency(t.transaction_amount)
+    ].to_csv.html_safe)
+  end
+
+  concat("\n")
+
+end
+%>

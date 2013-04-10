@@ -17,9 +17,9 @@
     - if @bill.present?
       %p
         - if @bill.due_date > Aria::DateTime.today
-          You owe #{number_to_currency(@bill.balance)}, due on #{@bill.due_date.to_s(:billing_date)}.
+          You owe #{number_to_user_currency(@bill.balance)}, due on #{@bill.due_date.to_s(:billing_date)}.
         - else
-          You owe #{number_to_currency(@bill.balance)} which was due on #{@bill.due_date.to_s(:billing_date)}.
+          You owe #{number_to_user_currency(@bill.balance)} which was due on #{@bill.due_date.to_s(:billing_date)}.
 
 .row-fluid
   .span8
