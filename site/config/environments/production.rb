@@ -85,19 +85,19 @@ RedHatCloud::Application.configure do
   # NOTE: For now, this simply maps everything to 'Red Hat HTML Statement'
   config.aria_invoice_template_id_map = Hash.new('3754655')
 
-  # Currency
+  # Supported Currency
   # Specify allowed currencies here, use ISO4217 format
   config.allowed_currencies = [:usd, :cad, :eur]
   config.default_currency = :usd
 
-  # Specify allowed countries
+  # Supported Countries
   # Add a corresponding value in config/countries.yml if the country uses something other than:
   #  - 'State' for the locality
   #  - 'Postcode' for the postal code
   config.allowed_countries = %w(AT BE CA CH DE DK ES FI FR GB IE IS IT LU NL NO PT SE US).map(&:to_sym)
-  # Preferred countries will show up first in the countries list
   config.preferred_countries = [:US]
 
+  # Supported Credit Cards
   # Specify accepted cards here. Keys can be found in config/credit_cards.yml
   config.accepted_cards = [:visa,:mastercard,:amex]
   # Disable extended credit card validation rules
