@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.7.1
+Version: 1.7.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -236,6 +236,11 @@ fi
 
 
 %changelog
+* Wed Apr 10 2013 Adam Miller <admiller@redhat.com> 1.7.2-1
+- <rhc-node> bug 949543 transfer RPM ownership of resource_limits.conf to
+  rubygem-o-o-node additionally, have devenv cp the one from rhc-node so it
+  will be the same. (lmeyer@redhat.com)
+
 * Thu Mar 28 2013 Adam Miller <admiller@redhat.com> 1.7.1-1
 - bump_minor_versions for sprint 26 (admiller@redhat.com)
 
