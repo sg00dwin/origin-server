@@ -970,7 +970,7 @@ To view the comment, visit [comment:comment-url].',
       'rules_user_badges_accomplished' => array(
         '#type' => 'rule',
         '#set' => 'event_userpoints_event_points_awarded',
-        '#label' => 'User Badges - Accomplished',
+        '#label' => 'User Badges - Active Contributor',
         '#active' => 1,
         '#weight' => '0',
         '#categories' => array(

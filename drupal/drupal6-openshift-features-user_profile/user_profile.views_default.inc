@@ -1776,7 +1776,7 @@ switch ($data->user_badges_badges_name){
   case \'Community Member\':
     print \'<div class="badge member">2M</div>\';
     break;
-  case \'Accomplished\':
+  case \'Active Contributor\':
     print \'<div class="badge accomplished">3A</div>\';
     break;
   case \'Pro\':
