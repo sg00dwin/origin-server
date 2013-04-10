@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.7.2
+Version: 1.7.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -151,6 +151,12 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Wed Apr 10 2013 Adam Miller <admiller@redhat.com> 1.7.3-1
+- Remove CAD rates from broker config (jliggitt@redhat.com)
+- Currency display story number_to_user_currency helper method Make CSV export
+  async, refactor csv to view Add tests for eur display Cache currency_cd in
+  session (jliggitt@redhat.com)
+
 * Mon Apr 08 2013 Adam Miller <admiller@redhat.com> 1.7.2-1
 - Card 536 (lnader@redhat.com)
 - Fix user plan update: To handle old existing users, while acquiring the lock
