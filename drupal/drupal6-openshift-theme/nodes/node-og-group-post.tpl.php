@@ -97,7 +97,10 @@ $do = og_comment_perms_do();
   
   <div class="new-post-button"><a class="btn" href="#comment-form">Reply to Thread</a></div>
   <?php endif; ?>
-  
-  
-  <?php print $links; ?>
+    
+  <?php if ($links): ?>
+    <div class="links"><?php print $links; ?></div>
+  <?php endif; ?>
+
+  <?php print openshift_social_sharing($node_url); ?>
 </div>

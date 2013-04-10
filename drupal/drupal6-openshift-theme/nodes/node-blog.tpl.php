@@ -4,22 +4,21 @@
 <?php 
 $author_nid = $field_author[0]['nid'];
 print views_embed_view('author_profile_box', 'block_1', $author_nid);
-?></div>
+?>
+</div>
 
-  <div class="content clear-block">
+  <div class="content clearfix">
     <?php print $content ?>
   </div>
 
-  <div class="clear-block">
-    <div class="meta">
-    <?php if ($taxonomy): ?>
-      <div class="terms"><?php print $terms ?></div>
-    <?php endif;?>
-    </div>
+  <?php if ($taxonomy): ?>
+    <div class="terms">Tags: <?php print $terms ?></div>
+  <?php endif;?>
 
-    <?php if ($links): ?>
-      <div class="links"><?php print $links; ?></div>
-    <?php endif; ?>
-  </div>
+  <?php if ($links): ?>
+    <div class="links"><?php print $links; ?></div>
+  <?php endif; ?>
+
+  <?php print openshift_social_sharing($node_url, $title); ?>
 
 </article>

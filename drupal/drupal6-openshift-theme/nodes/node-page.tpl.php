@@ -10,16 +10,12 @@
     <?php print $content ?>
   </div>
 
-  <div class="clear-block">
-    <div class="meta">
-    <?php if ($taxonomy): ?>
-      <div class="terms"><?php print $terms ?></div>
-    <?php endif;?>
-    </div>
+  <?php if ($taxonomy): ?>
+    <div class="terms">Tags: <?php print $terms ?></div>
+  <?php endif;?>
 
-    <?php if ($links): ?>
-      <div class="btn-toolbar"><?php print $links; ?></div>
-    <?php endif; ?>
-  </div>
+  <?php if ($links): ?>
+    <div class="links"><?php print $links; ?></div>
+  <?php endif; ?>
 
 </div>
