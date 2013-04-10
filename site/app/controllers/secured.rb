@@ -190,7 +190,7 @@ module Secured
     # The URL a user is taken to after signup
     #
     def default_after_signup_redirect
-      console_path
+      getting_started_path
     end
 
     #
