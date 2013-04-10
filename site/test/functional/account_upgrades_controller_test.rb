@@ -94,4 +94,28 @@ class AccountUpgradesControllerTest < ActionController::TestCase
     assert_not_nil assigns[:full_user]
     assert_not_nil assigns[:billing_info]
   end
+
+  test "should prevent users from seeing :new if their RHN account is in an unsupported country" do
+    user = with_user(full)
+    Aria::ContactInfo.any_instance.expects(:country).at_least_once.returns('JP')
+
+    get :new, :plan_id => 'free'
+    assert_template :no_upgrade
+  end
+
+  test "should prevent users from seeing :create if their RHN account is in an unsupported country" do
+    user = with_user(full)
+    Aria::ContactInfo.any_instance.expects(:country).at_least_once.returns('JP')
+
+    get :create
+    assert_template :no_upgrade
+  end
+
+  test "should prevent users from seeing :edit if their RHN account is in an unsupported country" do
+    user = with_user(full)
+    Aria::ContactInfo.any_instance.expects(:country).at_least_once.returns('JP')
+
+    get :edit
+    assert_template :no_upgrade
+  end
 end

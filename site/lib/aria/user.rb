@@ -250,10 +250,9 @@ module Aria
       end if opts
       return false unless validates
 
-      # Associate the account with a functional account group for invoicing
-      # This is based on the account country, *not* the bill country
-      functional_group = Aria::FunctionalGroup.find_by_country(params['country'])
-      params['functional_acct_groups'] = functional_group.group_no if functional_group
+      # Set the invoice template ID based on the country
+      template_id = invoice_template_id(params['country'],params['bill_country'])
+      params['alt_template_msg_no'] = template_id unless template_id.nil?
 
       Aria.create_acct_complete(params)
       true
@@ -328,6 +327,11 @@ module Aria
           :test_acct_ind => Rails.application.config.aria_force_test_users ? 1 : 0,
           :supplemental => {:rhlogin => login},
         })
+      end
+
+      def invoice_template_id(country, bill_country)
+        country_code = country.blank? ? bill_country : country
+        Rails.configuration.aria_invoice_template_id_map[country_code]
       end
 
       def aria_datetime(s)

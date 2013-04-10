@@ -11,8 +11,9 @@ class AccountUpgradesController < ConsoleController
   before_filter :plan, :only => [:new, :create]
   before_filter :billing_info, :only => [:new, :create, :edit]
   before_filter :payment_method, :only => [:new, :create, :edit]
-
   before_filter :process_async
+
+  before_filter :streamline_account_in_supported_country!, :only => [:new, :create, :edit]
 
   rescue_from Aria::Error do |e|
     @message = case e
@@ -99,6 +100,14 @@ class AccountUpgradesController < ConsoleController
   protected
     def authenticate_user_for_upgrade!
       redirect_to login_or_signup_path(account_plan_upgrade_path) unless user_signed_in?
+    end
+
+    def streamline_account_in_supported_country!
+      @full_user = @aria_user.full_user
+      if @full_user.persisted?
+        @contact_info = Aria::ContactInfo.from_full_user(@full_user)
+        render :no_upgrade and return false unless @contact_info.country.nil? or @contact_info.country.blank? or Rails.configuration.allowed_countries.include?(@contact_info.country.to_sym)
+      end
     end
 
     def copy_user_to_billing(full_user, billing)
