@@ -608,6 +608,10 @@ chmod 640 /etc/openshift/resource_limits.conf.micro
 chmod 640 /etc/openshift/resource_limits.conf.small
 chmod 640 /etc/openshift/resource_limits.template
 
+# BZ949543 - resource_limit.conf now owned by rubygem-o-o-node,
+# in devenv use the one supplied by rhc-node
+cp /etc/openshift/resource_limits.conf{.small,}
+
 # Remove Other rights from iptables-multi - was 755
 chmod 750 /sbin/iptables-multi
 
