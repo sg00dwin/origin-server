@@ -11,7 +11,7 @@ module BillingAware
     if session[:currency_cd].blank? and user_can_upgrade_plan?
       session[:currency_cd] = Aria::UserContext.new(current_user).currency_cd rescue nil
     end
-    session[:currency_cd] || 'usd'
+    session[:currency_cd] || Rails.configuration.default_currency.to_s
   end
 
   protected

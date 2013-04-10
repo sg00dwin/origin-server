@@ -1,6 +1,5 @@
 :ruby
-  plan_items = Hash[plan.features.map{|x| [x.name,x.value] }]
-  price = plan_items.delete('Price')
+  price = plan.feature('Price', user_currency_cd).value
 
 .plan{:id => plan.name.downcase}
   %h4
@@ -12,7 +11,7 @@
   - if plan.respond_to?(:summary)
     %p= plan.summary
   %ul
-    - plan.features.each do |feature|
+    - plan.features(user_currency_cd).each do |feature|
       - next if feature.name == "Price"
       %li= "#{feature.name}: #{feature.value}"
   - if select_button != ''
