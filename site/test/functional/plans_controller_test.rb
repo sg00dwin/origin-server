@@ -94,7 +94,7 @@ class PlansControllerTest < ActionController::TestCase
       with_unique_user
 
       if currency_cd
-        @controller.expects(:user_currency_cd).at_least_once.returns(currency_cd)
+        @controller.expects(:user_currency_cd).at_least(0).returns(currency_cd)
       end
 
       get :show
