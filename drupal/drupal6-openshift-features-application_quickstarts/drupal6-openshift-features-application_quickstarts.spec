@@ -5,7 +5,7 @@
 %global modname             application_quickstarts
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.5.1
+Version: 1.5.2
 Release: 1%{?dist}
 Summary: Openshift Application Quickstarts Feature for Drupal6
 Group:   Applications/Publishing
@@ -43,6 +43,11 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Thu Apr 11 2013 Adam Miller <admiller@redhat.com> 1.5.2-1
+- Add imagecache presets to application quickstarts (ccoleman@redhat.com)
+- Update quickstarts with correct icon sizes, fix typos and spelling errors.
+  (ccoleman@redhat.com)
+
 * Thu Mar 28 2013 Adam Miller <admiller@redhat.com> 1.5.1-1
 - bump_minor_versions for sprint 26 (admiller@redhat.com)
 
