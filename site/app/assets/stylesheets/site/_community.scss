@@ -35,13 +35,17 @@
   max-height: 35px;
 }
 
+.community .links {
+  margin: 20px 0 0 0;
 
-.links.inline a {
-  text-transform: capitalize;
-  margin-right: 20px;
-}
-.links.inline a[href^="/user"] {
-  margin-right: 0;
+  &.inline { 
+    a {
+      margin-right: 5px;
+    }
+    a[href^="/user"] {
+      margin-right: 0;
+    }
+  }
 }
 
 .og-mission,
@@ -232,7 +236,7 @@
   font-size: 16px;
   font-weight: bold;
 }
-.community .thread .thread-author .views-field-name {
+.community .thread .thread-author .views-field-name .field-content {
   font-size: inherit;
   padding: 0 8px 0 5px;
 }
@@ -328,7 +332,7 @@ td.views-field-vud-node-widget {
 
 
 /* Ideas table generation doesn't generate separate divs because it is using the view Table layout */
-.view-Ideas .views-table .views-field-title {
+.view-ideas .views-table .views-field-title {
   font-size: 13px;
   line-height: 1.4em;
 
@@ -455,12 +459,6 @@ html.js fieldset.collapsible .fieldset-wrapper {
       margin-right: 10px;
       font-style: normal;
       span {color: #333;}
-    }
-  }
-  .links {
-    margin: 20px 0 0 0;
-    a {
-      padding: 0 3px 0 0;
     }
   }
 }
@@ -635,18 +633,11 @@ html.js fieldset.collapsible .fieldset-wrapper {
 }
 
 .community .quickstart {
-  .clear-block > .links {
-    margin-top: 25px;
-  }
   .terms {
     font-weight: bold;
     .links {
       font-weight: normal;
       margin: 0 0 0 6px;
-    }
-    .links.inline a {
-      margin-right: 12px;
-      text-transform: none;
     }
   }
 }
@@ -701,6 +692,14 @@ html.js fieldset.collapsible .fieldset-wrapper {
       color: inherit;
     }
   }
+
+  tr:hover td {
+    background-color: transparent;
+  }
+  tr.views-row-extra > td {
+    border-top: 0;
+  }
+
 
   .view-footer {
     padding-top: 12px;
@@ -811,7 +810,7 @@ html.js fieldset.collapsible .fieldset-wrapper {
       top: 10px;
     }
     .links {
-      margin-left:12px;
+      margin-left: 12px;
     }
   }
 }

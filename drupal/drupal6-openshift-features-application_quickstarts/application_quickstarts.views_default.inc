@@ -9,7 +9,7 @@ function application_quickstarts_views_default_views() {
   // Exported view: application_quickstarts
   $view = new view;
   $view->name = 'application_quickstarts';
-  $view->description = 'Application Quickstarts (JSON)';
+  $view->description = 'Application QuickStarts (JSON)';
   $view->tag = '';
   $view->base_table = 'node';
   $view->core = 6;
@@ -658,7 +658,7 @@ function application_quickstarts_views_default_views() {
   ));
   $handler->override_option('items_per_page', 20);
   $handler->override_option('use_pager', '1');
-  $handler = $view->new_display('page', 'Promoted Quickstarts (JSON)', 'page_1');
+  $handler = $view->new_display('page', 'Promoted QuickStarts (JSON)', 'page_1');
   $handler->override_option('filters', array(
     'type' => array(
       'operator' => 'in',
@@ -699,7 +699,7 @@ function application_quickstarts_views_default_views() {
         'use_operator' => 0,
         'operator' => 'keys_op',
         'identifier' => 'search',
-        'label' => 'Search quickstarts',
+        'label' => 'Search QuickStarts',
         'optional' => 1,
         'remember' => 0,
       ),
@@ -798,7 +798,7 @@ function application_quickstarts_views_default_views() {
         'use_operator' => 0,
         'operator' => 'keys_op',
         'identifier' => 'search',
-        'label' => 'Search quickstarts',
+        'label' => 'Search QuickStarts',
         'optional' => 1,
         'remember' => 0,
       ),
@@ -966,7 +966,7 @@ function application_quickstarts_views_default_views() {
   // Exported view: application_quickstarts_content
   $view = new view;
   $view->name = 'application_quickstarts_content';
-  $view->description = 'List Quickstarts in the community';
+  $view->description = 'List QuickStarts in the community';
   $view->tag = '';
   $view->base_table = 'node';
   $view->core = 6;
@@ -1359,7 +1359,7 @@ print application_quickstarts_summary($data->node_data_field_cartridges_list_fie
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler->override_option('header', '<p>Browse through all of the OpenShift quickstarts, or <a class="" href="/node/add/quickstart">submit your own!</a></p>
+  $handler->override_option('header', '<p>Browse through all of the OpenShift QuickStarts, or <a class="" href="/node/add/quickstart">submit your own!</a></p>
 ');
   $handler->override_option('header_format', '2');
   $handler->override_option('header_empty', 1);
@@ -1430,8 +1430,52 @@ print application_quickstarts_summary($data->node_data_field_cartridges_list_fie
     ),
     'default' => '-1',
   ));
-  $handler = $view->new_display('block', 'Popular Quickstarts', 'block_1');
+  $handler = $view->new_display('block', 'Popular QuickStarts', 'block_1');
   $handler->override_option('fields', array(
+    'field_quickstart_icon_fid' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 1,
+        'text' => '<div class="pull-right">[field_quickstart_icon_fid]</div>',
+        'make_link' => 0,
+        'path' => '',
+        'absolute' => 0,
+        'link_class' => '',
+        'alt' => '',
+        'rel' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 1,
+      'empty_zero' => 0,
+      'hide_alter_empty' => 1,
+      'link_to_node' => 0,
+      'label_type' => 'none',
+      'format' => 'generic_icon_150_50_default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 0,
+      'id' => 'field_quickstart_icon_fid',
+      'table' => 'node_data_field_quickstart_icon',
+      'field' => 'field_quickstart_icon_fid',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
     'nid' => array(
       'label' => '',
       'alter' => array(
@@ -1497,50 +1541,6 @@ print application_quickstarts_summary($data->node_data_field_cartridges_list_fie
       'override' => array(
         'button' => 'Use default',
       ),
-    ),
-    'field_quickstart_icon_fid' => array(
-      'label' => '',
-      'alter' => array(
-        'alter_text' => 1,
-        'text' => '<div class="pull-right">[field_quickstart_icon_fid]</div>',
-        'make_link' => 0,
-        'path' => '',
-        'absolute' => 0,
-        'link_class' => '',
-        'alt' => '',
-        'rel' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'target' => '',
-        'help' => '',
-        'trim' => 0,
-        'max_length' => '',
-        'word_boundary' => 1,
-        'ellipsis' => 1,
-        'html' => 0,
-        'strip_tags' => 0,
-      ),
-      'empty' => '',
-      'hide_empty' => 1,
-      'empty_zero' => 0,
-      'hide_alter_empty' => 1,
-      'link_to_node' => 0,
-      'label_type' => 'none',
-      'format' => 'user_image_medium_40x40_default',
-      'multiple' => array(
-        'group' => TRUE,
-        'multiple_number' => '',
-        'multiple_from' => '',
-        'multiple_reversed' => FALSE,
-      ),
-      'exclude' => 0,
-      'id' => 'field_quickstart_icon_fid',
-      'table' => 'node_data_field_quickstart_icon',
-      'field' => 'field_quickstart_icon_fid',
-      'override' => array(
-        'button' => 'Use default',
-      ),
-      'relationship' => 'none',
     ),
     'field_quickstart_trust_value' => array(
       'label' => '',
@@ -2009,7 +2009,7 @@ print application_quickstarts_summary($data->node_data_field_cartridges_list_fie
   ));
   $handler->override_option('header', '');
   $handler->override_option('header_empty', 0);
-  $handler->override_option('footer', '<p><a class="action-more" href=\'/quickstarts/all?order=created&sort=desc\'>See all quickstarts</a></p>');
+  $handler->override_option('footer', '<p><a class="action-more" href=\'/quickstarts/all?order=created&sort=desc\'>See all QuickStarts</a></p>');
   $handler->override_option('footer_format', '1');
   $handler->override_option('footer_empty', 0);
   $handler->override_option('use_ajax', TRUE);
@@ -2025,8 +2025,52 @@ print application_quickstarts_summary($data->node_data_field_cartridges_list_fie
   ));
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
-  $handler = $view->new_display('block', 'Recent Quickstarts', 'block_3');
+  $handler = $view->new_display('block', 'Recent QuickStarts', 'block_3');
   $handler->override_option('fields', array(
+    'field_quickstart_icon_fid' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 1,
+        'text' => '<div class="pull-right">[field_quickstart_icon_fid]</div>',
+        'make_link' => 0,
+        'path' => '',
+        'absolute' => 0,
+        'link_class' => '',
+        'alt' => '',
+        'rel' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 1,
+      'empty_zero' => 0,
+      'hide_alter_empty' => 1,
+      'link_to_node' => 0,
+      'label_type' => 'none',
+      'format' => 'generic_icon_150_50_default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 0,
+      'id' => 'field_quickstart_icon_fid',
+      'table' => 'node_data_field_quickstart_icon',
+      'field' => 'field_quickstart_icon_fid',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
     'nid' => array(
       'label' => '',
       'alter' => array(
@@ -2092,50 +2136,6 @@ print application_quickstarts_summary($data->node_data_field_cartridges_list_fie
       'override' => array(
         'button' => 'Use default',
       ),
-    ),
-    'field_quickstart_icon_fid' => array(
-      'label' => '',
-      'alter' => array(
-        'alter_text' => 1,
-        'text' => '<div class="pull-right">[field_quickstart_icon_fid]</div>',
-        'make_link' => 0,
-        'path' => '',
-        'absolute' => 0,
-        'link_class' => '',
-        'alt' => '',
-        'rel' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'target' => '',
-        'help' => '',
-        'trim' => 0,
-        'max_length' => '',
-        'word_boundary' => 1,
-        'ellipsis' => 1,
-        'html' => 0,
-        'strip_tags' => 0,
-      ),
-      'empty' => '',
-      'hide_empty' => 1,
-      'empty_zero' => 0,
-      'hide_alter_empty' => 1,
-      'link_to_node' => 0,
-      'label_type' => 'none',
-      'format' => 'user_image_medium_40x40_default',
-      'multiple' => array(
-        'group' => TRUE,
-        'multiple_number' => '',
-        'multiple_from' => '',
-        'multiple_reversed' => FALSE,
-      ),
-      'exclude' => 0,
-      'id' => 'field_quickstart_icon_fid',
-      'table' => 'node_data_field_quickstart_icon',
-      'field' => 'field_quickstart_icon_fid',
-      'override' => array(
-        'button' => 'Use default',
-      ),
-      'relationship' => 'none',
     ),
     'name' => array(
       'label' => 'By',
@@ -2605,7 +2605,7 @@ print application_quickstarts_summary($data->node_data_field_cartridges_list_fie
   ));
   $handler->override_option('header', '');
   $handler->override_option('header_empty', 0);
-  $handler->override_option('footer', '<p><a class="action-more" href=\'/quickstarts/all?order=created&sort=desc\'>See all quickstarts</a></p>');
+  $handler->override_option('footer', '<p><a class="action-more" href=\'/quickstarts/all?order=created&sort=desc\'>See all QuickStarts</a></p>');
   $handler->override_option('footer_format', '1');
   $handler->override_option('footer_empty', 0);
   $handler->override_option('use_ajax', TRUE);
@@ -2621,7 +2621,7 @@ print application_quickstarts_summary($data->node_data_field_cartridges_list_fie
   ));
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
-  $handler = $view->new_display('page', 'All Quickstarts', 'page_2');
+  $handler = $view->new_display('page', 'All QuickStarts', 'page_2');
   $handler->override_option('fields', array(
     'nid' => array(
       'label' => '',
@@ -3010,14 +3010,14 @@ print application_quickstarts_summary($data->node_data_field_cartridges_list_fie
       'hide_alter_empty' => 1,
       'link_to_node' => 0,
       'label_type' => 'none',
-      'format' => 'user_image_large_80x80_default',
+      'format' => 'generic_icon_150_50_default',
       'multiple' => array(
         'group' => TRUE,
         'multiple_number' => '',
         'multiple_from' => '',
         'multiple_reversed' => FALSE,
       ),
-      'exclude' => 1,
+      'exclude' => 0,
       'id' => 'field_quickstart_icon_fid',
       'table' => 'node_data_field_quickstart_icon',
       'field' => 'field_quickstart_icon_fid',
@@ -3235,8 +3235,52 @@ print application_quickstarts_summary($data->node_data_field_quickstart_trust_fi
     'weight' => 0,
     'name' => 'navigation',
   ));
-  $handler = $view->new_display('block', 'Partner Quickstarts', 'block_2');
+  $handler = $view->new_display('block', 'Partner QuickStarts', 'block_2');
   $handler->override_option('fields', array(
+    'field_quickstart_icon_fid' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 1,
+        'text' => '<div class="pull-right">[field_quickstart_icon_fid]</div>',
+        'make_link' => 0,
+        'path' => '',
+        'absolute' => 0,
+        'link_class' => '',
+        'alt' => '',
+        'rel' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 1,
+      'empty_zero' => 0,
+      'hide_alter_empty' => 1,
+      'link_to_node' => 0,
+      'label_type' => 'none',
+      'format' => 'generic_icon_150_50_default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 0,
+      'id' => 'field_quickstart_icon_fid',
+      'table' => 'node_data_field_quickstart_icon',
+      'field' => 'field_quickstart_icon_fid',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
     'nid' => array(
       'label' => '',
       'alter' => array(
@@ -3302,50 +3346,6 @@ print application_quickstarts_summary($data->node_data_field_quickstart_trust_fi
       'override' => array(
         'button' => 'Use default',
       ),
-    ),
-    'field_quickstart_icon_fid' => array(
-      'label' => '',
-      'alter' => array(
-        'alter_text' => 1,
-        'text' => '<div class="pull-right">[field_quickstart_icon_fid]</div>',
-        'make_link' => 0,
-        'path' => '',
-        'absolute' => 0,
-        'link_class' => '',
-        'alt' => '',
-        'rel' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'target' => '',
-        'help' => '',
-        'trim' => 0,
-        'max_length' => '',
-        'word_boundary' => 1,
-        'ellipsis' => 1,
-        'html' => 0,
-        'strip_tags' => 0,
-      ),
-      'empty' => '',
-      'hide_empty' => 1,
-      'empty_zero' => 0,
-      'hide_alter_empty' => 1,
-      'link_to_node' => 0,
-      'label_type' => 'none',
-      'format' => 'user_image_medium_40x40_default',
-      'multiple' => array(
-        'group' => TRUE,
-        'multiple_number' => '',
-        'multiple_from' => '',
-        'multiple_reversed' => FALSE,
-      ),
-      'exclude' => 0,
-      'id' => 'field_quickstart_icon_fid',
-      'table' => 'node_data_field_quickstart_icon',
-      'field' => 'field_quickstart_icon_fid',
-      'override' => array(
-        'button' => 'Use default',
-      ),
-      'relationship' => 'none',
     ),
     'name' => array(
       'label' => 'By',
@@ -3860,7 +3860,7 @@ print application_quickstarts_summary($data->node_data_field_quickstart_trust_fi
   ));
   $handler->override_option('header', '');
   $handler->override_option('header_empty', 0);
-  $handler->override_option('footer', '<p><a class="action-more" href=\'/partners\'>See all OpenShift partners</a></p>');
+  $handler->override_option('footer', '<p><a class="action-more" href=\'/partners\'>See all OpenShift Partners</a></p>');
   $handler->override_option('footer_format', '1');
   $handler->override_option('footer_empty', 1);
   $handler->override_option('use_ajax', TRUE);

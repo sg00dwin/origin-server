@@ -26,7 +26,7 @@
   </div>
 
   <?php if ($taxonomy): ?>
-    <div class="views-field-tid"><?php print $terms ?></div>
+    <div class="views-field-tid terms">Tags: <?php print $terms ?></div>
   <?php endif;?>
 </div>
 </div>

@@ -40,6 +40,7 @@ $do = og_comment_perms_do();
         <?php if (strlen($node->field_event_url[0]["view"]) > 0) echo "<br />" ?> 
         <?php print $node->field_event_url[0]["view"] ?><br />
         
+
         </div>
 
         <?php if (strlen($node->content["body"]["#value"]) > 0): ?> 
@@ -49,6 +50,8 @@ $do = og_comment_perms_do();
         <?php endif; ?> 
 
         <?php print $node->field_event_categories[0]["view"] ?>
+
+        <?php print openshift_social_sharing($node_url, $title); ?>    
 
 </div>  
 </section>

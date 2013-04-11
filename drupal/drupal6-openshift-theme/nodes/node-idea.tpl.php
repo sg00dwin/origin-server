@@ -34,6 +34,7 @@ $do = og_comment_perms_do();
     <div class="terms terms-inline"><?php print $terms ?></div>
   <?php endif;?>
   </div>
+
 </div><!-- /thread-intro -->
 
   <div class="content clearfix">
@@ -44,7 +45,10 @@ $do = og_comment_perms_do();
     <?php else: print $content ?>
     <?php endif; ?>
   </div>
-  
-  
-  <?php print $links; ?>
+    
+  <?php if ($links): ?>
+    <div class="links"><?php print $links; ?></div>
+  <?php endif; ?>
+
+  <?php print openshift_social_sharing($node_url); ?>      
 </div>
