@@ -141,22 +141,25 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
       assert_response :success
       assert_select 'p', :text => /Check your inbox/
 
-      get email_confirm_path(:key => user.token, :emailAddress => user.email_address, :then => '/account')
+      get email_confirm_path(:key => user.token, :emailAddress => user.email_address)
       assert user = assigns(:user)
-      assert_redirected_to account_path
+      assert_redirected_to welcome_account_path
 
       follow_redirect!
       assert_redirected_to new_terms_path
-      assert_equal account_path, session[:terms_redirect]
+      assert_equal welcome_account_path, session[:terms_redirect]
 
       follow_redirect!
       assert_response :success
       assert_select 'form#new_term'
 
       post terms_path
-      assert_redirected_to account_path
+      assert_redirected_to welcome_account_path
 
       follow_redirect!
+      assert_redirected_to getting_started_path
+
+      get account_path
       assert_response :success
       assert_equal user.login, @controller.current_user.login
       assert_equal user.ticket, @controller.current_user.ticket
