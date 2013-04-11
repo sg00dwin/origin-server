@@ -56,7 +56,8 @@
           %li= link_to alt[0], alt[1], alt[2] || {}
 
     %form.form-search{:method => :get, :action => community_search_url}
-      %input.search{:name => 'keys'}
+      %label.invisible{:for => 'keys'} Search
+      %input.search{:id => 'keys', :name => 'keys'}
       %input.btn.btn-primary{:type => 'button', :value => 'Search'}
 
     %p= link_to "Return to our homepage.", root_path

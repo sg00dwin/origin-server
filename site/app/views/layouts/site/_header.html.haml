@@ -5,7 +5,8 @@
     = link_to "Status", status_path, :title => 'Track open issues on the OpenShift status page', :class => 'btn btn-small btn-warning', :style => 'display:none;', :id => 'outage'
     .pull-right.login
       %form#search-top{:action => community_search_url, :method => "get"}
-        %input.search-query{:name => "keys", :placeholder => "SEARCH", :type => "text"}
+        %label.invisible{:for => 'keys'} Search
+        %input.search-query{:id => 'keys', :name => "keys", :placeholder => "SEARCH", :type => "text"}
           %button.search{:type => "submit", :value => "Search"}
     
       -#if session[:login]

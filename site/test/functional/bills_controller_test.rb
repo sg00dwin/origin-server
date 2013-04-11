@@ -356,7 +356,7 @@ class BillsControllerTest < ActionController::TestCase
 
     assert_select "table.usage-charges" do
       assert_select "caption", :text => "Usage Charges"
-      assert_select "tr", 2 do |tr|
+      assert_select "tbody tr", 2 do |tr|
         assert_select tr[0], 'td:content(?)', 'Current'
         assert_select tr[0], 'div.graph-element.type-2[style*="100%"]'
         assert_select tr[0], 'td:content(?)', "#{currency_symbol}4.44"
@@ -369,7 +369,7 @@ class BillsControllerTest < ActionController::TestCase
 
     assert_select "table.usage-type-1" do
       assert_select "caption", :text => "Gear: Small"
-      assert_select "tr", 2 do |tr|
+      assert_select "tbody tr", 2 do |tr|
         assert_select tr[0], 'td:content(?)', 'Current'
         assert_select tr[0], 'div.graph-element.type-1[style*="0%"]'
         assert_select tr[0], 'td:content(?)', '0.0 gear-hours'
@@ -382,7 +382,7 @@ class BillsControllerTest < ActionController::TestCase
 
     assert_select "table.usage-type-2" do
       assert_select "caption", :text => "Gear: Medium"
-      assert_select "tr", 2 do |tr|
+      assert_select "tbody tr", 2 do |tr|
         assert_select tr[0], 'td:content(?)', 'Current'
         assert_select tr[0], 'div.graph-element.type-2[style*="100%"]'
         assert_select tr[0], 'td:content(?)', '2.22 gear-hours'
