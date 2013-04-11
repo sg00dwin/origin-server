@@ -54,8 +54,13 @@ namespace :test do
     ]
   end
 
-  desc 'Run the javascript unit tests'
-  task :js => ['konacha:run']
+  if Rake::Task.task_defined? 'konacha:run'
+    desc 'Run the javascript unit tests'
+    task :js => ['konacha:run']
+
+    # This is being renamed to test:js - so hide it
+    Rake::Task['konacha:run'].clear_comments
+  end
 
   #
   # Test groups intended to be run in parallel for the build.
@@ -131,18 +136,17 @@ namespace :test do
     end
 
     # Run javascript unit tests in check
-    task :js do |t|
-      require 'rspec/core'
-      ENV['FORMAT'] = 'CI::Reporter::RSpec'
-      ENV['CI_REPORTS'] = 'rhc/log/js/test/reports/'
+    if Rake::Task.task_defined? 'konacha:run'
+      task :js do |t|
+        require 'rspec/core'
+        ENV['FORMAT'] = 'CI::Reporter::RSpec'
+        ENV['CI_REPORTS'] = 'rhc/log/js/test/reports/'
 
-      Rake::Task['konacha:run'].invoke
+        Rake::Task['konacha:run'].invoke
+      end
     end
   end
 
   task :check => Rake::Task.tasks.select{ |t| t.name.match(/\Atest:check:/) }.map(&:name)
   task :extended => ['test:check:external_integration']
-
-  # This is being renamed to test:js - so hide it
-  Rake::Task['konacha:run'].clear_comments
 end
