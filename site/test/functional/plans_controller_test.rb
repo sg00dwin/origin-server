@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require File.expand_path('../../test_helper', __FILE__)
 
 class PlansControllerTest < ActionController::TestCase
@@ -69,4 +71,40 @@ class PlansControllerTest < ActionController::TestCase
     # Ensure that the Upgrade buttons are primary
     assert_select ".plan .btn-primary", :text => "Upgrade"
   end
+
+  test "should show plan lists in correct currency for default" do
+    do_plan_list_currency_test(nil, "$", "€")
+  end
+
+  test "should show plan lists in correct currency for usd" do
+    do_plan_list_currency_test("usd", "$", "€")
+  end
+
+  test "should show plan lists in correct currency for cad" do
+    do_plan_list_currency_test("cad", "$", "€")
+  end
+
+  test "should show plan lists in correct currency for eur" do
+    do_plan_list_currency_test("eur", "€", "$")
+  end
+
+  protected
+
+    def do_plan_list_currency_test(currency_cd, currency_symbol, exclude_currency_symbol)
+      with_unique_user
+
+      if currency_cd
+        @controller.expects(:user_currency_cd).at_least_once.returns(currency_cd)
+      end
+
+      get :show
+      assert_response :success
+      user = assigns(:user)
+
+      assert_select ".plan h4 span:content(?)", /#{Regexp.escape(currency_symbol)}/
+      assert_select ".plan h4 span:content(?)", /#{Regexp.escape(exclude_currency_symbol)}/, false
+
+      assert_select ".plan li:content(?)", /#{Regexp.escape(currency_symbol)}/
+      assert_select ".plan li:content(?)", /#{Regexp.escape(exclude_currency_symbol)}/, false
+    end
 end

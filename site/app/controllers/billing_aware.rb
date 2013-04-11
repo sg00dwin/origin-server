@@ -9,7 +9,8 @@ module BillingAware
   # Must be public for use in application_helper.rb
   def user_currency_cd
     if session[:currency_cd].blank? and user_can_upgrade_plan?
-      session[:currency_cd] = Aria::UserContext.new(current_user).currency_cd rescue nil
+      aria_user = Aria::UserContext.new(current_user)
+      session[:currency_cd] = aria_user.has_account? ? aria_user.currency_cd : Rails.configuration.default_currency.to_s
     end
     session[:currency_cd] || Rails.configuration.default_currency.to_s
   end
