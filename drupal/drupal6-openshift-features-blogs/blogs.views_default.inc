@@ -975,11 +975,6 @@ function blogs_views_default_views() {
       'field' => 'status',
       'relationship' => 'none',
     ),
-    'field_author_nid' => array(
-      'id' => 'field_author_nid',
-      'table' => 'node_data_field_author',
-      'field' => 'field_author_nid',
-    ),
   ));
   $handler->override_option('access', array(
     'type' => 'none',
@@ -1934,12 +1929,12 @@ function blogs_views_default_views() {
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('title', 'Documentation');
   $handler->override_option('cache', array(
     'type' => 'time',
     'results_lifespan' => '300',
     'output_lifespan' => '300',
   ));
+  $handler->override_option('title', 'Documentation');
   $handler->override_option('header', '');
   $handler->override_option('style_options', array(
     'grouping' => '',
@@ -1987,6 +1982,70 @@ function blogs_views_default_views() {
     'name' => 'navigation',
   ));
   $handler = $view->new_display('feed', 'Blog feed', 'feed_1');
+  $handler->override_option('filters', array(
+    'type' => array(
+      'operator' => 'in',
+      'value' => array(
+        'blog' => 'blog',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'type',
+      'table' => 'node',
+      'field' => 'type',
+      'relationship' => 'none',
+    ),
+    'status' => array(
+      'operator' => '=',
+      'value' => '1',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status',
+      'table' => 'node',
+      'field' => 'status',
+      'relationship' => 'none',
+    ),
+    'field_author_nid' => array(
+      'id' => 'field_author_nid',
+      'table' => 'node_data_field_author',
+      'field' => 'field_author_nid',
+    ),
+    'created' => array(
+      'operator' => '>',
+      'value' => array(
+        'type' => 'offset',
+        'value' => '-21 days',
+        'min' => '',
+        'max' => '',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'created',
+      'table' => 'node',
+      'field' => 'created',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('cache', array(
+    'type' => 'time',
+    'results_lifespan' => 3600,
+    'output_lifespan' => 3600,
+  ));
   $handler->override_option('title', 'OpenShift Blogs');
   $handler->override_option('header', '');
   $handler->override_option('items_per_page', 0);
@@ -2690,38 +2749,6 @@ function blogs_views_default_views() {
         'group' => 0,
       ),
       'validate_argument_php' => '',
-    ),
-  ));
-  $handler->override_option('filters', array(
-    'type' => array(
-      'operator' => 'in',
-      'value' => array(
-        'blog' => 'blog',
-      ),
-      'group' => '0',
-      'exposed' => FALSE,
-      'expose' => array(
-        'operator' => FALSE,
-        'label' => '',
-      ),
-      'id' => 'type',
-      'table' => 'node',
-      'field' => 'type',
-      'relationship' => 'none',
-    ),
-    'status' => array(
-      'operator' => '=',
-      'value' => '1',
-      'group' => '0',
-      'exposed' => FALSE,
-      'expose' => array(
-        'operator' => FALSE,
-        'label' => '',
-      ),
-      'id' => 'status',
-      'table' => 'node',
-      'field' => 'status',
-      'relationship' => 'none',
     ),
   ));
   $handler->override_option('cache', array(
