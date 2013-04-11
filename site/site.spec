@@ -112,7 +112,7 @@ bundle install --local
 RAILS_ENV=production RAILS_RELATIVE_URL_ROOT=/app \
   RAILS_LOG_PATH=%{buildroot}%{_var}/log/openshift/site/httpd/production.log \
   CONSOLE_CONFIG_FILE=conf/console.conf \
-  bundle exec rake assets:precompile assets:public_pages
+  bundle exec rake assets:precompile assets:public_pages assets:generic_error_pages
 
 rm -rf tmp
 rm -rf %{buildroot}%{_var}/log/openshift/*

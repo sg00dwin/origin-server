@@ -22,4 +22,17 @@ class ProductController < SiteController
   def console_error
     render 'console/error', :layout => 'console'
   end
+
+  def core_error
+    render :layout => nil
+  end
+  def core_not_found
+    render :layout => nil
+  end
+  def core_unavailable
+    render :layout => nil
+  end
+  def core_app_error
+    render :layout => nil
+  end
 end

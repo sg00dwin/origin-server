@@ -1,0 +1,20 @@
+!!! 5
+-ie_html :class => 'no-js', :lang => 'en' do
+  %head
+    %title Something is wrong
+    = render :partial => 'product/core_head'
+
+  %body
+    %header
+      .logo= link_to asset('logo.svg').to_s.html_safe, root_path
+
+      %hgroup
+        %h1 Something is wrong
+        %h2 HTTP 500 Error
+
+    %section.main
+      %p We are unable to show this page due to an error on the server.  Please check our the site status page below for known issues.
+      %p OpenShift status: #{link_to 'No open issues', status_url, :id => 'system-status', :class => 'status'}
+      %p If the error persists, please contact us via #{link_to_account_mailto} or #{link_to_irc}
+      
+    %script{:src => status_jsonp_url('system-status')}
