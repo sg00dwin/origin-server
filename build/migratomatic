@@ -269,10 +269,10 @@ def save_comparison_apps(mig_config, devenv, apps, config)
   end
 end
 
-def migrate_apps(new_version, apps, devenv, account)
+def migrate_apps(new_version, apps, devenv)
   puts "Migrating #{apps.length} applications"
 
-  command = "ssh root@#{devenv} \"rhc-admin-migrate --login #{account} --version #{new_version} >> /root/migrate.#{new_version}.log\""
+  command = "ssh root@#{devenv} \"rhc-admin-migrate --version #{new_version} >> /root/migrate.#{new_version}.log\""
 
   if VERBOSE
     puts "Running: \"#{command}\""
@@ -414,14 +414,13 @@ cart_types = [
 #]
              
 old_to_new_cart_types = {
-  'mongodb-2.0' => 'mongodb-2.2'
 }
 
 new_version = ARGV[0]
 command = ARGV[1]
 
 if new_version.nil? || command.nil?
-  puts "usage: migratomatic.rb <version> <command> [<command options>]"
+  puts "usage: migratomatic <version> <command> [<command options>]"
   exit
 end
 
@@ -434,7 +433,7 @@ when 'pull-artifacts'
   devenv = ARGV[2]
 
   if devenv.nil?
-    puts "usage: migratomatic.rb <version> pull-artifacts <devenv>"
+    puts "usage: migratomatic <version> pull-artifacts <devenv>"
     exit
   end
 
@@ -449,7 +448,7 @@ when 'test'
   create_apps(mig_config, apps, config)
   store_apps(mig_config, apps)
   update_devenv(mig_config, devenv, new_version)
-  migrate_apps(new_version, apps, devenv, account)
+  migrate_apps(new_version, apps, devenv)
   create_comparison_apps(old_to_new_cart_types, mig_config, apps, devenv, config)
   diff_report(mig_config, apps, devenv)
   cleanup(mig_config, devenv)
@@ -461,7 +460,7 @@ when 'setup'
   devenv = ARGV[2]
 
   if devenv.nil?
-    puts "usage: migratomatic.rb <version> setup <devenv>"
+    puts "usage: migratomatic <version> setup <devenv>"
     exit
   end
 
@@ -476,7 +475,7 @@ when 'update'
   devenv = ARGV[2]
 
   if devenv.nil?
-    puts "usage: migratomatic.rb <version> update <devenv>"
+    puts "usage: migratomatic <version> update <devenv>"
     exit
 
   end
@@ -486,7 +485,7 @@ when 'migrate'
   devenv = ARGV[2]
 
   if devenv.nil?
-    puts "usage: migratomatic.rb <version> migrate <devenv>"
+    puts "usage: migratomatic <version> migrate <devenv>"
 
     exit
   end  
@@ -499,7 +498,7 @@ when 'diff'
   devenv = ARGV[2]
 
   if devenv.nil?
-    puts "usage: migratomatic.rb <version> diff <devenv>"
+    puts "usage: migratomatic <version> diff <devenv>"
 
     exit
   end  

@@ -284,7 +284,7 @@ module Online
               else
                 puts "ERROR: Group name=#{g.name} owner=#{g.owner_id} id=#{g.group_id} " +
                 "does not exist or is in a different region."
-              end
+                end
             end
           end
         end
@@ -512,7 +512,7 @@ service openshift-port-proxy restart
                 test_queues[2] << ["Extended Runtime Other Group 3", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended_other3 openshift-test/tests"]
                 test_queues[0] << ["Runtime Unit", "cd openshift-test/node; rake test"]
                 (1..4).each do |i|
-                  test_queues[3] << ["Runtime Other Group #{i.to_s}", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_other_#{i.to_s} openshift-test/tests"]
+                  test_queues[3] << ["Runtime Other Group #{i.to_s}", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_other#{i.to_s} openshift-test/tests"]
                 end
               when 'site'
                 test_queues[0] << ["Site Extended", "cd openshift-test/site; rake test:extended"]
