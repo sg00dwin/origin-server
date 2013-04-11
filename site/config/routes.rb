@@ -62,6 +62,7 @@ RedHatCloud::Application.routes.draw do
 
     get :settings, :on => :member
     get :complete, :on => :member
+    get :welcome, :on => :member
     get :help, :on => :member
     get :faqs, :on => :member
     match 'contact' => 'account#contact_support', :via => :post
