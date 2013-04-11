@@ -206,6 +206,13 @@ class CloudUser
     self.pending_plan_id = nil
     self.pending_plan_uptime = nil
     self.plan_state = CloudUser::PLAN_STATES['active']
+    if plan_upgrade
+      old_plan_end_time = cur_time
+    else
+      cur_month_days = (Date.new(cur_time.year, 12, 31) << (12-cur_time.month)).day
+      old_plan_end_time = Time.new(cur_time.year, cur_time.month, cur_month_days, 23, 59, 59)
+    end
+    self.plan_history.push({'plan_id' => old_plan_id, 'end_time' => old_plan_end_time})
     self.assign_plan(plan_id, true)
 
     # Revoke/Assign entitlements
