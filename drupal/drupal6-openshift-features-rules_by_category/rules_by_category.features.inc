@@ -218,15 +218,7 @@ A user has posted the following comment to the [node:type-name] titled [node:tit
         '#status' => 'default',
         '#conditions' => array(
           '0' => array(
-            '#type' => 'condition',
-            '#settings' => array(
-              'field_name' => 'field_state',
-              '#argument map' => array(
-                'node' => 'node',
-                'node_unchanged' => 'node_unchanged',
-              ),
-            ),
-            '#name' => 'content_rules_field_changed',
+            '#weight' => 0,
             '#info' => array(
               'label' => 'Updated content\'s field \'field_state\' has been changed',
               'arguments' => array(
@@ -241,25 +233,18 @@ A user has posted the following comment to the [node:type-name] titled [node:tit
               ),
               'module' => 'CCK',
             ),
-            '#weight' => 0,
+            '#name' => 'content_rules_field_changed',
+            '#settings' => array(
+              'field_name' => 'field_state',
+              '#argument map' => array(
+                'node' => 'node',
+                'node_unchanged' => 'node_unchanged',
+              ),
+            ),
+            '#type' => 'condition',
           ),
           '1' => array(
-            '#weight' => 0,
-            '#info' => array(
-              'label' => 'Updated content\'s field \'field_state\' has value',
-              'arguments' => array(
-                'node' => array(
-                  'type' => 'node',
-                  'label' => 'Content',
-                ),
-              ),
-              'eval input' => array(
-                '0' => 'code',
-                '1' => 'value|0|value',
-              ),
-              'module' => 'CCK',
-            ),
-            '#name' => 'content_rules_field_has_value',
+            '#type' => 'condition',
             '#settings' => array(
               'field_name' => 'field_state',
               '#argument map' => array(
@@ -283,36 +268,25 @@ A user has posted the following comment to the [node:type-name] titled [node:tit
                 ),
               ),
             ),
-            '#type' => 'condition',
-          ),
-        ),
-        '#actions' => array(
-          '0' => array(
-            '#weight' => 0,
+            '#name' => 'content_rules_field_has_value',
             '#info' => array(
-              'label' => 'Execute custom PHP code',
-              'module' => 'PHP',
-              'eval input' => array(
-                '0' => 'code',
-              ),
-            ),
-            '#name' => 'rules_action_custom_php',
-            '#settings' => array(
-              'code' => 'send_feature_complete_email($node);',
-              'vars' => array(
-                '0' => 'node',
-              ),
-              '#eval input' => array(
-                'token_rules_input_evaluator' => array(
-                  'code' => array(
-                    '0' => ':global',
-                  ),
+              'label' => 'Updated content\'s field \'field_state\' has value',
+              'arguments' => array(
+                'node' => array(
+                  'type' => 'node',
+                  'label' => 'Content',
                 ),
               ),
+              'eval input' => array(
+                '0' => 'code',
+                '1' => 'value|0|value',
+              ),
+              'module' => 'CCK',
             ),
-            '#type' => 'action',
+            '#weight' => 0,
           ),
         ),
+        '#actions' => array(),
         '#version' => 6003,
       ),
       'rules_flag_inappropriate_discussion_topic' => array(
@@ -970,7 +944,7 @@ To view the comment, visit [comment:comment-url].',
       'rules_user_badges_accomplished' => array(
         '#type' => 'rule',
         '#set' => 'event_userpoints_event_points_awarded',
-        '#label' => 'User Badges - Accomplished',
+        '#label' => 'User Badges - Active Contributor',
         '#active' => 1,
         '#weight' => '0',
         '#categories' => array(
