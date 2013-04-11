@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.7.3
+Version: 1.7.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -151,6 +151,22 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Thu Apr 11 2013 Adam Miller <admiller@redhat.com> 1.7.4-1
+- Merge pull request #1158 from liggitt/currency_display3
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1155 from pravisankar/dev/ravi/card526
+  (dmcphers@redhat.com)
+- Add CAD to broker aria config (jliggitt@redhat.com)
+- Report usage to the correct plan: - Populate plan history in case of any plan
+  changes. - During dowgrade, set old plan end time as end of the month. -
+  Split usage between plan changes so that usage report time matches the plan.
+  - For safer side, use mid time between begin and end record time as usage
+  report time to aria. - Use usage record begin time as
+  qualifier_4/sync_identifier to record_usage/bulk_record_usage() aria api
+  instead of created_at time to uniquely determine the record in case of
+  partial syncs (i.e. sync succeeded in aria but failed to persist in mongo).
+  (rpenta@redhat.com)
+
 * Wed Apr 10 2013 Adam Miller <admiller@redhat.com> 1.7.3-1
 - Remove CAD rates from broker config (jliggitt@redhat.com)
 - Currency display story number_to_user_currency helper method Make CSV export
