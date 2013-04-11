@@ -284,7 +284,7 @@ module Online
               else
                 puts "ERROR: Group name=#{g.name} owner=#{g.owner_id} id=#{g.group_id} " +
                 "does not exist or is in a different region."
-                endo
+                end
             end
           end
         end
