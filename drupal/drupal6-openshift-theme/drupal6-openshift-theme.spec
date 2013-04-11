@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.15.2
+Version: 3.15.3
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,14 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Apr 11 2013 Adam Miller <admiller@redhat.com> 3.15.3-1
+- Minor tweaks to twitter (ccoleman@redhat.com)
+- Final styling tweaks, allegedly fix facebook (ccoleman@redhat.com)
+- Fix google and facebook links (ccoleman@redhat.com)
+- Social sharing links, cleanup, styling fixes (ccoleman@redhat.com)
+- Update quickstarts with correct icon sizes, fix typos and spelling errors.
+  (ccoleman@redhat.com)
+
 * Mon Apr 08 2013 Adam Miller <admiller@redhat.com> 3.15.2-1
 - replace favicon.ico with new (sgoodwin@redhat.com)
 - Bug 928970: fixes Forums heading (ffranz@redhat.com)
