@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.7.3
+Version: 1.7.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -181,6 +181,24 @@ fi
 %{sitedir}/public
 
 %changelog
+* Thu Apr 11 2013 Adam Miller <admiller@redhat.com> 1.7.4-1
+- Merge pull request #1158 from liggitt/currency_display3
+  (dmcphers+openshiftbot@redhat.com)
+- Fix test data for CAD, always parse CAD, USD, EUR from plan descriptions
+  (jliggitt@redhat.com)
+- Merge pull request #1150 from smarterclayton/tweaks_to_quickstarts
+  (dmcphers@redhat.com)
+- Merge pull request #1153 from
+  smarterclayton/bug_929056_send_community_help_to_console_help
+  (dmcphers+openshiftbot@redhat.com)
+- Add CAD, add tests for plan page listing (jliggitt@redhat.com)
+- Final styling tweaks, allegedly fix facebook (ccoleman@redhat.com)
+- Bug 929056 - Send community help to console help for now
+  (ccoleman@redhat.com)
+- Social sharing links, cleanup, styling fixes (ccoleman@redhat.com)
+- Update quickstarts with correct icon sizes, fix typos and spelling errors.
+  (ccoleman@redhat.com)
+
 * Wed Apr 10 2013 Adam Miller <admiller@redhat.com> 1.7.3-1
 - Merge pull request #1147 from
   smarterclayton/redirect_new_users_to_get_started
