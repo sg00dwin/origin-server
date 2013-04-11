@@ -73,7 +73,8 @@
 
               %form.row
                 .search-row
-                  %input.search-query
+                  %label.invisible{:for => 'search'} Search
+                  %input#search.search-query
                   %button.search{:type => 'submit'} 
         
         .column-content.lift.grid-wrapper
