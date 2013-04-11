@@ -50,6 +50,7 @@ Requires:  openshift-origin-cartridge-community-python-3.3
 Requires:  openshift-origin-cartridge-mock
 Requires:  openshift-origin-cartridge-mock-plugin
 Requires:  openshift-origin-cartridge-jbosseap
+Requires:  openshift-origin-cartridge-jbossas
 Requires:  openshift-origin-cartridge-php
 Requires:  openshift-origin-cartridge-perl
 Requires:  openshift-origin-cartridge-python
