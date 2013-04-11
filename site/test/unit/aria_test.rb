@@ -496,7 +496,7 @@ class AriaUnitTest < ActiveSupport::TestCase
 
 Features:
 * Price: €33/Month (EUR) *
-* Price: €43.05/Month (CAD) *
+* Price: $43.05/Month (CAD) *
 * Price: $42/Month (USD) *
 * Free Gears: 3
 * Support: By Red Hat
@@ -505,7 +505,7 @@ Features:
 * Additional Storage: $1/GB per month (CAD) *
 * Additional Storage: $1/GB per month (USD) *
 * SSL: For custom domains *
-* Java EE6 Full Profile & CDI: 3 gears free; € 0.02/hr per additional gear (EUR) *
+* Java EE6 Full Profile & CDI: 3 gears free; €0.02/hr per additional gear (EUR) *
 * Java EE6 Full Profile & CDI: 3 gears free; $0.03/hr per additional gear (USD) *
 * Java EE6 Full Profile & CDI: 3 gears free; $0.03/hr per additional gear (CAD) *
 """

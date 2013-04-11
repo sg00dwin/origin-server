@@ -57,7 +57,7 @@ module Aria
         if data =~ /^\d+$/
           count = data
           type  = 'numeric'
-        elsif currency_match = /\s*\((#{Rails.configuration.allowed_currencies.join('|')})\)\s*/i.match(data)
+        elsif currency_match = /\s*\((cad|eur|usd|#{Rails.configuration.allowed_currencies.join('|')})\)\s*/i.match(data)
           data.gsub!(currency_match[0], " ").strip!
           currency_cd = currency_match[1].downcase
         end
