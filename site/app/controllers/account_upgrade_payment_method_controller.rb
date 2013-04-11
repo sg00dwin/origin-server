@@ -1,21 +1,23 @@
 class AccountUpgradePaymentMethodController < PaymentMethodsController
+  before_filter :aria_user, :only => [:edit, :show, :new]
+  before_filter :payment_method, :only => [:edit, :show, :new]
+  before_filter :billing_info, :only => [:edit, :new]
+  before_filter :process_async
+
   def show
-    @user = Aria::UserContext.new(current_user)
-    @payment_method = @user.payment_method
     redirect_to url_for(:action => :new) and return unless @payment_method.persisted?
     redirect_to next_path
   end
 
   def new
-    @user = Aria::UserContext.new(current_user)
-    @payment_method = @user.payment_method || Aria::PaymentMethod.new
+    @payment_method ||= Aria::PaymentMethod.new
 
     @payment_method = Aria::PaymentMethod.test if Rails.env.development?
 
     update_errors(@payment_method.errors, (params[:payment_method] || {})[:errors] || {})
 
     @payment_method.mode = Aria::DirectPost.get_or_create(params[:plan_id], url_for(:action => :direct_create))
-    @payment_method.session_id = @user.create_session
+    @payment_method.session_id = @aria_user.create_session
   end
 
   def direct_create
@@ -30,7 +32,7 @@ class AccountUpgradePaymentMethodController < PaymentMethodsController
 
   protected
     def next_path
-      new_account_plan_upgrade_path
+      account_plan_upgrade_path
     end
     def post_name
       "edit_#{params[:plan_id]}"

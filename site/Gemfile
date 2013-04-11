@@ -12,7 +12,19 @@ gem 'sinatra', '~> 1.3.2'
 gem 'sqlite3', '~> 1.3.3'
 gem 'dalli'
 
-gem 'pry' if ENV['PRY']
+gem 'countries'
+
+# Do not include these gems while testing or compiling assets
+group :development, :production do
+  gem 'pry' if ENV['PRY']
+
+  if ENV['BETTER_ERRORS']
+    gem 'pry-rails' if ENV['PRY']
+    gem 'better_errors'
+    gem 'binding_of_caller'
+    gem 'meta_request'
+  end
+end
 
 # Bundle gems for the local environment. Make sure to
 # put test-only gems in this group so their generators

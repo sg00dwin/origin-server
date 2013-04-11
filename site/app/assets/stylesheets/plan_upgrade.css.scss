@@ -1,0 +1,73 @@
+$cc_sprite: "credit-cards.png";
+$sprite_offset: -55px;
+
+@mixin sprite_offset($index) {
+  background-position: $sprite_offset * $index;
+}
+
+.plan_upgrade {
+  legend {
+    color: #dadada;
+  }
+
+  label.control-label ul {
+    display: inline;
+    margin-left: 0px;
+
+    li {
+      display: inline;
+      &:after {
+        content: ", ";
+      }
+
+      &:last-child:after {
+        content: "";
+      }
+    }
+  }
+}
+
+.payment_form {
+  ul.card-types {
+    list-style: none;
+    margin-left: 230px;
+
+    li.cc-card {
+      display: inline;
+      float: left;
+      text-indent: -5000em;
+
+      background: #fff image-url($cc_sprite) 0 0 no-repeat;
+      height: 25px;
+      width: 52px;
+      background-color: transparent;
+
+      -moz-transition: opacity 400ms ease 0s;
+      opacity: 0.33;
+
+      &.selected {
+        opacity: 1;
+        z-index: 10;
+      }
+
+      &.visa {        @include sprite_offset(0); }
+      &.mastercard {  @include sprite_offset(1); }
+      &.amex {        @include sprite_offset(2); }
+      &.dinersclub {  @include sprite_offset(3); }
+      &.unionpay {    @include sprite_offset(4); }
+      &.laser {       @include sprite_offset(5); }
+      &.jcb {         @include sprite_offset(6); }
+      &.discover {    @include sprite_offset(7); }
+      &.maestro {     @include sprite_offset(8); }
+    }
+  }
+
+  .form-validation .validation01 {
+    top: 35px;
+  }
+
+  .payment_method {
+    margin: 18px 0;
+    -webkit-margin-top-collapse: separate; /* needed since used after legend which collapses margins */
+  }
+}

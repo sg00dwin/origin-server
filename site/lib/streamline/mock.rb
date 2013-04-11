@@ -182,7 +182,7 @@ module Streamline
          "address2"=>nil,
          "address3"=>nil,
          "city"=>"SOMEWHERE",
-         "country"=>"UNKNOWN",
+         "country"=>"US",
          "title"=>"Software",
          "postal_code"=>"12345",
          "phone_number"=>"000-000-0000",

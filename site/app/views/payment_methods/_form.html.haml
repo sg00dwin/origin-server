@@ -1,88 +1,80 @@
-:css
-  /* credit card */
-  .card-types-passive {
-    list-style: none;
-    margin-left: 230px;
-  }
-  .card-types-passive li {
-    display: inline;
-    float: left;
-    text-indent: -5000em;
-  }
-  .card-types-passive .cc-card {
-    background: #fff url("#{image_path("credit-cards.png")}") 0 0 no-repeat;
-    height: 25px;
-    width: 52px;
-  }
-  .card-types-passive li.Visa {
-    background-position: 0 0;
-  }
-  .card-types-passive li.Mastercard {
-    background-position: -55px 0;
-  }
-  .card-types-passive li.AMEX {
-    background-position: -110px 0;
-  }
-  .card-types-passive.selected .cc-card.selected {
-    opacity: 1;
-    background-color: transparent;
-    z-index: 10;
-  }
-  .card-types-passive.selected .cc-card {	
-    -moz-transition: opacity 400ms ease 0s;
-    background-color: transparent;
-    opacity: 0.33;
-  }
-  
-  .form-validation .validation01 {
-    top: 35px;
-  }
-  
-  .payment_method {
-    margin: 18px 0;
-    -webkit-margin-top-collapse: separate; /* needed since used after legend which collapses margins */
-  }
+= semantic_form_for payment_method, :url => aria_direct_post_url, :html => {:class => 'form-horizontal plan_upgrade payment_form', :id => 'payment_method'} do |f|
+  %section.row
+    .span8
+      = tag :meta, :name => 'accepted_card_types', :content => accepted_credit_cards.keys.join(':')
+      = f.semantic_errors :except => [:cc_no, :cvv, :cc_exp_mm]
+      = f.hidden_field :form_of_payment, :name => :formOfPayment
+      = f.hidden_field :session_id, :name => :inSessionID
+      = f.hidden_field :mode, :name => :mode
+      = f.hidden_field :client_no, :name => :client_no
 
-= semantic_form_for payment_method, :url => aria_direct_post_url, :html => {:class => 'form-horizontal', :id => 'payment_method'} do |f|
-  = f.semantic_errors
-  = f.hidden_field :form_of_payment, :name => :formOfPayment
-  = f.hidden_field :session_id, :name => :inSessionID
-  = f.hidden_field :mode, :name => :mode
-  = f.hidden_field :client_no, :name => :client_no
+      = f.inputs 'Payment Method' do
+        - if defined? previous_payment_method and not previous_payment_method.nil? and not previous_payment_method.cc_no.nil?
+          .control-group
+            .controls
+              .payment_method
+                Card on file: #### #### #### #{previous_payment_method.cc_no}, expires #{previous_payment_method.cc_exp_mm} / #{previous_payment_method.cc_exp_yyyy}
+        = f.inputs :inline => true, :required => true, :name => 'Credit Card Number' do
+          .clearfix
+            = f.input :cc_no, :input_html => { :name => 'cc_no', :type => 'text', :class => 'pull-left input-large', :placeholder => "Card Number"}
+            %ul.card-types
+              -# Do not try to change the order here, the sprites will not look right
+              -# See config/credit_cards.yml for instructions
+              - accepted_credit_cards.each do |id,name|
+                %li{ :class => "cc-card #{id}", :title => name }
+                  %span= name
+        = f.inputs :inline => true, :required => true, :name => 'Expiration Date' do
+          :ruby
+            @payment_method.cc_exp_mm ||= Date.today.month
+            @payment_method.cc_exp_yyyy ||= Date.today.year
+          = f.input :cc_exp_mm, :as => :select, :include_blank => false, :collection => (1..12).to_a.map{|num| [(num < 10 ? "0#{num}" : num.to_s),num]}, :input_html => { :name => 'cc_exp_mm', :class => 'input-mini' }
+          - year_options = (Date.today.year..(Date.today.year + 10)).to_a
+          = f.input :cc_exp_yyyy, :as => :select, :include_blank => false, :collection => year_options, :input_html => { :name => 'cc_exp_yyyy', :class => 'input-small' }
+        = f.input :cvv, :required => true, :label => 'Security Code', :input_html => { :class => 'input-mini', :name => :cvv }
 
-  = f.inputs 'Payment Method' do
-    - if defined? previous_payment_method and previous_payment_method.present?
-      .control-group
-        .controls
-          .payment_method
-            Card on file: #### #### #### #{previous_payment_method.cc_no}, expires #{previous_payment_method.cc_exp_mm} / #{previous_payment_method.cc_exp_yyyy}
-    = f.inputs :inline => true, :required => true, :name => 'Credit Card Number' do
-      .clearfix
-        = f.input :cc_no, :input_html => { :name => 'cc_no', :type => 'text', :class => 'pull-left input-large', :value => (@payment_method.cc_no || '') }
-        %ul{ :class => 'card-types-passive selected' }
-          %li{ :class => 'Visa cc-card' }
-            %span VISA
-          %li{ :class => 'Mastercard cc-card' }
-            %span Mastercard
-          %li{ :class => 'AMEX cc-card' }
-            %span American Express
-    = f.inputs :inline => true, :required => true, :name => 'Expiration Date' do
-      = f.input :cc_exp_mm, :as => :select, :include_blank => false, :default => (@payment_method.cc_exp_mm || Date.today.month), :collection => (1..12).to_a.map{|num| [(num < 10 ? "0#{num}" : num.to_s),num]}, :input_html => { :name => 'cc_exp_mm', :class => 'input-small' }
-      - year_options = (Date.today.year..(Date.today.year + 10)).to_a
-      = f.input :cc_exp_yyyy, :as => :select, :include_blank => false, :default => (@payment_method.cc_exp_yyyy || Date.today.year), :collection => year_options, :input_html => { :name => 'cc_exp_yyyy', :class => 'input-medium' }
-    = f.input :cvv, :label => 'Security Code', :input_html => { :class => 'input-mini', :name => :cvv }
+      = f.buttons do
+        = link_to *previous_link
+        = f.commit_button "Save Payment"
+        = f.loading
 
-  = f.buttons do
-    = link_to *previous_link
-    = f.commit_button "Save Payment"
-    = f.loading
+      -#TODO: needs error handling display on page
+      -#%iframe#payment_frame.hidden{:name => :payment_frame, :data => {'frame-url' => aria_direct_post_url(:params => 'serve_direct')}, :src => javascript_path('blank.html')}
+    %aside.span4
+      %h5
+        .font-icon-block
+          %span{:class => "font-icon font-icon-size-12", "data-icon" => "\ue000", "aria-hidden" => "true"}
+        Your Credit Card Information is Safe
+      %p
+        Your payment information is encrypted and sent directly to our payment processor.
+        We do not store any of your credit card data.
+      %h5 Current Billing Information
+      %p
+        If you are having problems submitting your payment information, please ensure that the following billing information is correct.
+        = render :partial => 'billing_info/summary', :locals => {:billing_info => @billing_info}
+        %p= link_to @billing_info.blank? ? "Add a billing address to this account" : "Change billing address", billing_link
 
-  -#TODO: needs error handling display on page
-  -#%iframe#payment_frame.hidden{:name => :payment_frame, :data => {'frame-url' => aria_direct_post_url(:params => 'serve_direct')}, :src => javascript_path('blank.html')}
+- content_for :stylesheets do
+  = stylesheet_link_tag 'plan_upgrade', :media => :all
 
 - content_for :javascripts do
   :javascript
+    // Set the extended validation flag so we can use it in the validations
+    window.extended_cc_validation = "#{extended_cc_validation}"
+
     $(document).ready(function() {
+      var cc_input = $('input[name="cc_no"]');
+      var cvv_input = $('input[name="cvv"]');
+
+      // Set the input types so we jquery.payment can format them properly
+      cc_input.payment('formatCardNumber');
+      cvv_input.payment('formatCardCVC');
+      // Change the classes for the sprites when we jquery.payment changes the card type
+      cc_input.on('payment.cardType', function(cardType) {
+        var type = arguments[1];
+        $('.cc-card').removeClass('selected');
+        $(".cc-card." + type).addClass('selected');
+      });
+
       var frame = $('#payment_frame');
       if (frame.length == 0) return;
       $('#payment_method')

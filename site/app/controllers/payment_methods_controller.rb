@@ -1,19 +1,24 @@
 class PaymentMethodsController < ConsoleController
   include BillingAware
+  include PaymentMethodsHelper
 
   before_filter :authenticate_user!
   before_filter :user_can_upgrade_plan!
 
+  before_filter :aria_user, :only => [:edit]
+  before_filter :billing_info, :only => [:edit]
+  before_filter :payment_method, :only => [:edit]
+
+  before_filter :process_async
+
   def edit
-    @user = Aria::UserContext.new(current_user)
-    @payment_method = @user.payment_method
     @previous_payment_method = @payment_method.dup
 
     update_errors(@payment_method.errors, (params[:payment_method] || {})[:errors] || {})
 
     @payment_method.cc_no = nil
     @payment_method.mode = Aria::DirectPost.get_or_create(post_name, url_for(:action => :direct_update))
-    @payment_method.session_id = @user.create_session
+    @payment_method.session_id = @aria_user.create_session
   end
 
   def direct_update

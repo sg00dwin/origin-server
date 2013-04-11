@@ -1,4 +1,6 @@
 module AccountHelper
+  include CountryHelper
+
   PlanUpgradeStepsCreate = [
     {
       :name => 'Plans',
@@ -24,6 +26,10 @@ module AccountHelper
     community_base_url 'policy/tax-exemptions'
   end
 
+  def customer_support_new_ticket_url
+    @customer_support_new_ticket_url ||= Rails.configuration.customer_support_new_ticket_url
+  end
+
   def line_item_details(li)
     if li.tax?
     elsif li.usage?
@@ -35,5 +41,9 @@ module AccountHelper
         "Service Credit"
       end
     end
+  end
+
+  def dynamic_country_form
+   !(Rails.configuration.respond_to?(:disable_dynamic_country_form) && Rails.configuration.disable_dynamic_country_form)
   end
 end

@@ -267,6 +267,7 @@ class AriaUnitTest < ActiveSupport::TestCase
       :status_cd => 0.to_s,
       :master_plan_no => Rails.application.config.aria_default_plan_no.to_s,
       :userid => Digest::MD5::hexdigest('foo'),
+      :alt_template_msg_no => '3754655',
     }).to_return(resp(ok_wddx))
 
     stub_aria(:get_acct_no_from_user_id, {
@@ -337,8 +338,8 @@ class AriaUnitTest < ActiveSupport::TestCase
     assert info = Aria::BillingInfo.from_account_details(attr)
     assert info.persisted?
     assert_equal 'Houston', info.city
-    assert_equal({'city' => 'Houston', 'address1' => '1 test'}, info.attributes)
-    assert_equal({'bill_city' => 'Houston', 'bill_address1' => '1 test'}, info.to_aria_attributes)
+    assert_equal({'city' => 'Houston', 'address1' => '1 test', 'region' => nil}, info.attributes)
+    assert_equal({'bill_city' => 'Houston', 'bill_address1' => '1 test', 'bill_locality' => nil, 'bill_state_prov' => '~'}, info.to_aria_attributes)
     #assert_nil info.tax_exempt
     #assert !info.tax_exempt?
   end

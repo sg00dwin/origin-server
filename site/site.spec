@@ -43,6 +43,7 @@ Requires:       %{?scl:%scl_prefix}rubygem(therubyracer)
 Requires:       %{?scl:%scl_prefix}rubygem(rack-recaptcha)
 Requires:       %{?scl:%scl_prefix}rubygem(rack-picatcha)
 Requires:       %{?scl:%scl_prefix}rubygem(dalli)
+Requires:       %{?scl:%scl_prefix}rubygem(countries)
 
 %if 0%{?fedora}%{?rhel} <= 6
 BuildRequires:  ruby193-build
@@ -76,6 +77,7 @@ BuildRequires:  %{?scl:%scl_prefix}rubygem(therubyracer)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(rack-recaptcha)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(rack-picatcha)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(dalli)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(countries)
 
 BuildArch:      noarch
 

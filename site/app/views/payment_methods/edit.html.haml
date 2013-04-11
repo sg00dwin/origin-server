@@ -1,5 +1,4 @@
 - content_for :title, 'Change your method of payment'
 
-%p Enter a new payment method
 = flashes
-= render :partial => 'form', :locals => {:payment_method => @payment_method, :previous_payment_method => @previous_payment_method, :previous_link => ['Cancel', account_path, {:class => 'btn'}]}
+= render :partial => 'payment_methods/form', :locals => {:payment_method => @payment_method, :previous_payment_method => @previous_payment_method, :previous_link => ['Cancel', account_path, {:class => 'btn'}], :billing_link => edit_account_billing_info_path}

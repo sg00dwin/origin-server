@@ -56,4 +56,55 @@ module BillingAware
         new_account_path(:then => path)
       end
     end
+
+    def aria_user
+      add_async(:aria_user => current_user)
+    end
+
+    def streamline_type
+      user = current_user
+      user.streamline_type!
+      add_async(:aria_user => user)
+    end
+
+    def plan
+      add_async(:plan => params[:plan_id])
+    end
+
+    def billing_info
+      add_async(:billing_info)
+    end
+
+    def payment_method
+      add_async(:payment_method)
+    end
+
+    def add_async(*args)
+      @async ||= {}
+      options = args.extract_options!
+      @async.merge!(options)
+      args.each do |arg|
+        @async[arg] = true
+      end
+    end
+
+    def process_async(*args)
+      add_async(*args)
+
+      unless @async.empty?
+        async do
+          @user = User.find :one, :as => current_user
+          @plan = Aria::MasterPlan.cached.find(@async[:plan])
+          @current_plan = @user.plan
+        end if @async[:plan]
+
+        async do
+          @aria_user = Aria::UserContext.new(@async[:aria_user])
+          @payment_method = @aria_user.payment_method if @async[:payment_method]
+          @billing_info = @aria_user.billing_info if @async[:billing_info]
+        end
+
+        join!
+      end
+    end
 end
