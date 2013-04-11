@@ -5,7 +5,7 @@
 %global modname             user_profile
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.12.1
+Version: 1.12.2
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom User Profile Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,10 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Thu Apr 11 2013 Adam Miller <admiller@redhat.com> 1.12.2-1
+- Bug 912027 - Change string references to 'Active Contributor'
+  (ccoleman@redhat.com)
+
 * Thu Mar 28 2013 Adam Miller <admiller@redhat.com> 1.12.1-1
 - bump_minor_versions for sprint 26 (admiller@redhat.com)
 
