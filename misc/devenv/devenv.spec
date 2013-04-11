@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.7.4
+Version: 1.7.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -738,6 +738,9 @@ oo-admin-cartridge --recursive -a install -s /usr/libexec/openshift/cartridges/v
 /etc/openshift/development
 
 %changelog
+* Thu Apr 11 2013 Adam Miller <admiller@redhat.com> 1.7.5-1
+- add jbossas to devenv.spec (bdecoste@gmail.com)
+
 * Wed Apr 10 2013 Adam Miller <admiller@redhat.com> 1.7.4-1
 - Merge pull request #1141 from sosiouxme/bz949543 (dmcphers@redhat.com)
 - <rhc-node> bug 949543 transfer RPM ownership of resource_limits.conf to
