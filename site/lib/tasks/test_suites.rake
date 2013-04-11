@@ -59,7 +59,8 @@ namespace :test do
     task :js => ['konacha:run']
 
     # This is being renamed to test:js - so hide it
-    Rake::Task['konacha:run'].clear_comments
+    # But... the version of rake on the denvenvs are too old for this
+    #Rake::Task['konacha:run'].clear_comments
   end
 
   #
