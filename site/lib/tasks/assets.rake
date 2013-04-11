@@ -34,10 +34,12 @@ namespace :assets do
   GenerateSiteViewTask.new(:generic_error_pages) do |t|
     t.layout = nil
     t.views = {
-      'product/core_not_found'   => 'core-404.html',
-      'product/core_error'       => 'core-500.html',
-      'product/core_unavailable' => 'core-503.html',
-      'product/core_app_error'   => 'core-app-500.html',
+      'product/core_not_found'       => 'error/404.html',
+      'product/core_error'           => 'error/500.html',
+      'product/core_unavailable'     => 'error/503.html',
+      'product/core_app_error'       => 'error/app/500.html',
+      'product/core_app_unavailable' => 'error/app/503.html',
+      'product/core_app_installing'  => 'error/app/installing.html',
     }
   end
 end

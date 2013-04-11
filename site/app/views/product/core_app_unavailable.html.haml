@@ -1,0 +1,19 @@
+!!! 5
+-ie_html :class => 'no-js', :lang => 'en' do
+  %head
+    %title Site not available
+    = render :partial => 'product/core_head'
+
+  %body
+    %header
+
+      %hgroup
+        %h1 Site not available
+        %h2 HTTP 503
+
+    %section.main
+      %p 
+        The site is currently stopped or undergoing maintenance. You can try 
+        %a{:href => "javascript:window.location.reload();"} refreshing the page
+        if the problem is temporary.
+      %p If you are the site owner, see #{link_to "this page", developers_get_help_url} to help troubleshoot your application.

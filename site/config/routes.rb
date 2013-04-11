@@ -45,12 +45,13 @@ RedHatCloud::Application.routes.draw do
 
   match 'account/plans' => app_redirect('account/plan'), :via => [:get]
 
-  match 'not_found' => 'product#not_found'
-  match 'error' => 'product#error'
-  match 'core_error' => 'product#core_error'
-  match 'core_not_found' => 'product#core_not_found'
-  match 'core_unavailable' => 'product#core_unavailable'
-  match 'core_app_error' => 'product#core_app_error'
+  [
+    :not_found, :error,
+    :core_error, :core_not_found, :core_unavailable, 
+    :core_app_error, :core_app_unavailable, :core_app_installing,
+  ].each do |sym|
+    match sym.to_s => "product##{sym}"
+  end
   match 'console/not_found' => 'product#console_not_found'
   match 'console/error' => 'product#console_error'
 
