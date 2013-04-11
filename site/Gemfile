@@ -42,7 +42,7 @@ group :test do
 end
 
 group :test, :development do
-  gem 'konacha',       '~> 2.5.1'
+  gem 'konacha',       '~> 2.6.0'
 end
 
 group :assets do
