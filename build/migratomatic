@@ -1,15 +1,17 @@
 #!/usr/bin/env ruby
 
+require 'getoptlong'
 require 'tempfile'
 require 'yaml'
 
-DRY_RUN = false
-VERBOSE = true
+def verbose(msg)
+  if VERBOSE
+    puts "#{msg}\n"
+  end
+end
 
 def command(cmd) 
-  if VERBOSE
-    puts "Running: \"#{cmd}\""
-  end
+  verbose "Running: \"#{cmd}\""
 
   if !DRY_RUN
     output = `#{cmd}`
@@ -20,28 +22,11 @@ def command(cmd)
 end
 
 def cmd_output(output)
-  puts "Output: \n=====\n#{output}\n====="
+  verbose "Output: \n=====\n#{output}\n====="
 end
 
 def generate_token
   rand(36**8).to_s(36)
-end
-
-def generate_app(cart_type, domain, scalable=false, embedded=[])
-  cart_name = cart_type.gsub(/-|\./,'')
-  token = generate_token
-  
-  app = {
-    :token => token,
-    :old_name => "old#{cart_name}#{token}",
-    :new_name => "new#{cart_name}#{token}",
-    :domain => domain,
-    :scalable => scalable,
-    :type => cart_type,
-    :embedded => embedded
-  }
-
-  app
 end
 
 def pull_artifacts(mig_config, devenv, version)
@@ -67,9 +52,7 @@ def create_devenv(mig_config, use_stage = true)
     cmd += " --branch stage"
   end
 
-  if VERBOSE
-    puts "Running: \"#{cmd}\""
-  end
+  verbose "Running: \"#{cmd}\""
 
   if DRY_RUN 
     host = "DRYRUN_#{env_type}_DEVENV"
@@ -142,25 +125,33 @@ def up_gears(devenv, account)
   command(cmd)
 end
 
-def generate_apps(app_defs, domain)
-  puts "Generating apps for #{app_defs.length} cartridge combinations"
+def generate_apps(app_descriptors, domain)
+  puts "Generating apps for #{app_descriptors.length} cartridge combinations"
 
   apps = []
 
-  app_defs.each do |app_def|
-    case app_def
-    when String
-      #apps << generate_app(app_def, domain)
-      apps << generate_app(app_def, domain, false)
-    when Array  
-      #apps << generate_app(app_def.first, domain, false, app_def[1..-1])
-      apps << generate_app(app_def.first, domain, false, app_def[1..-1])
-    else
-      $stderr.puts "generate_apps does not know how to process classOf #{app_def.class}"
-    end
+  app_descriptors.each do |app_def|
+    apps << generate_app(app_def, domain)
   end
 
   apps
+end
+
+def generate_app(app_descriptor, domain)
+  cart_name = app_descriptor[:type].gsub(/-|\./,'')
+  token = generate_token
+  
+  app = {
+    :token => token,
+    :old_name => "old#{cart_name}#{token}",
+    :new_name => "new#{cart_name}#{token}",
+    :domain => domain,
+    :scalable => !!app_descriptor[:scalable], # coerce a boolean for scalable
+    :type => app_descriptor[:type],
+    :embedded => app_descriptor[:embedded]
+  }
+
+  app
 end
 
 def create_apps(mig_config, apps, config)
@@ -171,7 +162,7 @@ def create_apps(mig_config, apps, config)
 
     command = "rhc app create --config #{config} -a #{app[:old_name]} -t #{app[:type]} -p none 2>&1"
     command = "#{command} -s" if app[:scalable]
-    puts   "  Running: \"#{command}\"" if VERBOSE
+    verbose "Running: \"#{command}\""
 
     if !DRY_RUN
       Dir.chdir(mig_config['tmp']) do
@@ -272,17 +263,11 @@ end
 def migrate_apps(new_version, apps, devenv)
   puts "Migrating #{apps.length} applications"
 
-  command = "ssh root@#{devenv} \"rhc-admin-migrate --version #{new_version} >> /root/migrate.#{new_version}.log\""
+  command("ssh root@#{devenv} \"rhc-admin-migrate --version #{new_version} >> /root/migrate.#{new_version}.log\"")
 
-  if VERBOSE
-    puts "Running: \"#{command}\""
+  if !DRY_RUN && $? != 0
+    raise "Error migrating apps"
   end
-
-  if !DRY_RUN
-    output = `#{command}`
-    cmd_output(output)
-    raise "Error migrating apps" unless $? == 0
-  end 
 
   migrate_log = "/root/migrate.#{new_version}.log"   
 end
@@ -304,7 +289,7 @@ def create_comparison_apps(old_to_new_cart_types, mig_config, apps, devenv, conf
       
       command = "rhc app create --config #{config} -a #{app[:new_name]} -t #{app_type} -p none 2>&1"
       command = "#{command} -s" if app[:scalable]
-      puts "Running: \"#{command}\"" if VERBOSE
+      verbose "Running: \"#{command}\""
 
       if !DRY_RUN
         Dir.chdir(mig_config['tmp']) do
@@ -313,11 +298,8 @@ def create_comparison_apps(old_to_new_cart_types, mig_config, apps, devenv, conf
           raise "Error creating app #{app[:new_name]}" unless $? == 0
 
           app[:embedded].each { |cart_type|
-            cart_type = old_to_new_cart_types[cart_type] ? old_to_new_cart_types[cart_type] : cart_type
-            cart_command = "rhc cartridge add --config #{config} -a #{app[:new_name]} -c #{cart_type} -p none 2>&1"
-            puts "Running: \"#{cart_command}\"" if VERBOSE
-            output = `#{cart_command}`
-            cmd_output(output)
+            cart_type = old_to_new_cart_types[cart_type] ||= cart_type
+            command("rhc app cartridge add --config #{config} -a #{app[:new_name]} -c #{cart_type} -p none 2>&1")
             raise "Error adding cartridge #{cart_type} to #{app_type}" unless $? == 0
           }
         end
@@ -340,26 +322,14 @@ def diff_report(mig_config, apps, devenv)
     puts "Diffing #{app[:old_name]} against #{app[:new_name]} (#{app[:type]}#{carts}, #{app[:scalable] ? 'scalable' : 'unscalable'})"
     result_file = "/#{mig_config['tmp']}/#{app[:type]}#{carts}.#{app[:scalable] ? 'scalable' : 'unscalable'}.diff"
 
-    cmd = "ssh root@#{devenv} diff -r /var/lib/openshift/#{app[:old_name]}-* /var/lib/openshift/#{app[:new_name]}-* --exclude=repo > #{result_file} 2>&1"
-
-    command(cmd)
+    command("ssh root@#{devenv} diff -r /var/lib/openshift/#{app[:old_name]}-* /var/lib/openshift/#{app[:new_name]}-* --exclude=repo > #{result_file} 2>&1")
   end
 end
 
 def cleanup(mig_config, devenv)
   puts "Cleaning up #{devenv}"
 
-  cmd = "cd #{mig_config['repo_dir']}/li; build/devenv terminate #{devenv} 2>&1"
-
-  if VERBOSE
-    puts "Running: \"#{cmd}\""
-  end
-
-  if !DRY_RUN
-    output = `#{cmd}`
-
-    cmd_output(output)
-  end
+  command("cd #{mig_config['repo_dir']}/li; build/devenv terminate #{devenv} 2>&1")
 end
 
 def get_or_create_config()
@@ -390,37 +360,81 @@ def get_or_create_config()
   return YAML.load_file(config_file)
 end
 
-#cart_types = [ 'php-5.3', 'ruby-1.8', 'ruby-1.9', 'perl-5.10', 'jbossas-7', 'jbosseap-6.0', 'python-2.6', 'diy-0.1', 'nodejs-0.6',
-#               ['php-5.3', 'mysql-5.1'], ['php-5.3', 'postgresql-8.4'], ['php-5.3', 'mongodb-2.0'], 
-#               ['php-5.3', 'mongodb-2.0', 'rockmongo-1.1'], ['php-5.3', 'mysql-5.1', 'phpmyadmin-3.4'], 'jenkins-1.4'
-#             ]
+def usage
+  puts <<USAGE
+build/migratomatic - setup, update, and migrate a stage instance to a newer version
 
-cart_types = [
-  ['php-5.3', 'postgresql-8.4'], 
-  ['nodejs-0.6', 'postgresql-8.4'], 
-  ['jbossas-7', 'postgresql-8.4'], 
-]
+usage: build/migratomatic [-V,--verbose] [-D,--dry-run]
+                          [-v,--version] <version> [-c,--command] <command> [-d,--devenv] <devenv host> 
 
-#cart_types = [ 'jenkins-1.4', 
-#               ['php-5.3', 'jenkins-client-1.4'],
-#               ['ruby-1.8', 'jenkins-client-1.4'], 
-#               ['ruby-1.9', 'jenkins-client-1.4'],
-#               ['perl-5.10', 'jenkins-client-1.4'],
-#               ['jbossas-7', 'jenkins-client-1.4'],
-#               ['jbosseap-6.0', 'jenkins-client-1.4'],
-#               ['diy-0.1', 'jenkins-client-1.4'],
-#               ['nodejs-0.6', 'jenkins-client-1.4'],
-#               ['python-2.6', 'jenkins-client-1.4'],
-#]
-             
-old_to_new_cart_types = {
-}
+commands:
+  help:            see this message
+  pull-artifacts:  pull artifacts (devenv-local, local.repo) from a devenv
+  create:          create a devenv from the latest stage ami
+  setup:           create a domain and pre-migration apps
+  update:          update a devenv to a new version
+  migrate:         migrate apps to a new version
+  diff:            create comparison apps and diff reports
+  test:            the whole \#!
+USAGE
+end
 
-new_version = ARGV[0]
-command = ARGV[1]
+def app_descriptions
+  [ { type: 'php-5.3', 
+      embedded: %w(postgresql-8.4) },
+    { type: 'php-5.3', 
+      embedded: %w(postgresql-8.4),
+      scalable: true },
+    { type: 'php-5.3',
+      embedded: %w(mysql-5.1 phpmyadmin-3.4) }
+  ]
+end
+
+def old_to_new_cart_types
+  {}
+end
+
+opt = {}
+
+begin
+    opts = GetoptLong.new(
+        ["--help",    "-h", GetoptLong::NO_ARGUMENT],
+        ["--verbose", "-V", GetoptLong::NO_ARGUMENT],
+        ["--dry-run", "-D", GetoptLong::NO_ARGUMENT],
+        ["--version", "-v", GetoptLong::REQUIRED_ARGUMENT],
+        ["--command", "-c", GetoptLong::REQUIRED_ARGUMENT],
+        ["--devenv",  "-d", GetoptLong::REQUIRED_ARGUMENT]
+    )
+
+    opts.each do |o, a|
+      if (o == "--help") or (o == "-h")
+        usage
+        exit
+      end
+
+      opt[o[2..-1]] = a.to_s
+    end
+rescue Exception => e
+  puts e
+  usage
+  exit
+end
+
+puts opt.to_s
+
+DRY_RUN = opt['dry-run'] 
+VERBOSE = opt['verbose']
+
+new_version = opt['version']
+command = opt['command']
 
 if new_version.nil? || command.nil?
-  puts "usage: migratomatic <version> <command> [<command options>]"
+  usage
+  exit
+end
+
+if !%w(create test).include?(opt['command']) && !opt['devenv']
+  usage
   exit
 end
 
@@ -430,13 +444,7 @@ puts "Loaded migratomatic config: #{mig_config.inspect}"
 
 case command
 when 'pull-artifacts'
-  devenv = ARGV[2]
-
-  if devenv.nil?
-    puts "usage: migratomatic <version> pull-artifacts <devenv>"
-    exit
-  end
-
+  devenv = opt['devenv']
   pull_artifacts(mig_config, devenv, new_version)
 when 'test'
   devenv = create_devenv(mig_config, true)
@@ -444,7 +452,7 @@ when 'test'
   create_domain(domain, account, config, devenv)
   add_ssh_key(account, config, mig_config['default_keyfile'])
   up_gears(devenv, account)
-  apps = generate_apps(cart_types, domain)
+  apps = generate_apps(app_descriptions, domain)
   create_apps(mig_config, apps, config)
   store_apps(mig_config, apps)
   update_devenv(mig_config, devenv, new_version)
@@ -454,68 +462,33 @@ when 'test'
   cleanup(mig_config, devenv)
 when 'create'
   devenv = create_devenv(mig_config, true)
-
   puts "devenv: #{devenv}"
 when 'setup'
-  devenv = ARGV[2]
-
-  if devenv.nil?
-    puts "usage: migratomatic <version> setup <devenv>"
-    exit
-  end
-
+  devenv = opt['devenv']
   account, domain, config = create_config(mig_config, devenv)
   create_domain(domain, account, config, devenv)
   add_ssh_key(account, config, mig_config['default_keyfile'])
   up_gears(devenv, account)
-  apps = generate_apps(cart_types, domain)
+  apps = generate_apps(app_descriptions, domain)
   create_apps(mig_config, apps, config)
   store_apps(mig_config, apps)
 when 'update'
-  devenv = ARGV[2]
-
-  if devenv.nil?
-    puts "usage: migratomatic <version> update <devenv>"
-    exit
-
-  end
-
+  devenv = opt['devenv']
   update_devenv(mig_config, devenv, new_version)
 when 'migrate'
-  devenv = ARGV[2]
-
-  if devenv.nil?
-    puts "usage: migratomatic <version> migrate <devenv>"
-
-    exit
-  end  
-
+  devenv = opt['devenv']
   apps = load_apps(mig_config)
   config = load_config(mig_config)
   account = load_rhlogin(config)
   migrate_apps(new_version, apps, devenv, account)
 when 'diff'
-  devenv = ARGV[2]
-
-  if devenv.nil?
-    puts "usage: migratomatic <version> diff <devenv>"
-
-    exit
-  end  
-
+  devenv = opt['devenv']
   apps = load_apps(mig_config)
   config = load_config(mig_config)
   create_comparison_apps(old_to_new_cart_types, mig_config, apps, devenv, config)
   diff_report(mig_config, apps, devenv)
 when 'help'
-  puts "  help:     see this message"
-  puts "  pull-artifacts: pull artifacts (devenv-local, local.repo) from a devenv"
-  puts "  create:         create a devenv from the latest stage ami"
-  puts "  setup:          create a domain and pre-migration apps" 
-  puts "  update:         update a devenv to a new version"
-  puts "  migrate:        migrate apps to a new version"
-  puts "  diff:           create comparison apps and diff reports"
-  puts "  test:           the whole \#!"
+  usage
 else
   puts "supported commands: pull-artifacts|create|setup|update|migrate|diff|test|help"
 end
