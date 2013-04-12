@@ -20,7 +20,7 @@
           = u.inputs :inline => true, :required => true, :name => 'Company Info' do
             = u.input :title, :required => false, :input_html => { :placeholder => "Job Title" }
             = u.input :company, :required => true, :input_html => { :placeholder => "Company Name" }
-          = u.input :phone_number, :required => true, :label => 'Phone Number', :input_html => { :class => 'input-medium', :placeholder => "10 digit number", :maxlength => 10 }
+          = u.input :phone_number, :required => true, :label => 'Phone Number', :input_html => { :class => 'input-medium', :maxlength => 30 }
           = u.input :email_subscribe, :as => :boolean, :checked_value => true, :unchecked_value => false, :required => false, :label => 'Receive mailings?', :input_html => { :title => 'Check here to receive periodic e-mails from Red Hat' }
           %p{ :style => 'font-size: 8pt; margin: 0px;' }
             &nbsp;
