@@ -15,5 +15,8 @@ Feature: Metrics Application Sub-Cartridge
     When I start the metrics-0.1 cartridge
     Then a httpd process will be running
     
+    When I restart the metrics-0.1 cartridge
+    Then a httpd process will be running
+    
     When I destroy the application
     Then a httpd process will not be running
