@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 1.2.1
+Version: 1.2.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -63,6 +63,9 @@ fi
 
 
 %changelog
+* Fri Apr 12 2013 Adam Miller <admiller@redhat.com> 1.2.2-1
+- Call the ruby mcs label generator directly for speed. (rmillner@redhat.com)
+
 * Wed Jan 23 2013 Adam Miller <admiller@redhat.com> 1.2.1-1
 - bump_minor_versions for sprint 23 (admiller@redhat.com)
 
