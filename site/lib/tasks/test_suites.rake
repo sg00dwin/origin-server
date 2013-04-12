@@ -57,10 +57,6 @@ namespace :test do
   if Rake::Task.task_defined? 'konacha:run'
     desc 'Run the javascript unit tests'
     task :js => ['konacha:run']
-
-    # This is being renamed to test:js - so hide it
-    # But... the version of rake on the denvenvs are too old for this
-    #Rake::Task['konacha:run'].clear_comments
   end
 
   #
@@ -141,7 +137,7 @@ namespace :test do
       task :js do |t|
         require 'rspec/core'
         ENV['FORMAT'] = 'CI::Reporter::RSpec'
-        ENV['CI_REPORTS'] = 'rhc/log/js/test/reports/'
+        ENV['CI_REPORTS'] = 'test/reports/js/'
 
         Rake::Task['konacha:run'].invoke
       end
