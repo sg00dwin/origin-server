@@ -449,6 +449,7 @@ service rhc-broker restart
 service jenkins restart
 service httpd restart --verbose 2>&1
 service sshd restart
+service openshift-node-web-proxy restart
 chkconfig iptables on
 chkconfig named on
 #chkconfig qpidd on
