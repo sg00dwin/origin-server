@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/openshift/cartridges/v2/metrics
 
 Name: openshift-origin-cartridge-metrics
-Version: 1.7.7
+Version: 1.7.8
 Release: 1%{?dist}
 Summary: Metrics cartridge
 
@@ -42,6 +42,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/README.md
 
 %changelog
+* Fri Apr 12 2013 Adam Miller <admiller@redhat.com> 1.7.8-1
+- fix typo (dmcphers@redhat.com)
+
 * Thu Apr 11 2013 Adam Miller <admiller@redhat.com> 1.7.7-1
 - Locked files fix for metrics (ironcladlou@gmail.com)
 
