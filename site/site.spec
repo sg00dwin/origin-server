@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.7.4
+Version: 1.7.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -185,6 +185,80 @@ fi
 %{sitedir}/public
 
 %changelog
+* Fri Apr 12 2013 Adam Miller <admiller@redhat.com> 1.7.5-1
+- Merge pull request #1166 from liggitt/currency_test
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 929178 Remove duplicate error messages for payment info
+  (hripps@redhat.com)
+- Add tests for premium indicator in correct currency on application types page
+  (jliggitt@redhat.com)
+- Merge pull request #1164 from smarterclayton/origin_ui_37_error_pages
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1169 from smarterclayton/bug_950875_hit_console_first
+  (dmcphers@redhat.com)
+- Ensure login flows tests redirect to getting_started_path
+  (ccoleman@redhat.com)
+- Bug 950875 - After account confirm, redirect user to console first then get-
+  started (ccoleman@redhat.com)
+- Merge pull request #1160 from liggitt/accessibility
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1161 from nhr/plan_currency (dmcphers@redhat.com)
+- Add two additional pages for app unavailable and app installing
+  (ccoleman@redhat.com)
+- Add generic error pages to the product. (ccoleman@redhat.com)
+- Add form labels (jliggitt@redhat.com)
+- Add alt_template_msg_no to expected fields in Aria call (hripps@redhat.com)
+- Clean up aria config settings (hripps@redhat.com)
+- Users in unsupported countries cannot upgrade to Silver plan
+  (hripps@redhat.com)
+- Aria account main address set on account create (hripps@redhat.com)
+- Lookup and apply functional account groups in Aria (hripps@redhat.com)
+- Update plan upgrade page to match design spec (hripps@redhat.com)
+- Fix async and controller logic for before_filter (hripps@redhat.com)
+- Fix some views (fotios@redhat.com)
+- Fix for process_async (fotios@redhat.com)
+- plan id search (fotios@redhat.com)
+- Added async aria stuff to all controllers (fotios@redhat.com)
+- Better async (fotios@redhat.com)
+- More before_filter (fotios@redhat.com)
+- User info in before_filters (fotios@redhat.com)
+- Added more supported countries (fotios@redhat.com)
+- Fixing unit tests (fotios@redhat.com)
+- Exclude better_errors gems during testing (fotios@redhat.com)
+- Fixing unit tests (fotios@redhat.com)
+- Add test for billing address update (hripps@redhat.com)
+- Prevent currency change on billing info update (hripps@redhat.com)
+- Added aside for billing info (fotios@redhat.com)
+- Fixing workflow (fotios@redhat.com)
+- Correct functional tests for new billing and payment configuration
+  (hripps@redhat.com)
+- Force user to select a currency (fotios@redhat.com)
+- Billing info partial (fotios@redhat.com)
+- Fixed partials for payment and billing info summaries (fotios@redhat.com)
+- Fix view looking for credit cards in Rails configuration (fotios@redhat.com)
+- Rebase Aria::BillingInfo to use class method overrides (hripps@redhat.com)
+- billing_info link (fotios@redhat.com)
+- Removed add_validations helper (fotios@redhat.com)
+- Fixing countries config and helper (fotios@redhat.com)
+- Change loading debug libs in Gemfile (fotios@redhat.com)
+- Remove validation for previously removed atrribute (hripps@redhat.com)
+- Removed styleguide changes (fotios@redhat.com)
+- Removed plan pricing css (fotios@redhat.com)
+- This was also in another helper, messed up during rebase (fotios@redhat.com)
+- Changed payment_method css (fotios@redhat.com)
+- section.row (fotios@redhat.com)
+- Turn address.coffee into it's own function (fotios@redhat.com)
+- Moved account form back (fotios@redhat.com)
+- Moved credit card stuff to it's own helper (fotios@redhat.com)
+- Moved country_helper to app/helpers (fotios@redhat.com)
+- Refactored credit card JS (fotios@redhat.com)
+- Fixed autocomplete helpers (fotios@redhat.com)
+- Fixed Gemfile (fotios@redhat.com)
+- Changes to plan upgrade forms https://trello.com/c/s6W4Sxd3 This allows users
+  to create/update their account/billing/payment information in the upgrade
+  workflow. (fotios@redhat.com)
+- Extened billing info to support intl. addresses (hripps@redhat.com)
+
 * Thu Apr 11 2013 Adam Miller <admiller@redhat.com> 1.7.4-1
 - Merge pull request #1158 from liggitt/currency_display3
   (dmcphers+openshiftbot@redhat.com)
