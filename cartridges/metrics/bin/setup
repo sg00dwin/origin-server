@@ -4,9 +4,9 @@ set -x
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 # Create additional directories required by METRICS
-mkdir -p ${OPENSHIFT_METRICS_DIR}/{logs,run}
-ln -s /usr/lib64/httpd/modules $OPENSHIFT_METRICS_DIR/modules
-ln -s /etc/httpd/conf/magic $OPENSHIFT_METRICS_DIR/conf/magic
+mkdir -p ${OPENSHIFT_METRICS_DIR}/{logs,run,sessions}
+ln -s /usr/lib64/httpd/modules ${OPENSHIFT_METRICS_DIR}modules
+ln -s /etc/httpd/conf/magic ${OPENSHIFT_METRICS_DIR}conf/magic
 
 client_result ""
 client_result "metrics added."
