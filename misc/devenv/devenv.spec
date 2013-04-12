@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.7.5
+Version: 1.7.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -747,6 +747,19 @@ oo-admin-cartridge --recursive -a install -s /usr/libexec/openshift/cartridges/v
 /etc/openshift/development
 
 %changelog
+* Fri Apr 12 2013 Adam Miller <admiller@redhat.com> 1.7.6-1
+- rhc-devenv now needs to ensure openshift-node-web-proxy is started
+  (bleanhar@redhat.com)
+- Call the ruby mcs label generator directly for speed. (rmillner@redhat.com)
+- Merge pull request #1164 from smarterclayton/origin_ui_37_error_pages
+  (dmcphers+openshiftbot@redhat.com)
+- Adding phpmyadmin (dmcphers@redhat.com)
+- Add 404, 500, and 503 to the devenv (ccoleman@redhat.com)
+- Merge pull request #1163 from tkramer-
+  rh/dev/tkramer/mod_security/remove_rules (dmcphers@redhat.com)
+- Security - mod_security remove all rules for devenv (tkramer@redhat.com)
+- Add generic error pages to the product. (ccoleman@redhat.com)
+
 * Thu Apr 11 2013 Adam Miller <admiller@redhat.com> 1.7.5-1
 - add jbossas to devenv.spec (bdecoste@gmail.com)
 
