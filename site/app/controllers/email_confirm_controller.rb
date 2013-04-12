@@ -1,11 +1,4 @@
-require 'net/http'
-require 'net/https'
-require 'json'
-require 'cgi'
-
 class EmailConfirmController < SiteController
-
-  layout 'simple'
 
   before_filter :changing_current_user!
 

@@ -77,7 +77,7 @@ class ApplicationController < ActionController::Base
       @reference_id = request.uuid
       logger.error "Unhandled exception reference ##{@reference_id}: #{e.message}\n#{e.backtrace.join("\n  ")}"
       @message, @alternatives = message, alternatives
-      render 'console/error'
+      render 'console/error', :layout => 'console'
     end
 
     def access_denied(e)
