@@ -7,7 +7,7 @@ class AccountUpgradesController < ConsoleController
 
   # These filters set the user, aria, plan, etc instance variables
   before_filter :streamline_type, :only => :show
-  before_filter :aria_user, :only => [:new, :create, :edit]
+  before_filter :aria_user, :only => [:new, :create, :edit, :update]
   before_filter :plan, :only => [:new, :create]
   before_filter :billing_info, :only => [:new, :create, :edit]
   before_filter :payment_method, :only => [:new, :create, :edit]
@@ -64,7 +64,7 @@ class AccountUpgradesController < ConsoleController
 
   def update
     user_params = params[:streamline_full_user]
-    @billing_info = Aria::BillingInfo.new user_params[:aria_billing_info]
+    @billing_info = Aria::BillingInfo.new(user_params[:aria_billing_info], @aria_user.has_account?)
     user = current_user
     @full_user = user.full_user
 
