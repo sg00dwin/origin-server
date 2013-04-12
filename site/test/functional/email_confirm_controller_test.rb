@@ -31,7 +31,7 @@ class EmailConfirmControllerTest < ActionController::TestCase
     WebUser::Mock.any_instance.expects(:confirm_email).returns(true)
     get :confirm, :key => 'test', :emailAddress => 'test'
     assert_session_user assigns(:user)
-    assert_redirected_to getting_started_path
+    assert_redirected_to welcome_account_path
   end
 
   test "should disallow external redirect" do
@@ -58,6 +58,6 @@ class EmailConfirmControllerTest < ActionController::TestCase
     get :confirm, :key => unconfirmed_user.token, :emailAddress => unconfirmed_user.email_address
     assert_nil cookies['rh_sso']
     assert_session_user unconfirmed_user
-    assert_redirected_to getting_started_path
+    assert_redirected_to welcome_account_path
   end
 end

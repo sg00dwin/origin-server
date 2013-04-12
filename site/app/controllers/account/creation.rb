@@ -101,6 +101,10 @@ module Account
       render :create
     end
 
+    def welcome
+      redirect_to getting_started_path
+    end
+
     private
     def set_captcha_vars
       # Handle everything we need here so we don't need params in the module
