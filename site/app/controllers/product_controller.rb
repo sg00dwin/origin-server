@@ -22,4 +22,13 @@ class ProductController < SiteController
   def console_error
     render 'console/error', :layout => 'console'
   end
+
+  [
+    :core_error, :core_not_found, :core_unavailable, 
+    :core_app_error, :core_app_unavailable, :core_app_installing
+  ].each do |sym|
+    define_method sym do 
+      render :layout => nil
+    end
+  end
 end

@@ -1,0 +1,19 @@
+!!! 5
+-ie_html :class => 'no-js', :lang => 'en' do
+  %head
+    %title An error has occurred
+    = render :partial => 'product/core_head'
+
+  %body
+    %header
+
+      %hgroup
+        %h1 An error has occurred
+        %h2 HTTP 500 Error
+
+    %section.main
+      %p 
+        This page could not be displayed due to an error. You can try 
+        %a{:href => "javascript:window.location.reload();"} refreshing the page
+        if the problem is temporary.
+      %p If you are the site owner, see #{link_to "this page", developers_get_help_url} to help troubleshoot your application.

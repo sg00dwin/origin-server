@@ -1,0 +1,17 @@
+!!! 5
+-ie_html :class => 'no-js', :lang => 'en' do
+  %head
+    %title Your application is being installed
+    = render :partial => 'product/core_head'
+
+  %body
+    %header
+
+      %hgroup
+        %h1 Your application is being installed
+
+    %section.main
+      %p 
+        It may take from a few seconds to a few minutes to complete the installation. You can try 
+        %a{:href => "javascript:window.location.reload();"} refreshing the page
+        until the application is fully configured.

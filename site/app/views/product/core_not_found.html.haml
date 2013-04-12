@@ -1,0 +1,20 @@
+!!! 5
+-ie_html :class => 'no-js', :lang => 'en' do
+  %head
+    %title 404 Not found
+    = render :partial => 'product/core_head'
+
+  %body
+    %header
+      .logo= link_to asset('logo.svg').to_s.html_safe, root_path
+
+      %hgroup
+        %h1 Not found
+        %h2 HTTP 404
+
+    %section.main
+      %p The page you requested could not be found. Check that you entered the correct address. You can also try #{link_to 'searching for it', community_search_url}.
+      %p If you believe you reached this page in error, please contact us at #{link_to_account_mailto}
+      %p OpenShift status: #{link_to 'No open issues', status_url, :id => 'system-status', :class => 'status'}
+
+    %script{:src => status_jsonp_url('system-status')}
