@@ -28,7 +28,7 @@ RedHatCloud::Application.configure do
   ############################################
   # OpenShift Configuration Below this point #
   ############################################
-  config.integrated = true
+  config.integrated = false
   config.streamline = {
     :host => 'https://streamline-proxy1.ops.rhcloud.com',
     :base_url => '/wapps/streamline',
