@@ -1,0 +1,62 @@
+#!/usr/bin/env oo-ruby
+
+# This script will lock down the host so only specific users are allowed to bind to specific IP addresses
+# It can be called with:
+#
+# [ $(semanage node -l | grep -c 255.255.255.128) -lt 1000 ] && ./rhc-ip-prep.sh
+
+# lock down the localhost ip addresses
+# The maximum UID our allocation mechanism scales to is 262143
+
+require 'tempfile'
+require 'rubygems'
+require 'openshift-origin-node/model/unix_user'
+require 'openshift-origin-node/utils/shell_exec'
+require 'openshift-origin-node/utils/selinux'
+require 'openshift-origin-node/utils/node_logger'
+require 'openshift-origin-common'
+
+
+config = OpenShift::Config.new
+min_uid = (config.get('GEAR_MIN_UID') ||   500).to_i
+max_uid = (config.get('GEAR_MAX_UID') || 16000).to_i
+
+
+# The mcs label generator is too expensive to keep entering with
+# different UIDs.
+
+exitstatus = 0
+reader, writer = IO.pipe
+cpid = Process.fork
+if cpid.nil?
+  out = err = ""
+  rc = 255
+  writer.close
+  begin
+    Process.setrlimit(Process::RLIMIT_NOFILE , 131070)
+    cmd = "semanage -S targeted -i -"
+    out, err, rc = OpenShift::Utils::oo_spawn(cmd, {:chdir=> '/', :in => reader})
+  rescue => e
+    err << "An exception ocurred: #{e.inspect}"
+    rc = 255
+  end
+  $stdout.write(out)
+  $stderr.write(err)
+  $stdout.flush
+  $stderr.flush
+  exit!(rc)
+end
+
+reader.close
+OpenShift::Utils::SELinux.mcs_labels.each do |uid, mcs_label|
+  break if uid > max_uid
+  next  if uid < min_uid
+  network, netmask = OpenShift::UnixUser.get_ip_network(uid)
+  writer.puts("node -a -t node_t -r #{mcs_label} -M #{netmask} -p ipv4 #{network}")
+end
+writer.puts("node -a -t node_t -r s0:c1023 -M  255.0.0.0 -p ipv4 127.0.0.0")
+writer.puts("node -a -t node_t -r s0:c1023 -M  255.0.0.0 -p ipv4 10.0.0.0")
+writer.puts("node -a -t node_t -r s0:c1023 -M  0.0.0.0 -p ipv4 0.0.0.0")
+writer.close
+Process.waitpid(cpid, 0)
+exit($?.exitstatus)
