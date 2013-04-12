@@ -730,6 +730,15 @@ cd /var/www/openshift/site && /usr/bin/scl enable ruby193 "rake assets:clean"
 # Install the carts
 oo-admin-cartridge --recursive -a install -s /usr/libexec/openshift/cartridges/v2/
 
+# PhantomJS install
+mkdir /tmp/phantomjs
+cd /tmp/phantomjs
+wget https://phantomjs.googlecode.com/files/phantomjs-1.9.0-linux-x86_64.tar.bz2
+tar --extract --file=phantomjs-1.9.0-linux-x86_64.tar.bz2 phantomjs-1.9.0-linux-x86_64/bin/phantomjs
+cp phantomjs-1.9.0-linux-x86_64/bin/phantomjs /usr/local/bin
+cd -
+rm -rf /tmp/phantomjs
+
 %files
 %defattr(-,root,root,-)
 %attr(0660,-,-) %{_var}/log/openshift/broker/mcollective-client.log

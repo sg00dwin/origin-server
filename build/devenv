@@ -620,6 +620,7 @@ service openshift-port-proxy restart
               test_queues[1] << ["Site Check Cartridges",           'cd openshift-test/site; rake test:check:cartridges']
               test_queues[2] << ["Site Check Miscellaneous 1",      'cd openshift-test/site; rake test:check:misc1']
               test_queues[3] << ["Site Check REST API Integration", 'cd openshift-test/site; rake test:check:restapi_integration']
+              test_queues[0] << ["Site Check Javascripts", 'cd openshift-test/site; rake test:check:js']
             end
 
             unless options.exclude_rhc?

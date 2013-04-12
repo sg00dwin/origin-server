@@ -54,6 +54,11 @@ namespace :test do
     ]
   end
 
+  if Rake::Task.task_defined? 'konacha:run'
+    desc 'Run the javascript unit tests'
+    task :js => ['konacha:run']
+  end
+
   #
   # Test groups intended to be run in parallel for the build.
   #
@@ -125,6 +130,17 @@ namespace :test do
     Rake::TestTask.new :base => ['test:prepare'] do |t|
       t.libs << 'test'
       t.test_files = FileList['test/**/*_test.rb'] - covered
+    end
+
+    # Run javascript unit tests in check
+    if Rake::Task.task_defined? 'konacha:run'
+      task :js do |t|
+        require 'rspec/core'
+        ENV['FORMAT'] = 'CI::Reporter::RSpec'
+        ENV['CI_REPORTS'] = 'test/reports/js/'
+
+        Rake::Task['konacha:run'].invoke
+      end
     end
   end
 
