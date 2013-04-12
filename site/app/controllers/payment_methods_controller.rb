@@ -54,7 +54,7 @@ class PaymentMethodsController < ConsoleController
         h
       end
       @user = Aria::UserContext.new(current_user)
-      unless @user.has_valid_payment_method?
+      if not @user.has_valid_payment_method? and @errors.empty?
         (@errors[:base] ||= []).unshift :unknown
       end
       params[:params] && params[:params][:params] == 'serve_direct'
