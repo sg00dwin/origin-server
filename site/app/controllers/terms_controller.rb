@@ -18,8 +18,6 @@ class TermsController < SiteController
       end
 
       @term = Term.new
-
-      render :layout => 'simple'
     else
       redirect_to login_path
     end
@@ -41,7 +39,7 @@ class TermsController < SiteController
         @user.errors.each do |attr, message|
           @term.errors.add(attr, message)
         end
-        render :new, :layout => 'simple'
+        render :new
       end
     else
       redirect_to login_path
