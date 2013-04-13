@@ -5,7 +5,7 @@ Name:      openshift-origin-cartridge-rockmongo
 Version:   0.0.6
 Release:   1%{?dist}
 Group:     Applications/Internet
-License:   ASL 2.0
+License:   ASL 2.0 and NBSD
 URL:       http://openshift.redhat.com
 Source0:   %{name}-%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
