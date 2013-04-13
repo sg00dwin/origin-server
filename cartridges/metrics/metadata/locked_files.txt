@@ -1,6 +1,4 @@
 metadata/
-configuration/
-sessions/
-tmp/
 conf/
+conf.d/
 env/
