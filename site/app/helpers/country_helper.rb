@@ -22,9 +22,18 @@ module CountryHelper
     end
   end
 
-  def regions_for_select
+  def regions_for_select(maxlength=1024)
     # The Country gem adds some extra information in parens at the end of some entries
-    CountryHelper.subdivisions.map{|c,s| [c.name, s.map{|sub| [sub.last['name'].split('(').first, sub.first, {'data-country' => c.alpha2} ] }] }
+    CountryHelper.subdivisions.map do |c,s| 
+      [
+        c.name,
+        s.map do |(key,data)| 
+          name = data['name'].split('(').first
+          value = /\D/.match(key) ? key : name # Use the full name instead of all-numeric identifiers
+          [name, value.slice(0,maxlength), {'data-country' => c.alpha2}]
+        end
+      ]
+    end
   end
 
   def currencies_for_select

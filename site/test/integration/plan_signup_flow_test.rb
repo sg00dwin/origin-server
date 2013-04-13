@@ -42,9 +42,10 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
       :address2 =>"",
       :address3 =>"",
       :city => "Happyville",
-      :state =>"TX",
+      :region =>"TX",
       :zip => "10001",
-      :country => "US"
+      :country => "US",
+      :currency_cd => "usd"
     }
   end
 

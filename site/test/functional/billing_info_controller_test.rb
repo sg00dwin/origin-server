@@ -70,15 +70,48 @@ class BillingInfoControllerTest < ActionController::TestCase
     assert_template :edit
   end
 
-  test "update should return to edit page if length validation errors" do
+  test "update should validate field lengths correctly for us" do
     omit_if_aria_is_unavailable
     with_account_holder
     aria_billing_info = Aria::BillingInfo.test.attributes
     aria_billing_info['middle_initial'] = 'ABC'
+    aria_billing_info['region'] = 'Longer not allowed'
+    aria_billing_info['country'] = 'US'
     Aria.expects(:update_acct_complete).never()
     post :update, :aria_billing_info => { :aria_billing_info => aria_billing_info }
     assert assigns(:billing_info)
     assert assigns(:billing_info).errors[:middle_initial].length > 0
+    assert assigns(:billing_info).errors[:region].length > 0
+    assert_template :edit
+  end
+
+  test "update should validate field lengths correctly for non us" do
+    omit_if_aria_is_unavailable
+    with_account_holder
+    aria_billing_info = Aria::BillingInfo.test.attributes
+    aria_billing_info['middle_initial'] = 'ABC'
+    aria_billing_info['region'] = 'Longer allowed'
+    aria_billing_info['country'] = 'DE'
+    Aria.expects(:update_acct_complete).never()
+    post :update, :aria_billing_info => { :aria_billing_info => aria_billing_info }
+    assert assigns(:billing_info)
+    assert assigns(:billing_info).errors[:middle_initial].length > 0
+    assert assigns(:billing_info).errors[:region].length == 0
+    assert_template :edit
+  end
+
+  test "update should invalidate field lengths correctly for non us" do
+    omit_if_aria_is_unavailable
+    with_account_holder
+    aria_billing_info = Aria::BillingInfo.test.attributes
+    aria_billing_info['middle_initial'] = 'ABC'
+    aria_billing_info['region'] = 'Longer allowed, but very long is not allowed even in non-US countries'
+    aria_billing_info['country'] = 'DE'
+    Aria.expects(:update_acct_complete).never()
+    post :update, :aria_billing_info => { :aria_billing_info => aria_billing_info }
+    assert assigns(:billing_info)
+    assert assigns(:billing_info).errors[:middle_initial].length > 0
+    assert assigns(:billing_info).errors[:region].length > 0
     assert_template :edit
   end
 

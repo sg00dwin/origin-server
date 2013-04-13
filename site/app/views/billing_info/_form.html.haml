@@ -11,7 +11,7 @@
       = b.input :address3, :label => false, :input_html => {:class => 'address-line'}, :autocomplete => 'address-line3'
       = b.inputs :inline => true, :name => 'City, State, ZIP'do
         = b.input :city, :input_html => { :class => 'input-medium', :placeholder => 'City'}, :autocomplete => 'localilty'
-        = b.input :region, :as => :select, :collection => regions_for_select, :include_blank => true, :input_html => { :class => 'input-medium'}, :autocomplete => 'region'
+        = b.input :region, :as => :select, :collection => regions_for_select(32), :include_blank => true, :input_html => { :class => 'input-medium'}, :autocomplete => 'region'
         = b.input :zip, :input_html => { :class => 'input-mini', :placeholder => "ZIP"}, :autocomplete => 'postal-code'
       = b.inputs :inline => true, :name => 'Country' do
         = b.input :country, :as => :select, :collection => countries_for_select, :include_blank => false, :autocomplete => 'country'

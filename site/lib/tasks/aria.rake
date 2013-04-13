@@ -382,7 +382,16 @@ namespace :aria do
       1.month => record_silver_usage_over,
       2.months => record_silver_usage_over,
       3.months => record_silver_usage_over
-    }, {:currency_cd => "eur"})
+    }, {
+      :billing_info => Aria::BillingInfo.new({
+        :address1 => '12345 Happy Street',
+        :city => 'Austin',
+        :country => 'US',
+        :region => 'TX',
+        :zip => '10001',
+        :currency_cd => "eur"
+      })
+    })
 
     banner "EUR user in DE"
     puts generate_test_user(all_actions, 'mega_eur_in_de', age4, { 
@@ -391,13 +400,13 @@ namespace :aria do
       2.months => record_silver_usage_over,
       3.months => record_silver_usage_over
     }, {
-      :currency_cd => "eur",
       :billing_info => Aria::BillingInfo.new({
         :address1 => '12345 Happy Street',
         :city => 'Berlin',
         :country => 'DE',
-        :state => 'ZZ',
+        :region => 'Burgenland',
         :zip => '10001',
+        :currency_cd => "eur"
       })
     })
 
@@ -408,13 +417,13 @@ namespace :aria do
       2.months => record_silver_usage_over,
       3.months => record_silver_usage_over
     }, {
-      :currency_cd => "cad",
       :billing_info => Aria::BillingInfo.new({
         :address1 => '12345 Happy Street',
         :city => 'Happyville',
         :country => 'CA',
-        :state => 'NF',
+        :region => 'NF',
         :zip => '10001',
+        :currency_cd => "cad",
       })
     })
 

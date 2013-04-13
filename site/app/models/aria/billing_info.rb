@@ -17,6 +17,9 @@ module Aria
                           :city,
                           :country,
                           :zip
+    validates_presence_of :region, :message => "State can't be blank", :if => :region_is_state?
+    validates_presence_of :region, :message => "Region can't be blank", :unless => :region_is_state?
+    validates_presence_of :currency_cd, :message => "Currency can't be blank", :if => :can_change_currency?
 
     validates_length_of :first_name, :maximum => 32
     validates_length_of :middle_initial, :maximum => 1
@@ -27,6 +30,8 @@ module Aria
     validates_length_of :city, :maximum => 32
     validates_length_of :country, :maximum => 2
     validates_length_of :zip, :maximum => 14
+    validates_length_of :region, :maximum => 2, :if => :region_is_state? # From Aria.state_prov
+    validates_length_of :region, :maximum => 32, :unless => :region_is_state? # From Aria.locality
 
     account_prefix :from => 'billing_',
                    :to => 'bill_',
@@ -92,6 +97,7 @@ module Aria
         :country => 'US',
         :region => 'TX',
         :zip => '10001',
+        :currency_cd => 'usd'
       })
     end
 
@@ -103,6 +109,11 @@ module Aria
       # A user without a billing address is invalid
       def self.persisted?(details)
         details.billing_address1.present?
+      end
+
+      # Used to determine how to validate :region
+      def region_is_state?
+        ['US', 'CA'].include? country
       end
   end
 end
