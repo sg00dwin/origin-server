@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.7.5
+Version: 1.7.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -189,6 +189,42 @@ fi
 %{sitedir}/public
 
 %changelog
+* Mon Apr 15 2013 Adam Miller <admiller@redhat.com> 1.7.6-1
+- Merge pull request #1188 from liggitt/bug/951671 (dmcphers@redhat.com)
+- Merge pull request #1186 from liggitt/bug/952145
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 951671 - allow unsetting address2, address3 in Aria
+  (jliggitt@redhat.com)
+- Fix bug 952145 - show prices in new currency as soon as user chooses it
+  (jliggitt@redhat.com)
+- Fix Bug 952140, use C$ for CAD (jliggitt@redhat.com)
+- Set BillingInfo.persisted? correctly (jliggitt@redhat.com)
+- Fix validation on billing info form (jliggitt@redhat.com)
+- Merge pull request #1180 from
+  smarterclayton/bug_951492_some_status_urls_wrong (dmcphers@redhat.com)
+- Remove old references to the site theme from potential error pages
+  (ccoleman@redhat.com)
+- Development mode shouldn't have integrated true (ccoleman@redhat.com)
+- Merge pull request #1178 from jtharris/features/Card6 (dmcphers@redhat.com)
+- Merge pull request #1175 from nhr/BZ950867 (dmcphers@redhat.com)
+- Bug 951492 - Some status URLs should be using relative paths
+  (ccoleman@redhat.com)
+- Merge pull request #1177 from nhr/BZ951158 (dmcphers@redhat.com)
+- Fix for test output. (jharris@redhat.com)
+- Add js tests to denenv. (jharris@redhat.com)
+- Cannot clear comments in older versions of rake. (jharris@redhat.com)
+- Only create js test tasks if konacha is available. (jharris@redhat.com)
+- Bumping konacha version. (jharris@redhat.com)
+- Add js testing gem dependencies. (jharris@redhat.com)
+- Only use konacha in dev and test groups. (jharris@redhat.com)
+- Slim down rspec requirement. (jharris@redhat.com)
+- Fix up rake tasks for js test reporting. (jharris@redhat.com)
+- Removing phantomjs gem. (jharris@redhat.com)
+- Javascript unit testing. (jharris@redhat.com)
+- Bug 951158 Wrapped dynamic portion of payment info form for aria-live
+  attribute (hripps@redhat.com)
+- Bug 950867 Phone number field max length corrected to 30 (hripps@redhat.com)
+
 * Fri Apr 12 2013 Adam Miller <admiller@redhat.com> 1.7.5-1
 - Merge pull request #1166 from liggitt/currency_test
   (dmcphers+openshiftbot@redhat.com)
