@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/openshift/cartridges/v2/metrics
 
 Name: openshift-origin-cartridge-metrics
-Version: 1.7.8
+Version: 1.7.9
 Release: 1%{?dist}
 Summary: Metrics cartridge
 
@@ -42,6 +42,13 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/README.md
 
 %changelog
+* Mon Apr 15 2013 Adam Miller <admiller@redhat.com> 1.7.9-1
+- Merge pull request #1183 from jwhonce/wip/manifest_scrub
+  (dmcphers+openshiftbot@redhat.com)
+- cleanup (dmcphers@redhat.com)
+- WIP Cartridge Refactor - Scrub manifests (jhonce@redhat.com)
+- cleanup (dmcphers@redhat.com)
+
 * Fri Apr 12 2013 Adam Miller <admiller@redhat.com> 1.7.8-1
 - fix typo (dmcphers@redhat.com)
 
