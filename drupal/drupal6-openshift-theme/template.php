@@ -157,11 +157,11 @@ function openshift_social_sharing($url, $title = NULL) {
   } else {
     $tweet_text = 'via @openshift';
   }
-  $share_url = drupal_urlencode($share_url);
-  $tweet_text = drupal_urlencode($tweet_text);
+  $share_url = urlencode($share_url);
+  $tweet_text = urlencode($tweet_text);
   return '<div class="social-sharing">'.
       '<a target="_blank" href="http://twitter.com/intent/tweet?text='. $tweet_text .' '. $share_url .'" aria-hidden="true" data-icon="&#xee04;" title="Post to Twitter"> </a>'.
-      '<a target="_blank" href="http://www.facebook.com/sharer.php?p[url]='. $share_url .'&p[title]='. drupal_urlencode($title) .'" aria-hidden="true" data-icon="&#xee05;" title="Post to Facebook"> </a>'.
+      '<a target="_blank" href="http://www.facebook.com/sharer.php?u='. $share_url .'&t='. urlencode($title) .'" aria-hidden="true" data-icon="&#xee05;" title="Post to Facebook"> </a>'.
       '<a target="_blank" href="https://plus.google.com/share?url='. $share_url .'" aria-hidden="true" data-icon="&#xee06;" title="Post to Google+"> </a>'.
     '</div>';
 }
