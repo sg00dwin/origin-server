@@ -334,14 +334,18 @@ class AriaUnitTest < ActiveSupport::TestCase
   end
 
   test 'billing info should init from billing details' do
-    attr = Aria::WDDX::Struct.new({'billing' => 'a', 'billing_city' => 'Houston', 'billing_address1' => '1 test', 'other' => '2'})
+    attr = Aria::WDDX::Struct.new({'billing' => 'a', 'billing_city' => 'Houston', 'billing_address1' => '1 test', 'other' => '2', 'billing_country' => 'US', 'billing_state' => 'TX', 'billing_locality' => 'Invalid'})
     assert info = Aria::BillingInfo.from_account_details(attr)
     assert info.persisted?
     assert_equal 'Houston', info.city
-    assert_equal({'city' => 'Houston', 'address1' => '1 test', 'region' => nil}, info.attributes)
-    assert_equal({'bill_city' => 'Houston', 'bill_address1' => '1 test', 'bill_locality' => nil, 'bill_state_prov' => '~'}, info.to_aria_attributes)
-    #assert_nil info.tax_exempt
-    #assert !info.tax_exempt?
+    assert_equal 'TX', info.region
+    assert_equal({'city' => 'Houston', 'address1' => '1 test', 'region' => 'TX', 'country' => 'US'}, info.attributes)
+    assert_equal({'bill_city' => 'Houston', 'bill_address1' => '1 test', 'bill_state_prov' => 'TX', 'bill_country' => 'US'}, info.to_aria_attributes)
+    assert_equal({'bill_city' => 'Houston', 'bill_address1' => '1 test', 'bill_state_prov' => 'TX', 'bill_country' => 'US', 'bill_locality' => '~'}, info.to_aria_attributes('update'))
+
+    info.address2 = ""
+    assert_equal({'bill_city' => 'Houston', 'bill_address1' => '1 test', 'bill_state_prov' => 'TX', 'bill_country' => 'US', 'bill_address2' => ''}, info.to_aria_attributes)
+    assert_equal({'bill_city' => 'Houston', 'bill_address1' => '1 test', 'bill_state_prov' => 'TX', 'bill_country' => 'US', 'bill_address2' => '~', 'bill_locality' => '~'}, info.to_aria_attributes('update'))
   end
 
   test 'billing info should serialize supplemental fields' do
