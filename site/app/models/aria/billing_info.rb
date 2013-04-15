@@ -13,6 +13,19 @@ module Aria
               :currency_cd
     # Rails 3.0 requires all define_attribute_method calls to be together
 
+    # Aria makes us explicitly unset values on update
+    @@nullable = [:bill_first_name, :bill_middle_initial, :bill_last_name, :bill_address2, :bill_address3]
+
+    @@region_save_map = Hash.new(['bill_locality','bill_state_prov']).merge({
+      'US' => ['bill_state_prov','bill_locality'],
+      'CA' => ['bill_state_prov','bill_locality'],
+    })
+    @@region_load_map ||= Hash.new('locality').merge({
+      'US' => 'state',
+      'CA' => 'state',
+    })
+
+
     validates_presence_of :address1,
                           :city,
                           :country,
@@ -50,26 +63,18 @@ module Aria
     class << self
       def rename_to_save(hash, action='save')
         super(hash, action)
-        @save_map ||= Hash.new(['bill_locality','bill_state_prov']).merge({
-          'US' => ['bill_state_prov','bill_locality'],
-          'CA' => ['bill_state_prov','bill_locality'],
-        })
-        (new_field, clear_field) = @save_map[hash['bill_country']]
-        hash[new_field] = hash['bill_region']
-        # This explicitly nils the unused field within Aria
-        hash[clear_field] = '~'
-        hash.delete('bill_region')
+
+        (region_set_key, region_clear_key) = @@region_save_map[hash['bill_country']]
+        hash[region_set_key] = hash.delete('bill_region')
+        hash[region_clear_key] = '~' if action == 'update'
+
+        # Explicitly nil empty string fields within Aria
+        @@nullable.each {|n| hash[n.to_s] = "~" if hash[n.to_s] == "" } if action == 'update'
       end
 
       def rename_to_load(hash)
         super(hash)
-        @load_map ||= Hash.new('locality').merge({
-          'US' => 'state',
-          'CA' => 'state',
-        })
-        load_key = @load_map[hash['country']]
-        hash['region'] = hash[load_key]
-        hash.delete(load_key)
+        hash['region'] = hash.delete(@@region_load_map[hash['country']])
       end
     end
 

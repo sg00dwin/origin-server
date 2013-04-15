@@ -53,70 +53,66 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
 
     info = Aria::BillingInfo.new
 
+    #
+    # user
+    #
     # create US account
-    methods.each do |m|
-      info.send(m, ::SecureRandom.base64(5)) if m.to_s.ends_with?('=')
-    end
+    methods.each {|m| info.send(m, ::SecureRandom.base64(5)) if m.to_s.ends_with?('=') }
     info.country = 'US'
     info.zip = 12345.to_s
     info.region = 'TX'
     info.middle_initial = 'P'
     info.currency_cd = 'usd'
-    #info.tax_exempt = 1
     assert user.create_account(:billing_info => info), user.errors.inspect
-    billing_info = user.billing_info
-    #info.attributes.delete 'tax_exempt'
-    assert_equal info.attributes, billing_info.attributes
-    #assert_equal 1, user.tax_exempt
-    #assert user.tax_exempt?
+    assert_equal info.attributes, user.billing_info.attributes
 
-    # create US account, pay in Euros
-    info.currency_cd = 'eur'
-    assert user_out.create_account(:billing_info => info), user_out.errors.inspect
-    billing_info = user_out.billing_info
-    assert_equal info.attributes, billing_info.attributes
-
-    # update original to Canadian address
-    methods.each do |m|
-      info.send(m, ::SecureRandom.base64(5)) if m.to_s.ends_with?('=')
-    end
+    # update to Canadian address
     info.country = 'CA'
     info.zip = 'K1A0B1'
     info.region = 'ON'
     info.middle_initial = 'M'
-    # Currency can't be changed once set.
-    info.currency_cd = 'usd'
-    #info.tax_exempt = 2
+    info.currency_cd = 'usd' # Currency can't be changed once set.
     assert user.update_account(:billing_info => info), user.errors.inspect
-    billing_info = user.billing_info
-    #info.attributes.delete 'tax_exempt'
-    assert_equal info.attributes, billing_info.attributes
-    #assert_equal 2, user.tax_exempt
-    #assert user.tax_exempt?
+    assert_equal info.attributes, user.billing_info.attributes
 
-    # update original to French address
-    methods.each do |m|
-      info.send(m, ::SecureRandom.base64(5)) if m.to_s.ends_with?('=')
-    end
+    # update to French address, unset some optional fields
     info.country = 'FR'
     info.zip = 54321.to_s
     info.region = 'Loraine'
-    info.middle_initial = 'M'
-    # Currency can't be changed once set.
-    info.currency_cd = 'usd'
-    #info.tax_exempt = 2
+    info.currency_cd = 'usd' # Currency can't be changed once set.
+    info.first_name = info.middle_initial = info.last_name = "" # Unset some fields using an empty string
+    expected_attributes = Hash[info.attributes.map {|(k,v)| [k, v == "" ? nil : v] }]
+    info.address2 = info.address3 = nil # Set some fields to nil, meaning "ignore"
     assert user.update_account(:billing_info => info), user.errors.inspect
-    billing_info = user.billing_info
-    #info.attributes.delete 'tax_exempt'
-    assert_equal info.attributes, billing_info.attributes
-    #assert_equal 2, user.tax_exempt
-    #assert user.tax_exempt?
+    # Ensure all unset fields go to nil in Aria
+    info.first_name = info.middle_initial = info.last_name = info.address2 = info.address3 = nil
+    assert_equal expected_attributes, user.billing_info.attributes
 
+    #
+    # user_out
+    #
+    # create US account, pay in Euros
+    methods.each {|m| info.send(m, ::SecureRandom.base64(5)) if m.to_s.ends_with?('=') }
+    info.country = 'US'
+    info.zip = 12345.to_s
+    info.region = 'TX'
+    info.middle_initial = 'P'
+    info.currency_cd = 'eur'
+    assert user_out.create_account(:billing_info => info), user_out.errors.inspect
+    assert_equal info.attributes, user_out.billing_info.attributes
+
+    #
+    # user_eur
+    #
     # create new French account
+    methods.each {|m| info.send(m, ::SecureRandom.base64(5)) if m.to_s.ends_with?('=') }
+    info.country = 'FR'
+    info.zip = 54321.to_s
+    info.region = 'Loraine'
+    info.middle_initial = 'P'
     info.currency_cd = 'eur'
     assert user_eur.create_account(:billing_info => info), user_eur.errors.inspect
-    billing_info = user_eur.billing_info
-    assert_equal info.attributes, billing_info.attributes
+    assert_equal info.attributes, user_eur.billing_info.attributes
   end
 
   test 'should set direct post settings' do
