@@ -219,9 +219,13 @@ class CloudUser
     begin
       if old_plan_id != plan_id
         billing_service = OpenShift::BillingService.instance
-        if billing_service.respond_to?('revoke_entitlements') and billing_service.respond_to?('assign_entitlements')
-          billing_service.revoke_entitlements(self.login, self.usage_account_id, old_plan_id, plan_upgrade)
-          billing_service.assign_entitlements(self.login, self.usage_account_id, plan_id, plan_upgrade)
+        if billing_service.respond_to?('send_entitlements')
+          old_plan_name = self.get_plan_info(old_plan_id)[:name]
+          new_plan_name = plan_info[:name]
+          tid = "T" + OpenShift::Counter.get_next_sequence("billing_transaction_id").to_s
+          comment = "TransactionID: #{tid} - Plan changed from '#{old_plan_name}' to '#{new_plan_name}' on #{cur_time}"
+          billing_service.write_acct_comment(self.usage_account_id, comment)
+          billing_service.send_entitlements(self.login, self.usage_account_id, old_plan_name, new_plan_name, old_plan_end_time, tid)
         end
       end
     rescue Exception => e

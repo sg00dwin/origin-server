@@ -234,14 +234,17 @@ module OpenShift
       end
     end
 
-    def revoke_entitlements(login, acct_no, plan_id, plan_upgrade)
-      send_entitlements(login, acct_no, plan_id, plan_upgrade,
-                        OpenShift::AriaEvent::ENTITLEMENTS[:revoke])
-    end
-
-    def assign_entitlements(login, acct_no, plan_id, plan_upgrade)
-      send_entitlements(login, acct_no, plan_id, plan_upgrade,
-                        OpenShift::AriaEvent::ENTITLEMENTS[:assign])
+    def send_entitlements(login, acct_no, old_plan_name, new_plan_name, effective_time, tid)
+      return unless Rails.application.config.billing[:config][:enable_event_notification]
+      hash = {}
+      hash['login'] = login
+      hash['acct_no'] = acct_no
+      hash['old_plan_name'] = old_plan_name
+      hash['plan_name'] = new_plan_name
+      hash['plan_units'] = 1
+      hash['effective_date'] = effective_time.strftime("%Y-%m-%d")
+      hash['transaction_id'] = tid
+      OpenShift::AriaEvent.send_entitlements(hash) 
     end
 
     ######################## ARIA API methods #######################
@@ -333,7 +336,11 @@ module OpenShift
       end
       return true
     end
-  
+ 
+    def write_acct_comment(*args)
+      get_response_status(@ah.write_acct_comment(*args), __method__)
+    end
+ 
     def get_queued_service_plans(*args)
       result = get_response(@ah.get_queued_service_plans(*args), __method__)
       result.data['queued_plans']
@@ -376,18 +383,6 @@ module OpenShift
       else
         time
       end
-    end
-
-    def send_entitlements(login, acct_no, plan_id, plan_upgrade, entitlement_type)
-      return unless Rails.application.config.billing[:config][:enable_event_notification]
-      aria_plans = Rails.application.config.billing[:plans]
-      hash = {}
-      hash['login'] = login
-      hash['acct_no'] = acct_no
-      hash['plan_name'] = aria_plans[plan_id.to_sym][:name]
-      hash['plan_units'] = 1
-      hash['apply_end_of_month'] = (not plan_upgrade)
-      OpenShift::AriaEvent.send_entitlements(hash, entitlement_type) 
     end
 
     def send(request)

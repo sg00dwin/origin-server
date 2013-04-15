@@ -20,8 +20,9 @@ Broker::Application.configure do
       :enable_event_notification => conf.get_bool("BILLING_PROVIDER_EVENT_NOTIFICATION", "false"),
       :event_remote_ipaddr_begin => conf.get("BILLING_PROVIDER_EVENT_REMOTE_IPADDR_BEGIN", ""),
       :event_remote_ipaddr_end   => conf.get("BILLING_PROVIDER_EVENT_REMOTE_IPADDR_END", ""),
-      :event_orders_team_email   => conf.get("BILLING_PROVIDER_EVENT_ORDERS_TEAM_EMAIL", ""),
-      :event_peoples_team_email  => conf.get("BILLING_PROVIDER_EVENT_PEOPLES_TEAM_EMAIL", "")
+      :event_plan_assign_email   => conf.get("BILLING_PROVIDER_EVENT_PLAN_ASSIGN_EMAIL", ""),
+      :event_plan_revoke_email   => conf.get("BILLING_PROVIDER_EVENT_PLAN_REVOKE_EMAIL", ""),
+      :event_acct_modif_email  => conf.get("BILLING_PROVIDER_EVENT_ACCT_MODIF_EMAIL", "")
     },
     :usage_type => {
       :gear => {
@@ -44,6 +45,7 @@ Broker::Application.configure do
       :free => {
         :plan_no => conf.get("BILLING_PROVIDER_FREE_PLAN_NO").to_i,
         :name => "Free",
+        :sku => nil,
         :capabilities => {
           'subaccounts' => false,
           'max_gears' => 3,
@@ -54,6 +56,7 @@ Broker::Application.configure do
       :silver => {
         :plan_no => conf.get("BILLING_PROVIDER_SILVER_PLAN_NO").to_i,
         :name => "Silver",
+        :sku => conf.get("GSS_ORACLE_SILVER_SKU", ""),
         :capabilities => {
           'subaccounts' => false,
           'max_gears' => 16,
