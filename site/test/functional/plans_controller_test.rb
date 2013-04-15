@@ -73,24 +73,24 @@ class PlansControllerTest < ActionController::TestCase
   end
 
   test "should show plan lists in correct currency for default" do
-    do_plan_list_currency_test(nil, "$", "€")
+    do_plan_list_currency_test(nil, "$", ["C$","€"])
   end
 
   test "should show plan lists in correct currency for usd" do
-    do_plan_list_currency_test("usd", "$", "€")
+    do_plan_list_currency_test("usd", "$", ["C$","€"])
   end
 
   test "should show plan lists in correct currency for cad" do
-    do_plan_list_currency_test("cad", "$", "€")
+    do_plan_list_currency_test("cad", "C$", ["€"])
   end
 
   test "should show plan lists in correct currency for eur" do
-    do_plan_list_currency_test("eur", "€", "$")
+    do_plan_list_currency_test("eur", "€", ["$"])
   end
 
   protected
 
-    def do_plan_list_currency_test(currency_cd, currency_symbol, exclude_currency_symbol)
+    def do_plan_list_currency_test(currency_cd, currency_symbol, exclude_currency_symbols)
       with_unique_user
 
       if currency_cd
@@ -102,9 +102,13 @@ class PlansControllerTest < ActionController::TestCase
       user = assigns(:user)
 
       assert_select ".plan h4 span:content(?)", /#{Regexp.escape(currency_symbol)}/
-      assert_select ".plan h4 span:content(?)", /#{Regexp.escape(exclude_currency_symbol)}/, false
+      exclude_currency_symbols.each do |exclude_currency_symbol|
+        assert_select ".plan h4 span:content(?)", /#{Regexp.escape(exclude_currency_symbol)}/, false
+      end
 
       assert_select ".plan li:content(?)", /#{Regexp.escape(currency_symbol)}/
-      assert_select ".plan li:content(?)", /#{Regexp.escape(exclude_currency_symbol)}/, false
+      exclude_currency_symbols.each do |exclude_currency_symbol|
+        assert_select ".plan li:content(?)", /#{Regexp.escape(exclude_currency_symbol)}/, false
+      end
     end
 end
