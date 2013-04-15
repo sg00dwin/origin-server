@@ -28,15 +28,26 @@ module ApplicationHelper
   end
 
   def user_currency_symbol
-    controller.user_currency_cd == "eur" ? "€" : "$"
+    case controller.user_currency_cd
+    when "eur"
+      "€"
+    when "cad"
+      "C$"
+    else
+      "$"
+    end
   end
   
   def number_to_user_currency(number)
     return nil if number.nil?
 
-    if controller.user_currency_cd == 'eur'
+    case controller.user_currency_cd
+    when 'eur'
       unit = "€"
       format = "%u %n"
+    when 'cad'
+      unit = "C$"
+      format = "%u%n"
     else
       unit = "$"
       format = "%u%n"

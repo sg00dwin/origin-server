@@ -246,7 +246,7 @@ class BillsControllerTest < ActionController::TestCase
   end
 
   test "should compare usage between bill and current period in cad" do
-    do_usage_test("cad", "$")
+    do_usage_test("cad", "C$")
   end
 
   test "should compare usage between bill and current period in eur" do
@@ -263,7 +263,7 @@ class BillsControllerTest < ActionController::TestCase
   end
 
   test "should show forwarded balance based on statements in cad" do
-    do_forwarded_balance_test("cad", "$")
+    do_forwarded_balance_test("cad", "C$")
   end
 
   test "should show forwarded balance based on statements in eur" do
@@ -314,7 +314,7 @@ class BillsControllerTest < ActionController::TestCase
   end
 
   test "should export invoice successfully in cad" do
-    do_export_test("cad", "$")
+    do_export_test("cad", "C$")
   end
 
   test "should export invoice successfully in eur" do
@@ -323,7 +323,7 @@ class BillsControllerTest < ActionController::TestCase
 
   private
 
-  def do_usage_test(currency_cd = "usd", currency_symbol = "$")
+  def do_usage_test(currency_cd, currency_symbol)
     omit_if_aria_is_unavailable
 
     user = with_user(full({'currency_cd' => currency_cd}))
@@ -394,7 +394,7 @@ class BillsControllerTest < ActionController::TestCase
     end
   end
 
-  def do_forwarded_balance_test(currency_cd = "usd", currency_symbol = "$")
+  def do_forwarded_balance_test(currency_cd, currency_symbol)
     omit_if_aria_is_unavailable
 
     user = with_user(full({'currency_cd' => currency_cd}))
@@ -438,7 +438,7 @@ class BillsControllerTest < ActionController::TestCase
     assert_select "td:content(?)", "#{currency_symbol}0.00", false    
   end
 
-  def do_export_test(currency_cd = "usd", currency_symbol = "$")
+  def do_export_test(currency_cd, currency_symbol)
     omit_if_aria_is_unavailable
 
     user = with_user(full({'currency_cd' => currency_cd}))
