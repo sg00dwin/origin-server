@@ -46,7 +46,10 @@ rm -rf %{buildroot}
 
 for fixpath in "/sandbox"
 do
-    [ -e "$fixpath" ] && /sbin/restorecon -R "$fixpath"
+    if [ -e "$fixpath" ]
+    then
+        /sbin/restorecon -R "$fixpath"
+    fi
 done
 
 
