@@ -233,7 +233,7 @@ class AriaUnitTest < ActiveSupport::TestCase
   end
 
   test 'should raise unavailable on 404' do
-    stub_aria(:get_test).to_return(:status => 404)
+    stub_aria(:get_test).to_return(:status => 404, :body => ' ')
     e = assert_raise(Aria::NotAvailable){ Aria.get_test }
     assert_equal 404, e.response.code
   end
@@ -697,7 +697,7 @@ Features:
     assert Aria::Bill.new(nil, nil, nil, nil, nil, [payment2], [], 100).show_payment_amounts, "A payment that is partially applied should show the amount"
     assert Aria::Bill.new(nil, nil, nil, nil, nil, [payment1, payment2], [], 100).show_payment_amounts, "When there are multiple payments, they should show their amounts"
     
-    assert_false Aria::Bill.new(nil, nil, nil, nil, nil, [payment1], [], 100).show_payment_amounts, "A payment that is fully applied and matches the balance due shouldn't show its amount"
+    assert !Aria::Bill.new(nil, nil, nil, nil, nil, [payment1], [], 100).show_payment_amounts, "A payment that is fully applied and matches the balance due shouldn't show its amount"
   end
 
   def test_line_item_prorated

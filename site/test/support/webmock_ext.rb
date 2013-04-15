@@ -3,7 +3,7 @@
 # query mapping.  Based on https://github.com/bblimke/webmock/blob/8989b85cc48087310c27631ce0602608cab6d428/lib/webmock/request_pattern.rb
 #
 require 'webmock'
-
+=begin
 raise 'Remove me' if WebMock::VERSION >= '1.8'
 
 def hash_including(hash)
@@ -107,3 +107,4 @@ module WebMock
     end
   end
 end
+=end

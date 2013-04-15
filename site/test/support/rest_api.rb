@@ -1,4 +1,3 @@
-require 'mocha'
 require 'streamline'
 
 class ActiveSupport::TestCase
