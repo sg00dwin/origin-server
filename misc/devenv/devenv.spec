@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.7.6
+Version: 1.7.7
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -757,6 +757,14 @@ rm -rf /tmp/phantomjs
 /etc/openshift/development
 
 %changelog
+* Mon Apr 15 2013 Adam Miller <admiller@redhat.com> 1.7.7-1
+- Merge pull request #1179 from fotioslindiakos/postgres_v2
+  (dmcphers@redhat.com)
+- Fixing devenv.spec (fotios@redhat.com)
+- Merge pull request #1178 from jtharris/features/Card6 (dmcphers@redhat.com)
+- Added postgres v2 cartridge to spec (fotios@redhat.com)
+- Adding basic phantomjs install. (jharris@redhat.com)
+
 * Fri Apr 12 2013 Adam Miller <admiller@redhat.com> 1.7.6-1
 - rhc-devenv now needs to ensure openshift-node-web-proxy is started
   (bleanhar@redhat.com)
