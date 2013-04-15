@@ -216,6 +216,7 @@ module Secured
     # Set a user object on the session
     #
     def user_to_session(user)
+      session[:currency_cd] = nil
       session[:ticket] = user.ticket
       session[:api_ticket] = user.api_ticket
       session[:login] = user.login
