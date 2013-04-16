@@ -383,12 +383,7 @@ namespace :aria do
       2.months => record_silver_usage_over,
       3.months => record_silver_usage_over
     }, {
-      :billing_info => Aria::BillingInfo.new({
-        :address1 => '12345 Happy Street',
-        :city => 'Austin',
-        :country => 'US',
-        :region => 'TX',
-        :zip => '10001',
+      :billing_info => Aria::BillingInfo.test({
         :currency_cd => "eur"
       })
     })
@@ -400,12 +395,10 @@ namespace :aria do
       2.months => record_silver_usage_over,
       3.months => record_silver_usage_over
     }, {
-      :billing_info => Aria::BillingInfo.new({
-        :address1 => '12345 Happy Street',
+      :billing_info => Aria::BillingInfo.test({
         :city => 'Berlin',
         :country => 'DE',
         :region => 'Burgenland',
-        :zip => '10001',
         :currency_cd => "eur"
       })
     })
@@ -417,12 +410,9 @@ namespace :aria do
       2.months => record_silver_usage_over,
       3.months => record_silver_usage_over
     }, {
-      :billing_info => Aria::BillingInfo.new({
-        :address1 => '12345 Happy Street',
-        :city => 'Happyville',
+      :billing_info => Aria::BillingInfo.test({
         :country => 'CA',
         :region => 'NF',
-        :zip => '10001',
         :currency_cd => "cad",
       })
     })
