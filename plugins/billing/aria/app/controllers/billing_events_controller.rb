@@ -19,7 +19,7 @@ class BillingEventsController < BillingController
       end
     rescue Exception => e
       Rails.logger.error "ERROR: Processing event, #{e.message}"
-      Rails.logger.error e
+      Rails.logger.error e.backtrace.inspect
     end
     render :text => retval
   end

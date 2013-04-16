@@ -211,7 +211,17 @@ module OpenShift
         'rest_call' => "update_master_plan"
       }
     end
-  
+ 
+    def write_acct_comment(acct_no, comment)
+      {
+        'acct_no' => acct_no,
+        'client_no' => @client_no,
+        'auth_key' => @auth_key,
+        'comment' => comment,
+        'rest_call' => "write_acct_comment"
+      }
+    end
+ 
     def get_queued_service_plans(acct_no)
       {
         'account_number' => acct_no,
