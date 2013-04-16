@@ -14,7 +14,7 @@ module Aria
     # Rails 3.0 requires all define_attribute_method calls to be together
 
     # Aria makes us explicitly unset values on update
-    @@nullable = [:bill_first_name, :bill_middle_initial, :bill_last_name, :bill_address2, :bill_address3]
+    @@nullable = [:bill_middle_initial, :bill_address2, :bill_address3]
 
     @@region_save_map = Hash.new(['bill_locality','bill_state_prov']).merge({
       'US' => ['bill_state_prov','bill_locality'],
@@ -26,7 +26,9 @@ module Aria
     })
 
 
-    validates_presence_of :address1,
+    validates_presence_of :first_name,
+                          :last_name,
+                          :address1,
                           :city,
                           :country,
                           :zip
@@ -95,15 +97,17 @@ module Aria
       ].compact.join(', ')
     end
 
-    def self.test
+    def self.test(opts={})
       new({
+        :first_name => 'Test',
+        :last_name => 'User',
         :address1 => '12345 Happy Street',
         :city => 'Happyville',
         :country => 'US',
         :region => 'TX',
         :zip => '10001',
         :currency_cd => 'usd'
-      })
+      }.merge(opts))
     end
 
     def to_key

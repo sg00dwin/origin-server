@@ -48,6 +48,8 @@ class AccountUpgradesControllerTest < ActionController::TestCase
           :password_confirmation => 'aoeuaoeu',
         },
         :aria_billing_info => {
+          :first_name => 'Bob',
+          :last_name => 'Smith',
           :city => 'Happyville',
           :region => 'TX',
           :country => 'US',

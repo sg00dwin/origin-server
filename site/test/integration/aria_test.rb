@@ -80,12 +80,12 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     info.zip = 54321.to_s
     info.region = 'Loraine'
     info.currency_cd = 'usd' # Currency can't be changed once set.
-    info.first_name = info.middle_initial = info.last_name = "" # Unset some fields using an empty string
+    info.middle_initial = info.address2 = "" # Unset some fields using an empty string
     expected_attributes = Hash[info.attributes.map {|(k,v)| [k, v == "" ? nil : v] }]
-    info.address2 = info.address3 = nil # Set some fields to nil, meaning "ignore"
+    info.address3 = nil # Set some fields to nil, meaning "preserve existing value"
     assert user.update_account(:billing_info => info), user.errors.inspect
     # Ensure all unset fields go to nil in Aria
-    info.first_name = info.middle_initial = info.last_name = info.address2 = info.address3 = nil
+    info.middle_initial = info.address2 = nil
     assert_equal expected_attributes, user.billing_info.attributes
 
     #
