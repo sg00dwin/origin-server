@@ -60,11 +60,7 @@ Feature: Cartridge Lifecycle Zend Verification Tests
     |   zend-5.6     |
     
   Scenario Outline: Application Snapshot
-    Given an existing <type> application
-    When I snapshot the application
-    Then the application should be accessible
-    When I restore the application
-    Then the application should be accessible
+    Given an existing <type> application, verify it can be snapshotted and restored
 
   Scenarios: Application Snapshot Scenarios
     |      type     |
