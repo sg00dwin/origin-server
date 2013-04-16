@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.5.4
+Version: 1.5.5
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,15 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Tue Apr 16 2013 Troy Dawson <tdawson@redhat.com> 1.5.5-1
+- Billing email notification changes: -Added generic Counter mongoid model that
+  will provide atomic sequence numbers -Added GSS sku for plans -Separate email
+  config params for assign entitelement, revoke entitlement and account-
+  modications -'Effective Date' field will show calendar date instead of
+  'Immediate/End of month' string -Generate billing transaction id for plan
+  changes and write a comment with this id for the corresponding account in
+  aria. (rpenta@redhat.com)
+
 * Thu Apr 11 2013 Adam Miller <admiller@redhat.com> 1.5.4-1
 - Merge pull request #1158 from liggitt/currency_display3
   (dmcphers+openshiftbot@redhat.com)
