@@ -3,47 +3,9 @@ require File.expand_path('../../test_helper', __FILE__)
 class WebFlowsTest < ActionDispatch::IntegrationTest
   web_integration
 
-  def with_logged_in_user
-    api_fetch(:logged_in_user_and_cookies) do |cached|
-      if cached
-        set_user(cached[:user])
-        cached[:cookies].each do |(name,c)|
-          page.driver.remove_cookie(name)
-          page.driver.set_cookie(
-            name, 
-            c.value,
-            [:path, :expires].inject({}) do |h, sym| 
-              h[sym] = c.send(sym)
-              h
-            end
-          )
-        end
-        cached
-      else
-        with_unique_user
-        visit_login
-        { 
-          :cookies => page.driver.cookies.map{ |name, c| [name, c.dup] },
-          :user => @user.dup
-        }
-      end
-    end
-  end
-
-  def visit_login(user=@user)
-    visit login_path
-
-    assert page.has_content? "Sign in to OpenShift"
-    within "#login_form" do
-      fill_in 'Login', :with => user.login
-      fill_in 'Password', :with => user.password
-    end
-    click_button 'Sign in'
-  end
-
   test 'login to console' do
     with_unique_user
-    visit_login
+    visit_console_login
 
     assert has_content? /Management Console/i
 
@@ -55,7 +17,7 @@ class WebFlowsTest < ActionDispatch::IntegrationTest
 
   test 'logout from console' do
     with_unique_user
-    visit_login
+    visit_console_login
 
     assert link = find('#utility-nav a', :text => 'Sign Out', :visible => false)
 
@@ -68,7 +30,8 @@ class WebFlowsTest < ActionDispatch::IntegrationTest
   end
 
   test 'tag dropdown on application types page' do
-    with_logged_in_user
+    with_logged_in_console_user
+    
     visit application_types_path
 
     assert has_css?('.tile h3', :text => /Ruby 1\.(\d)/)
@@ -84,7 +47,8 @@ class WebFlowsTest < ActionDispatch::IntegrationTest
   end
 
   test 'help page displays' do
-    with_logged_in_user
+    with_logged_in_console_user
+
     visit console_help_path
     assert has_css? 'h2', :text => /Create/
   end

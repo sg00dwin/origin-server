@@ -77,6 +77,7 @@ namespace :test do
       t.libs << 'test'
       covered.concat(t.test_files = FileList[
         'test/integration/web_flows_test.rb',
+        'test/integration/community_flows_test.rb',
       ])
     end
 
