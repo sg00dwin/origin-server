@@ -61,6 +61,10 @@ def migrate_apps
             puts "ERROR : haproxy cartridge not found in scalable app #{app['_id'].to_s}"
             next
           end
+          if app['app_ssh_keys'].nil? or app['app_ssh_keys'].empty?
+            puts "ERROR : No app_ssh_keys found in scalable app #{app['_id'].to_s}"
+            next
+          end
           new_keys = []
           app['app_ssh_keys'].each { |key|
             new_key = key.dup
