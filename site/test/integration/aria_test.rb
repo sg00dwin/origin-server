@@ -47,7 +47,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
   test 'should set and update billing info' do
     user = Aria::UserContext.new(WebUser.new :rhlogin => new_uuid)
     user_eur = Aria::UserContext.new(WebUser.new :rhlogin => new_uuid)
-    user_out = Aria::UserContext.new(WebUser.new :rhlogin => new_uuid)
+    user_cad = Aria::UserContext.new(WebUser.new :rhlogin => new_uuid)
 
     methods = Aria::BillingInfo.generated_attribute_methods.instance_methods
 
@@ -62,24 +62,23 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     info.zip = 12345.to_s
     info.region = 'TX'
     info.middle_initial = 'P'
-    info.currency_cd = 'usd'
     assert user.create_account(:billing_info => info), user.errors.inspect
     assert_equal info.attributes, user.billing_info.attributes
+    assert_equal 'usd', user.currency_cd
 
     # update to Canadian address
     info.country = 'CA'
     info.zip = 'K1A0B1'
     info.region = 'ON'
     info.middle_initial = 'M'
-    info.currency_cd = 'usd' # Currency can't be changed once set.
     assert user.update_account(:billing_info => info), user.errors.inspect
     assert_equal info.attributes, user.billing_info.attributes
+    assert_equal 'usd', user.currency_cd
 
     # update to French address, unset some optional fields
     info.country = 'FR'
     info.zip = 54321.to_s
     info.region = 'Loraine'
-    info.currency_cd = 'usd' # Currency can't be changed once set.
     info.middle_initial = info.address2 = "" # Unset some fields using an empty string
     expected_attributes = Hash[info.attributes.map {|(k,v)| [k, v == "" ? nil : v] }]
     info.address3 = nil # Set some fields to nil, meaning "preserve existing value"
@@ -87,19 +86,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     # Ensure all unset fields go to nil in Aria
     info.middle_initial = info.address2 = nil
     assert_equal expected_attributes, user.billing_info.attributes
-
-    #
-    # user_out
-    #
-    # create US account, pay in Euros
-    methods.each {|m| info.send(m, ::SecureRandom.base64(5)) if m.to_s.ends_with?('=') }
-    info.country = 'US'
-    info.zip = 12345.to_s
-    info.region = 'TX'
-    info.middle_initial = 'P'
-    info.currency_cd = 'eur'
-    assert user_out.create_account(:billing_info => info), user_out.errors.inspect
-    assert_equal info.attributes, user_out.billing_info.attributes
+    assert_equal 'usd', user.currency_cd
 
     #
     # user_eur
@@ -110,9 +97,22 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     info.zip = 54321.to_s
     info.region = 'Loraine'
     info.middle_initial = 'P'
-    info.currency_cd = 'eur'
     assert user_eur.create_account(:billing_info => info), user_eur.errors.inspect
     assert_equal info.attributes, user_eur.billing_info.attributes
+    assert_equal 'eur', user_eur.currency_cd
+
+    #
+    # user_cad
+    #
+    # create new French account
+    methods.each {|m| info.send(m, ::SecureRandom.base64(5)) if m.to_s.ends_with?('=') }
+    info.country = 'CA'
+    info.zip = 'K1A0B1'
+    info.region = 'ON'
+    info.middle_initial = 'P'
+    assert user_cad.create_account(:billing_info => info), user_cad.errors.inspect
+    assert_equal info.attributes, user_cad.billing_info.attributes
+    assert_equal 'cad', user_cad.currency_cd
   end
 
   test 'should set direct post settings' do
