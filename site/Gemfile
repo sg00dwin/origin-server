@@ -2,6 +2,8 @@ source 'http://rubygems.org'
 
 gem 'openshift-origin-console', :require => 'console', :path => ENV['CONSOLE_PATH']
 
+gem 'rake', '~> 0.9.2'
+
 gem 'rack-recaptcha', :require => 'rack/recaptcha'
 gem 'rack-picatcha', :require => 'rack/picatcha'
 
@@ -14,11 +16,12 @@ gem 'dalli'
 
 gem 'countries'
 
-# Do not include these gems while testing or compiling assets
-group :development, :production do
-  gem 'pry' if ENV['PRY']
+gem 'pry' if ENV['PRY']
+gem 'perftools.rb',  :require => 'perftools' if ENV['PERFTOOLS']
 
-  if ENV['BETTER_ERRORS']
+# Do not include these gems while testing or compiling assets
+if ENV['BETTER_ERRORS']
+  group :development, :production do
     gem 'pry-rails' if ENV['PRY']
     gem 'better_errors'
     gem 'binding_of_caller'
@@ -30,15 +33,17 @@ end
 # put test-only gems in this group so their generators
 # and rake tasks are available in development mode:
 group :test do
-  gem 'ci_reporter',   '~> 1.7.0', :require => nil
-  gem 'test-unit'      if RUBY_VERSION.to_f >= 1.9
-  gem 'mocha',         '~> 0.12.1'
-  gem 'simplecov',     '~> 0.6.4', :require => nil if RUBY_VERSION.to_f >= 1.9
-  gem 'webmock',       '~> 1.6.4'
-  gem 'poltergeist',   '~> 1.1.0'
+  gem 'ci_reporter',   '~> 1.7.0', :require => false
+  gem 'minitest',      '~> 3.5.0', :require => false
+  gem 'mocha',         '~> 0.12.10', :require => false
+  gem 'simplecov',     '~> 0.6.4', :require => false
+  gem 'webmock',       '~> 1.8.0', :require => false
+  gem 'poltergeist',   '~> 1.2.0', :require => false
+  gem 'capybara',      '~> 2.1.0', :require => false
+  gem 'simplecov',     '~> 0.6.4', :require => false 
 
   # Note:  Only for CI output
-  gem 'rspec-core',    '~> 2.8', :require => nil
+  gem 'rspec-core',    '~> 2.8', :require => false
 end
 
 group :test, :development do

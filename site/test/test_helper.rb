@@ -3,7 +3,10 @@ require File.expand_path('../coverage_helper.rb', __FILE__)
 ENV["RAILS_ENV"] = "test"
 
 require File.expand_path("../../config/environment.rb",  __FILE__)
+require 'minitest/autorun'
 require "rails/test_help"
+require 'webmock/minitest'
+WebMock.allow_net_connect!
 
 Rails.backtrace_cleaner.remove_silencers!
 
