@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.7.4
+Version: 1.7.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -151,6 +151,19 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Tue Apr 16 2013 Troy Dawson <tdawson@redhat.com> 1.7.5-1
+- Merge pull request #1193 from smarterclayton/move_to_minitest
+  (dmcphers+openshiftbot@redhat.com)
+- Move to using minitest 3.5, webmock 1.8.11, and mocha 0.12.10
+  (ccoleman@redhat.com)
+- Billing email notification changes: -Added generic Counter mongoid model that
+  will provide atomic sequence numbers -Added GSS sku for plans -Separate email
+  config params for assign entitelement, revoke entitlement and account-
+  modications -'Effective Date' field will show calendar date instead of
+  'Immediate/End of month' string -Generate billing transaction id for plan
+  changes and write a comment with this id for the corresponding account in
+  aria. (rpenta@redhat.com)
+
 * Thu Apr 11 2013 Adam Miller <admiller@redhat.com> 1.7.4-1
 - Merge pull request #1158 from liggitt/currency_display3
   (dmcphers+openshiftbot@redhat.com)
