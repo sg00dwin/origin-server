@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.7.6
+Version: 1.7.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -189,6 +189,12 @@ fi
 %{sitedir}/public
 
 %changelog
+* Tue Apr 16 2013 Troy Dawson <tdawson@redhat.com> 1.7.7-1
+- Fix bug 952371 - make first and last name required in billing info
+  (jliggitt@redhat.com)
+- Move to using minitest 3.5, webmock 1.8.11, and mocha 0.12.10
+  (ccoleman@redhat.com)
+
 * Mon Apr 15 2013 Adam Miller <admiller@redhat.com> 1.7.6-1
 - Merge pull request #1188 from liggitt/bug/951671 (dmcphers@redhat.com)
 - Merge pull request #1186 from liggitt/bug/952145
