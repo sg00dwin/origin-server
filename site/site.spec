@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.8.0
+Version: 1.8.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -193,6 +193,15 @@ fi
 %{sitedir}/public
 
 %changelog
+* Tue Apr 16 2013 Dan McPherson <dmcphers@redhat.com> 1.8.1-1
+- Add buildrequires for new test packages (ccoleman@redhat.com)
+- bump_minor_versions for sprint XX (tdawson@redhat.com)
+- Merge pull request #1198 from nhr/Auto_select_billing_currency
+  (dmcphers+openshiftbot@redhat.com)
+- Modified based on review feedback (hripps@redhat.com)
+- Billing currency now auto-selected per config file mapping
+  (hripps@redhat.com)
+
 * Tue Apr 16 2013 Troy Dawson <tdawson@redhat.com> 1.7.7-1
 - Fix bug 952371 - make first and last name required in billing info
   (jliggitt@redhat.com)
