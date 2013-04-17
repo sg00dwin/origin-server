@@ -5,7 +5,7 @@ sed -i 's/\INTEGRATED_AUTH=\"false\"/INTEGRATED_AUTH="true"/' /etc/openshift/plu
 service rhc-broker restart
 
 echo "Enabling SSO for Site..."
-sed -i "s/config\.integrated\ \=\ false/config.integrated\ =\ true/" /var/www/openshift/site/config/environments/development.rb
+sed -i "s/STREAMLINE_ENABLED=false/STREAMLINE_ENABLED=true/" /etc/openshift/console-devenv.conf
 service rhc-site restart
 
 echo "Enabling SSO for Drupal..."

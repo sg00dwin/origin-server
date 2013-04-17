@@ -310,9 +310,6 @@ cp -f /etc/openshift/node.conf.libra /etc/openshift/node.conf
 restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
-# Clear the console.conf default community URL
-sed -i 's|^COMMUNITY_URL=|#COMMUNITY_URL=|' /etc/openshift/console.conf
-
 # Setup OPENSHIFT_CLOUD_DOMAIN for the devenv
 mv -f /etc/openshift/env/OPENSHIFT_CLOUD_DOMAIN.libra /etc/openshift/env/OPENSHIFT_CLOUD_DOMAIN
 restorecon /etc/openshift/env/OPENSHIFT_CLOUD_DOMAIN || :

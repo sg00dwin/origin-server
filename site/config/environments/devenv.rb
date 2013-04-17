@@ -27,6 +27,7 @@ RedHatCloud::Application.configure do
   # Use a different cache store in production
   # config.cache_store = :mem_cache_store
 
+
   # Enable serving of images, stylesheets, and javascripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
 
@@ -36,7 +37,7 @@ RedHatCloud::Application.configure do
   # Enable threaded mode
   config.threadsafe!
   # Workaround for Rails 3.2.x and threadsafe!
-  config.dependency_loading = true if $rails_rake_task
+  config.dependency_loading = false
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation can not be found)
@@ -51,29 +52,10 @@ RedHatCloud::Application.configure do
 
   config.assets.compile = false
   config.assets.initialize_on_precompile = false
-  config.assets.compress = true
-  # Digest is disabled so we serve the same resources
-  #config.assets.digest = true
-  config.assets.js_compressor = :uglifier
-  config.assets.precompile += %w(application.js
-                                 console.js
-                                 modernizr.min.js
-                                 jquery.payment.js
-                                 site/home.js
-                                 site/tracking.js
-                                 site/omniture.js
-                                 site/s_code.js
-                                 site/picatcha.js
-                                 common.css
-                                 console.css
-                                 site.css
-                                 overpass.css
-                                 picatcha.css
-                                )
 
-  Console.configure(ENV['CONSOLE_CONFIG_FILE'] || '/etc/openshift/console.conf')
+  Console.configure('/etc/openshift/console-devenv.conf')
 
   # Promo code Email notification setup
   config.email_from = 'OpenShift <noreply@openshift.redhat.com>'
-  config.marketing_mailing_list = Console.config.env(:MARKETING_EMAIL_LIST, ['Marketing Mailing List <snathan@redhat.com>'])
+  config.marketing_mailing_list = Console.config.env(:MARKETING_EMAIL_LIST, ['Marketing Mailing List <snathan@redhat.com>'])  
 end
