@@ -2,7 +2,7 @@
 
 Summary:   Embedded RockMongo support
 Name:      openshift-origin-cartridge-rockmongo
-Version:   0.0.7
+Version: 0.1.0
 Release:   1%{?dist}
 Group:     Applications/Internet
 License:   ASL 2.0 and NBSD
