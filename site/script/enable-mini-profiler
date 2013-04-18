@@ -1,0 +1,13 @@
+cat <<- END >> /var/www/openshift/site/Gemfile
+
+#
+# Included by enable-mini-profiler
+#
+gem 'rack-mini-profiler'
+END
+
+bundle install --gemfile /var/www/openshift/site/Gemfile
+chown root:libra_user /var/www/openshift/site/Gemfile.lock
+service rhc-site restart
+
+echo "MiniProfiler installed"
