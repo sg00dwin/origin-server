@@ -9,7 +9,17 @@
     <artifactNumToKeep>100</artifactNumToKeep>
   </logRotator>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.BooleanParameterDefinition>
+          <name>MERGE_PRETEST_SUCCESS</name>
+          <description></description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
   <disabled>true</disabled>
@@ -23,18 +33,23 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>set +x
+      <command>opts=&quot;&quot;
+if $MERGE_PRETEST_SUCCESS
+then
+  opts=&quot;--merge_pretest_success&quot;
+fi
+set +x
 echo &quot;OpenShift Online and Enterprise Pulls:&quot;
 echo
 set -x
-/usr/bin/test_pull_requests
+/usr/bin/test_pull_requests $opts
 set +x
 echo
 echo
 echo &quot;Java Client Pulls:&quot;
 echo
 set -x
-/usr/bin/test_pull_requests --config ~/.test_pull_requests_java_client.json</command>
+/usr/bin/test_pull_requests $opts --config ~/.test_pull_requests_java_client.json</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
