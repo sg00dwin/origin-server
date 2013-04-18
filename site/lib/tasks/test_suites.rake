@@ -73,6 +73,14 @@ namespace :test do
     ].each{ |s| Rake::Task[s].abandon }
     Rake::Task[:check].abandon
 
+    Rake::TestTask.new :web_integration => ['test:prepare'] do |t|
+      t.libs << 'test'
+      covered.concat(t.test_files = FileList[
+        'test/integration/web_flows_test.rb',
+        'test/integration/community_flows_test.rb',
+      ])
+    end
+
     Rake::TestTask.new :applications => ['test:prepare'] do |t|
       t.libs << 'test'
       covered.concat(t.test_files = FileList[
