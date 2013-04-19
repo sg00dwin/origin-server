@@ -6,8 +6,8 @@ module Aria
       @acct_no = acct_no
     end
 
-    def period_name
-      bill_date.to_date.strftime('%b')
+    def usage_period_name
+      usage_bill_from.to_date.strftime('%b') if usage_bill_from
     end
 
     def payments
