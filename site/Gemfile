@@ -17,7 +17,6 @@ gem 'dalli'
 gem 'countries'
 
 gem 'pry' if ENV['PRY']
-gem 'perftools.rb',  :require => 'perftools' if ENV['PERFTOOLS']
 
 # Do not include these gems while testing or compiling assets
 if ENV['BETTER_ERRORS']
