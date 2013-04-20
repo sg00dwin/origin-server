@@ -310,9 +310,6 @@ cp -f /etc/openshift/node.conf.libra /etc/openshift/node.conf
 restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
-# Clear the console.conf default community URL
-sed -i 's|^COMMUNITY_URL=|#COMMUNITY_URL=|' /etc/openshift/console.conf
-
 # Setup OPENSHIFT_CLOUD_DOMAIN for the devenv
 mv -f /etc/openshift/env/OPENSHIFT_CLOUD_DOMAIN.libra /etc/openshift/env/OPENSHIFT_CLOUD_DOMAIN
 restorecon /etc/openshift/env/OPENSHIFT_CLOUD_DOMAIN || :
@@ -717,10 +714,6 @@ then
   sed -i 's/listener, force_ruby=false/listener, force_ruby=true/' \
       /usr/lib/ruby/gems/1.8/gems/gherkin-2.2.4/lib/gherkin/i18n.rb
 fi
-
-# BZ864807 - clean up redundant assets to prevent JS oddities
-#            in rails development mode.
-cd /var/www/openshift/site && /usr/bin/scl enable ruby193 "rake assets:clean"
 
 # Set up ClamAV
 /usr/sbin/setsebool -P clamscan_can_scan_system 1

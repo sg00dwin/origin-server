@@ -272,7 +272,7 @@ class AriaUnitTest < ActiveSupport::TestCase
       :status_cd => 0.to_s,
       :master_plan_no => Rails.application.config.aria_default_plan_no.to_s,
       :userid => Digest::MD5::hexdigest('foo'),
-      :alt_msg_template_no => '111',
+      :alt_msg_template_no => '37546551',
       :collections_acct_groups => Rails.application.config.default_collections_group_id.to_s,
       :currency_cd => 'usd'
     }

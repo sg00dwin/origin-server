@@ -151,6 +151,7 @@ ln -s %{sitedir}/public %{buildroot}%{htmldir}/app
 ln -sf /etc/httpd/conf/magic %{buildroot}%{sitedir}/httpd/conf/magic
 
 cp conf/console.conf %{buildroot}/etc/openshift/
+cp conf/console-devenv.conf %{buildroot}/etc/openshift/
 
 %clean
 rm -rf %{buildroot}
@@ -187,6 +188,7 @@ fi
 %config(noreplace) %{sitedir}/config/environments/production.rb
 %config(noreplace) %{sitedir}/app/subsites/status/config/hosts.yml
 %config(noreplace) /etc/openshift/console.conf
+%config /etc/openshift/console-devenv.conf
 %exclude %{sitedir}/public
 
 %files static
