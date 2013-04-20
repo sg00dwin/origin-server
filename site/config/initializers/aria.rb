@@ -36,6 +36,7 @@ Rails.application.config.tap do |config|
   config.allowed_countries = %w(AT BE CA CH DE DK ES FI FR GB IE IS IT LU NL NO PT SE US).map(&:to_sym)
   config.preferred_countries = [:US]
   config.currency_cd_by_country = Hash.new('eur').merge!({ 'US' => 'usd', 'CA' => 'cad' })
+  config.default_collections_group_id = Console.config.env(:ARIA_DEFAULT_COLLECTIONS_GROUP_ID, '10017441')
 
   # Supported Credit Cards
   # Specify accepted cards here. Keys can be found in config/credit_cards.yml
