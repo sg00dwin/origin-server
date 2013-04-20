@@ -137,9 +137,45 @@ end
 
 command :update do |c|
   c.syntax = "#{name} update"
+  
+  c.option "--add-task-checklists", "Add task checklists to stories"
+  c.option "--add-bug-checklists", "Add checklists to stories"
 
   c.description = "An assortment of Trello modification utilities"
   c.action do |args, options|
+    trello.boards.each do |board_id, board|
+      puts "\nBoard Name: #{board.name}"
+      lists = board.lists.target
+      lists.each do |list|
+        if list.name == 'In Progress' || list.name == 'Complete'
+          cards = list.cards.target
+          if !cards.empty?
+            puts "\n  List: #{list.name}  (#cards #{cards.length})"
+            cards.each_with_index do |card, index|
+              if card.name != 'Getting Started: How we use Trello' && !(card.name =~ /^Sprint \d+/ && !card.due.nil?)
+
+                checklists = []
+                checklists << 'Tasks' if options.add_task_checklists
+                checklists << 'Bugs' if options.add_bug_checklists && !card.labels.map{|x| x.name }.include?('no-qe')
+
+                card.checklists.target.each do |checklist|
+                  checklists.delete(checklist.name)
+                  break if checklists.empty?
+                end if !checklists.empty?
+                
+                if !checklists.empty?
+                  puts "Adding #{checklists.pretty_inspect.chomp} to #{card.name}"
+                  checklists.each do |checklist_name|
+                    checklist = Trello::Checklist.create({:name => checklist_name, :board_id => board.id})
+                    card.add_checklist(checklist)
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+    end
   end
 end
 
