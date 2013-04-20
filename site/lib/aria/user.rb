@@ -199,7 +199,7 @@ module Aria
     def past_usage_line_items(periods=3)
       Hash[
         usage_invoices.slice(0, periods).inject([]) { |a, i| 
-          arr = [ i.period_name, i.line_items.select(&:usage?) ]
+          arr = [ i.usage_period_name, i.line_items.select(&:usage?) ]
           a << arr if arr.last.present?
           a
         }

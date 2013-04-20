@@ -38,7 +38,7 @@ RedHatCloud::Application.configure do
 
   Console.configure do |c|
     c.api = (ENV['CONSOLE_API_MODE'] || 'local').to_sym
-    c.community_url = 'https://www.openshift.com/'
+    c.community_url = ENV['COMMUNITY_URL'] || 'https://www.openshift.com/'
   end
 
   config.email_from = 'OpenShift <noreply@openshift.redhat.com>'

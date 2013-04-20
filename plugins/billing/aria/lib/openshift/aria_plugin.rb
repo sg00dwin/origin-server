@@ -145,6 +145,9 @@ module OpenShift
       new_srecs
     end
 
+    def pre_sync_usage(session)
+    end
+
     def sync_usage(session, user_srecs, sync_time)
       return if user_srecs.empty?
     
@@ -231,6 +234,17 @@ module OpenShift
         session.with(safe:true)[:usage_records].find({_id: {"$in" => continue_user_ids}}).update_all(update_query) unless continue_user_ids.empty?
         # For ended usage records: delete from mongo        
         delete_ended_urecs(session, ended_srecs)
+      end
+    end
+
+    def post_sync_usage(session)
+      cur_time = Time.now.utc
+      # This can be expensive operation and we don't need to run everytime.
+      # Run only on 1st, 15th and 28th of the month
+      if [1, 15, 28].include?(cur_time.day)
+        month_old_time = cur_time - (30*24*60*60) # remove 30days from current time 
+        update_query = { "$pull" => { "plan_history" => { "end_time" => { "$lt" => month_old_time } } } }
+        session[:cloud_users].find.update(update_query, {:multi => true})
       end
     end
 
