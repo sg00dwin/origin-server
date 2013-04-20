@@ -1,6 +1,5 @@
-#!/bin/bash -e
+#!/bin/bash -eu
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
-set -u
 
 # RockMongo cartridge. Source included in cartridge
 # RockMongo setup script
