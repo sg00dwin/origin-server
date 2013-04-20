@@ -35,8 +35,8 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %dir %{cartridgedir}/env
+%dir %{cartridgedir}/usr
 %dir %{cartridgedir}/etc
-%dir %{cartridgedir}/html
 %dir %{cartridgedir}/logs
 %dir %{cartridgedir}/metadata
 %dir %{cartridgedir}/run
@@ -46,7 +46,6 @@ rm -rf %{buildroot}
 %{cartridgedir}/metadata/manifest.yml
 %doc %{cartridgedir}/COPYRIGHT
 %doc %{cartridgedir}/LICENSE
-%doc %{cartridgedir}/changelog
 %doc %{cartridgedir}/README.md
 
 %changelog

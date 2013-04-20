@@ -37,10 +37,18 @@ function status() {
   exit 0
 }
 
+# Clean up any log files
+function tidy() {
+  client_message "Emptying log dir: $OPENSHIFT_ROCKMONGO_LOG_DIR"
+  shopt -s dotglob
+  rm -rf $OPENSHIFT_ROCKMONGO_LOG_DIR/*
+}
+
 case "$1" in
   start)            start ;;
   stop)             stop ;;
   restart|reload)   restart ;;
   status)           status ;;
+  tidy)             tidy ;;
   *)                exit 0
 esac
