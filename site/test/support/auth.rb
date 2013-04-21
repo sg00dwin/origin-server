@@ -37,10 +37,6 @@ class ActionController::TestCase
     ses[:streamline_type] = user.streamline_type if user.respond_to? :streamline_type
     ses
   end
-
-  def account_settings_redirect
-    settings_account_path
-  end
 end
 
 class ActionDispatch::IntegrationTest

@@ -11,7 +11,8 @@ module Account
     def show
       @user_has_keys = sshkey_uploaded?
       @domain = user_default_domain rescue nil
-      @identity = Identity.find(current_user).first
+      @identities = Identity.find current_user
+      @show_email = false
 
       user = Aria::UserContext.new(current_user)
 
@@ -54,25 +55,6 @@ module Account
           # )
         end
         @usage_types = Aria::UsageLineItem.type_info(@usage_items.values.flatten) if @usage_items
-      end
-    end
-
-    def settings
-      @user = current_user
-      @identities = Identity.find @user
-      @show_email = false
-
-      async{ @domain = begin user_default_domain; rescue ActiveResource::ResourceNotFound; end }
-
-      async{ @keys = Key.all :as => @user }
-      async{ @authorizations = Authorization.all :as => @user }
-
-      join!(30)
-
-      if not @domain
-        flash.now[:info] = "You need to set a namespace before you can create applications"
-      elsif @keys.blank?
-        flash.now[:info] = "You need to set a public key before you can work with application code"
       end
     end
   end
