@@ -140,6 +140,7 @@ command :update do |c|
   
   c.option "--add-task-checklists", "Add task checklists to stories"
   c.option "--add-bug-checklists", "Add checklists to stories"
+  c.option "--update-bug-tasks", "Update closed/verified bug tasks"
 
   c.description = "An assortment of Trello modification utilities"
   c.action do |args, options|
@@ -152,22 +153,45 @@ command :update do |c|
           if !cards.empty?
             puts "\n  List: #{list.name}  (#cards #{cards.length})"
             cards.each_with_index do |card, index|
-              if card.name != 'Getting Started: How we use Trello' && !(card.name =~ /^Sprint \d+/ && !card.due.nil?)
+              if options.add_task_checklists || options.add_bug_checklists
+                if card.name != 'Getting Started: How we use Trello' && !(card.name =~ /^Sprint \d+/ && !card.due.nil?)
+                  checklists = []
+                  checklists << 'Tasks' if options.add_task_checklists
+                  checklists << 'Bugs' if options.add_bug_checklists && !card.labels.map{|x| x.name }.include?('no-qe')
 
-                checklists = []
-                checklists << 'Tasks' if options.add_task_checklists
-                checklists << 'Bugs' if options.add_bug_checklists && !card.labels.map{|x| x.name }.include?('no-qe')
-
-                card.checklists.target.each do |checklist|
-                  checklists.delete(checklist.name)
-                  break if checklists.empty?
-                end if !checklists.empty?
+                  card.checklists.target.each do |checklist|
+                    checklists.delete(checklist.name)
+                    break if checklists.empty?
+                  end if !checklists.empty?
                 
-                if !checklists.empty?
-                  puts "Adding #{checklists.pretty_inspect.chomp} to #{card.name}"
-                  checklists.each do |checklist_name|
-                    checklist = Trello::Checklist.create({:name => checklist_name, :board_id => board.id})
-                    card.add_checklist(checklist)
+                  if !checklists.empty?
+                    puts "Adding #{checklists.pretty_inspect.chomp} to #{card.name}"
+                    checklists.each do |checklist_name|
+                      checklist = Trello::Checklist.create({:name => checklist_name, :board_id => board.id})
+                      card.add_checklist(checklist)
+                    end
+                  end
+                end
+              end
+              if options.update_bug_tasks
+                #TODO need a way to complete a task in the trello api
+                require 'bugzilla_helper'
+                bugzilla = load_conf(BugzillaHelper, CONFIG.bugzilla, true)
+                card.check_item_states.target.each do |check_item_state|
+                  puts check_item_state.state
+                  puts check_item_state.item.name
+                end
+                card.checklists.target.each do |checklist|
+                  if checklist.name == 'Bugs'
+                    checklist.items.each do |item|
+                      status = bugzilla.bug_status_by_url(item.name)
+                      if status == 'VERIFIED' || status == 'CLOSED'
+                        #item.complete unless item.complete?
+                      elsif status == 'OPEN' || status == 'ASSIGNED'
+                        #item.open if item.complete?
+                      end
+                    end
+                    break 
                   end
                 end
               end
