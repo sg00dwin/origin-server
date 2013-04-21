@@ -1,18 +1,16 @@
 - content_for :page_title, 'My Account'
 
+%h1
+  My Account
+  %small.pull-right
+    <strong>Free</strong> Plan
+
 .row
-  .span12
-    %h1
-      My Account
-      %small.pull-right
-        <strong>Free</strong> Plan
+  .span5
+    %section
+      = render :partial => 'user', :locals => {:user => @user, :show_email => @show_email, :identities => @identities}
 
-.row-fluid
-  .span4
-    %section.panel
-      = render :partial => 'settings', :locals => {:identity => @identity, :domain => @domain, :user => @user, :user_has_keys => @user_has_keys}
-
-  .span8
+  .span7
     %section.panel
       %h2 Common Questions
       %dl

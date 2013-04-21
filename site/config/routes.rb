@@ -64,7 +64,6 @@ RedHatCloud::Application.routes.draw do
            :controller => :account,
            :only => [:new, :create, :show] do
 
-    get :settings, :on => :member
     get :complete, :on => :member
     get :welcome, :on => :member
     get :help, :on => :member
@@ -111,10 +110,6 @@ RedHatCloud::Application.routes.draw do
         get :success
       end
     end
-  end
-
-  scope 'account' do
-    openshift_account_resource_routes
   end
 
   match 'user/create/external' => 'account#create_external', :via => [:post]

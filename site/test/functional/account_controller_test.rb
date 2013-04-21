@@ -74,8 +74,6 @@ class AccountControllerTest < ActionController::TestCase
       get :show
       assert_response :success
       assert assigns(:user)
-      assert assigns(:identity)
-      assert assigns(:domain).nil?
 
       assert assigns(:plan).nil?, assigns(:user).inspect
       assert_select 'a', 'Upgrade Now'
@@ -89,8 +87,6 @@ class AccountControllerTest < ActionController::TestCase
       get :show
       assert_response :success
       assert assigns(:user)
-      assert assigns(:identity)
-      assert assigns(:domain).nil?
       assert assigns(:plan)
       assert_select 'a', 'Upgrade Now'
       assert_select 'p', /not currently subscribed/
@@ -103,20 +99,11 @@ class AccountControllerTest < ActionController::TestCase
       assert_response :success
       assert assigns(:user)
       assert assigns(:plan)
-      assert assigns(:identity)
-      assert assigns(:domain).nil?
 
       assert assigns(:plan), assigns(:user).inspect
       assert_select 'a:content(?)', 'Billing history'
       assert_select 'h2:content(?)', 'Next Bill'
     end
-  end
-
-  test "should render settings" do
-    with_unique_user
-    get :settings
-    assert_response :success
-    assert assigns(:user)
   end
 
   test "should render dashboard without aria" do
@@ -126,8 +113,6 @@ class AccountControllerTest < ActionController::TestCase
       assert_response :success
       assert_template :dashboard_free
       assert assigns(:user)
-      assert assigns(:identity)
-      assert assigns(:domain).nil?
 
       assert assigns(:plan).nil?
       assert_select 'a', /Get more help and information/

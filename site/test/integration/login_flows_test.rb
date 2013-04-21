@@ -164,7 +164,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
       assert_equal user.login, @controller.current_user.login
       assert_equal user.ticket, @controller.current_user.ticket
       assert_select 'a', :text => user.email_address
-      assert_select 'h2', :text => /Settings/i
+      assert_select 'h2', :text => /Common Questions/i
 
       get logout_path
       assert_redirected_to root_path
