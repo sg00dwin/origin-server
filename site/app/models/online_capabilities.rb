@@ -6,7 +6,10 @@ class OnlineCapabilities < Capabilities::Cacheable
   end
 
   def to_a
-    super.map!{ |v| v == 'free' ? nil : v }
+    super.tap do |arr| 
+      i = self.class.attrs.index(:plan_id) 
+      arr[i] = nil if arr[i] == 'free'
+    end
   end
 
   alias_method :plan_upgrade_enabled?, :plan_upgrade_enabled
