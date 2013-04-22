@@ -760,6 +760,16 @@ Features:
     assert_equal 0, items.length
   end
 
+  def test_tolerate_missing_services
+    stub_client_plans_all([stub_plan_serviceless])
+    assert items = Aria::RecurringLineItem.find_all_by_plan_no(3)
+    assert_equal 0, items.length
+
+    stub_acct_plans_all(1, [stub_plan_serviceless])
+    assert items = Aria::RecurringLineItem.find_all_by_current_plan(1)
+    assert_equal 0, items.length
+  end
+
   def test_collapse_identical_usage_line_items
     usage = [
       Aria::WDDX::Struct.new({'usage_type_no' => 1, 'rate_per_unit' => 1, 'units' => 1}),
@@ -998,6 +1008,14 @@ Features:
       end
     stub_acct_plans_all(acct_no, acct_plan)
     stub_client_plans_all([stub_plan_free, stub_plan_pay])
+  end
+
+  def stub_plan_serviceless
+    {
+      'plan_no' => '3',
+      'plan_name' => 'SuperServiceless',
+      'plan_services' => nil
+    }
   end
 
   def stub_plan_pay
