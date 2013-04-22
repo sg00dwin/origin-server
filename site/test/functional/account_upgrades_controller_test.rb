@@ -100,6 +100,7 @@ class AccountUpgradesControllerTest < ActionController::TestCase
   test "should prevent users from seeing :new if their RHN account is in an unsupported country" do
     user = with_user(full)
     Aria::ContactInfo.any_instance.expects(:country).at_least_once.returns('JP')
+    Aria::UserContext.any_instance.expects(:has_account?).at_least_once.returns(false)
 
     get :new, :plan_id => 'free'
     assert_template :no_upgrade
@@ -108,6 +109,7 @@ class AccountUpgradesControllerTest < ActionController::TestCase
   test "should prevent users from seeing :create if their RHN account is in an unsupported country" do
     user = with_user(full)
     Aria::ContactInfo.any_instance.expects(:country).at_least_once.returns('JP')
+    Aria::UserContext.any_instance.expects(:has_account?).at_least_once.returns(false)
 
     get :create
     assert_template :no_upgrade
@@ -116,6 +118,7 @@ class AccountUpgradesControllerTest < ActionController::TestCase
   test "should prevent users from seeing :edit if their RHN account is in an unsupported country" do
     user = with_user(full)
     Aria::ContactInfo.any_instance.expects(:country).at_least_once.returns('JP')
+    Aria::UserContext.any_instance.expects(:has_account?).at_least_once.returns(false)
 
     get :edit
     assert_template :no_upgrade
@@ -124,11 +127,10 @@ class AccountUpgradesControllerTest < ActionController::TestCase
   test "should always allow users to work with their plan if they already have an Aria account" do
     user = with_user(full)
     Aria::ContactInfo.any_instance.expects(:country).at_least_once.returns('JP')
+    Aria::UserContext.any_instance.stubs(:has_account?).returns(false).then.returns(true)
 
     get :new, :plan_id => 'free'
     assert_template :no_upgrade
-
-    Aria::UserContext.any_instance.expects(:has_complete_account?).at_least_once.returns(true)
 
     get :new, :plan_id => 'free'
     assert_template :change

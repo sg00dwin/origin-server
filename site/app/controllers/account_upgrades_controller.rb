@@ -104,7 +104,7 @@ class AccountUpgradesController < ConsoleController
 
     def account_in_supported_country!
       # If the user already has an Aria account, we do not prevent their access to billing
-      return if @aria_user.has_complete_account?
+      return if @aria_user.has_account?
 
       @full_user = @aria_user.full_user
       if @full_user.persisted?
