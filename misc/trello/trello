@@ -131,7 +131,6 @@ command :report do |c|
 end
 
 command :comment do |c|
-  
   c.syntax = "#{name} comment"
   
   c.option "--card-ref SCOPE_TEAM_ID", "Get a single card Ex: origin_broker_1"
