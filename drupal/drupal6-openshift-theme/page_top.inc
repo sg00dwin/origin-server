@@ -21,6 +21,6 @@
             }
             ?>
           </div>
-          <div class="mobile-block"><a href="/enterprise-paas"><span>Streamline App Delivery with  </span>OpenShift Enterprise</a></div>
+          <div class=""><a href="/blogs">Blog</a></div>
         </div>
       </div>

@@ -620,6 +620,12 @@ function user_profile_context_default_contexts() {
   $context->reactions = array(
     'block' => array(
       'blocks' => array(
+        'menu_block-2' => array(
+          'module' => 'menu_block',
+          'delta' => 2,
+          'region' => 'content_header',
+          'weight' => 0,
+        ),
         'menu_block-1' => array(
           'module' => 'menu_block',
           'delta' => 1,

@@ -51,11 +51,10 @@
             <div class="span12 span-flush-right">
         <?php endif; ?>
 
+            <?php print $content_header; # temporary ?>
+
             <?php if ($heading) :?>
-              <h1 class="ribbon">
-                <div class="ribbon-content"><?php print $heading; ?></div>
-                <div class="ribbon-left"></div>
-              </h1>
+              <h1 class="ribbon"><?php print $heading; ?></h1>
             <?php endif; ?>
 
             <section class='default' id='about'>
