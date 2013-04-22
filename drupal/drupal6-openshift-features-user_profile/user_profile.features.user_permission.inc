@@ -128,7 +128,9 @@ function user_profile_user_default_permissions() {
   // Exported permission: administer block classes
   $permissions['administer block classes'] = array(
     'name' => 'administer block classes',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'administrator',
+    ),
   );
 
   // Exported permission: administer blocks
@@ -478,7 +480,8 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'blogger',
-      '2' => 'moderator',
+      '2' => 'content author',
+      '3' => 'moderator',
     ),
   );
 
@@ -497,8 +500,9 @@ function user_profile_user_default_permissions() {
     'name' => 'create document content',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'doc content owner',
-      '2' => 'moderator',
+      '1' => 'content author',
+      '2' => 'doc content owner',
+      '3' => 'moderator',
     ),
   );
 
@@ -508,8 +512,9 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'blogger',
-      '2' => 'doc content owner',
-      '3' => 'moderator',
+      '2' => 'content author',
+      '3' => 'doc content owner',
+      '4' => 'moderator',
     ),
   );
 
@@ -561,7 +566,9 @@ function user_profile_user_default_permissions() {
   // Exported permission: create newsletter content
   $permissions['create newsletter content'] = array(
     'name' => 'create newsletter content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'content author',
+    ),
   );
 
   // Exported permission: create page content
@@ -569,8 +576,20 @@ function user_profile_user_default_permissions() {
     'name' => 'create page content',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
-      '2' => 'page author',
+      '1' => 'content author',
+      '2' => 'moderator',
+      '3' => 'page author',
+    ),
+  );
+
+  // Exported permission: create partner content
+  $permissions['create partner content'] = array(
+    'name' => 'create partner content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
+      '3' => 'page author',
     ),
   );
 
@@ -601,6 +620,14 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: create story content
+  $permissions['create story content'] = array(
+    'name' => 'create story content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
   // Exported permission: create url aliases
   $permissions['create url aliases'] = array(
     'name' => 'create url aliases',
@@ -615,7 +642,8 @@ function user_profile_user_default_permissions() {
     'name' => 'create video content',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'content author',
+      '2' => 'moderator',
     ),
   );
 
@@ -652,7 +680,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'doc content owner',
-      '2' => 'moderator',
     ),
   );
 
@@ -703,12 +730,23 @@ function user_profile_user_default_permissions() {
   // Exported permission: delete any newsletter content
   $permissions['delete any newsletter content'] = array(
     'name' => 'delete any newsletter content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
   );
 
   // Exported permission: delete any page content
   $permissions['delete any page content'] = array(
     'name' => 'delete any page content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: delete any partner content
+  $permissions['delete any partner content'] = array(
+    'name' => 'delete any partner content',
     'roles' => array(
       '0' => 'administrator',
       '1' => 'moderator',
@@ -739,6 +777,14 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: delete any story content
+  $permissions['delete any story content'] = array(
+    'name' => 'delete any story content',
+    'roles' => array(
+      '0' => 'administrator',
     ),
   );
 
@@ -869,6 +915,14 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: delete own partner content
+  $permissions['delete own partner content'] = array(
+    'name' => 'delete own partner content',
+    'roles' => array(
+      '0' => 'authenticated user',
+    ),
+  );
+
   // Exported permission: delete own poll content
   $permissions['delete own poll content'] = array(
     'name' => 'delete own poll content',
@@ -892,6 +946,14 @@ function user_profile_user_default_permissions() {
     'name' => 'delete own quickstart content',
     'roles' => array(
       '0' => 'authenticated user',
+    ),
+  );
+
+  // Exported permission: delete own story content
+  $permissions['delete own story content'] = array(
+    'name' => 'delete own story content',
+    'roles' => array(
+      '0' => 'administrator',
     ),
   );
 
@@ -934,6 +996,7 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'moderator',
+      '2' => 'page author',
     ),
   );
 
@@ -944,6 +1007,7 @@ function user_profile_user_default_permissions() {
       '0' => 'administrator',
       '1' => 'blogger',
       '2' => 'moderator',
+      '3' => 'page author',
     ),
   );
 
@@ -1014,7 +1078,9 @@ function user_profile_user_default_permissions() {
   // Exported permission: edit any newsletter content
   $permissions['edit any newsletter content'] = array(
     'name' => 'edit any newsletter content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'administrator',
+    ),
   );
 
   // Exported permission: edit any page content
@@ -1023,6 +1089,15 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'page author',
+    ),
+  );
+
+  // Exported permission: edit any partner content
+  $permissions['edit any partner content'] = array(
+    'name' => 'edit any partner content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
     ),
   );
 
@@ -1049,6 +1124,14 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit any story content
+  $permissions['edit any story content'] = array(
+    'name' => 'edit any story content',
+    'roles' => array(
+      '0' => 'administrator',
     ),
   );
 
@@ -1126,6 +1209,7 @@ function user_profile_user_default_permissions() {
     'name' => 'edit field_document_file',
     'roles' => array(
       '0' => 'authenticated user',
+      '1' => 'content author',
     ),
   );
 
@@ -1234,6 +1318,7 @@ function user_profile_user_default_permissions() {
     'name' => 'edit field_file',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'content author',
     ),
   );
 
@@ -1455,9 +1540,7 @@ function user_profile_user_default_permissions() {
   $permissions['edit own blog content'] = array(
     'name' => 'edit own blog content',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'blogger',
-      '2' => 'moderator',
+      '0' => 'authenticated user',
     ),
   );
 
@@ -1465,9 +1548,7 @@ function user_profile_user_default_permissions() {
   $permissions['edit own discussion content'] = array(
     'name' => 'edit own discussion content',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'authenticated user',
-      '2' => 'moderator',
+      '0' => 'authenticated user',
     ),
   );
 
@@ -1476,8 +1557,9 @@ function user_profile_user_default_permissions() {
     'name' => 'edit own document content',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'doc content owner',
-      '2' => 'moderator',
+      '1' => 'content author',
+      '2' => 'doc content owner',
+      '3' => 'moderator',
     ),
   );
 
@@ -1485,9 +1567,7 @@ function user_profile_user_default_permissions() {
   $permissions['edit own event content'] = array(
     'name' => 'edit own event content',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'blogger',
-      '2' => 'moderator',
+      '0' => 'authenticated user',
     ),
   );
 
@@ -1520,11 +1600,7 @@ function user_profile_user_default_permissions() {
   $permissions['edit own idea content'] = array(
     'name' => 'edit own idea content',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'authenticated user',
-      '2' => 'blogger',
-      '3' => 'doc content owner',
-      '4' => 'moderator',
+      '0' => 'authenticated user',
     ),
   );
 
@@ -1540,7 +1616,9 @@ function user_profile_user_default_permissions() {
   // Exported permission: edit own newsletter content
   $permissions['edit own newsletter content'] = array(
     'name' => 'edit own newsletter content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'content author',
+    ),
   );
 
   // Exported permission: edit own page content
@@ -1548,7 +1626,17 @@ function user_profile_user_default_permissions() {
     'name' => 'edit own page content',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'content author',
+      '2' => 'moderator',
+      '3' => 'page author',
+    ),
+  );
+
+  // Exported permission: edit own partner content
+  $permissions['edit own partner content'] = array(
+    'name' => 'edit own partner content',
+    'roles' => array(
+      '0' => 'authenticated user',
     ),
   );
 
@@ -1577,12 +1665,19 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: edit own story content
+  $permissions['edit own story content'] = array(
+    'name' => 'edit own story content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
   // Exported permission: edit own video content
   $permissions['edit own video content'] = array(
     'name' => 'edit own video content',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'moderator',
+      '0' => 'authenticated user',
     ),
   );
 
@@ -1847,9 +1942,10 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'blogger',
-      '2' => 'doc content owner',
-      '3' => 'moderator',
-      '4' => 'page author',
+      '2' => 'content author',
+      '3' => 'doc content owner',
+      '4' => 'moderator',
+      '5' => 'page author',
     ),
   );
 
@@ -2350,6 +2446,26 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: view imagecache generic_icon_150_50
+  $permissions['view imagecache generic_icon_150_50'] = array(
+    'name' => 'view imagecache generic_icon_150_50',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+    ),
+  );
+
+  // Exported permission: view imagecache generic_icon_256_256
+  $permissions['view imagecache generic_icon_256_256'] = array(
+    'name' => 'view imagecache generic_icon_256_256',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+    ),
+  );
+
   // Exported permission: view imagecache user_image_large_80x80
   $permissions['view imagecache user_image_large_80x80'] = array(
     'name' => 'view imagecache user_image_large_80x80',
@@ -2414,9 +2530,10 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'blogger',
-      '2' => 'doc content owner',
-      '3' => 'moderator',
-      '4' => 'page author',
+      '2' => 'content author',
+      '3' => 'doc content owner',
+      '4' => 'moderator',
+      '5' => 'page author',
     ),
   );
 

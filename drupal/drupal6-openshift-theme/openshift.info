@@ -25,6 +25,7 @@ regions[messaging] = Messaging
 regions[title_bar] = Title Bar
 regions[content_prefix] = Content Prefix
 regions[content] = Content
+regions[content_header] = Content Header
 regions[content_suffix] = Content Suffix
 regions[sidebar_left] = Left Column
 regions[sidebar_right] = Right Column

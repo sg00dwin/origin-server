@@ -19,7 +19,7 @@
         	</span>
         	</a>
         </div>
-          <div class="column-nav lift-less grid-wrapper">
+        <div class="column-nav lift-less grid-wrapper">
           <div class="nav-collapse collapse">
             <nav class="span3">
               <div class="gutter-right">
@@ -71,6 +71,7 @@
               </div>
             </div>
             <?php endif; ?>
+    
             <?php print $content_prefix; ?>
             <?php print $content; ?>
 
