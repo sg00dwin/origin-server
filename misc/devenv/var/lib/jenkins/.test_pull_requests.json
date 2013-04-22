@@ -70,7 +70,7 @@
       "pretest_queue_threshold": 2,
       "pretest_settings_key": "test_settings",
       "pretest_comment": "[Test]ing while waiting on the merge queue",
-      "trello_card_refs": ["origin_broker", "broker", "online_broker", "origin_runtime", "runtime", "online_runtime", "origin_ui", "ui", "online_ui", "enterprise", "enterprise_broker", "enterprise_runtime", "enterprise_ui", "documentation"]
+      "trello_card_refs": ["origin_broker", "online_broker", "origin_runtime", "online_runtime", "origin_ui", "online_ui", "enterprise", "enterprise_broker", "enterprise_runtime", "enterprise_ui", "documentation"]
       "allow_multiple": false,
       "branches": { "*": {"jenkins_job_name": "merge_pull_requests_generic",
                               "downstream_job_name": "create_ami",
