@@ -25,7 +25,7 @@ git push --tags&#xd;
         <hudson.model.StringParameterDefinition>
           <name>AMI_POSTFIX</name>
           <description>The postfix to add to the ami name =&gt; fork_ami_${AMI_POSTFIX}_${BUILD_NUMBER}
-Usually would be the feature name or something to indicate the purpose of the ami.  Only 1 ami per postfix is kept.</description>
+Usually would be the feature name or something to indicate the purpose of the ami.  Only 1 ami per postfix is kept. See https://trello.com/c/Fw7i4PIX for how to reference trello cards.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
@@ -273,6 +273,13 @@ set -e
   if [ $RESULT -eq 0 ]
   then
 
+    if [ -n &quot;$AMI_POSTFIX&quot; ]
+    then
+      set +e
+      trello comment &quot;A fork ami has been created for this card: ${TAG_NAME}_${BUILD_NUMBER}&quot; --card-ref $AMI_POSTFIX
+      set -e
+    fi
+
     QE_TESTS_ARRAY=()
     if $RUN_QE_FULLFUNCTIONAL_TESTS
     then
@@ -305,7 +312,7 @@ set -e
     if [ -n &quot;$EXTENDED_TESTS&quot; ]
     then
       # Run the extended tests
-      build/devenv test ${TAG_NAME}_${BUILD_NUMBER} --include_extended=&quot;$EXTENDED_TESTS&quot; --terminate 
+      build/devenv test ${TAG_NAME}_${BUILD_NUMBER} --include_extended=&quot;$EXTENDED_TESTS&quot; --terminate
     else
       build/devenv terminate ${TAG_NAME}_${BUILD_NUMBER} --download_artifacts
     fi
