@@ -120,4 +120,17 @@ class AccountUpgradesControllerTest < ActionController::TestCase
     get :edit
     assert_template :no_upgrade
   end
+
+  test "should always allow users to work with their plan if they already have an Aria account" do
+    user = with_user(full)
+    Aria::ContactInfo.any_instance.expects(:country).at_least_once.returns('JP')
+
+    get :new, :plan_id => 'free'
+    assert_template :no_upgrade
+
+    Aria::UserContext.any_instance.expects(:has_complete_account?).at_least_once.returns(true)
+
+    get :new, :plan_id => 'free'
+    assert_template :change
+  end
 end
