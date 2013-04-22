@@ -355,6 +355,10 @@ function openshift_breadcrumb($breadcrumb) {
   }
 }
 
+function openshift_menu_tree__menu_block__2($tree) {
+  return '<ul class="menu nav nav-tabs">'. $tree .'</ul>';
+}
+
 function openshift_menu_tree($tree) {
   return '<ul class="menu nav nav-list">'. $tree .'</ul>';
 }

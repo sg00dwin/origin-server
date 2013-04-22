@@ -10,8 +10,8 @@ function community_wiki_user_default_permissions() {
   $permissions['attach images'] = array(
     'name' => 'attach images',
     'roles' => array(
-      '0' => 'authenticated user',
-      '1' => 'blogger',
+      '0' => 'administrator',
+      '1' => 'authenticated user',
       '2' => 'moderator',
     ),
   );
@@ -37,6 +37,7 @@ function community_wiki_user_default_permissions() {
     'name' => 'delete any images',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'moderator',
     ),
   );
 
@@ -68,7 +69,8 @@ function community_wiki_user_default_permissions() {
   $permissions['edit any images'] = array(
     'name' => 'edit any images',
     'roles' => array(
-      '0' => 'authenticated user',
+      '0' => 'administrator',
+      '1' => 'moderator',
     ),
   );
 
