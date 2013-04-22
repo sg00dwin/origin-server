@@ -39,6 +39,27 @@ class TrelloHelper
       return [boards[documentation_id]]
     end
   end
+  
+  def team_board(board_name)
+    case board_name
+    when 'origin_broker'
+      return boards[origin_broker_id]
+    when 'broker', 'online_broker' 
+      return boards[broker_id]
+    when 'origin_runtime'
+      return boards[origin_runtime_id]
+    when 'runtime', 'online_runtime'
+      return boards[runtime_id]
+    when 'origin_ui'
+      return boards[origin_ui_id]
+    when 'ui', 'online_ui'
+      return boards[ui_id]
+    when 'enterprise', 'enterprise_broker', 'enterprise_runtime', 'enterprise_ui' 
+      return boards[enterprise_id]
+    when 'documentation'
+      return boards[documentation_id]
+    end
+  end
 
   def boards
     return @boards if @boards
@@ -49,6 +70,38 @@ class TrelloHelper
       end
     end
     @boards
+  end
+  
+  def print_card(card, num=nil)
+    print "     "
+    print "#{num}) " if num
+    puts "#{card.name} (##{card.short_id})"
+    members = card.members
+    if !members.empty?
+      puts "       Assignee(s): #{members.map{|member| member.full_name}.join(',')}"
+    end
+  end
+
+  def print_list(list)
+    cards = list.cards.target
+    if !cards.empty?
+      puts "\n  List: #{list.name}  (#cards #{cards.length})"
+      puts "    Cards:"
+      cards.each_with_index do |card, index|
+        print_card(card, index+1)
+      end
+    end
+  end
+  
+  def card_by_ref(card_ref)
+    card = nil
+    if card_ref =~ /^(\w+)_(\d+)/i
+      board_name = $1
+      card_short_id = $2
+      board = team_board(board_name)
+      card = board.find_card(card_short_id)
+    end
+    card
   end
 
   def org

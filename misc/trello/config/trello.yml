@@ -1,11 +1,11 @@
 #https://trello.com/1/appKey/generate
-#https://trello.com/1/connect?key=cf13fc063fa50d55b9ff7da8cd388bcb&name=OpenShift&response_type=token&scope=read,write
-#https://trello.com/1/connect?key=cf13fc063fa50d55b9ff7da8cd388bcb&name=OpenShift&response_type=token&scope=read&expiration=never
+#https://trello.com/1/connect?key=b59616731a73736f9eee5f5dfefb34de&name=OpenShift&response_type=token&scope=read,write
+#https://trello.com/1/connect?key=b59616731a73736f9eee5f5dfefb34de&name=OpenShift&response_type=token&scope=read&expiration=never
 ---
-:consumer_key: cf13fc063fa50d55b9ff7da8cd388bcb
-:consumer_secret: c5a84c67a4820b6e24b2fefb614f7bb1a1bba4ebd66419f697fb063f608e7f32
-:oauth_token: 6e81c3026b684d91b51ae9bc11043512dffcae427fdf81c1fedf5f19031cc349
-:oauth_token_secret: c5a84c67a4820b6e24b2fefb614f7bb1a1bba4ebd66419f697fb063f608e7f32
+:consumer_key: b59616731a73736f9eee5f5dfefb34de
+:consumer_secret: 3ac3aa1bf2e306614adcebe807a146fd92ccf104d70ac2efcd9ba2311c7485b2
+:oauth_token: 004d5ee4bd510526153e4fae9231ca9f35202a51d9959ac8c8f7f299f5f5cbda
+:oauth_token_secret: 3ac3aa1bf2e306614adcebe807a146fd92ccf104d70ac2efcd9ba2311c7485b2
 :broker_id: 50f5d10ff44b270a080031be
 :origin_broker_id: 50fc6a1d6ecd57e86a0075d1
 :documentation_id: 50fc695dd58223727e00750c

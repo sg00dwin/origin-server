@@ -46,47 +46,43 @@ command :list do |c|
 
   c.option "--list LIST_NAME", "Restrict to a particular list"
   c.option "--team TEAM_NAME (broker|ui|runtime|enterprise|documentation)", "Restrict to a team"
+  c.option "--card-ref SCOPE_TEAM_ID", "Get a single card Ex: origin_broker_1"
 
   c.description = "An assortment of Trello queries"
   c.action do |args, options|
-    
-    #puts trello.member('danmcp').full_name
     puts "Organization: #{trello.org.name}"
-
-    if options.team
-      boards = trello.team_boards(options.team)
-    else
-      boards = trello.org_boards
-    end
-    
-    boards.each do |board|
-      puts "\nBoard Name: #{board.name}"
-      lists = board.lists.target
-      if options.list
-        lists = []
-        lists.each do |list|
-          if list.name == options.list
-            lists = [list]
-            break
-          end
-        end
+    if options.card_ref
+      card = trello.card_by_ref(options.card_ref)
+      if card
+        trello.print_card(card)
+      else
+        puts "#{options.card_ref} is an invalid format!"
+        exit 1
       end
-      lists.each do |list|
-        cards = list.cards.target
-        if !cards.empty?
-          puts "\n  List: #{list.name}  (#cards #{cards.length})"
-          puts "    Cards:"
-          cards.each_with_index do |card, index|
-            puts "     #{index+1}) #{card.name} (##{card.short_id})"
-            members = card.members
-            if !members.empty?
-              puts "       Assignee(s): #{members.map{|member| member.full_name}.join(',')}"
+    else
+      if options.team
+        boards = trello.team_boards(options.team)
+      else
+        boards = trello.org_boards
+      end
+
+      boards.each do |board|
+        puts "\nBoard Name: #{board.name}"
+        lists = board.lists.target
+        if options.list
+          lists = []
+          lists.each do |list|
+            if list.name == options.list
+              lists = [list]
+              break
             end
           end
         end
+        lists.each do |list|
+          trello.print_list(list)
+        end
       end
     end
-    #puts trello.org_boards
   end
 end
 
@@ -133,6 +129,26 @@ command :report do |c|
     report.send_email if options.send_email
     
   end
+end
+
+command :comment do |c|
+  
+  c.syntax = "#{name} comment"
+  
+  c.option "--card-ref SCOPE_TEAM_ID", "Get a single card Ex: origin_broker_1"
+
+  c.description = "Adds a comment to a trello card"
+  c.action do |args, options|
+    comment = args[0]
+    card = trello.card_by_ref(options.card_ref)
+    if card
+      card.add_comment(comment)
+    else
+      puts "#{options.card_ref} is an invalid format!"
+      exit 1
+    end
+  end
+
 end
 
 command :update do |c|
