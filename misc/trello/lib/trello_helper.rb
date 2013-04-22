@@ -44,15 +44,15 @@ class TrelloHelper
     case board_name
     when 'origin_broker'
       return boards[origin_broker_id]
-    when 'broker', 'online_broker' 
+    when 'online_broker' 
       return boards[broker_id]
     when 'origin_runtime'
       return boards[origin_runtime_id]
-    when 'runtime', 'online_runtime'
+    when 'online_runtime'
       return boards[runtime_id]
     when 'origin_ui'
       return boards[origin_ui_id]
-    when 'ui', 'online_ui'
+    when 'online_ui'
       return boards[ui_id]
     when 'enterprise', 'enterprise_broker', 'enterprise_runtime', 'enterprise_ui' 
       return boards[enterprise_id]
