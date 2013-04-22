@@ -19,8 +19,7 @@ program :name, "Trello Utilities"
 program :version, "1.0.0"
 program :description, "An assortment of Trello utilities"
 
-# This loads the conf files and creates new objects
-#   based on the specified classes
+# This loads the conf files and creates new objects based on the specified classes
 def load_conf(klass,args,single = false)
   if single
     klass.new(args)
