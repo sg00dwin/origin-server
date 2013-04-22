@@ -235,7 +235,7 @@ module OpenShiftMigration
 
       Dir.chdir(user.homedir) do
         cart_model.unlock_gear(cartridge) do |c|
-          output << cart_model.cartridge_setup(c, version)
+          output << cart_model.cartridge_action(c, 'setup', version, true)
 
           cart_model.process_erb_templates(c.directory)
 
