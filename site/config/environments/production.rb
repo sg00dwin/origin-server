@@ -70,6 +70,7 @@ RedHatCloud::Application.configure do
                                  site.css
                                  overpass.css
                                  picatcha.css
+                                 plan_upgrade.css
                                 )
 
   Console.configure(ENV['CONSOLE_CONFIG_FILE'] || '/etc/openshift/console.conf')
