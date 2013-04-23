@@ -33,10 +33,15 @@ Rails.application.config.tap do |config|
   # Add a corresponding value in config/countries.yml if the country uses something other than:
   #  - 'State' for the locality
   #  - 'Postcode' for the postal code
-  config.allowed_countries = %w(AT BE CA CH DE DK ES FI FR GB IE IS IT LU NL NO PT SE US).map(&:to_sym)
+  config.allowed_countries = Console.config.env(:ARIA_ALLOWED_COUNTRIES, [:AT, :BE, :CA, :CH, :DE, :DK, :ES, :FI, :FR, :GB, :IE, :IS, :IT, :LU, :NL, :NO, :PT, :SE, :US])
   config.preferred_countries = [:US]
   config.currency_cd_by_country = Hash.new('eur').merge!({ 'US' => 'usd', 'CA' => 'cad' })
-  config.default_collections_group_id = Console.config.env(:ARIA_DEFAULT_COLLECTIONS_GROUP_ID, '10017441')
+  config.collections_group_id_by_country =
+    Hash.new(
+         Console.config.env(:ARIA_DEFAULT_COLLECTIONS_GROUP_ID, '3')
+    ).merge!(
+         Console.config.env(:ARIA_COLLECTIONS_GROUP_ID_MAP, { 'US' => '1', 'CA' => '2' })
+    )
 
   # Supported Credit Cards
   # Specify accepted cards here. Keys can be found in config/credit_cards.yml
