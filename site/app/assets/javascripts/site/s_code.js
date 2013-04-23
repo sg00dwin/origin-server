@@ -20,7 +20,7 @@ s.linkTrackVars="None"
 s.linkTrackEvents="None"
 s.dynamicAccountSelection=true
 s.dynamicAccountMatch=window.location.host+window.location.pathname
-s.dynamicAccountList="redhatglobaltest,redhatdev=localhost,stg.openshift.redhat.com,int.openshift.redhat.com,int.openshift.com,stg.openshift.com;redhatglobal,redhatcom,redhatopenshift=redhat.com/openshift,openshift.redhat.com,www.openshift.com,openshift.com"
+s.dynamicAccountList="redhatglobaltest,redhatdev=localhost,stg.openshift.redhat.com,int.openshift.redhat.com,int.openshift.com,stg.openshift.com;redhatglobal,redhatopenshift=redhat.com/openshift,openshift.redhat.com,www.openshift.com,openshift.com"
 /* WARNING: Changing any of the below variables will cause drastic
 changes to how your visitor data is collected.  Changes should only be
 made when instructed to do so by your account manager.*/
