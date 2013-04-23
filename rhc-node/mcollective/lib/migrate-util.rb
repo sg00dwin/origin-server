@@ -1,4 +1,6 @@
 require 'open4'
+require 'openshift-origin-node/utils/selinux'
+require 'openshift-origin-node/utils/path_utils'
 
 module OpenShiftMigration
   module Util
@@ -36,6 +38,9 @@ module OpenShiftMigration
     def self.get_env_var_value(app_home, env_var_name)
       file_contents = file_to_string("#{app_home}/.env/#{env_var_name}").chomp
       eq_index = file_contents.index('=')
+
+      return file_contents unless eq_index
+      
       value = file_contents[(eq_index + 1)..-1]
       value = value[1..-1] if value.start_with?("'")
       value = value[0..-2] if value.end_with?("'")
@@ -99,7 +104,7 @@ module OpenShiftMigration
     #
     # @param [String]         homedir OPENSHIFT_HOMEDIR for gear under operation
     # @param [ArrayOf String] name    env var to be deleted
-    def self.rm_env_var_value(homedir, *name)
+    def self.rm_env_var(homedir, *name)
       name.each { |file|
         path = File.join(homedir, ".env", file)
         FileUtils.rm(path) if File.exists?(path)
@@ -149,5 +154,58 @@ module OpenShiftMigration
       Dir.rmdir dirname if (File.directory? dirname) && (Dir.entries(dirname) - %w[ . .. ]).empty?
     end
 
+    # Move a list of environment variables from the gear environment 
+    # to a cartridge environment
+    def self.move_gear_env_var_to_cart(homedir, cartridge_name, *vars)
+      output = ''
+
+      gear_env = File.join(homedir, '.env')
+      cart_env = File.join(homedir, cartridge_name, 'env')
+
+      vars.each do |env_var_name|
+        gear_env_var = File.join(gear_env, env_var_name)
+
+        next if !File.exists?(gear_env_var)
+
+        cart_env_var = File.join(cart_env, env_var_name)
+
+        output << "Moving env var #{env_var_name} to #{cartridge_name} env var directory\n"
+
+        FileUtils.mv(gear_env_var, cart_env_var)
+      end
+
+      output
+    end
+
+    def self.make_user_owned(target, user)
+      mcs_label = OpenShift::Utils::SELinux.get_mcs_label(user.uid)
+      PathUtils.oo_chown_R(user.uid, user.gid, target)
+      OpenShift::Utils::SELinux.set_mcs_label_R(mcs_label, target)
+    end
+
+    def self.move_directory_between_carts(user, 
+                                          old_cartridge_name, 
+                                          new_cartridge_name, 
+                                          *directories)
+      output = ''
+
+      directories.each do |directory|
+        next if !File.directory?(File.join(user.homedir, old_cartridge_name, directory))
+
+        output << "Moving contents of #{old_cartridge_name}/#{directory} to #{new_cartridge_name}/#{directory}"
+
+        target_directory = File.join(user.homedir, new_cartridge_name, directory)
+
+        Dir.glob(File.join(user.homedir, old_cartridge_name, directory, '*')).each do |entry|
+          target = File.join(target_directory, File.basename(entry))
+          FileUtils.mv(entry, target, force: true)
+        end
+
+        make_user_owned(target_directory, user)
+
+      end
+        
+      output
+    end
   end
 end
