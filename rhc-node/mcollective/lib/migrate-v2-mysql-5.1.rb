@@ -5,7 +5,6 @@ module OpenShiftMigration
   class Mysql51Migration
     def post_process(user)
       # TODO: determine whether owner/selinux context needs to change
-      FileUtils.rm_rf(File.join(user.homedir, 'app-root', 'data', '.mysql_setup_invocation_marker'))
 
       output = "applying mysql-5.1 migration post-process:\n"
       output << `ls -l /var/lib/openshift/#{user.uuid}/.env`
