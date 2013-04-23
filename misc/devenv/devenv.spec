@@ -692,7 +692,7 @@ curl -k https://localhost/broker/rest/user -u user_with_extra_storage@test.com:p
 if [ $? -eq 0 ]
 then
   echo "Adding additional storage to user"
-  /usr/sbin/oo-admin-ctl-user -l user_with_extra_storage@test.com --setmaxstorage 10 --setmaxgears 10
+  /usr/sbin/oo-admin-ctl-user -l user_with_extra_storage@test.com --setmaxuntrackedstorage 5 --setmaxgears 10
 else
   echo "user_with_extra_storage could not be created!"
 fi

@@ -30,14 +30,27 @@ class CloudUser
       raise OpenShift::UserException.new("User #{self.login} has gear limit set to #{user_capabilities["max_gears"]} but '#{plan_id}' plan allows #{plan_capabilities["max_gears"]}.", 160)
     end
 
-    if plan_capabilities.has_key?("gear_sizes") && user_capabilities.has_key?("gear_sizes") &&
-       (plan_capabilities["gear_sizes"].sort != user_capabilities["gear_sizes"].sort)
-      raise OpenShift::UserException.new("User #{self.login} can use gear sizes [#{user_capabilities["gear_sizes"].join(",")}] but '#{plan_id}' plan allows [#{plan_capabilities["gear_sizes"].join(",")}].", 161)
+    if plan_capabilities.has_key?("gear_sizes")
+      if !user_capabilities.has_key?("gear_sizes")
+        raise OpenShift::UserException.new("User #{self.login} does not have 'gear_sizes' capability provided by '#{plan_id}' plan", 182)
+      elsif plan_capabilities["gear_sizes"].sort != user_capabilities["gear_sizes"].sort
+        raise OpenShift::UserException.new("User #{self.login} can use gear sizes [#{user_capabilities["gear_sizes"].join(",")}] but '#{plan_id}' plan allows [#{plan_capabilities["gear_sizes"].join(",")}].", 161)
+      end
     end
 
-    if plan_capabilities.has_key?("max_storage_per_gear") && user_capabilities.has_key?("max_storage_per_gear") &&
-       (plan_capabilities["max_storage_per_gear"] != user_capabilities["max_storage_per_gear"])
-      raise OpenShift::UserException.new("User #{self.login} can have additional file-system storage of #{user_capabilities["max_storage_per_gear"]} GB per gear group but '#{plan_id}' plan allows #{plan_capabilities["max_storage_per_gear"]} GB.", 162)
+    if plan_capabilities.has_key?("max_untracked_addtl_storage_per_gear")
+      if !user_capabilities.has_key?("max_untracked_addtl_storage_per_gear")
+        raise OpenShift::UserException.new("User #{self.login} does not have 'max_untracked_addtl_storage_per_gear' capability provided by '#{plan_id}' plan", 183)
+      elsif plan_capabilities["max_untracked_addtl_storage_per_gear"] != user_capabilities["max_untracked_addtl_storage_per_gear"]
+        raise OpenShift::UserException.new("User #{self.login} has untracked additional file-system storage of #{user_capabilities["max_untracked_addtl_storage_per_gear"]} GB per gear but '#{plan_id}' plan allows #{plan_capabilities["max_untracked_addtl_storage_per_gear"]} GB.", 162)
+      end
+    end
+    if plan_capabilities.has_key?("max_tracked_addtl_storage_per_gear")
+      if !user_capabilities.has_key?("max_tracked_addtl_storage_per_gear")
+        raise OpenShift::UserException.new("User #{self.login} does not have 'max_tracked_addtl_storage_per_gear' capability provided by '#{plan_id}' plan", 184)
+      elsif plan_capabilities["max_tracked_addtl_storage_per_gear"] != user_capabilities["max_tracked_addtl_storage_per_gear"]
+        raise OpenShift::UserException.new("User #{self.login} has tracked additional file-system storage of #{user_capabilities["max_tracked_addtl_storage_per_gear"]} GB per gear but '#{plan_id}' plan allows #{plan_capabilities["max_tracked_addtl_storage_per_gear"]} GB.", 181)
+      end
     end
   end
 
@@ -59,8 +72,7 @@ class CloudUser
         end if domain.applications
       end if self.domains
     end
-    addtl_storage = 0
-    addtl_storage = plan_capabilities["max_storage_per_gear"] if plan_capabilities.has_key?("max_storage_per_gear")
+    addtl_storage = (plan_capabilities["max_untracked_addtl_storage_per_gear"] || 0) + (plan_capabilities["max_tracked_addtl_storage_per_gear"] || 0)
     self.domains.each do |domain|
       domain.applications.each do |app|
         app.group_instances.uniq.each do |ginst|

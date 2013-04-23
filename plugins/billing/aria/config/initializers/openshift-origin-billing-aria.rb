@@ -67,7 +67,8 @@ Broker::Application.configure do
           'subaccounts' => false,
           'max_gears' => 16,
           'gear_sizes' => ["small", "medium"],
-          'max_storage_per_gear' => 30, # 30GB
+          'max_untracked_addtl_storage_per_gear' => 5, # 5GB
+          'max_tracked_addtl_storage_per_gear' => 0, # 0GB
           'plan_upgrade_enabled' => true,
           'private_ssl_certificates' => true
         },
