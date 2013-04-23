@@ -5,6 +5,8 @@ class AccountControllerTest < ActionController::TestCase
     @controller.stubs(:skip_captcha?).returns(true)
   end
 
+  def stub_aria_checks; end
+
   test "should get new unauthorized" do
     get :new
     assert_response :success

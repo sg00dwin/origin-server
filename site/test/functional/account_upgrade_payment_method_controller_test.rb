@@ -1,8 +1,7 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class AccountUpgradePaymentMethodControllerTest < ActionController::TestCase
-
-  setup { omit_if_aria_is_unavailable }
+  with_aria
 
   test "should display payment method errors when creating" do
     with_account_holder

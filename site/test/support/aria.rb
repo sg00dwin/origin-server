@@ -48,3 +48,15 @@ class ActiveSupport::TestCase
     id
   end
 end
+
+class ActionController::TestCase
+  setup :stub_aria_checks
+  def stub_aria_checks
+    Aria.stubs(:get_acct_no_from_user_id).raises(Aria::AccountDoesNotExist)
+  end
+
+  def self.with_aria
+    setup{ omit_if_aria_is_unavailable }
+    define_method :stub_aria_checks do; end
+  end
+end
