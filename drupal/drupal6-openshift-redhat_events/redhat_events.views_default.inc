@@ -1415,7 +1415,7 @@ function redhat_events_views_default_views() {
       'label' => '',
       'alter' => array(
         'alter_text' => 1,
-        'text' => '<p class="slug">[field_event_short_description_value]</p>',
+        'text' => '<div class="slug">[field_event_short_description_value]</div>',
         'make_link' => 0,
         'path' => '',
         'absolute' => 0,
@@ -1426,7 +1426,7 @@ function redhat_events_views_default_views() {
         'suffix' => '',
         'target' => '',
         'help' => '',
-        'trim' => 1,
+        'trim' => 0,
         'max_length' => '300',
         'word_boundary' => 0,
         'ellipsis' => 1,
