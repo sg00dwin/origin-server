@@ -44,6 +44,11 @@ class RescueFromTest < ActionDispatch::IntegrationTest
     assert_error_page
   end
 
+  def test_render_server_maintenance_page
+    controller_raises(ActiveResource::ServerError)
+    assert_server_maintenance_page
+  end
+
   def test_access_denied_results_in_redirect
     product_controller_raises(AccessDeniedException)
   
