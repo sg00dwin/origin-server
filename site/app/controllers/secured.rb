@@ -70,7 +70,10 @@ module Secured
                   })
                  rescue => e
                    logger.error "Unable to create an authorization: #{e.message} (#{e.class})\n  #{e.backtrace.join("\n  ")}"
-                   Authorization.new.tap{ |a| a.errors[:base] = e.message }
+                   Authorization.new.tap{ |a| 
+                     a.errors[:base] = e.message 
+                     a.errors[:code] = e.response.code.to_i if e.response.present? && e.response.code.present?
+                   }
                  end
           if auth.persisted?
             logger.debug "Authorization succeeded for #{user.login}, expires in #{distance_of_time_in_words(auth.expires_at, Time.now)}"
@@ -80,7 +83,7 @@ module Secured
           else
             logger.debug "Authorization failed for #{user.login}, #{auth.errors.full_messages.join(', ')}"
             redirect_to logout_path(
-              :cause => :expired,
+              :cause => auth.errors[:code] == [503] ? :server_unavailable : :expired,
               :then => url_for({:only_path => true}.merge(params))
             )
             false

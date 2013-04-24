@@ -45,7 +45,12 @@ class RescueFromTest < ActionDispatch::IntegrationTest
   end
 
   def test_render_server_unavailable_page
-    controller_raises(ActiveResource::ServerError)
+    controller_raises(ActiveResource::ServerError.new(OpenStruct.new(:code => 503)))
+    assert_server_unavailable_page
+  end
+
+  def test_render_server_error_page
+    controller_raises(ActiveResource::ServerError.new(nil))
     assert_server_unavailable_page
   end
 

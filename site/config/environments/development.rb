@@ -11,6 +11,7 @@ RedHatCloud::Application.configure do
   config.whiny_nils = true
 
   config.log_level = :debug
+  Rails.logger = Logger.new(STDOUT)
 
   # Show full error reports and disable caching
   config.consider_all_requests_local       = true

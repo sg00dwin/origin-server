@@ -17,6 +17,8 @@ class LogoutController < ApplicationController
       render :expired
     when 'change_account'
       render :change_account
+    when 'server_unavailable'
+      render :server_unavailable
     end
   end
 end
