@@ -5,7 +5,6 @@
 Feature: Cartridge Lifecycle Zend Verification Tests
   Scenario Outline: Application Creation
     Given the libra client tools
-    And an accepted node
     When <app_count> <type> applications are created
     Then the applications should be accessible
 
