@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- change set #2 
+     range: 2000 - 2999
+-->
+<rules>
+  <rule event-type="zsm-configuration-mismatch" enabled="true" break="true" id="2000" >
+    <rule-name>Cluster Member Configuration Inconsistency</rule-name>
+    <rule-description>Triggered when a cluster member's configuration differs from the rest of the cluster</rule-description>
+    <conditions>When a node configuration does not match cluster</conditions>
+    <event-actions>
+      <action type="severity" >normal</action>
+    </event-actions>
+  </rule>
+  <rule event-type="zsm-node-added-successfully" enabled="true" break="true" id="2001" >
+    <rule-name>Cluster Member Added</rule-name>
+    <rule-description>Triggered when a new server is successfully added to the cluster</rule-description>
+    <conditions>When a node is added to ZSCM</conditions>
+    <event-actions>
+      <action type="severity" >info</action>
+    </event-actions>
+  </rule>
+  <rule event-type="zsm-node-is-not-responding" enabled="true" break="true" id="2002" >
+    <rule-name>Cluster Member Not Responding</rule-name>
+    <rule-description>Triggered when Zend Server Cluster Manager is unable to connect to a cluster member</rule-description>
+    <conditions>When a node is not responding</conditions>
+    <event-actions>
+      <action type="severity" >severe</action>
+    </event-actions>
+  </rule>
+  <rule event-type="zsm-node-removed-successfully" enabled="true" break="true" id="2003" >
+    <rule-name>Cluster Member Removed</rule-name>
+    <rule-description>Triggered when a server is removed from the cluster</rule-description>
+    <conditions>When a node is removed from ZSCM</conditions>
+    <event-actions>
+      <action type="severity" >info</action>
+    </event-actions>
+  </rule>
+  <rule event-type="zsm-restart-failed" enabled="true" break="true" id="2004" >
+    <rule-name>Cluster Member Restart Failed</rule-name>
+    <rule-description>Triggered when an attempt to restart PHP on a cluster member fails</rule-description>
+    <conditions>When node's restart fails</conditions>
+    <event-actions>
+      <action type="severity" >normal</action>
+    </event-actions>
+  </rule>
+  <rule event-type="zsm-node-disabled" enabled="true" break="true" id="2005" >
+    <rule-name>Cluster Member Disabled</rule-name>
+    <rule-description>Triggered when a new server is temporarily deactivated so that it is not operational as part of the cluster, and is not monitored, but is still listed as a cluster member</rule-description>
+    <conditions>When a node is disabled in ZSCM</conditions>
+    <event-actions>
+      <action type="severity" >info</action>
+    </event-actions>
+  </rule>
+  <rule event-type="zsm-node-enabled" enabled="true" break="true" id="2006" >
+    <rule-name>Cluster Member Enabled</rule-name>
+    <rule-description>Triggered when a server is activated after it was temporarily deactivated </rule-description>
+    <conditions>When a node is enabled in ZSCM</conditions>
+    <event-actions>
+      <action type="severity" >info</action>
+    </event-actions>
+  </rule>  
+</rules>
