@@ -51,7 +51,7 @@ class RescueFromTest < ActionDispatch::IntegrationTest
 
   def test_render_server_error_page
     controller_raises(ActiveResource::ServerError.new(nil))
-    assert_server_unavailable_page
+    assert_error_page
   end
 
   def test_access_denied_results_in_redirect
