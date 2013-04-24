@@ -75,6 +75,12 @@ module OpenShift
 
     def after_remove_ssh_key(user,key)
     end
+
+    def before_replace_ssh_keys(user)
+    end
+
+    def after_replace_ssh_keys(user)
+    end
   end
   
   OpenShift::UnixUser.add_observer(LibraUnixUserObserver.instance)
