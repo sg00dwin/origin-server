@@ -3,9 +3,33 @@
 # incomplete
 
 require 'simplecov'
+
+SimpleCov.adapters.delete(:root_filter)
+SimpleCov.filters.clear
+
+class EngineFilter < SimpleCov::Filter
+  def initialize(names)
+    @names = names
+  end
+  def matches?(source_file)
+    engines.each do |root_path|
+      return false if source_file.filename.start_with? root_path
+    end
+    return true
+  end
+  def engines
+    @engines ||= begin
+      engines = Rails.application.railties.engines.select{ |e| @names.include? e.class.to_s }
+      engines.map { |e| e.config.root.to_s } << Rails.application.config.root.to_s
+    end
+  end    
+end
+
 SimpleCov.start 'rails' do
   coverage_dir 'test/coverage/'
   command_name 'Site tests'
+
+  add_filter EngineFilter.new('Console::Engine')
 
   # Filters - these files will be ignored.
   add_filter 'app/controllers/styleguide_controller.rb'
