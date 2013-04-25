@@ -37,6 +37,9 @@ require 'openshift-origin-common'
 
 module OpenShift
   class V2MigrationCartridgeModel < V2CartridgeModel
+    ##
+    # In this subclass, this method is changed slightly to account for
+    # V1 cartridge directories which may exist in the gear.
     def process_cartridges(cartridge_dir = nil) # : yields cartridge_path
       if cartridge_dir
         cart_dir = File.join(@user.homedir, cartridge_dir)
@@ -45,28 +48,9 @@ module OpenShift
       end
 
       Dir[PathUtils.join(@user.homedir, "*")].each do |cart_dir|
-        # Ignore directories with '-' to avoid both app-root as well as any
-        # V1 cartridge instance directories
-        next if cart_dir.include?('-') || cart_dir.end_with?('git') ||
+        next if cart_dir.end_with?('app-root') || cart_dir =~ /-\d/ || cart_dir.end_with?('git') ||
             (not File.directory? cart_dir)
         yield cart_dir
-      end
-    end
-  end
-
-  ##
-  # Override this class to avoid globbing up installed V2 cartridges in V1 apps
-  #
-  class V1CartridgeModel
-    def each_cartridge
-      Dir[PathUtils.join(@user.homedir, "*")].each do |cart_dir|
-        next if cart_dir.end_with?('app-root')
-        next if cart_dir.end_with?('git')
-        next if !cart_dir.include?('-')
-        next if not File.directory? cart_dir
-
-        cartridge = get_cartridge(File.basename(cart_dir))
-        yield cartridge
       end
     end
   end
@@ -105,9 +89,7 @@ module OpenShiftMigration
     libra_domain = get_config_value('CLOUD_DOMAIN')
     gear_name = nil
     app_name = nil
-    output = ''
-
-    output += 'Beginning V1 -> V2 migration\n'
+    output = "Beginning V1 -> V2 migration\n"
 
     gear_home = "#{libra_home}/#{uuid}"
     begin
@@ -128,10 +110,15 @@ module OpenShiftMigration
 
     progress = MigrationProgress.new(uuid)
 
-    output = stop_gear(progress, uuid)
-    cartridge_migrators = load_cartridge_migrators 
-    output << migrate_env_vars(progress, gear_home)
+    output << migrate_stop_lock(progress, uuid, gear_home)
+    output << stop_gear(progress, uuid)
+    output << migrate_typeless_translated_vars(progress, uuid, gear_home)
+    output << cleanup_gear_env(progress, gear_home)
+    output << migrate_env_vars_to_raw(progress, gear_home)
+
     OpenShift::Utils::Sdk.mark_new_sdk_app(gear_home)
+    cartridge_migrators = load_cartridge_migrators 
+
     output << migrate_cartridges(progress, gear_home, uuid, cartridge_migrators)
 
     env_echos.each do |env_echo|
@@ -141,6 +128,7 @@ module OpenShiftMigration
       
     start_gear(progress, uuid)
 
+    # TODO: check state of gear before deleting marker files?
     progress.clear
 
     total_time = (Time.now.to_f * 1000).to_i - start_time
@@ -148,11 +136,36 @@ module OpenShiftMigration
     return output, exitcode
   end
 
+  def self.migrate_stop_lock(progress, uuid, gear_home)
+    output = ''
+
+    if progress.incomplete? 'detect_v1_stop_lock'
+      stop_lock_found = !Dir.glob(File.join(gear_home, '*-*', 'run', 'stop_lock')).empty?
+
+      if stop_lock_found
+        config = OpenShift::Config.new
+        state  = OpenShift::Utils::ApplicationState.new(uuid)
+        user   = OpenShift::UnixUser.from_uuid(uuid)
+
+        output << "Creating V2 stop_lock"
+
+        cart_model = OpenShift::V2MigrationCartridgeModel.new(config, user, state)
+        cart_model.create_stop_lock
+      else
+        output << "V1 stop lock not detected\n"
+      end
+
+      output << progress.mark_complete('detect_v1_stop_lock')
+    end
+
+    output
+  end
+
   def self.stop_gear(progress, uuid)
     output = ''
 
     if progress.incomplete? 'stop_gear'
-      OpenShift::ApplicationContainer.from_uuid(uuid).stop_gear
+      OpenShift::ApplicationContainer.from_uuid(uuid).stop_gear(user_initiated: false)
       output << progress.mark_complete('stop_gear')
     end
 
@@ -163,7 +176,7 @@ module OpenShiftMigration
     output = ''
 
     if progress.incomplete? 'start_gear'
-      OpenShift::ApplicationContainer.from_uuid(uuid).start_gear
+      OpenShift::ApplicationContainer.from_uuid(uuid).start_gear(user_initiated: false)
       output << progress.mark_complete('start_gear')
     end
 
@@ -201,39 +214,67 @@ module OpenShiftMigration
     migrators
   end
 
-  def self.migrate_env_vars(progress, gear_home)
+  def self.migrate_typeless_translated_vars(progress, uuid, gear_home)
     output = ''
 
-    FileUtils.rm_rf(File.join(gear_home, '.env', 'USER_VARS'))
-    output << migrate_typeless_translated_vars(gear_home)
-    output << migrate_translate_gear_vars(gear_home)
-    output << migrate_env_vars_to_raw(progress, gear_home)
-    
+    if progress.incomplete? 'typeless_translated_vars'
+      blacklist = %w(OPENSHIFT_GEAR_CTL_SCRIPT OPENSHIFT_GEAR_TYPE)
+
+      vars_file = File.join(gear_home, '.env', 'TYPELESS_TRANSLATED_VARS')
+
+      if File.exists?(vars_file)
+        content = IO.read(vars_file)
+
+        content.each_line do |line|
+          if line.chomp =~ /export ([^=]+)=\'([^\']+)\'/
+            key = $1
+            value = $2
+
+            next if blacklist.include?(key)
+
+            env_var_file = File.join(gear_home, '.env', key)
+
+            IO.write(env_var_file, value)
+
+            mcs_label = Utils::SELinux.get_mcs_label(uuid)
+            PathUtils.oo_chown(0, gid, env_var_file)
+            Utils::SELinux.set_mcs_label(mcs_label, filename)
+          end
+        end
+      end
+
+      output << progress.mark_complete('typeless_translated_vars')
+    end
+
     output
   end
 
-  def self.migrate_typeless_translated_vars(gear_home)
-    # TODO: split out typeless translated vars into separate files
-    ''
-  end
+  def self.cleanup_gear_env(progress, gear_home)
+    output = ''
 
-  def self.migrate_translate_gear_vars(gear_home)
-    # TODO: split out translate gear vars into separate files
-    ''
+    if progress.incomplete? 'gear_env_cleanup'
+      FileUtils.rm_rf(File.join(gear_home, '.env', 'USER_VARS'))
+      FileUtils.rm_rf(File.join(gear_home, '.env', 'TRANSLATE_GEAR_VARS'))
+      output << progress.mark_complete('gear_env_cleanup')
+    end
+
+    output
   end
 
   def self.migrate_env_vars_to_raw(progress, gear_home)
-    return '' if progress.complete? 'migrate_env_vars_to_raw'
-
     output = ''
 
-    Dir.glob(File.join(gear_home, '.env', '*')).each do |entry|
-      content = IO.read(entry).chomp
-      if content =~ /^export/
-        output << "Migrating #{File.basename(entry)} to raw value\n"
-        content.sub!(/^export [^=]+=\'([^\']*)\'/, '\1')
-        IO.write(entry, content)
+    if progress.incomplete? 'env_vars_to_raw'
+      Dir.glob(File.join(gear_home, '.env', '*')).each do |entry|
+        content = IO.read(entry).chomp
+        if content =~ /^export /
+          output << "Migrating #{File.basename(entry)} to raw value\n"
+          content.sub!(/^export [^=]+=\'([^\']*)\'/, '\1')
+          IO.write(entry, content)
+        end
       end
+
+      output << progress.mark_complete('env_vars_to_raw')
     end
 
     output
@@ -247,7 +288,7 @@ module OpenShiftMigration
       tokens = cartridge_name.split('-')
       name = tokens[0]
       version = tokens[1]
-      output << migrate_cartridge(progress, name, version, uuid, true, cartridge_migrators)
+      output << migrate_cartridge(progress, name, version, uuid, cartridge_migrators)
     end
 
     output
@@ -266,22 +307,17 @@ module OpenShiftMigration
     v1_carts
   end
 
-  def self.migrate_cartridge(progress, name, version, uuid, start, cartridge_migrators)
-    # TODO: account for 'configure' workflow changes to introduce discrete install and
-    # post-setup control actions
-    # TODO: migration resume strategy
-
+  def self.migrate_cartridge(progress, name, version, uuid, cartridge_migrators)
     config = OpenShift::Config.new
-    state = OpenShift::Utils::ApplicationState.new(uuid)
-    user = OpenShift::UnixUser.from_uuid(uuid)
+    state  = OpenShift::Utils::ApplicationState.new(uuid)
+    user   = OpenShift::UnixUser.from_uuid(uuid)
 
     cart_model = OpenShift::V2MigrationCartridgeModel.new(config, user, state)
+    cartridge  = OpenShift::CartridgeRepository.instance.select(name, version)
 
     output = ''
 
-    cartridge = OpenShift::CartridgeRepository.instance.select(name, version)
-
-    OpenShift::Utils::Cgroups.with_cgroups_disabled(uuid) do
+    OpenShift::Utils::Cgroups.with_no_cpu_limits(uuid) do
       if progress.incomplete? "#{name}_create_directory"
         cart_model.create_cartridge_directory(cartridge, version)
         output << progress.mark_complete("#{name}_create_directory")
@@ -308,16 +344,13 @@ module OpenShiftMigration
         end
       end
 
-      if start
-        output << cart_model.start_cartridge('start', cartridge)
-      end
-
       if progress.incomplete? "#{name}_connect_frontend"
         cart_model.connect_frontend(cartridge)
         output << progress.mark_complete("#{name}_connect_frontend")
       end
     end
 
+    # TODO: need to perform checks before deleting V1 cartridge directory?
     FileUtils.rm_rf(File.join(user.homedir, "#{name}-#{version}"))
 
     output
