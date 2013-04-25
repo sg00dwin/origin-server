@@ -145,7 +145,6 @@ Requires:  drupal6-image
 Requires:  drupal6-image_resize_filter
 Requires:  drupal6-imageapi
 Requires:  drupal6-imagecache
-
 Requires:  drupal6-imagecache_profiles
 Requires:  drupal6-imagefield
 Requires:  drupal6-insert
@@ -159,19 +158,21 @@ Requires:  drupal6-media_youku
 Requires:  drupal6-mediawiki_filter
 Requires:  drupal6-menu_block
 Requires:  drupal6-messaging
+Requires:  drupal6-memcache
 Requires:  drupal6-notifications
 Requires:  drupal6-node_import
 Requires:  drupal6-og
 Requires:  drupal6-openshift-custom_forms
 Requires:  drupal6-openshift-features-application_quickstarts
 Requires:  drupal6-openshift-features-blogs
+Requires:  drupal6-openshift-features-community_wiki
 Requires:  drupal6-openshift-features-forums
 Requires:  drupal6-openshift-features-front_page
 Requires:  drupal6-openshift-features-global_settings
+Requires:  drupal6-openshift-features-recent_activity_report
 Requires:  drupal6-openshift-features-reporting_csv_views
 Requires:  drupal6-openshift-features-rules_by_category
 Requires:  drupal6-openshift-features-user_profile
-Requires:  drupal6-openshift-features-recent_activity_report
 Requires:  drupal6-openshift-features-video
 Requires:  drupal6-openshift-modals
 Requires:  drupal6-openshift-og_comment_perms
@@ -185,6 +186,7 @@ Requires:  drupal6-pathauto
 Requires:  drupal6-path_redirect
 Requires:  drupal6-prepopulate
 Requires:  drupal6-rules
+Requires:  drupal6-semanticviews
 Requires:  drupal6-stringoverrides
 Requires:  drupal6-token
 Requires:  drupal6-user_badges
@@ -199,7 +201,6 @@ Requires:  drupal6-vote_up_down
 Requires:  drupal6-votingapi
 Requires:  drupal6-wikitools
 Requires:  drupal6-wysiwyg
-Requires:  drupal6-openshift-features-community_wiki
 Requires:  drupal6-clamav
 Requires:  drupal6-xmlsitemap
 
