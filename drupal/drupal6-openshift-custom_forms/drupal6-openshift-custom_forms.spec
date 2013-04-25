@@ -5,7 +5,7 @@
 %global modname             custom_forms
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.3.0
+Version: 1.3.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Forms for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Thu Apr 25 2013 Adam Miller <admiller@redhat.com> 1.3.1-1
+- bump_minor_versions for sprint XX (tdawson@redhat.com)
+
 * Mon Apr 08 2013 Adam Miller <admiller@redhat.com> 1.2.2-1
 - Admins should be able to edit email addresses in the community
   (ccoleman@redhat.com)
