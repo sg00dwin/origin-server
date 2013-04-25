@@ -5,7 +5,7 @@
 %global modname             rules_by_category
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.6.0
+Version: 1.6.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Rules by Category Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Thu Apr 25 2013 Adam Miller <admiller@redhat.com> 1.6.1-1
+- bump_minor_versions for sprint XX (tdawson@redhat.com)
+
 * Thu Apr 11 2013 Adam Miller <admiller@redhat.com> 1.5.2-1
 - Bug 909055 - Rule was calling a missing bit of code, never copied over from
   original Acquia instance (ccoleman@redhat.com)
