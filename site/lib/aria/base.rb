@@ -36,7 +36,7 @@ module Aria
 
       def rename_to_load(hash)
         return unless @rename_to_load
-        @rename_to_load.each_pair do |to, from|
+        @rename_to_load.each_pair do |from, to|
           old = hash[from]
           hash[to] = old unless old.nil?
           hash.delete(from)

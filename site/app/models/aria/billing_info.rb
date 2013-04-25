@@ -9,7 +9,8 @@ module Aria
               :zip,
               :first_name,
               :middle_initial,
-              :last_name
+              :last_name,
+              :email
     # Rails 3.0 requires all define_attribute_method calls to be together
 
     # Aria makes us explicitly unset values on update
@@ -95,12 +96,14 @@ module Aria
     def self.test(opts={})
       new({
         :first_name => 'Test',
+        :middle_initial => 'T',
         :last_name => 'User',
         :address1 => '12345 Happy Street',
         :city => 'Happyville',
         :country => 'US',
         :region => 'TX',
         :zip => '10001',
+        :email => 'foo@bar.com',
       }.merge(opts))
     end
 

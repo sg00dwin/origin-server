@@ -60,6 +60,14 @@ module Aria
       end
     end
 
+    def contact_info
+      @contact_info ||= begin
+        Aria::ContactInfo.from_account_details(account_details)
+      rescue AccountDoesNotExist
+        Aria::ContactInfo.new
+      end
+    end
+
     # A pay_method of 0 is "Other/None", 1 is "Credit Card"
     # This may need to be changed if we accept other payment methods
     def has_valid_payment_method?

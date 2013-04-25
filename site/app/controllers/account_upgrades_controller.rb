@@ -65,6 +65,9 @@ class AccountUpgradesController < ConsoleController
   def update
     user_params = params[:streamline_full_user]
     @billing_info = Aria::BillingInfo.new(user_params[:aria_billing_info], @aria_user.has_account?)
+    if not @aria_user.has_account? or @billing_info.email.blank?
+      @billing_info.email = @aria_user.email_address || @aria_user.load_email_address
+    end
     user = current_user
     @full_user = user.full_user
 
