@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.8.0
+Version: 1.8.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -236,6 +236,22 @@ fi
 
 
 %changelog
+* Thu Apr 25 2013 Adam Miller <admiller@redhat.com> 1.8.1-1
+- WIP: V2 Migrations (pmorie@gmail.com)
+- Creating fixer mechanism for replacing all ssh keys for an app
+  (abhgupta@redhat.com)
+- Merge pull request #1239 from danmcp/master
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1238 from jwhonce/wip/raw_envvar
+  (dmcphers+openshiftbot@redhat.com)
+- implementing install and post-install (dmcphers@redhat.com)
+- Card online_runtime_255 - Change environment variable files to be named KEY
+  and contain VALUE (jhonce@redhat.com)
+- Adding install and post setup steps (dmcphers@redhat.com)
+- Use require_relative in v2 migrations (pmorie@gmail.com)
+- WIP: V1 -> V2 migrations (pmorie@gmail.com)
+- bump_minor_versions for sprint XX (tdawson@redhat.com)
+
 * Fri Apr 12 2013 Adam Miller <admiller@redhat.com> 1.7.3-1
 - Call the ruby mcs label generator directly for speed. (rmillner@redhat.com)
 
