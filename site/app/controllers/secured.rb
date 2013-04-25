@@ -69,10 +69,11 @@ module Secured
                     :as => user
                   })
                  rescue => e
+                  puts e.inspect
                    logger.error "Unable to create an authorization: #{e.message} (#{e.class})\n  #{e.backtrace.join("\n  ")}"
                    Authorization.new.tap{ |a| 
                      a.errors[:base] = e.message 
-                     a.errors[:code] = e.response.code.to_i if e.response.present? && e.response.code.present?
+                     a.attributes[:server_unavailable] = true if e.is_a?(RestApi::ServerUnavailable)
                    }
                  end
           if auth.persisted?
@@ -83,7 +84,7 @@ module Secured
           else
             logger.debug "Authorization failed for #{user.login}, #{auth.errors.full_messages.join(', ')}"
             redirect_to logout_path(
-              :cause => auth.errors[:code] == [503] ? :server_unavailable : :expired,
+              :cause => auth.attributes[:server_unavailable] ? :server_unavailable : :expired,
               :then => url_for({:only_path => true}.merge(params))
             )
             false
