@@ -1,5 +1,5 @@
 @runtime
-@runtime4
+@runtime_extended1
 Feature: metrics Embedded Cartridge
 
   Scenario: CRUD metrics embedded cartridge 

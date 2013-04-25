@@ -510,10 +510,7 @@ service openshift-port-proxy restart
                 test_queues[0] << ["Extended Runtime Other Group 1", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended_other1 openshift-test/tests"]
                 test_queues[1] << ["Extended Runtime Other Group 2", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended_other2 openshift-test/tests"]
                 test_queues[2] << ["Extended Runtime Other Group 3", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended_other3 openshift-test/tests"]
-                test_queues[0] << ["Runtime Unit", "cd openshift-test/node; rake test"]
-                (1..4).each do |i|
-                  test_queues[3] << ["Runtime Other Group #{i.to_s}", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_other#{i.to_s} openshift-test/tests"]
-                end
+                test_queues[3] << ["Runtime Other Group 4", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_other4 openshift-test/tests"]
               when 'site'
                 test_queues[0] << ["Site Extended", "cd openshift-test/site; rake test:extended"]
               when 'rhc'
@@ -611,7 +608,9 @@ service openshift-port-proxy restart
               (1..4).each do |i|
                 test_queues[i-1] << ["Runtime Group #{i.to_s}", "cucumber #{CUCUMBER_OPTIONS} -t @runtime#{i.to_s} openshift-test/tests"]
               end
-              secondary_test_queues[0] << ["Runtime Other Group", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_other openshift-test/tests"]
+              (1..3).each do |i|
+                secondary_test_queues[i-1] << ["Runtime Other Group #{i.to_s}", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_other#{i.to_s} openshift-test/tests"]
+              end 
             end
 
             unless options.exclude_site?
@@ -656,7 +655,9 @@ service openshift-port-proxy restart
             
             ssh(hostname, "mkdir -p /var/lib/openshift/.settings; touch /var/lib/openshift/.settings/v2_cartridge_format; echo 'Rails.cache.clear' | /var/www/openshift/broker/script/rails console development && service rhc-broker restart")
             begin
+              puts "Running secondary tests..." 
               run_tests(secondary_test_queues, hostname)
+              puts "Done"
             ensure
               ssh(hostname, "mkdir -p /var/lib/openshift/.settings; rm -rf /var/lib/openshift/.settings/v2_cartridge_format; echo 'Rails.cache.clear' | /var/www/openshift/broker/script/rails console development && service rhc-broker restart")
             end

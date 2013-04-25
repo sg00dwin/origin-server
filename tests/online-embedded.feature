@@ -8,7 +8,6 @@ Feature: Embedded Cartridge Verification Tests
 
   Scenario: Embedded Usage
     Given the libra client tools
-    And an accepted node
     When 1 php-5.3 applications are created
     Then the applications should be accessible
 
@@ -30,7 +29,6 @@ Feature: Embedded Cartridge Verification Tests
 
   #Scenario: Jenkins Client Usage
   #  Given the libra client tools
-  #  And an accepted node
   #  When 1 jenkins-1.4 applications are created
   #  Then the applications should be accessible
   #  Given an existing jenkins-1.4 application without an embedded cartridge
