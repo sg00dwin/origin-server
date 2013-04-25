@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.8.0
+Version: 1.8.1
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -751,6 +751,29 @@ rm -rf /tmp/phantomjs
 /etc/openshift/development
 
 %changelog
+* Thu Apr 25 2013 Adam Miller <admiller@redhat.com> 1.8.1-1
+- Merge pull request #1249 from jwhonce/wip/raw_envvar
+  (dmcphers+openshiftbot@redhat.com)
+- Splitting up runtime_other tests (dmcphers@redhat.com)
+- exclude mongodb from epel (admiller@redhat.com)
+- Card online_runtime_255 - Change environment variable files to be named KEY
+  and contain VALUE (jhonce@redhat.com)
+- updating jenkins settings (dmcphers@redhat.com)
+- syncing jenkins jobs (dmcphers@redhat.com)
+- trello utility work (dmcphers@redhat.com)
+- Adding trello features (dmcphers@redhat.com)
+- Merge default_collection_group_id config setting, use dev value in tests.
+  Remove devenv purge of assets (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into
+  separate_config_from_environments (ccoleman@redhat.com)
+- Separate config from environments (ccoleman@redhat.com)
+- syncing jenkins jobs (dmcphers@redhat.com)
+- Merge pull request #1201 from jwhonce/bug/952619
+  (dmcphers+openshiftbot@redhat.com)
+- bump_minor_versions for sprint XX (tdawson@redhat.com)
+- Bug 952619 - Production and Devenv Node httpd.conf diverged
+  (jhonce@redhat.com)
+
 * Tue Apr 16 2013 Troy Dawson <tdawson@redhat.com> 1.7.8-1
 - Symlink drupal favicon into root drupal directory (ccoleman@redhat.com)
 - Merge pull request #1192 from smarterclayton/bug_952187_fix_error_documents
