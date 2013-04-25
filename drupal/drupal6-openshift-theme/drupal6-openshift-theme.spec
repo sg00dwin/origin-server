@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.16.0
+Version: 3.16.1
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,11 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Apr 25 2013 Adam Miller <admiller@redhat.com> 3.16.1-1
+- Update permissions, add content_author role, prepare for site IA changes
+  (ccoleman@redhat.com)
+- bump_minor_versions for sprint XX (tdawson@redhat.com)
+
 * Mon Apr 15 2013 Adam Miller <admiller@redhat.com> 3.15.4-1
 - Bug 952077 - drupal_urlencode encodes poorly for real websites
   (ccoleman@redhat.com)
