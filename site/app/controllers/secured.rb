@@ -69,11 +69,10 @@ module Secured
                     :as => user
                   })
                  rescue => e
-                  puts e.inspect
                    logger.error "Unable to create an authorization: #{e.message} (#{e.class})\n  #{e.backtrace.join("\n  ")}"
                    Authorization.new.tap{ |a| 
                      a.errors[:base] = e.message 
-                     a.attributes[:server_unavailable] = true if e.is_a?(RestApi::ServerUnavailable)
+                     a.attributes[:server_unavailable] = e.is_a?(RestApi::ServerUnavailable)
                    }
                  end
           if auth.persisted?
