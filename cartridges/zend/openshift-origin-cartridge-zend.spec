@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/v2/zend
 
 Name:    openshift-origin-cartridge-zend
-Version: 0.1.3
+Version: 0.1.4
 Release: 1%{?dist}
 Summary: Zend Server cartridge
 Group:   Development/Languages
@@ -71,6 +71,9 @@ sh %{cartridgedir}/versions/5.6/configuration/zend_configure_filesystem.sh
 
 
 %changelog
+* Thu Apr 25 2013 Dan McPherson <dmcphers@redhat.com> 0.1.4-1
+- 
+
 * Wed Apr 24 2013 Dan McPherson <dmcphers@redhat.com> 0.1.3-1
 - new package built with tito
 
