@@ -5,7 +5,7 @@
 %global modname             blogs
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.15.0
+Version: 1.15.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Blog Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Thu Apr 25 2013 Adam Miller <admiller@redhat.com> 1.15.1-1
+- bump_minor_versions for sprint XX (tdawson@redhat.com)
+
 * Thu Apr 11 2013 Adam Miller <admiller@redhat.com> 1.14.2-1
 - Limit the content the blogs feed can display for perf reasons
   (ccoleman@redhat.com)
