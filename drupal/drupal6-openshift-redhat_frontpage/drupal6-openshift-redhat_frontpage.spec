@@ -5,7 +5,7 @@
 %global modname             redhat_frontpage
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.7.3
+Version: 1.7.4
 Release: 1%{?dist}
 Summary: Openshift Red Hat Front Page Custom Module for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,10 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Thu Apr 25 2013 Adam Miller <admiller@redhat.com> 1.7.4-1
+- more clean up from the botched tag (admiller@redhat.com)
+- Drupal cache of twitter 7 days, instead of 1 hour (ccoleman@redhat.com)
+
 * Thu Apr 25 2013 Adam Miller <admiller@redhat.com>
 - Drupal cache of twitter 7 days, instead of 1 hour (ccoleman@redhat.com)
 
