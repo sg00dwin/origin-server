@@ -352,18 +352,18 @@ class AriaUnitTest < ActiveSupport::TestCase
   end
 
   test 'contact info should init from account details' do
-    attr = Aria::WDDX::Struct.new({'billing' => 'a', 'city' => 'Lund', 'address1' => '1 test', 'other' => '2', 'country' => 'SE', 'locality' => 'Scania', 'state_prov' => 'Invalid', 'alt_email' => 'foo@bar.com', 'mi' => 'Z' })
+    attr = Aria::WDDX::Struct.new({'billing' => 'a', 'city' => 'Lund', 'address1' => '1 test', 'other' => '2', 'country' => 'SE', 'locality' => 'Scania', 'state_prov' => 'Invalid', 'alt_email' => 'foo@bar.com', 'mi' => 'Z', 'postal_code' => '223344' })
     assert info = Aria::ContactInfo.from_account_details(attr)
     assert info.persisted?
     assert_equal 'Lund', info.city
     assert_equal 'Scania', info.region
-    assert_equal({'city' => 'Lund', 'address1' => '1 test', 'region' => 'Scania', 'country' => 'SE', 'email' => 'foo@bar.com', 'middle_initial' => 'Z'}, info.attributes)
-    assert_equal({'city' => 'Lund', 'address1' => '1 test', 'locality' => 'Scania', 'country' => 'SE', 'email' => 'foo@bar.com', 'mi' => 'Z'}, info.to_aria_attributes)
-    assert_equal({'city' => 'Lund', 'address1' => '1 test', 'locality' => 'Scania', 'country' => 'SE', 'state_prov' => '~', 'email' => 'foo@bar.com', 'middle_initial' => 'Z'}, info.to_aria_attributes('update'))
+    assert_equal({'city' => 'Lund', 'address1' => '1 test', 'region' => 'Scania', 'country' => 'SE', 'email' => 'foo@bar.com', 'middle_initial' => 'Z', 'zip' => '223344'}, info.attributes)
+    assert_equal({'city' => 'Lund', 'address1' => '1 test', 'locality' => 'Scania', 'country' => 'SE', 'email' => 'foo@bar.com', 'mi' => 'Z', 'postal_cd' => '223344'}, info.to_aria_attributes)
+    assert_equal({'city' => 'Lund', 'address1' => '1 test', 'locality' => 'Scania', 'country' => 'SE', 'state_prov' => '~', 'email' => 'foo@bar.com', 'middle_initial' => 'Z', 'postal_cd' => '223344'}, info.to_aria_attributes('update'))
 
     info.address2 = ""
-    assert_equal({'city' => 'Lund', 'address1' => '1 test', 'locality' => 'Scania', 'country' => 'SE', 'address2' => '', 'email' => 'foo@bar.com', 'mi' => 'Z'}, info.to_aria_attributes)
-    assert_equal({'city' => 'Lund', 'address1' => '1 test', 'locality' => 'Scania', 'country' => 'SE', 'address2' => '~', 'state_prov' => '~', 'email' => 'foo@bar.com', 'middle_initial' => 'Z'}, info.to_aria_attributes('update'))
+    assert_equal({'city' => 'Lund', 'address1' => '1 test', 'locality' => 'Scania', 'country' => 'SE', 'address2' => '', 'email' => 'foo@bar.com', 'mi' => 'Z', 'postal_cd' => '223344'}, info.to_aria_attributes)
+    assert_equal({'city' => 'Lund', 'address1' => '1 test', 'locality' => 'Scania', 'country' => 'SE', 'address2' => '~', 'state_prov' => '~', 'email' => 'foo@bar.com', 'middle_initial' => 'Z', 'postal_cd' => '223344'}, info.to_aria_attributes('update'))
   end
 
   test 'billing info should init from billing details' do

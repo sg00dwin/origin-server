@@ -64,8 +64,9 @@ class AccountUpgradesController < ConsoleController
 
   def update
     user_params = params[:streamline_full_user]
-    @billing_info = Aria::BillingInfo.new(user_params[:aria_billing_info], @aria_user.has_account?)
-    if not @aria_user.has_account? or @billing_info.email.blank?
+    has_aria_account = @aria_user.has_account?
+    @billing_info = Aria::BillingInfo.new(user_params[:aria_billing_info], has_aria_account)
+    if @billing_info.email.blank? or not has_aria_account
       @billing_info.email = @aria_user.email_address || @aria_user.load_email_address
     end
     user = current_user
@@ -90,10 +91,16 @@ class AccountUpgradesController < ConsoleController
     current_user_changed!
     process_async(:aria_user => current_user)
 
-    begin
-      render :edit and return unless @aria_user.create_account(:billing_info => @billing_info, :contact_info => @contact_info)
-    rescue Aria::AccountExists
+    if has_aria_account
+      # This is definitely an update scenario
       render :edit and return unless @aria_user.update_account(:billing_info => @billing_info)
+    else
+      # This may or may not be an update scenario; try creating first.
+      begin
+        render :edit and return unless @aria_user.create_account(:billing_info => @billing_info, :contact_info => @contact_info)
+      rescue Aria::AccountExists
+        render :edit and return unless @aria_user.update_account(:billing_info => @billing_info)
+      end
     end
 
     redirect_to account_plan_upgrade_payment_method_path and return unless @aria_user.has_valid_payment_method?
@@ -112,7 +119,7 @@ class AccountUpgradesController < ConsoleController
       @full_user = @aria_user.full_user
       if @full_user.persisted?
         @contact_info = Aria::ContactInfo.from_full_user(@full_user)
-        render :no_upgrade and return false unless @contact_info.country.nil? or @contact_info.country.blank? or Rails.configuration.allowed_countries.include?(@contact_info.country.to_sym)
+        render :no_upgrade and return false if @contact_info.country.blank? or not Rails.configuration.allowed_countries.include?(@contact_info.country.to_sym)
       end
     end
 

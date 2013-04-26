@@ -24,16 +24,18 @@ module Aria
     # 2) We create from streamline, and can't edit anything anyway
 
     # Do validate the country is allowed
-    validates_inclusion_of :country, :in => Rails.configuration.allowed_countries.map(&:to_s), :message => "Unsupported country #{:country}"
+    validates_inclusion_of :country, :in => Rails.configuration.allowed_countries.map(&:to_s), :message => "Unsupported country #{:country}", :allow_blank => true
 
     account_prefix :from => '',
                    :to => '',
                    :rename_to_save => {
+                     'zip' => 'postal_cd',
                      'middle_initial' => 'mi',
                    },
                    :rename_to_load => {
                      'alt_email' => 'email',
                      'mi' => 'middle_initial',
+                     'postal_code' => 'zip',
                    },
                    :no_rename_to_update => ['middle_initial'],
                    :no_prefix => []
