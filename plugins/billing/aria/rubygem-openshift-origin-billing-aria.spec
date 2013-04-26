@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.6.0
+Version: 1.6.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,13 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Thu Apr 25 2013 Adam Miller <admiller@redhat.com> 1.6.1-1
+- Add 'Operating Unit' field to billing email notifications.
+  (rpenta@redhat.com)
+- Update test user generation to add contact info (jliggitt@redhat.com)
+- Cleanup Plan history as a post sync operation (rpenta@redhat.com)
+- bump_minor_versions for sprint XX (tdawson@redhat.com)
+
 * Tue Apr 16 2013 Troy Dawson <tdawson@redhat.com> 1.5.5-1
 - Billing email notification changes: -Added generic Counter mongoid model that
   will provide atomic sequence numbers -Added GSS sku for plans -Separate email
