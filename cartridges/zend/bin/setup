@@ -1,6 +1,4 @@
-#!/bin/bash -e
-set -u
-set -x
+#!/bin/bash -eux
 
 case "$1" in
   -v|--version)
@@ -11,11 +9,6 @@ if [ "$version" != "5.6" ]
 then
     echo "Version \"$version\" not supported."
 fi
-
-#OPENSHIFT_ZEND_DIR="$OPENSHIFT_HOMEDIR/zend/"
-#export OPENSHIFT_ZEND_DIR
-
-echo "export OPENSHIFT_ZEND_VERSION='$version'" > "$OPENSHIFT_ZEND_DIR/env/OPENSHIFT_ZEND_VERSION"
 
 # Copy the version specific files up to zend directory
 shopt -s dotglob
@@ -28,7 +21,6 @@ cp $OPENSHIFT_ZEND_DIR/versions/$version/configuration/etc/conf/* $OPENSHIFT_ZEN
 #php.ini?
 
 cp -r $OPENSHIFT_ZEND_DIR/versions/$version/metadata/* $OPENSHIFT_ZEND_DIR/metadata
-cp -r $OPENSHIFT_ZEND_DIR/versions/$version/template/* $OPENSHIFT_ZEND_DIR/template
 
 mkdir -p $OPENSHIFT_ZEND_DIR/zend
 cp -r $OPENSHIFT_ZEND_DIR/versions/$version/configuration/user-files/* $OPENSHIFT_ZEND_DIR/zend/
@@ -50,14 +42,3 @@ cp -r $OPENSHIFT_ZEND_DIR/versions/$version/configuration/user-files/* $OPENSHIF
 # Create additional directories required by ZEND
 mkdir -p $OPENSHIFT_ZEND_DIR/phplib/pear/{docs,ext,php,cache,cfg,data,download,temp,tests,www}
 mkdir -p $OPENSHIFT_ZEND_DIR/{logs,run,tmp,sessions}
-
-# FIXME: delete ~/zend/modules;
-# /usr/lib64/httpd/modules/ vs. /usr/local/zend/gui/lighttpd/lib/
-ln -s /usr/lib64/httpd/modules $OPENSHIFT_ZEND_DIR/modules
-ln -s /etc/httpd/conf/magic $OPENSHIFT_ZEND_DIR/conf/magic
-
-# Pear setup
-rm -f $OPENSHIFT_HOMEDIR/.pearrc
-pear config-create "$OPENSHIFT_ZEND_DIR"/phplib/pear/ "$OPENSHIFT_HOMEDIR"/.pearrc
-pear -c "$OPENSHIFT_HOMEDIR"/.pearrc config-set php_ini "$OPENSHIFT_ZEND_DIR"/versions/shared/configuration/etc/conf/php.ini
-pear -c "$OPENSHIFT_HOMEDIR"/.pearrc config-set auto_discover 1

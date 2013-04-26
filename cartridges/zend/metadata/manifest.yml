@@ -94,3 +94,4 @@ Endpoints:
     Mappings:
       - Frontend:      "/ZendServer"
         Backend:       "/ZendServer"
+Install-Build-Required: false
