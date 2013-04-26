@@ -1,0 +1,98 @@
+#!/usr/bin/oo-ruby
+
+#
+# Fix stale frontend configurations (names for which the gear has been removed).
+#
+
+require 'rubygems'
+require 'openshift-origin-node'
+
+$errors = []
+def with_track_errors
+  begin
+    yield
+  rescue => e
+    $errors << e
+  end
+end
+
+errors = []
+fqdns = ARGV.map { |n| n.strip.downcase }
+
+if fqdns.empty?
+   $stdout.puts "Usage: #{$0} name name name ..."
+   exit(0)
+end
+
+$stdout.puts("Deleting names and any associated aliases from the frontend:")
+$stdout.puts("\t#{fqdns.join("\n\t")}")
+
+$stdout.puts("Hit 'y' to continue, anything else to abort.")
+resp = $stdin.gets
+if not resp.nil?
+  resp.strip!
+  if resp != 'y'
+    $stdout.puts("Aborting")
+    exit(0)
+  end
+end
+
+with_track_errors do
+  $stdout.puts("Deleting from ApacheDBNodes...")
+  OpenShift::ApacheDBNodes.open(OpenShift::ApacheDBNodes::WRCREAT) do |d|
+    d.delete_if { |k, v| fqdns.include?(k.split('/')[0]) }
+  end
+end
+
+with_track_errors do
+  $stdout.puts("Deleting from ApacheDBAliases...")
+  OpenShift::ApacheDBAliases.open(OpenShift::ApacheDBAliases::WRCREAT) do |d| 
+    d.delete_if { |k, v| fqdns.include?(v) }
+  end
+end
+
+with_track_errors do
+  $stdout.puts("Deleting from ApacheDBIdler...")
+  OpenShift::ApacheDBIdler.open(OpenShift::ApacheDBIdler::WRCREAT) do |d|
+    d.delete_if { |k, v| fqdns.include?(k) }
+  end
+end
+
+with_track_errors do
+  $stdout.puts("Deleting from ApacheDBSTS...")
+  OpenShift::ApacheDBSTS.open(OpenShift::ApacheDBSTS::WRCREAT) do |d|
+    d.delete_if { |k, v| fqdns.include?(k) }
+  end
+end
+
+with_track_errors do
+  $stdout.puts("Deleting from NodeJSDBRoutes...")
+  OpenShift::NodeJSDBRoutes.open(OpenShift::NodeJSDBRoutes::WRCREAT) do |d|
+    d.delete_if { |k, v| fqdns.include?(k) }
+    d.delete_if { |k, v| fqdns.include?(v["alias"]) }
+  end
+end
+
+# This module doesn't exist on INT/PROD yet
+if defined?(OpenShift::GearDB)
+  with_track_errors do
+    $stdout.puts("Deleting from GearDB...")
+    OpenShift::GearDB.open(OpenShift::GearDB::WRCREAT) do |d|
+      d.delete_if { |k, v| fqdns.include?(v["fqdn"]) }
+    end
+  end
+end
+
+$stdout.puts("Done")
+
+if not $errors.empty?
+  $stderr.puts("Errors during run:")
+  $errors.each do |e|
+    $stderr.puts("------------------------------")
+    $stderr.puts("#{e}")
+    $stderr.puts("\t#{e.backtrace.join("\n\t")}")
+  end
+  exit(1)
+end
+
+exit(0)
