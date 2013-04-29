@@ -29,10 +29,10 @@ require_relative "migrate-v2-mysql-5.1"
 require_relative "migrate-v2-phpmyadmin-3.4"
 require_relative "migrate-v2-postgresql-8.4"
 
-require 'openshift-origin-node/utils/sdk'
 require 'openshift-origin-node/model/cartridge_repository'
-require 'openshift-origin-node/utils/cgroups'
 require 'openshift-origin-node/model/unix_user'
+require 'openshift-origin-node/utils/sdk'
+require 'openshift-origin-node/utils/cgroups'
 require 'openshift-origin-common'
 
 module OpenShift
@@ -147,7 +147,7 @@ module OpenShiftMigration
         state  = OpenShift::Utils::ApplicationState.new(uuid)
         user   = OpenShift::UnixUser.from_uuid(uuid)
 
-        output << "Creating V2 stop_lock"
+        output << "Creating V2 stop_lock\n"
 
         cart_model = OpenShift::V2MigrationCartridgeModel.new(config, user, state)
         cart_model.create_stop_lock
@@ -155,7 +155,7 @@ module OpenShiftMigration
         output << "V1 stop lock not detected\n"
       end
 
-      output << progress.mark_complete('detect_v1_stop_lock')
+      output << progress.mark_complete('migrate_stop_lock')
     end
 
     output
@@ -219,7 +219,7 @@ module OpenShiftMigration
 
     if progress.incomplete? 'typeless_translated_vars'
       blacklist = %w(OPENSHIFT_GEAR_CTL_SCRIPT OPENSHIFT_GEAR_TYPE)
-
+      user = OpenShift::UnixUser.from_uuid(uuid)
       vars_file = File.join(gear_home, '.env', 'TYPELESS_TRANSLATED_VARS')
 
       if File.exists?(vars_file)
@@ -236,9 +236,9 @@ module OpenShiftMigration
 
             IO.write(env_var_file, value)
 
-            mcs_label = Utils::SELinux.get_mcs_label(uuid)
-            PathUtils.oo_chown(0, gid, env_var_file)
-            Utils::SELinux.set_mcs_label(mcs_label, filename)
+            mcs_label = OpenShift::Utils::SELinux.get_mcs_label(uuid)
+            PathUtils.oo_chown(0, user.gid, env_var_file)
+            OpenShift::Utils::SELinux.set_mcs_label(mcs_label, env_var_file)
           end
         end
       end
