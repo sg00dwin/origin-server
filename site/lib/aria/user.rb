@@ -10,9 +10,14 @@ module Aria
     end
 
     def has_account?
-      acct_no.present?
-    rescue AccountDoesNotExist
-      false
+      if @has_account.nil?
+        @has_account = begin
+          acct_no.present?
+        rescue AccountDoesNotExist
+          false
+        end
+      end
+      @has_account
     end
 
     def create_session
@@ -269,8 +274,10 @@ module Aria
       params['client_coll_acct_group_ids'] = Aria::User.collections_acct_group_id(params['bill_country'])
 
       Aria.create_acct_complete(params)
+      clear_cache!
       true
     rescue Aria::AccountExists
+      clear_cache!
       raise
     rescue Aria::Error => e
       errors.add(:base, e.to_s)
@@ -308,7 +315,7 @@ module Aria
     end
 
     def clear_cache!
-      (instance_variables - [:@delegate_sd_obj, :@acct_no]).each{ |s| remove_instance_variable(s) }
+      (instance_variables - [:@delegate_sd_obj, :@acct_no, :@mocha]).each{ |s| remove_instance_variable(s) }
     end
 
     private
