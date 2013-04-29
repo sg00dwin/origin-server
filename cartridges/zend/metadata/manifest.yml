@@ -87,6 +87,9 @@ Endpoints:
     Mappings:
       - Frontend:      ""
         Backend:       ""
+      - Frontend:      "/health"
+        Backend:       ""
+        Options:       { health: true }
   - Private-IP-Name:   IP
     Private-Port-Name: ZEND_PORT
     Private-Port:      16083
