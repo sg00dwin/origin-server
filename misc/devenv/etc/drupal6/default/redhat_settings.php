@@ -25,4 +25,11 @@ $streamline_host = 'https://streamline-proxy1.ops.rhcloud.com';
 $conf['redhat_sso_login_url'] = $streamline_host . '/wapps/streamline/login.html';
 $conf['redhat_user_info_url'] = $streamline_host . '/wapps/streamline/userInfo.html';
 $conf['redhat_user_info_secret_key'] = 'sw33tl1Qu0r';
+
+# Enable memcached for devenv
+$conf['memcache_servers'] = array(
+  '127.0.0.1:11211' => 'default',
+  '127.0.0.1:11212' => 'default'
+);
+$conf['cache_inc'] ='sites/all/modules/memcache/memcache.inc';
 ?>
