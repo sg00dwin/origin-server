@@ -37,19 +37,28 @@ module Aria
                      'mi' => 'middle_initial',
                      'postal_code' => 'zip',
                    },
-                   :no_rename_to_update => ['middle_initial'],
+                   :rename_to_update => {
+                     'zip' => 'postal_cd',
+                   },
                    :no_prefix => []
 
     class << self
-      def rename_to_save(hash, action='save')
-        super(hash, action)
+      def rename_to_save(hash)
+        super(hash)
 
         (region_set_key, region_clear_key) = @@region_save_map[hash['country']]
         hash[region_set_key] = hash.delete('region')
-        hash[region_clear_key] = '~' if action == 'update'
+      end
+
+      def rename_to_update(hash)
+        super(hash)
+
+        (region_set_key, region_clear_key) = @@region_save_map[hash['country']]
+        hash[region_set_key] = hash.delete('region')
+        hash[region_clear_key] = '~'
 
         # Explicitly nil empty string fields within Aria
-        @@nullable.each {|n| hash[n.to_s] = "~" if hash[n.to_s] == "" } if action == 'update'
+        @@nullable.each {|n| hash[n.to_s] = "~" if hash[n.to_s] == "" }
       end
 
       def rename_to_load(hash)
@@ -68,6 +77,7 @@ module Aria
         attributes['email'] = begin
           full_user.email_address || full_user.load_email_address
         rescue
+          Rails.logger.warn("Streamline::FullUser#load_email_address failed")
         end
         new(attributes)
       end

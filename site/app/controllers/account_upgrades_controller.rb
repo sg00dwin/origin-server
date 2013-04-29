@@ -64,11 +64,9 @@ class AccountUpgradesController < ConsoleController
 
   def update
     user_params = params[:streamline_full_user]
-    has_aria_account = @aria_user.has_account?
-    @billing_info = Aria::BillingInfo.new(user_params[:aria_billing_info], has_aria_account)
-    if @billing_info.email.blank? or not has_aria_account
-      @billing_info.email = @aria_user.email_address || @aria_user.load_email_address
-    end
+    @billing_info = Aria::BillingInfo.new(user_params[:aria_billing_info], @aria_user.has_account?)
+    @billing_info.email = @aria_user.email_address || @aria_user.load_email_address
+
     user = current_user
     @full_user = user.full_user
 
@@ -91,7 +89,7 @@ class AccountUpgradesController < ConsoleController
     current_user_changed!
     process_async(:aria_user => current_user)
 
-    if has_aria_account
+    if @aria_user.has_account?
       # This is definitely an update scenario
       render :edit and return unless @aria_user.update_account(:billing_info => @billing_info)
     else
