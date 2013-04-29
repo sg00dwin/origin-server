@@ -5,8 +5,14 @@ case "$1" in
     version="$2"
 esac
 
-echo "export OPENSHIFT_ZEND_VERSION='$version'" > "$OPENSHIFT_ZEND_DIR/env/OPENSHIFT_ZEND_VERSION"
+if [ "$version" != "5.6" ]
+then
+    echo "Version \"$version\" not supported."
+fi
 
+echo "$version" > "$OPENSHIFT_ZEND_DIR/env/OPENSHIFT_ZEND_VERSION"
+
+shopt -s dotglob
 cp -r $OPENSHIFT_ZEND_DIR/versions/$version/template/* $OPENSHIFT_ZEND_DIR/template
 
 # FIXME: delete ~/zend/modules;
@@ -19,3 +25,29 @@ rm -f $OPENSHIFT_HOMEDIR/.pearrc
 pear config-create "$OPENSHIFT_ZEND_DIR"/phplib/pear/ "$OPENSHIFT_HOMEDIR"/.pearrc
 pear -c "$OPENSHIFT_HOMEDIR"/.pearrc config-set php_ini "$OPENSHIFT_ZEND_DIR"/versions/shared/configuration/etc/conf/php.ini
 pear -c "$OPENSHIFT_HOMEDIR"/.pearrc config-set auto_discover 1
+
+# Configure Zend specific files
+
+# PAM /sandbox dir
+zend_sandbox="/sandbox/zend"
+
+paths=(
+"etc"
+"tmp"
+"var"
+"gui/lighttpd/etc"
+"gui/lighttpd/logs"
+"gui/lighttpd/tmp"
+"gui/application/data"
+)
+
+# Symlinks the above paths in /sandbox to cartridge directory in the gear
+for path in ${paths[*]}; do
+    zpath=$zend_sandbox/$path
+    zdir=`dirname $zpath`
+    zfile=`basename $zpath`
+    [ -d "$zdir" ]  ||  mkdir -p $zdir
+    ln -s $OPENSHIFT_ZEND_DIR/$path $zdir/$zfile
+    #chown -R $OPENSHIFT_GEAR_UUID:$OPENSHIFT_GEAR_UUID $zpath
+done
+#

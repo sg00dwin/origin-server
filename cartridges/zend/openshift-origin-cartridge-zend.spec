@@ -53,7 +53,7 @@ rm -rf %{buildroot}
 %{_sbindir}/oo-admin-cartridge --action install --offline --source %{cartridgedir}
 #this copies over files in zend server rpm install that do not work in openshift 
 cp -rf %{cartridgedir}/versions/5.6/configuration/shared-files/usr/local/zend/* /usr/local/zend/
-sh %{cartridgedir}/versions/5.6/configuration/zend_configure_filesystem.sh
+sh %{cartridgedir}/versions/5.6/rpm/zend_configure_filesystem.sh
 
 
 %files
