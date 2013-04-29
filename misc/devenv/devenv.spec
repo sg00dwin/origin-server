@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.8.1
+Version: 1.8.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -752,6 +752,10 @@ rm -rf /tmp/phantomjs
 /etc/openshift/development
 
 %changelog
+* Mon Apr 29 2013 Adam Miller <admiller@redhat.com> 1.8.2-1
+- Add memcached support for Drupal in devenv and semanticviews module
+  (ccoleman@redhat.com)
+
 * Thu Apr 25 2013 Adam Miller <admiller@redhat.com> 1.8.1-1
 - Merge pull request #1249 from jwhonce/wip/raw_envvar
   (dmcphers+openshiftbot@redhat.com)
