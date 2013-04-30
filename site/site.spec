@@ -185,7 +185,6 @@ fi
 %defattr(0640,root,libra_user,0750)
 %{sitedir}
 %{htmldir}/app
-%config(noreplace) %{sitedir}/config/environments/production.rb
 %config(noreplace) %{sitedir}/app/subsites/status/config/hosts.yml
 %config(noreplace) /etc/openshift/console.conf
 %config /etc/openshift/console-devenv.conf
