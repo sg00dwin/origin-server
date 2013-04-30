@@ -67,41 +67,42 @@ Broker::Application.configure do
           'subaccounts' => false,
           'max_gears' => 16,
           'gear_sizes' => ["small", "medium"],
-          'max_storage_per_gear' => 30, # 30GB
+          'max_untracked_addtl_storage_per_gear' => 5, # 5GB
+          'max_tracked_addtl_storage_per_gear' => 0, # 0GB
           'plan_upgrade_enabled' => true,
           'private_ssl_certificates' => true
         },
         :usage_rates => {
           :gear => { 
-                    :small => { 
-                               :usd => 0.05, #$/hr
-                               :cad => 0.05,
-                               :eur => 0.04,
-                               :duration => :hour
-                              },
-                    :medium => {
-                                :usd => 0.12, #$/hr
-                                :cad => 0.12,
-                                :eur => 0.09,
-                                :duration => :hour
-                               }
-                   },
+            :small => { 
+              :usd => conf.get("SILVER_PLAN_RATE_GEAR_SMALL_USD", "").to_f, #$/hr
+              :cad => conf.get("SILVER_PLAN_RATE_GEAR_SMALL_CAD", "").to_f,
+              :eur => conf.get("SILVER_PLAN_RATE_GEAR_SMALL_EUR", "").to_f,
+              :duration => conf.get("SILVER_PLAN_RATE_GEAR_SMALL_DURATION", "").to_sym
+            },
+            :medium => {
+              :usd => conf.get("SILVER_PLAN_RATE_GEAR_MEDIUM_USD", "").to_f, #$/hr
+              :cad => conf.get("SILVER_PLAN_RATE_GEAR_MEDIUM_CAD", "").to_f,
+              :eur => conf.get("SILVER_PLAN_RATE_GEAR_MEDIUM_EUR", "").to_f,
+              :duration => conf.get("SILVER_PLAN_RATE_GEAR_MEDIUM_DURATION", "").to_sym
+            }
+          },
           :storage => {
-                       :gigabyte => {
-                                     :usd => 1.00, #$/month
-                                     :cad => 1.00,
-                                     :eur => 1.00,
-                                     :duration => :month
-                                    }
-                      },
+            :gigabyte => {
+              :usd => conf.get("SILVER_PLAN_RATE_STORAGE_GB_USD", "").to_f, #$/month
+              :cad => conf.get("SILVER_PLAN_RATE_STORAGE_GB_CAD", "").to_f,
+              :eur => conf.get("SILVER_PLAN_RATE_STORAGE_GB_EUR", "").to_f,
+              :duration => conf.get("SILVER_PLAN_RATE_STORAGE_GB_DURATION", "").to_sym
+            }
+          },
           :cartridge => {
-                         :'jbosseap-6.0' => {
-                                             :usd => 0.03, #$/hr
-                                             :cad => 0.03,
-                                             :eur => 0.02,
-                                             :duration => :hour
-                                            }
-                        }
+            :'jbosseap-6.0' => {
+              :usd => conf.get("SILVER_PLAN_RATE_CARTRIDGE_JBOSS_EAP6_USD", "").to_f, #$/hr
+              :cad => conf.get("SILVER_PLAN_RATE_CARTRIDGE_JBOSS_EAP6_CAD", "").to_f,
+              :eur => conf.get("SILVER_PLAN_RATE_CARTRIDGE_JBOSS_EAP6_EUR", "").to_f,
+              :duration => conf.get("SILVER_PLAN_RATE_CARTRIDGE_JBOSS_EAP6_DURATION", "").to_sym
+            }
+          }
         }
       }
     }

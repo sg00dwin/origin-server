@@ -14,7 +14,8 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     @user_id = cu._id
     cu.plan_id = "silver"
     user_capabilities = cu.get_capabilities
-    user_capabilities['max_storage_per_gear'] = 20
+    user_capabilities['max_untracked_addtl_storage_per_gear'] = 5
+    user_capabilities['max_tracked_addtl_storage_per_gear'] = 5
     cu.set_capabilities(user_capabilities)
     cu.save!
     Lock.create_lock(cu)
@@ -75,18 +76,33 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
       assert_equal(UsageRecord::EVENTS[:continue], usage_records[0].event)
     end
     
-    # Add fs storage
+    # Add untracked fs storage
     app = Application.find_by(name: @appname, domain: @domain)
     component_instance = app.component_instances.find_by(cartridge_name: 'php-5.3')
-    app.update_component_limits(component_instance, 1, 1, 5)
+    app.update_component_limits(component_instance, 1, 1, 4)
     group_instance = app.group_instances.find_by(_id: component_instance.group_instance_id)
-    assert_equal(5, group_instance.addtl_fs_gb)
+    assert_equal(4, group_instance.addtl_fs_gb)
+
+    usage_records = []
+    UsageRecord.where(user_id: @user_id).each { |rec| usage_records << rec }
+    assert_equal(1, usage_records.length)
+    assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[0].usage_type)
+    assert_equal('small', usage_records[0].gear_size)
+    assert_equal(UsageRecord::EVENTS[:continue], usage_records[0].event)
+
+    # Add tracked fs storage
+    app = Application.find_by(name: @appname, domain: @domain)
+    component_instance = app.component_instances.find_by(cartridge_name: 'php-5.3')
+    app.update_component_limits(component_instance, 1, 1, 8)
+    group_instance = app.group_instances.find_by(_id: component_instance.group_instance_id)
+    assert_equal(8, group_instance.addtl_fs_gb)
 
     usage_records = []
     UsageRecord.where(user_id: @user_id).asc(:usage_type).each { |rec| usage_records << rec }
     assert_equal(2, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:begin], usage_records[0].event)
+    assert_equal(3, usage_records[0].addtl_fs_gb)
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[1].usage_type)
     assert_equal(UsageRecord::EVENTS[:continue], usage_records[1].event)
 
@@ -98,10 +114,11 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     assert_equal(2, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:continue], usage_records[0].event)
+    assert_equal(3, usage_records[0].addtl_fs_gb)
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[1].usage_type)
     assert_equal(UsageRecord::EVENTS[:continue], usage_records[1].event)
 
-    # Remove fs storage
+    # Remove tracked fs storage
     app = Application.find_by(name: @appname, domain: @domain)
     component_instance = app.component_instances.find_by(cartridge_name: 'php-5.3')
     app.update_component_limits(component_instance, 1, 1, 0)
@@ -113,6 +130,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     assert_equal(3, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:continue], usage_records[0].event)
+    assert_equal(3, usage_records[0].addtl_fs_gb)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[1].usage_type)
     assert_equal(UsageRecord::EVENTS[:end], usage_records[1].event)
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[2].usage_type)
@@ -127,18 +145,19 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:continue], usage_records[0].event)
 
-    # Add fs storage back to test removal with gear
+    # Add tracked fs storage back to test removal with gear
     app = Application.find_by(name: @appname, domain: @domain)
     component_instance = app.component_instances.find_by(cartridge_name: 'php-5.3')
-    app.update_component_limits(component_instance, 1, 1, 5)
+    app.update_component_limits(component_instance, 1, 1, 8)
     group_instance = app.group_instances.find_by(_id: component_instance.group_instance_id)
-    assert_equal(5, group_instance.addtl_fs_gb)
+    assert_equal(8, group_instance.addtl_fs_gb)
     
     usage_records = []
     UsageRecord.where(user_id: @user_id).asc(:usage_type).each { |rec| usage_records << rec }
     assert_equal(2, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:begin], usage_records[0].event)
+    assert_equal(3, usage_records[0].addtl_fs_gb)
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[1].usage_type)
     assert_equal(UsageRecord::EVENTS[:continue], usage_records[1].event)
     
@@ -151,6 +170,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     assert_equal(4, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:begin], usage_records[0].event)
+    assert_equal(3, usage_records[0].addtl_fs_gb)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[1].usage_type)
     assert_equal(UsageRecord::EVENTS[:end], usage_records[1].event)
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[2].usage_type)
