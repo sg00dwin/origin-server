@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.8.2
+Version: 1.8.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -752,6 +752,15 @@ rm -rf /tmp/phantomjs
 /etc/openshift/development
 
 %changelog
+* Tue Apr 30 2013 Adam Miller <admiller@redhat.com> 1.8.3-1
+- Merge pull request #1266 from pravisankar/dev/ravi/new-card559
+  (dmcphers+openshiftbot@redhat.com)
+- Removed 'max_storage_per_gear' capability for Silver plan Added
+  'max_untracked_addtl_storage_per_gear=5' and
+  'max_tracked_addtl_storage_per_gear=0' capabilities for Silver plan. Fixed
+  unit tests and models to accommodate the above change. Added migration script
+  for existing users Fixed devenv spec Fix migration script (rpenta@redhat.com)
+
 * Mon Apr 29 2013 Adam Miller <admiller@redhat.com> 1.8.2-1
 - Add memcached support for Drupal in devenv and semanticviews module
   (ccoleman@redhat.com)
