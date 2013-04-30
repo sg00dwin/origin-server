@@ -10,8 +10,7 @@
     %aside
       .sidebar
         - unless @user_on_basic_plan
-          %h4 For Account Assistance
-          %p Submit a question regarding your account
+          %h4 For Customer Service
           = render :partial => 'contact', :locals => {:user => @user, :user_on_basic_plan => @user_on_basic_plan}
 
           %h4 For Technical Support
