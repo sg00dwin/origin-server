@@ -42,7 +42,7 @@ Broker::Application.configure do
   ############################################
   config.dns = {
     :zone => "rhcloud.com",
-    :dynect_customer_name => "demo-redhat",
+    :dynect_customer_name => "redhat",
     :dynect_user_name => "dev-rhcloud-user",
     :dynect_password => "vo8zaijoN7Aecoo",
     :dynect_url => "https://api2.dynect.net"
