@@ -1,6 +1,6 @@
 require 'open4'
 require 'openshift-origin-node/utils/selinux'
-require 'openshift-origin-node/utils/path_utils'
+require 'openshift-origin-common/utils/path_utils'
 
 module OpenShiftMigration
   module Util
@@ -156,7 +156,7 @@ module OpenShiftMigration
 
     # Move a list of environment variables from the gear environment 
     # to a cartridge environment
-    def self.move_gear_env_var_to_cart(homedir, cartridge_name, *vars)
+    def self.move_gear_env_var_to_cart(homedir, cartridge_name, vars)
       output = ''
 
       gear_env = File.join(homedir, '.env')
@@ -186,23 +186,26 @@ module OpenShiftMigration
     def self.move_directory_between_carts(user, 
                                           old_cartridge_name, 
                                           new_cartridge_name, 
-                                          *directories)
+                                          directories)
       output = ''
 
       directories.each do |directory|
-        next if !File.directory?(File.join(user.homedir, old_cartridge_name, directory))
+        if !File.directory?(File.join(user.homedir, old_cartridge_name, directory))
+          output << "Skipping #{directory} because it is not a directory\n"
+          next
+        end
 
-        output << "Moving contents of #{old_cartridge_name}/#{directory} to #{new_cartridge_name}/#{directory}"
+        output << "Moving contents of #{old_cartridge_name}/#{directory} to #{new_cartridge_name}/#{directory}\n"
 
         target_directory = File.join(user.homedir, new_cartridge_name, directory)
 
         Dir.glob(File.join(user.homedir, old_cartridge_name, directory, '*')).each do |entry|
+          output << " Moving #{entry}\n"
           target = File.join(target_directory, File.basename(entry))
           FileUtils.mv(entry, target, force: true)
         end
 
         make_user_owned(target_directory, user)
-
       end
         
       output

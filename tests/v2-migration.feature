@@ -2,9 +2,9 @@
 Feature: V2 Migrations for V1 apps
   Scenario: PHP app migration
     Given a new client created php-5.3 application
-    And the application has a USER_VARS env file
-    And the application has a TYPELESS_TRANSLATED_VARS env file
-    And the application has a TRANSLATE_GEAR_VARS env file
+    Given the application has a USER_VARS env file
+    Given the application has a TYPELESS_TRANSLATED_VARS env file
+    Given the application has a TRANSLATE_GEAR_VARS env file
     Then the application should be accessible
 
     When the application is migrated to the v2 cartridge system

@@ -165,7 +165,9 @@ module OpenShiftMigration
     output = ''
 
     if progress.incomplete? 'stop_gear'
-      OpenShift::ApplicationContainer.from_uuid(uuid).stop_gear(user_initiated: false)
+      container = OpenShift::ApplicationContainer.from_uuid(uuid)
+      container.stop_gear(user_initiated: false)
+      container.force_stop
       output << progress.mark_complete('stop_gear')
     end
 
@@ -330,11 +332,9 @@ module OpenShiftMigration
             output << progress.mark_complete("#{name}_setup")
           end
 
-          cart_model.process_erb_templates(c.directory)
-
-          if progress.incomplete? "#{name}_install"
-            output << cart_model.cartridge_action(c, 'install', version, true)
-            output << progress.mark_complete("#{name}_install")
+          if progress.incomplete? "#{name}_erb"
+            cart_model.process_erb_templates(c.directory)
+            output << progress.mark_complete("#{name}_erb")
           end
 
           if progress.incomplete? "#{name}_hook"

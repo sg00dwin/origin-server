@@ -62,11 +62,11 @@ module MCollective
         output = ""
         exitcode = 0
         begin
-          require "#{File.dirname(__FILE__)}/../lib/migrate-v2"
+          require_relative "../lib/migrate-v2"
           output, exitcode = OpenShiftMigration::migrate(uuid, namespace, version)
         rescue LoadError => e
           exitcode = 127
-          output += "Migrate not supported.\n"
+          output += "Migrate not supported. #{e.message} #{e.backtrace}\n"
         rescue Exception => e
           exitcode = 1
           output += "Gear failed to migrate with exception: #{e.message}\n#{e.backtrace}\n"
