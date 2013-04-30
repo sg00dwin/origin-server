@@ -56,7 +56,7 @@ Broker::Application.configure do
           'subaccounts' => false,
           'max_gears' => 3,
           'gear_sizes' => ["small"],
-          'plan_upgrade_enabled' => true
+          'plan_upgrade_enabled' => conf.get_bool("BILLING_PROVIDER_FREE_PLAN_UPGRADE_ENABLED", "false")
         }
       },
       :silver => {
