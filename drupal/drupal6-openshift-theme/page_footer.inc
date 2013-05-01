@@ -52,7 +52,7 @@
       <section id="copyright">
         <div class="container">
           <a href="https://www.redhat.com/">
-            <img src="<?php print $openshift_server_url; ?>/app/assets/redhat.png" alt="Red Hat">
+            <img src="<?php print openshift_assets_url(); ?>/redhat.png" alt="Red Hat">
           </a>
           <div class="pull-right"><?php print $footer_message; ?></div>
         </div>
@@ -63,13 +63,13 @@
 	<script type='text/javascript' src='https://www.redhat.com/j/elqNow/elqImg.js'></script>
 	<!-- End Eloqua Tracking -->
 	<!-- Begin Google Analytics Tracking -->
-	<script type="text/javascript" src="<?php print $openshift_server_url; ?>/app/assets/site/tracking.js"></script>
+	<script type="text/javascript" src="<?php print openshift_assets_url(); ?>/site/tracking.js"></script>
 	<!-- End Google Analytics Tracking -->
     <!-- SiteCatalyst code version: H.23.3.
     Copyright 1996-2011 Adobe, Inc. All Rights Reserved
     More info available at http://www.omniture.com -->
     <div id="oTags">
-    <script type="text/javascript" src="<?php print $openshift_server_url; ?>/app/assets/site/s_code.js"></script>
+    <script type="text/javascript" src="<?php print openshift_assets_url(); ?>/site/s_code.js"></script>
     <script language="JavaScript" type="text/javascript"><!--
     /* You may give each page an identifying name, server, and channel on
     the next lines. */

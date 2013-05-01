@@ -468,6 +468,10 @@ function openshift_server_url() {
   return redhat_sso_server_url();
 }
 
+function openshift_assets_url() {
+  return variable_get('openshift_assets_url', openshift_server_url() . "/app/assets");
+}
+
 function openshift_button($element) {
   // Make sure not to overwrite classes.
   $id = $element['#id'];
