@@ -1,9 +1,9 @@
 = semantic_form_for @post, :url => 'contact', :simple => true, :html => {:id => 'new_user_form', :class => ''} do |form|
+  %p Submit a question regarding your account
   = form.inputs do
     = form.input :from, :as => :hidden, :value => @user.login
     = form.input :subject, :as => :string, :input_html => { :placeholder => 'General Question (Subject)', :class => 'span4' }
     = form.input :body, :as => :text, :input_html => { :placeholder => "How can we help you?", :class => 'span4', :rows => 3 }
     .form-actions
       = form.commit_button 'Send', :button_html => {:class => 'btn btn-primary btn-block-phone btn-small'}
-  or email us at:
-  %a{:href => "mailto:openshift+accounts@redhat.com"} openshift+accounts@redhat.com
+  or contact #{link_to "Customer Service", contact_customer_support_url, :class => 'external'}.

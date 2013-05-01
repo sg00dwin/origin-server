@@ -52,10 +52,7 @@ Rails.application.config.tap do |config|
   #config.disable_dynamic_country_form = true
 
   # Account Support contact
-  config.acct_help_mail_to = Console.config.env(:ACCOUNT_HELP_MAIL_ADDRESS, 'os.accounts@redhat.com')
-
-  # Customer Support Links
-  config.customer_support_new_ticket_url = 'https://access.redhat.com/support/cases/new/'  
+  config.acct_help_mail_to = Console.config.env(:ACCOUNT_HELP_MAIL_ADDRESS, 'customerservice@redhat.com')
 end
 
 Aria::LogSubscriber.attach_to :aria
