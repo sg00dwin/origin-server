@@ -108,7 +108,7 @@ Broker::Application.configure do
     :scopes => ['Scope::Session', 'Scope::Read', 'Scope::Application', 'Scope::Userinfo'],
     :default_scope => 'userinfo',
     :scope_expirations => OpenShift::Controller::Configuration.parse_expiration("session=1.days|2.days", 1.month),
-    :enable_external_cartridges => 'true',
+    :external_cartridges_enabled => true,
   }
 
   # Profiler config
