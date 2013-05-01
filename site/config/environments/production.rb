@@ -35,8 +35,6 @@ RedHatCloud::Application.configure do
 
   # Enable threaded mode
   config.threadsafe!
-  # Workaround for Rails 3.2.x and threadsafe!
-  config.dependency_loading = true if $rails_rake_task
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation can not be found)
@@ -47,31 +45,41 @@ RedHatCloud::Application.configure do
 
   # Disable Rails's static asset server
   # In production, Apache or nginx will already do this
-  config.serve_static_assets = true
+  config.serve_static_assets = false
 
   config.assets.compile = false
   config.assets.initialize_on_precompile = false
-  config.assets.compress = true
-  # Digest is disabled so we serve the same resources
-  #config.assets.digest = true
-  config.assets.js_compressor = :uglifier
-  config.assets.precompile += %w(application.js
-                                 console.js
-                                 modernizr.min.js
-                                 jquery.payment.js
-                                 site/home.js
-                                 site/tracking.js
-                                 site/omniture.js
-                                 site/s_code.js
-                                 site/picatcha.js
-                                 site/address.js
-                                 common.css
-                                 console.css
-                                 site.css
-                                 overpass.css
-                                 picatcha.css
-                                 plan_upgrade.css
-                                )
+
+  if $rails_rake_task
+    # Settings specific to the production environment build task
+
+    # Workaround for Rails 3.2.x and threadsafe!
+    config.dependency_loading = true
+    
+    config.assets.compress = true
+    # Digest is disabled so we serve the same resources
+    #config.assets.digest = true
+    config.assets.js_compressor = :uglifier
+    config.assets.precompile += %w(application.js
+                                   console.js
+                                   modernizr.min.js
+                                   jquery.payment.js
+                                   site/home.js
+                                   site/tracking.js
+                                   site/omniture.js
+                                   site/s_code.js
+                                   site/picatcha.js
+                                   site/address.js
+                                   common.css
+                                   console.css
+                                   site.css
+                                   overpass.css
+                                   picatcha.css
+                                   plan_upgrade.css
+                                  )
+  else
+    # Settings specific to the production environment server launch
+  end
 
   Console.configure(ENV['CONSOLE_CONFIG_FILE'] || '/etc/openshift/console.conf')
 

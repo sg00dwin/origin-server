@@ -48,7 +48,7 @@ RedHatCloud::Application.configure do
 
   # Disable Rails's static asset server
   # In production, Apache or nginx will already do this
-  config.serve_static_assets = true
+  config.serve_static_assets = false
 
   config.assets.compile = false
   config.assets.initialize_on_precompile = false
