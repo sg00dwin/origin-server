@@ -614,13 +614,13 @@ service openshift-port-proxy restart
             end
 
             unless options.exclude_site?
-              test_queues[0].unshift ["Site Check Applications",         'cd openshift-test/site; rake test:check:applications']
-              test_queues[1].unshift ["Site Check Base",            'cd openshift-test/site; rake test:check:base']
-              test_queues[1] << ["Site Check Cartridges",           'cd openshift-test/site; rake test:check:cartridges']
-              test_queues[2] << ["Site Check Miscellaneous 1",      'cd openshift-test/site; rake test:check:misc1']
-              test_queues[3] << ["Site Check REST API Integration", 'cd openshift-test/site; rake test:check:restapi_integration']
-              test_queues[0] << ["Site Check Javascripts", 'cd openshift-test/site; rake test:check:js']
-              test_queues[1] << ["Site Check Web Integration", 'cd openshift-test/site; COMMUNITY_URL=https://localhost:8118/ TEST_SCREENSHOT_DIR=/tmp/rhc/screenshots/ CAPYBARA_HOST=https://localhost RAILS_RELATIVE_URL_ROOT=/app CAPYBARA_DEBUG=/tmp/rhc/capybara_web_integration.log rake test:check:web_integration']
+              test_queues[0].unshift ["Site Check Applications",         'cd openshift-test/site; bundle exec rake test:check:applications']
+              test_queues[1].unshift ["Site Check Base",            'cd openshift-test/site; bundle exec rake test:check:base']
+              test_queues[1] << ["Site Check Cartridges",           'cd openshift-test/site; bundle exec rake test:check:cartridges']
+              test_queues[2] << ["Site Check Miscellaneous 1",      'cd openshift-test/site; bundle exec rake test:check:misc1']
+              test_queues[3] << ["Site Check REST API Integration", 'cd openshift-test/site; bundle exec rake test:check:restapi_integration']
+              test_queues[0] << ["Site Check Javascripts", 'cd openshift-test/site; bundle exec rake test:check:js']
+              test_queues[1] << ["Site Check Web Integration", 'cd openshift-test/site; COMMUNITY_URL=https://localhost:8118/ TEST_SCREENSHOT_DIR=/tmp/rhc/screenshots/ CAPYBARA_HOST=https://localhost RAILS_RELATIVE_URL_ROOT=/app CAPYBARA_DEBUG=/tmp/rhc/capybara_web_integration.log bundle exec rake test:check:web_integration']
             end
 
             unless options.exclude_rhc?
