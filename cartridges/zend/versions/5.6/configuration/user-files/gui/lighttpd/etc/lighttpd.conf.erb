@@ -152,12 +152,12 @@
      ######### Options that are good to be but not neccesary to be changed #######
      
      ## bind to port (default: 80)
-     server.port= 16081
+     server.port= <%= "#{ENV['OPENSHIFT_ZEND_CONSOLE_PORT']}" %>
      # uncomment to enable IPv6 support
      #server.use-ipv6 = "enable"
      
      ## bind to localhost (default: all interfaces)
-     server.bind                = "###OPENSHIFT_INTERNAL_IP###"
+     server.bind                = "<%= "#{ENV['OPENSHIFT_ZEND_CONSOLE_IP']}" %>"
      
      ## error-handler for status 404
      #server.error-handler-404   = "/error-handler.html"

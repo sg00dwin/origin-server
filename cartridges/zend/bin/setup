@@ -18,26 +18,7 @@ cp $OPENSHIFT_ZEND_DIR/versions/$version/configuration/etc/conf.d/* $OPENSHIFT_Z
 mkdir -p $OPENSHIFT_ZEND_DIR/configuration/etc/conf
 cp $OPENSHIFT_ZEND_DIR/versions/$version/configuration/etc/conf/* $OPENSHIFT_ZEND_DIR/configuration/etc/conf/
 
-#php.ini?
-
 cp -r $OPENSHIFT_ZEND_DIR/versions/$version/metadata/* $OPENSHIFT_ZEND_DIR/metadata
-
-mkdir -p $OPENSHIFT_ZEND_DIR/zend
-cp -r $OPENSHIFT_ZEND_DIR/versions/$version/configuration/user-files/* $OPENSHIFT_ZEND_DIR/zend/
-
-
-#etc/conf.d/debugger.ini
-#gui/application/data/zend-server.ini
-#gui/lighttpd/etc/lighttpd.conf
-#etc/conf.d/ZendGlobalDirectives.ini
-
-#echo "Replacing ###OPENSHIFT_INTERNAL_IP### with ${IP_ADDRESS} in $zdir/${zfile}"
-#sed -i "s/###OPENSHIFT_INTERNAL_IP###/${IP_ADDRESS}/g" $zdir/${zfile}
-#echo "Replacing ###UID### with $USER_ID in $zdir/${zfile}"
-#sed -i "s/###UID###/${USER_ID}/g" $zdir/${zfile}
-#echo "Replacing ###GID### with $GROUP_ID in $zdir/${zfile}"
-#sed -i "s/###GID###/${GROUP_ID}/g" $zdir/${zfile}
-
 
 # Create additional directories required by ZEND
 mkdir -p $OPENSHIFT_ZEND_DIR/phplib/pear/{docs,ext,php,cache,cfg,data,download,temp,tests,www}
