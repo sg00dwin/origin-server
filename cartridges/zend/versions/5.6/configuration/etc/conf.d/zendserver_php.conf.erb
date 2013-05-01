@@ -22,5 +22,5 @@ DirectoryIndex index.php
 # files as PHP source code:
 #
 #AddType application/x-httpd-php-source .phps
-PHPIniDir /usr/local/zend/etc
-Include <%= ENV['OPENSHIFT_ZEND_DIR'] %>/versions/5.6/configuration/user-files/etc/sites.d/zend-default-vhost-80.conf
+PHPIniDir <%= ENV['OPENSHIFT_ZEND_DIR'] %>configuration/etc
+Include /usr/local/zend/etc/sites.d/zend-default-vhost-80.conf

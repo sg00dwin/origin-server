@@ -1,11 +1,11 @@
 # Warning:
-# Modifying this file will break the Zend Server Administration Interface
+# Modifying this file will break the Zend Server Console (Administration Interface)
 
-Listen :16083
-NameVirtualHost :16083
+Listen <%= "#{ENV['OPENSHIFT_ZEND_ZENDSERVER_IP']}:#{ENV['OPENSHIFT_ZEND_ZENDSERVER_PORT']}" %>
+NameVirtualHost <%= "#{ENV['OPENSHIFT_ZEND_ZENDSERVER_IP']}:#{ENV['OPENSHIFT_ZEND_ZENDSERVER_PORT']}" %>
 # do not allow override of this value for the UI's Vhost as it should
 # always be off when generating non-html content such as dynamic images
-<VirtualHost *:16083>
+<VirtualHost *:<%= "#{ENV['OPENSHIFT_ZEND_CONSOLE_PORT']}" %>>
   php_admin_flag tidy.clean_output off
   php_admin_flag session.auto_start off
   Alias /ZendServer "/usr/local/zend/gui/UserServer"

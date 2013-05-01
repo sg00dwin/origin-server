@@ -16,7 +16,7 @@ marketing="1"
 [apiKeys]
 
 [userServer]
-url = http://###OPENSHIFT_INTERNAL_IP###:16083/ZendServer
+url = http://<%= "#{ENV['OPENSHIFT_ZEND_ZENDSERVER_IP']}:#{ENV['OPENSHIFT_ZEND_ZENDSERVER_PORT']}" %>/ZendServer
 
 [monitor]
 logfile=logfiles.xml

@@ -28,6 +28,9 @@ pear -c "$OPENSHIFT_HOMEDIR"/.pearrc config-set auto_discover 1
 
 # Configure Zend specific files
 
+mkdir -p $OPENSHIFT_ZEND_DIR/usr/local/zend
+cp -r $OPENSHIFT_ZEND_DIR/versions/$version/configuration/user-files/* $OPENSHIFT_ZEND_DIR/usr/local/zend/
+
 # PAM /sandbox dir
 zend_sandbox="/sandbox/zend"
 
@@ -47,7 +50,5 @@ for path in ${paths[*]}; do
     zdir=`dirname $zpath`
     zfile=`basename $zpath`
     [ -d "$zdir" ]  ||  mkdir -p $zdir
-    ln -s $OPENSHIFT_ZEND_DIR/$path $zdir/$zfile
-    #chown -R $OPENSHIFT_GEAR_UUID:$OPENSHIFT_GEAR_UUID $zpath
+    ln -s $OPENSHIFT_ZEND_DIR/usr/local/zend/$path $zdir/$zfile
 done
-#

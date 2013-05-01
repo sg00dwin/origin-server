@@ -4,7 +4,7 @@ zend_extension_manager.dir.debugger=/usr/local/zend/lib/debugger
 
 
 ; Specifies the hosts that are allowed to connect (hostmask list) with Zend Debugger when running a remote debug session with Zend Studio
-zend_debugger.allow_hosts=127.0.0.1/32,###OPENSHIFT_INTERNAL_IP###/32
+zend_debugger.allow_hosts=127.0.0.1/32,<%= "#{ENV['OPENSHIFT_ZEND_ZENDSERVER_IP']}" %>/32
 
 ; Specifies the hosts that are not allowed to connect (hostmask list) with the Zend Debugger when running a remote debug session with Zend Studio
 zend_debugger.deny_hosts=
@@ -36,5 +36,4 @@ zend_debugger.use_fast_timestamp=1
 
 ; Enable code-coverage feature, should only be true on local debugger
 zend_debugger.enable_coverage=0
-
 
