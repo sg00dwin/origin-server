@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.8.3
+Version: 1.8.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -195,6 +195,17 @@ fi
 %{sitedir}/public
 
 %changelog
+* Wed May 01 2013 Adam Miller <admiller@redhat.com> 1.8.4-1
+- Merge pull request #1274 from
+  smarterclayton/production_rb_not_a_config_any_longer
+  (dmcphers+openshiftbot@redhat.com)
+- production.rb should no longer be a config(noreplace), now that the config
+  file is being used. (ccoleman@redhat.com)
+- Merge pull request #1271 from jwforres/Bug955444_FAQRelativeLinks404
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 955444 - Getting Started page link 404 on account help page
+  (jforrest@redhat.com)
+
 * Mon Apr 29 2013 Adam Miller <admiller@redhat.com> 1.8.3-1
 - Merge pull request #1258 from smarterclayton/drupal_fixes
   (dmcphers+openshiftbot@redhat.com)
