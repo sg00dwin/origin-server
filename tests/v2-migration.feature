@@ -23,3 +23,18 @@ Feature: V2 Migrations for V1 apps
     Then the environment variables will be migrated to raw values
     And the application will be marked as a v2 app
     And the application should not be accessible
+
+  Scenario: PHP + Mysql migration
+    Given a new client created php-5.3 application
+    Given the embedded mysql-5.1 cartridge is added
+    Then I can select from mysql
+
+    When I insert test data into mysql
+    Then the test data will be present in mysql
+
+    When the application is migrated to the v2 cartridge system
+    Then the environment variables will be migrated to raw values
+    And the application will be marked as a v2 app
+    And the application should be accessible
+    And I can select from mysql
+    And the test data will be present in mysql

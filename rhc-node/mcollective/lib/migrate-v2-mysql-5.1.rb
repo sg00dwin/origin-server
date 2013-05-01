@@ -18,8 +18,6 @@ module OpenShiftMigration
 
       FileUtils.rm_rf(File.join(cart_dir, 'mysql', 'log'))
       FileUtils.rm_rf(File.join(cart_dir, 'mysql', 'data'))
-      FileUtils.mkdir_p(File.join(cart_dir, 'mysql', 'log'))
-      FileUtils.mkdir_p(File.join(cart_dir, 'mysql', 'data'))
 
       directories = %w(log data)
       output << Util.move_directory_between_carts(user, 'mysql-5.1', 'mysql', directories)
