@@ -164,7 +164,7 @@ class Watchman
   # Load environment variables into a hash
   def read_env(path)
     env = {}
-    if File.exist? File.join(path, '.env', 'v2_cartridge_format')
+    if File.exist? File.join(path, '.env', 'CARTRIDGE_VERSION_2')
       Dir[File.join(path, '.env', '*')].each do |file|
         contents = IO.read(file).chomp
         next if contents.empty?
