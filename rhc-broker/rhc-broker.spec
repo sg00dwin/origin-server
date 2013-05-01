@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.8.2
+Version: 1.8.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -153,6 +153,9 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Wed May 01 2013 Adam Miller <admiller@redhat.com> 1.8.3-1
+- update dynect customer name (blentz@redhat.com)
+
 * Tue Apr 30 2013 Adam Miller <admiller@redhat.com> 1.8.2-1
 - Removed 'max_storage_per_gear' capability for Silver plan Added
   'max_untracked_addtl_storage_per_gear=5' and
