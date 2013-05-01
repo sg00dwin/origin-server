@@ -18,7 +18,7 @@ namespace :aria do
       puts "Set direct post configuration '#{name}' to redirect to '#{url}'"
 
       Aria::DirectPost.create(plan, url)
-      Aria::DirectPost.create("edit_#{plan}", url)
+      Aria::DirectPost.create("edit_#{plan.id}", url)
       puts "  Settings: #{Aria.get_reg_uss_config_params("direct_post_#{name}").inspect}"
     end
   end
