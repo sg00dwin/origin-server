@@ -33,7 +33,11 @@ require 'openshift-origin-node/model/cartridge_repository'
 require 'openshift-origin-node/model/unix_user'
 require 'openshift-origin-node/utils/sdk'
 require 'openshift-origin-node/utils/cgroups'
+require 'openshift-origin-node/utils/application_state'
+require 'openshift-origin-node/utils/environ'
 require 'openshift-origin-common'
+require 'net/http'
+require 'uri'
 
 module OpenShift
   class V2MigrationCartridgeModel < V2CartridgeModel
@@ -53,10 +57,38 @@ module OpenShift
         yield cart_dir
       end
     end
+
+    def gear_status
+      output = ''
+      problem = false
+
+      each_cartridge do |cartridge|
+        cart_status = do_control('status', cartridge)
+        output << cart_status
+
+        if cart_status !~ /running/
+          problem = true
+        end
+      end
+
+      return [problem, output]
+    end
+  end
+end
+
+module OpenShift::Utils
+  class MigrationApplicationState < ApplicationState
+    def initialize(uuid, state_file = '.state')
+      @uuid = uuid
+
+      config      = OpenShift::Config.new
+      @state_file = File.join(config.get("GEAR_BASE_DIR"), uuid, "app-root", "runtime", state_file)
+    end
   end
 end
 
 module OpenShiftMigration
+  PREMIGRATION_STATE = '.premigration_state'
 
   def self.rm_exists(file)
     # We want all errors reported, except for missing file...
@@ -110,6 +142,7 @@ module OpenShiftMigration
 
     progress = MigrationProgress.new(uuid)
 
+    output << inspect_gear_state(progress, gear_home)
     output << migrate_stop_lock(progress, uuid, gear_home)
     output << stop_gear(progress, uuid)
     output << migrate_typeless_translated_vars(progress, uuid, gear_home)
@@ -128,12 +161,25 @@ module OpenShiftMigration
       
     start_gear(progress, uuid)
 
-    # TODO: check state of gear before deleting marker files?
-    progress.clear
+    output << validate_gear(progress, uuid, gear_home)
+    output << cleanup(progress, gear_home)
 
     total_time = (Time.now.to_f * 1000).to_i - start_time
     output += "***time_migrate_on_node_measured_from_node=#{total_time}***\n"
     return output, exitcode
+  end
+
+  def self.inspect_gear_state(progress, gear_home)
+    output = ''
+
+    if progress.incomplete? 'inspect_gear_state'
+      app_state = File.join(gear_home, 'app-root', 'runtime', '.state')
+      save_state = File.join(gear_home, 'app-root', 'runtime', PREMIGRATION_STATE)
+      FileUtils.cp(app_state, save_state)
+      output << progress.mark_complete('inspect_gear_state')
+    end
+
+    output
   end
 
   def self.migrate_stop_lock(progress, uuid, gear_home)
@@ -350,7 +396,6 @@ module OpenShiftMigration
       end
     end
 
-    # TODO: need to perform checks before deleting V1 cartridge directory?
     FileUtils.rm_rf(File.join(user.homedir, "#{name}-#{version}"))
 
     output
@@ -368,6 +413,60 @@ module OpenShiftMigration
 
     output
   end
+
+  def self.validate_gear(progress, uuid, gear_home)
+    output = ''
+
+    if progress.incomplete? 'validate_gear'
+      premigration_state = OpenShift::Utils::MigrationApplicationState.new(uuid, PREMIGRATION_STATE)
+
+      output << "Pre-migration state: #{premigration_state.value}\n"
+
+      if premigration_state.value == 'started'
+        config = OpenShift::Config.new
+        state  = OpenShift::Utils::ApplicationState.new(uuid)
+        user   = OpenShift::UnixUser.from_uuid(uuid)
+
+        cart_model = OpenShift::V2MigrationCartridgeModel.new(config, user, state)
+
+        if cart_model.primary_cartridge
+          env = OpenShift::Utils::Environ.for_gear(gear_home)
+
+          dns = env['OPENSHIFT_GEAR_DNS']
+          uri = URI.parse("http://#{dns}")
+
+          http = Net::HTTP.new(uri.host, uri.port)
+          request = Net::HTTP::Get.new(uri.request_uri)
+
+          response = http.request(request)
+
+          output << "Post-migration response code: #{response.code}\n"
+        end
+
+        problem, status = cart_model.gear_status
+
+        if problem
+          output << "Leaving migration metadata in place due to problem detected with gear status\n"
+          output << "Status: #{status}\n"
+          return output
+        end
+      end
+
+      output << progress.mark_complete('validate_gear')
+    end
+
+    output
+  end
+
+  def self.cleanup(progress, gear_home)
+    output = ''
+
+    if progress.complete? 'validate_gear'
+      output << 'Cleaning up after migration'
+      FileUtils.rm_f(File.join(gear_home, 'app-root', 'runtime', PREMIGRATION_STATE))
+      progress.clear
+    end
+
+    output
+  end
 end
-
-

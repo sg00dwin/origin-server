@@ -48,3 +48,8 @@ Then /^the TYPELESS_TRANSLATED_VARS variables will be discrete variables$/ do
 
   assert content == 'bar'  
 end
+
+Then /^the migration metadata will be cleaned up$/ do 
+  assert Dir.glob(File.join($home_root, @app.uid, 'data', '.migration*')).empty?
+  assert_file_not_exists File.join($home_root, @app.uid, 'app-root', 'runtime', '.premigration_state')
+end

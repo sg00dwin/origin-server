@@ -14,6 +14,7 @@ Feature: V2 Migrations for V1 apps
     And the USER_VARS file will not exist
     And the TRANSLATE_GEAR_VARS file will not exist
     And the TYPELESS_TRANSLATED_VARS variables will be discrete variables
+    And the migration metadata will be cleaned up
 
   Scenario: Stopped PHP app migration
     Given a new client created php-5.3 application
@@ -23,6 +24,7 @@ Feature: V2 Migrations for V1 apps
     Then the environment variables will be migrated to raw values
     And the application will be marked as a v2 app
     And the application should not be accessible
+    And the migration metadata will be cleaned up
 
   Scenario: PHP + Mysql migration
     Given a new client created php-5.3 application
@@ -38,3 +40,4 @@ Feature: V2 Migrations for V1 apps
     And the application should be accessible
     And I can select from mysql
     And the test data will be present in mysql
+    And the migration metadata will be cleaned up
