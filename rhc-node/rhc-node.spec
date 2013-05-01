@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.8.2
+Version: 1.8.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -236,6 +236,12 @@ fi
 
 
 %changelog
+* Wed May 01 2013 Adam Miller <admiller@redhat.com> 1.8.3-1
+- Add cuke tests for mysql migrations (pmorie@gmail.com)
+- V1 -> V2 migrations (pmorie@gmail.com)
+- WIP Cartridge Refactor - Fix rhc-watchman for V2 nodes (jhonce@redhat.com)
+- WIP: migration cucumber tests (pmorie@gmail.com)
+
 * Mon Apr 29 2013 Adam Miller <admiller@redhat.com> 1.8.2-1
 - V1 -> V2 migrations (pmorie@gmail.com)
 
