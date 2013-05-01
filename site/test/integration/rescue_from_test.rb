@@ -44,6 +44,12 @@ class RescueFromTest < ActionDispatch::IntegrationTest
     assert_error_page
   end
 
+  def test_render_server_unavailable_page
+    controller_raises(RestApi::ServerUnavailable.new(OpenStruct.new(:code => 503)))
+    assert_response :redirect
+    assert_redirected_to(:controller => 'console_index', :action => 'server_unavailable')
+  end
+
   def test_access_denied_results_in_redirect
     product_controller_raises(AccessDeniedException)
   

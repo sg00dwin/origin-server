@@ -56,7 +56,7 @@ User errors:
 159: User has additional filesystem storage that the new plan does not allow.
 160: User max gear limit capability does not match with current plan
 161: User gear sizes capability does not match with current plan
-162: User max additional file-system storage per gear group capability does not match with current plan
+162: User max untracked additional file-system storage per gear capability does not match with current plan
 163: Gear group does not exist
 164: User is not allowed to change storage quota
 165: Invalid storage quota value provided
@@ -72,6 +72,10 @@ User errors:
 175: User is not authorized to add private certificates
 176: User has private certificates that the new plan does not allow.
 180: This command is not available in this application
+181: User max tracked additional file-system storage per gear capability does not match with current plan
+182: User does not have 'gear_sizes' capability provided by current plan
+183: User does not have 'max_untracked_addtl_storage_per_gear' capability provided by current plan
+184: User does not have 'max_tracked_addtl_storage_per_gear' capability provided by current plan
 210: Can not override existing location for git repo
 211: Parent directory for git repo does not exist
 212: Could not find libra_id_rsa

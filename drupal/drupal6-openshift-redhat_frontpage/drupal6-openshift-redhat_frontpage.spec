@@ -5,7 +5,7 @@
 %global modname             redhat_frontpage
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.7.1
+Version: 1.7.5
 Release: 1%{?dist}
 Summary: Openshift Red Hat Front Page Custom Module for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,16 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Tue Apr 30 2013 Adam Miller <admiller@redhat.com> 1.7.5-1
+- Homepage shows duplicate title (ccoleman@redhat.com)
+
+* Thu Apr 25 2013 Adam Miller <admiller@redhat.com> 1.7.4-1
+- more clean up from the botched tag (admiller@redhat.com)
+- Drupal cache of twitter 7 days, instead of 1 hour (ccoleman@redhat.com)
+
+* Thu Apr 25 2013 Adam Miller <admiller@redhat.com>
+- Drupal cache of twitter 7 days, instead of 1 hour (ccoleman@redhat.com)
+
 * Thu Mar 07 2013 Adam Miller <admiller@redhat.com> 1.7.1-1
 - bump_minor_versions for sprint 25 (admiller@redhat.com)
 

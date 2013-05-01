@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.8.1
+Version: 1.8.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -185,7 +185,6 @@ fi
 %defattr(0640,root,libra_user,0750)
 %{sitedir}
 %{htmldir}/app
-%config(noreplace) %{sitedir}/config/environments/production.rb
 %config(noreplace) %{sitedir}/app/subsites/status/config/hosts.yml
 %config(noreplace) /etc/openshift/console.conf
 %config /etc/openshift/console-devenv.conf
@@ -196,6 +195,102 @@ fi
 %{sitedir}/public
 
 %changelog
+* Mon Apr 29 2013 Adam Miller <admiller@redhat.com> 1.8.3-1
+- Merge pull request #1258 from smarterclayton/drupal_fixes
+  (dmcphers+openshiftbot@redhat.com)
+- Unformatted lists should write nothing (ccoleman@redhat.com)
+- Base collections account group only on billing country (hripps@redhat.com)
+- Merge pull request #1246 from fabianofranz/master
+  (dmcphers+openshiftbot@redhat.com)
+- Fixed tests for Maintenance mode (ffranz@redhat.com)
+- Using a dedicated exception to handle server unavailable so we don't have to
+  check status codes more than once (ffranz@redhat.com)
+- Tests for Maintenance mode (ffranz@redhat.com)
+- Tests for Maintenance mode (ffranz@redhat.com)
+- Maintenance mode will now handle login/authorization properly
+  (ffranz@redhat.com)
+- Maintenance mode page, now handling nil responses on server error
+  (ffranz@redhat.com)
+- Maintenance mode for the web console (ffranz@redhat.com)
+
+* Thu Apr 25 2013 Adam Miller <admiller@redhat.com> 1.8.2-1
+- Merge pull request #1243 from spurtell/spurtell/analytics
+  (dmcphers+openshiftbot@redhat.com)
+- Enable ENV override of allowed countries (hripps@redhat.com)
+- Add support for Aria collections account groups (hripps@redhat.com)
+- Removed redhatcom Omniture report suite at request of corporate tracking
+  (spurtell@redhat.com)
+- Fix bug 955440 - add STREAMLINE_ENABLED to console-devenv.conf to make
+  enable_ssh script work (jliggitt@redhat.com)
+- Merge pull request #1235 from nhr/BZ953978 (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1234 from liggitt/test_env_config
+  (dmcphers+openshiftbot@redhat.com)
+- Updated per review feedback (hripps@redhat.com)
+- Updated per review feedback (hripps@redhat.com)
+- Bug 953978 Once a user has an Aria account, ignore the supported country
+  limitation (hripps@redhat.com)
+- Lock down captcha and integrated auth settings in test mode
+  (jliggitt@redhat.com)
+- Fix bug 954314, tolerate plans with no added services (jliggitt@redhat.com)
+- Merge pull request #1226 from smarterclayton/improve_memory_usage_of_rest_api
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1225 from smarterclayton/split_settings_page
+  (dmcphers+openshiftbot@redhat.com)
+- Change only the plan id attribute during array serialization
+  (ccoleman@redhat.com)
+- Improve memory usage of the console REST API code by reducing object copies
+  (ccoleman@redhat.com)
+- Get tests passing (ccoleman@redhat.com)
+- Split the settings page into its own top level tab for cleaner separation
+  (ccoleman@redhat.com)
+- Merge default_collection_group_id config setting, use dev value in tests.
+  Remove devenv purge of assets (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into
+  separate_config_from_environments (ccoleman@redhat.com)
+- Merge pull request #1223 from smarterclayton/download_save_version
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1222 from liggitt/aria_test_users
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1218 from liggitt/bug/953725
+  (dmcphers+openshiftbot@redhat.com)
+- Download a version of rack-mini-profiler with support for relative paths
+  (ccoleman@redhat.com)
+- Update test user generation to add contact info (jliggitt@redhat.com)
+- Make enable-mini-profiler executable (ccoleman@redhat.com)
+- Fix bug 953725 - don't do required element validation in contact_info
+  (jliggitt@redhat.com)
+- Merge pull request #1214 from smarterclayton/add_mini_profiler_support
+  (dmcphers+openshiftbot@redhat.com)
+- Enable mini-profiler via a script on the devenv (ccoleman@redhat.com)
+- Merge pull request #1209 from liggitt/bug/953549
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1194 from smarterclayton/add_web_integration_tests
+  (dmcphers+openshiftbot@redhat.com)
+- Merge remote-tracking branch 'origin/master' into
+  separate_config_from_environments (ccoleman@redhat.com)
+- Separate config from environments (ccoleman@redhat.com)
+- Fix bug 953549 to add address.js to production build (jliggitt@redhat.com)
+- Merge pull request #1203 from nhr/country_tweaks
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 953176 - recognize tax line items correctly, use Aria-provided usage
+  total amount (jliggitt@redhat.com)
+- Merge pull request #1199 from sg00dwin/515dev
+  (dmcphers+openshiftbot@redhat.com)
+- Looking current group ID (hripps@redhat.com)
+- Fixed test cases for dummy invoice tmpl ID & coll group (hripps@redhat.com)
+- Set collections group default during acct creation (hripps@redhat.com)
+- Updated to validate invoice template ID assignment (hripps@redhat.com)
+- Updated to include workaround for Streamline bug (hripps@redhat.com)
+- Aria models now require and validate country plus other tweaks
+  (hripps@redhat.com)
+- Merge branch 'master' of github.com:openshift/li into 515dev
+  (sgoodwin@redhat.com)
+- Bug 922127 - Allow users to sort their comments Introduce rules to display
+  comment-controls in a way that match existing structure and are minor
+  weighted (smaller) to the primary content. (sgoodwin@redhat.com)
+- Add community tests (ccoleman@redhat.com)
+- Add a few simple web integration tests (ccoleman@redhat.com)
+
 * Tue Apr 16 2013 Dan McPherson <dmcphers@redhat.com> 1.8.1-1
 - Add buildrequires for new test packages (ccoleman@redhat.com)
 - bump_minor_versions for sprint XX (tdawson@redhat.com)

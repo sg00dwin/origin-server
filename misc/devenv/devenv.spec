@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.8.0
+Version: 1.8.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -145,7 +145,6 @@ Requires:  drupal6-image
 Requires:  drupal6-image_resize_filter
 Requires:  drupal6-imageapi
 Requires:  drupal6-imagecache
-
 Requires:  drupal6-imagecache_profiles
 Requires:  drupal6-imagefield
 Requires:  drupal6-insert
@@ -159,19 +158,21 @@ Requires:  drupal6-media_youku
 Requires:  drupal6-mediawiki_filter
 Requires:  drupal6-menu_block
 Requires:  drupal6-messaging
+Requires:  drupal6-memcache
 Requires:  drupal6-notifications
 Requires:  drupal6-node_import
 Requires:  drupal6-og
 Requires:  drupal6-openshift-custom_forms
 Requires:  drupal6-openshift-features-application_quickstarts
 Requires:  drupal6-openshift-features-blogs
+Requires:  drupal6-openshift-features-community_wiki
 Requires:  drupal6-openshift-features-forums
 Requires:  drupal6-openshift-features-front_page
 Requires:  drupal6-openshift-features-global_settings
+Requires:  drupal6-openshift-features-recent_activity_report
 Requires:  drupal6-openshift-features-reporting_csv_views
 Requires:  drupal6-openshift-features-rules_by_category
 Requires:  drupal6-openshift-features-user_profile
-Requires:  drupal6-openshift-features-recent_activity_report
 Requires:  drupal6-openshift-features-video
 Requires:  drupal6-openshift-modals
 Requires:  drupal6-openshift-og_comment_perms
@@ -185,6 +186,7 @@ Requires:  drupal6-pathauto
 Requires:  drupal6-path_redirect
 Requires:  drupal6-prepopulate
 Requires:  drupal6-rules
+Requires:  drupal6-semanticviews
 Requires:  drupal6-stringoverrides
 Requires:  drupal6-token
 Requires:  drupal6-user_badges
@@ -199,7 +201,6 @@ Requires:  drupal6-vote_up_down
 Requires:  drupal6-votingapi
 Requires:  drupal6-wikitools
 Requires:  drupal6-wysiwyg
-Requires:  drupal6-openshift-features-community_wiki
 Requires:  drupal6-clamav
 Requires:  drupal6-xmlsitemap
 
@@ -692,7 +693,7 @@ curl -k https://localhost/broker/rest/user -u user_with_extra_storage@test.com:p
 if [ $? -eq 0 ]
 then
   echo "Adding additional storage to user"
-  /usr/sbin/oo-admin-ctl-user -l user_with_extra_storage@test.com --setmaxstorage 10 --setmaxgears 10
+  /usr/sbin/oo-admin-ctl-user -l user_with_extra_storage@test.com --setmaxuntrackedstorage 5 --setmaxgears 10
 else
   echo "user_with_extra_storage could not be created!"
 fi
@@ -751,6 +752,42 @@ rm -rf /tmp/phantomjs
 /etc/openshift/development
 
 %changelog
+* Tue Apr 30 2013 Adam Miller <admiller@redhat.com> 1.8.3-1
+- Merge pull request #1266 from pravisankar/dev/ravi/new-card559
+  (dmcphers+openshiftbot@redhat.com)
+- Removed 'max_storage_per_gear' capability for Silver plan Added
+  'max_untracked_addtl_storage_per_gear=5' and
+  'max_tracked_addtl_storage_per_gear=0' capabilities for Silver plan. Fixed
+  unit tests and models to accommodate the above change. Added migration script
+  for existing users Fixed devenv spec Fix migration script (rpenta@redhat.com)
+
+* Mon Apr 29 2013 Adam Miller <admiller@redhat.com> 1.8.2-1
+- Add memcached support for Drupal in devenv and semanticviews module
+  (ccoleman@redhat.com)
+
+* Thu Apr 25 2013 Adam Miller <admiller@redhat.com> 1.8.1-1
+- Merge pull request #1249 from jwhonce/wip/raw_envvar
+  (dmcphers+openshiftbot@redhat.com)
+- Splitting up runtime_other tests (dmcphers@redhat.com)
+- exclude mongodb from epel (admiller@redhat.com)
+- Card online_runtime_255 - Change environment variable files to be named KEY
+  and contain VALUE (jhonce@redhat.com)
+- updating jenkins settings (dmcphers@redhat.com)
+- syncing jenkins jobs (dmcphers@redhat.com)
+- trello utility work (dmcphers@redhat.com)
+- Adding trello features (dmcphers@redhat.com)
+- Merge default_collection_group_id config setting, use dev value in tests.
+  Remove devenv purge of assets (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into
+  separate_config_from_environments (ccoleman@redhat.com)
+- Separate config from environments (ccoleman@redhat.com)
+- syncing jenkins jobs (dmcphers@redhat.com)
+- Merge pull request #1201 from jwhonce/bug/952619
+  (dmcphers+openshiftbot@redhat.com)
+- bump_minor_versions for sprint XX (tdawson@redhat.com)
+- Bug 952619 - Production and Devenv Node httpd.conf diverged
+  (jhonce@redhat.com)
+
 * Tue Apr 16 2013 Troy Dawson <tdawson@redhat.com> 1.7.8-1
 - Symlink drupal favicon into root drupal directory (ccoleman@redhat.com)
 - Merge pull request #1192 from smarterclayton/bug_952187_fix_error_documents

@@ -8,7 +8,7 @@ class CommunityFlowsTest < ActionDispatch::IntegrationTest
 
     assert has_content? /Develop and scale apps in the cloud/i
 
-    assert has_css?(".news > div"), "No blog posts on the homepage"
+    assert has_css?(".news > li"), "No blog posts on the homepage"
 
     assert has_css?("#buzz-retweets > .tweet"), "No retweets on the homepage"
     assert has_css?("#buzz-tweets > .tweet"), "No tweets on the homepage"
