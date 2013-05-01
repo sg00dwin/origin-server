@@ -25,6 +25,7 @@ class ProductController < SiteController
 
   [
     :core_error, :core_not_found, :core_unavailable, 
+    :core_request_denied,
     :core_app_error, :core_app_unavailable, :core_app_installing
   ].each do |sym|
     define_method sym do 

@@ -119,7 +119,7 @@ chmod 0666 %{buildroot}%{_var}/log/openshift/site/httpd/production.log
 rm -f Gemfile.lock
 bundle install --local
 
-RAILS_ENV=production RAILS_RELATIVE_URL_ROOT=/app \
+RAILS_ENV=production RAILS_HOST=openshift.redhat.com RAILS_RELATIVE_URL_ROOT=/app \
   RAILS_LOG_PATH=%{buildroot}%{_var}/log/openshift/site/httpd/production.log \
   CONSOLE_CONFIG_FILE=conf/console.conf \
   bundle exec rake assets:precompile assets:public_pages assets:generic_error_pages

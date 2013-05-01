@@ -1,0 +1,22 @@
+!!! 5
+-ie_html :class => 'no-js', :lang => 'en' do
+  %head
+    %title Temporarily Disabled
+    = render :partial => 'product/core_head'
+
+  %body
+    %header
+      .logo= link_to asset('logo.svg').to_s.html_safe, root_path
+
+      %hgroup
+        %h1 Temporarily Disabled
+
+    %section.main
+      %p 
+        The request you made cannot be completed at this time.  This may be due to a
+        terms of service violation, or a security measure implemented by the OpenShift
+        team.
+
+      %p 
+        If you receive this message more than once, please contact us via 
+        #{link_to_account_mailto} or #{link_to_irc} and include the reference ID: <strong>temporarily_disabled</strong>

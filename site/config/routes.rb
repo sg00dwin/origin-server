@@ -47,7 +47,8 @@ RedHatCloud::Application.routes.draw do
 
   [
     :not_found, :error,
-    :core_error, :core_not_found, :core_unavailable, 
+    :core_error, :core_not_found, :core_unavailable,
+    :core_request_denied,
     :core_app_error, :core_app_unavailable, :core_app_installing,
   ].each do |sym|
     match sym.to_s => "product##{sym}"
