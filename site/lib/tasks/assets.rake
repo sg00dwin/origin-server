@@ -33,6 +33,7 @@ namespace :assets do
       'product/core_not_found'       => 'error/404.html',
       'product/core_error'           => 'error/500.html',
       'product/core_unavailable'     => 'error/503.html',
+      'product/core_request_denied'  => 'error/request_denied.html',
       'product/core_app_error'       => 'error/app/500.html',
       'product/core_app_unavailable' => 'error/app/503.html',
       'product/core_app_installing'  => 'error/app/installing.html',
