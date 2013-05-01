@@ -12,11 +12,15 @@ module OpenShiftMigration
       env_vars.map! { |x| "OPENSHIFT_MYSQL_DB_#{x}" }
 
       output << Util.move_gear_env_var_to_cart(user.homedir, 'mysql', env_vars)
-      cart_env = File.join(user.homedir, 'mysql', 'env')
+      cart_dir = File.join(user.homedir, 'mysql')
+      cart_env = File.join(cart_dir, 'env')
       Util.make_user_owned(cart_env, user)
 
+      FileUtils.rm_rf(File.join(cart_dir, 'mysql', 'log'))
+      FileUtils.rm_rf(File.join(cart_dir, 'mysql', 'data'))
+
       directories = %w(log data)
-      output << Util.move_directory_between_carts(user, 'mysql', 'mysql-5.1', directories)
+      output << Util.move_directory_between_carts(user, 'mysql-5.1', 'mysql', directories)
 
       output
     end
