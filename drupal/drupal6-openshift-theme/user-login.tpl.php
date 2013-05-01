@@ -4,7 +4,7 @@
   display: none;
 }
 .column-1 ul {
-  background: url('<?php print openshift_server_url(); ?>/app/assets/community-bubbles.png') top left no-repeat;
+  background: url('<?php print openshift_assets_url(); ?>/community-bubbles.png') top left no-repeat;
   min-height: 68px;
   margin: 0 0 12px 12px;
 }

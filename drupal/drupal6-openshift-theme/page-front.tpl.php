@@ -12,12 +12,12 @@
   <div class="span6">
     <ul class="learn unstyled">
     <li class="scale">
-    <a class="link-tile" href="/paas#scale"><img src="<?php print $openshift_server_url; ?>/app/assets/scale.png">
+    <a class="link-tile" href="/paas#scale"><img src="<?php print openshift_assets_url(); ?>/scale.png">
     <h4>Java, Ruby, Node.js, Python, PHP, or Perl</h4>
     <p>Code in your favorite language, framework, and middleware.  Grow your applications easily with resource scaling.</p>
     </a></li>
     <li class="time">
-    <a class="link-tile" href="/enterprise-paas"><img src="<?php print $openshift_server_url; ?>/app/assets/time.png">
+    <a class="link-tile" href="/enterprise-paas"><img src="<?php print openshift_assets_url(); ?>/time.png">
     <h4>Private and Public Platform as a Service</h4>
     <p>
     OpenShift Enterprise by Red Hat brings the
@@ -28,7 +28,7 @@
     </p>
     </a></li>
     <li class="locked">
-    <a class="link-tile" href="/paas#open"><img src="<?php print $openshift_server_url; ?>/app/assets/lock.png">
+    <a class="link-tile" href="/paas#open"><img src="<?php print openshift_assets_url(); ?>/lock.png">
     <h4>No Lock-In</h4>
     <p>Built on open technologies so you can take it with you.</p>
     </a></li>
