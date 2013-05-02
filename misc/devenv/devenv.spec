@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.8.3
+Version: 1.8.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -753,6 +753,14 @@ rm -rf /tmp/phantomjs
 /etc/openshift/development
 
 %changelog
+* Thu May 02 2013 Adam Miller <admiller@redhat.com> 1.8.4-1
+- Merge pull request #1292 from tkramer-
+  rh/dev/tkramer/security/BZ917917_ssl.conf (dmcphers+openshiftbot@redhat.com)
+- Security - ssl.conf higher ciphers for BZ917917 (tkramer@redhat.com)
+- add switchyard to devenv (bdecoste@gmail.com)
+- Added openshift_assets_url conf to allow loading assets from local site
+  (jforrest@redhat.com)
+
 * Tue Apr 30 2013 Adam Miller <admiller@redhat.com> 1.8.3-1
 - Merge pull request #1266 from pravisankar/dev/ravi/new-card559
   (dmcphers+openshiftbot@redhat.com)
