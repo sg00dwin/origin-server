@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/v2/zend
 
 Name:    openshift-origin-cartridge-zend
-Version: 0.1.8
+Version: 0.1.9
 Release: 1%{?dist}
 Summary: Zend Server cartridge
 Group:   Development/Languages
@@ -71,6 +71,9 @@ sh %{cartridgedir}/versions/5.6/rpm/zend_configure_filesystem.sh
 
 
 %changelog
+* Thu May 02 2013 Adam Miller <admiller@redhat.com> 0.1.9-1
+- fix zend configuration (vvitek@redhat.com)
+
 * Tue Apr 30 2013 Adam Miller <admiller@redhat.com> 0.1.8-1
 - Merge pull request #1268 from VojtechVitek/zend-v2-setup-install
   (dmcphers+openshiftbot@redhat.com)
