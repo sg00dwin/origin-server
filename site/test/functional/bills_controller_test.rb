@@ -5,6 +5,7 @@ require File.expand_path('../../test_helper', __FILE__)
 class BillsControllerTest < ActionController::TestCase
 
   setup {
+    Rails.cache.clear
     Aria.expects(:gen_random_string).at_least(0).returns("123")
   }
 

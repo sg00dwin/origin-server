@@ -313,7 +313,7 @@ module Aria
     end
 
     def self.cache_key(acct_no)
-      Rails.cache.fetch([Aria::User.name, "acct_no", acct_no]) { [acct_no, Time.now.to_s] }
+      Rails.cache.fetch([Aria::User.name, "acct_no", acct_no]) { [acct_no, Time.now.strftime("%Y-%m-%d %H:%M:%S.%N") ] }
     end
 
     private
