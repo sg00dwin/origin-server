@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.8.4
+Version: 1.8.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -195,6 +195,35 @@ fi
 %{sitedir}/public
 
 %changelog
+* Thu May 02 2013 Adam Miller <admiller@redhat.com> 1.8.5-1
+- Merge pull request #1293 from jwforres/Bug958596_CantAccessAccountHelp
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 958596 - The Account Help page is not accessible. (jforrest@redhat.com)
+- Fix site_extended tests (jliggitt@redhat.com)
+- Merge pull request #1285 from liggitt/bug_958278_segfault_on_int_assetss
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1256 from smarterclayton/support_external_cartridges
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1277 from smarterclayton/add_customer_service_links
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1282 from smarterclayton/add_request_denied_error
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1273 from liggitt/bug_958219_direct_post_plan_id
+  (dmcphers+openshiftbot@redhat.com)
+- Review comments - adjust messages (ccoleman@redhat.com)
+- Fix bug 958278 - only compress and precompile content in production build
+  task (jliggitt@redhat.com)
+- Introduce a request denied error (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into support_external_cartridges
+  (ccoleman@redhat.com)
+- Minor tweaks to our text around customer service - use "Customer Service",
+  link directly to the support link for contact info, and then remove
+  unnecessary config from account_helper.rb (ccoleman@redhat.com)
+- Fix bug 958219 - use plan id in direct_post config name (jliggitt@redhat.com)
+- Site should include console coverage numbers (ccoleman@redhat.com)
+- Improve test performance by skipping aria checks on most tests
+  (ccoleman@redhat.com)
+
 * Wed May 01 2013 Adam Miller <admiller@redhat.com> 1.8.4-1
 - Merge pull request #1274 from
   smarterclayton/production_rb_not_a_config_any_longer
