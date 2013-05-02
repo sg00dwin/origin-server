@@ -18,8 +18,6 @@ cp $OPENSHIFT_ZEND_DIR/versions/$version/configuration/etc/conf.d/* $OPENSHIFT_Z
 mkdir -p $OPENSHIFT_ZEND_DIR/configuration/etc/conf
 cp $OPENSHIFT_ZEND_DIR/versions/$version/configuration/etc/conf/* $OPENSHIFT_ZEND_DIR/configuration/etc/conf/
 
-cp -r $OPENSHIFT_ZEND_DIR/versions/$version/metadata/* $OPENSHIFT_ZEND_DIR/metadata
-
 # Create additional directories required by ZEND
 mkdir -p $OPENSHIFT_ZEND_DIR/phplib/pear/{docs,ext,php,cache,cfg,data,download,temp,tests,www}
 mkdir -p $OPENSHIFT_ZEND_DIR/{logs,run,tmp,sessions}
