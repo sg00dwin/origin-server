@@ -273,6 +273,9 @@ module Aria
       # Set the collection group; always keyed to billing info.
       params['client_coll_acct_group_ids'] = Aria::User.collections_acct_group_id(params['bill_country'])
 
+      # Set the functional group
+      params['client_func_acct_group_ids'] = Aria::User.functional_acct_group_id(params['country'],params['bill_country'])
+
       begin
         Aria.create_acct_complete(params)
         true
@@ -366,6 +369,11 @@ module Aria
 
       def self.collections_acct_group_id(bill_country)
         Rails.configuration.collections_group_id_by_country[bill_country]
+      end
+
+      def self.functional_acct_group_id(country, bill_country)
+        country_code = country.blank? ? bill_country : country
+        Rails.configuration.functional_group_id_by_country[country_code]
       end
 
       def aria_datetime(s)
