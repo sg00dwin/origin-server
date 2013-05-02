@@ -109,7 +109,7 @@ module OpenShiftMigration
   # at any point and continue to pick up where it left off or make
   # harmless changes the 2-n times around.
   def self.migrate(uuid, namespace, version)
-    unless version == "2.0.26"
+    unless version == "2.0.27"
       return "Invalid version: #{version}", 255
     end
 
@@ -154,15 +154,15 @@ module OpenShiftMigration
 
     output << migrate_cartridges(progress, gear_home, uuid, cartridge_migrators)
 
-    env_echos.each do |env_echo|
-      echo_output, echo_exitcode = Util.execute_script(env_echo)
-      output += echo_output
-    end
-      
     start_gear(progress, uuid)
 
     output << validate_gear(progress, uuid, gear_home)
     output << cleanup(progress, gear_home)
+
+    env_echos.each do |env_echo|
+      echo_output, echo_exitcode = Util.execute_script(env_echo)
+      output += echo_output
+    end
 
     total_time = (Time.now.to_f * 1000).to_i - start_time
     output += "***time_migrate_on_node_measured_from_node=#{total_time}***\n"

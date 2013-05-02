@@ -1,5 +1,5 @@
 When /^the application is migrated to the v2 cartridge system$/ do
-  output = `rhc-v2-migrate --app-name #{@app.name} --login #{@app.login} --migrate-gear #{@app.uid} --version 2.0.26`
+  output = `rhc-v2-migrate --app-name #{@app.name} --login #{@app.login} --migrate-gear #{@app.uid} --version 2.0.27`
   $logger.info("Migration output: #{output}")
 end
 
