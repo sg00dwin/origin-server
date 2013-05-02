@@ -69,6 +69,7 @@ Requires:  openshift-origin-cartridge-10gen-mms-agent
 Requires:  openshift-origin-cartridge-cron
 Requires:  openshift-origin-cartridge-phpmyadmin
 Requires:  openshift-origin-cartridge-zend
+Requires:  openshift-origin-cartridge-switchyard
 Requires:  activemq
 Requires:  activemq-client
 #Requires:  qpid-cpp-server
