@@ -190,7 +190,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
 
   test "should record usage" do
     u = with_account_holder
-    assert_difference 'Aria.get_usage_history(u.acct_no, :date_range_start => u.account_details.last_arrears_bill_thru_date).count', 2 do
+    assert_difference 'Aria.get_usage_history(u.acct_no, :date_range_start => u.current_period_start_date).count', 2 do
       record_usage_for_user(u)
     end
     assert usage = Aria.get_unbilled_usage_summary(u.acct_no)
@@ -240,8 +240,8 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     assert items = Aria::RecurringLineItem.find_all_by_plan_no(Aria::MasterPlan.find('silver').plan_no)
     assert items.length == 1
     assert_equal "Plan: Silver", items[0].name
-    assert_equal 42, items[0].amount
-    assert_equal 42, items[0].total_cost
+    assert items[0].amount > 0
+    assert_equal items[0].amount, items[0].total_cost
     assert !items[0].prorated?
     assert_equal 1.0, items[0].units
 

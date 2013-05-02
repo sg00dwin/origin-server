@@ -2,8 +2,8 @@ class ActiveSupport::TestCase
   def with_account_holder
     @@account_holder ||= begin
       Aria::UserContext.new(WebUser.new({
-        :email_address=> "openshift_test_account_perm_1",
-        :rhlogin=>       "openshift_test_account_perm_1",
+        :email_address=> "openshift_test_account_perm_2",
+        :rhlogin=>       "openshift_test_account_perm_2",
         :ticket => '1'
       })).tap do |u|
         begin
