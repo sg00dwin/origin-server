@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.8.3
+Version: 1.8.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -153,6 +153,22 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Thu May 02 2013 Adam Miller <admiller@redhat.com> 1.8.4-1
+- Merge pull request #1288 from pmorie/dev/v2_migrations
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1256 from smarterclayton/support_external_cartridges
+  (dmcphers+openshiftbot@redhat.com)
+- Add post-migration validation step (pmorie@gmail.com)
+- Merge remote-tracking branch 'origin/master' into support_external_cartridges
+  (ccoleman@redhat.com)
+- Rename "external cartridge" to "downloaded cartridge".  UI should call them
+  "personal" cartridges (ccoleman@redhat.com)
+- Use standard name for boolean (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into support_external_cartridges
+  (ccoleman@redhat.com)
+- Conf not available in rhc-broker test (ccoleman@redhat.com)
+- Add broker config for external cartridges (ccoleman@redhat.com)
+
 * Wed May 01 2013 Adam Miller <admiller@redhat.com> 1.8.3-1
 - update dynect customer name (blentz@redhat.com)
 
