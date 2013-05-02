@@ -31,7 +31,7 @@ end
 
 Then /^I should see "([^"]*)" restarts$/ do |restarts|
   count = @watchman.restarted.nil? ? 0: @watchman.restarted
-  count.should be restarts.to_i
+  count.should eq restarts.to_i
 end
 
 Given /^a JBoss application the Watchman Service using "([^"]*)" and "([^"]*)"$/ do |log, epoch |
@@ -77,5 +77,5 @@ Given /^a Watchman object using "([^"]*)" and "([^"]*)" expect "([^"]*)" excepti
   end
 
   expected = 5 - iterations
-  @watchman.retries.should be expected
+  @watchman.retries.should eq expected
 end

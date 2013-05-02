@@ -1,5 +1,5 @@
 Rails.application.config.tap do |config|
-  config.integrated = Console.config.env(:STREAMLINE_ENABLED, false)
+  config.integrated = Rails.env.test? ? false : Console.config.env(:STREAMLINE_ENABLED, false)
   config.streamline = {
     :host => Console.config.env(:STREAMLINE_HOST, 'https://streamline-proxy1.ops.rhcloud.com'),
     :register_secret => Console.config.env(:STREAMLINE_REGISTER_SECRET, 'c0ldW1n3'),

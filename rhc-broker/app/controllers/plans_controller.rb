@@ -8,17 +8,20 @@ class PlansController < BaseController
       plan = RestPlan.new(key, value[:name], value[:plan_no], value[:capabilities], value[:usage_rates])
       plans.push(plan)
     end
-    render_success(:ok, "plans", plans, "LIST_PLANS")
+    render_success(:ok, "plans", plans)
   end
 
   def show
     id = params[:id]
     OpenShift::BillingService.instance.get_plans.each do |key, value|
       return render_success(:ok, "plan",
-                            RestPlan.new(key, value[:name], value[:plan_no], value[:capabilities], value[:usage_rates]),
-                            "SHOW_PLAN") if key == id.to_sym
+                            RestPlan.new(key, value[:name], value[:plan_no], value[:capabilities], value[:usage_rates])) if key == id.to_sym
     end
-    render_error(:not_found, "Plan not found.", 150, "SHOW_PLAN")
+    render_error(:not_found, "Plan not found.", 150)
+  end
+  
+  def set_log_tag
+    @log_tag = get_log_tag_prepend + "PLAN"
   end
 
   protected

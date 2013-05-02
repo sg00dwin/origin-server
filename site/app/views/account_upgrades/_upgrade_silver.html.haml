@@ -4,17 +4,13 @@
       .feature-block
         %h3 More gears
         %p Use up to 16 gears for new apps, scaling capacity and more.
-        %a{:class => "btn btn-primary", :href => application_types_path} Create a new application
+        = link_to "Create a new application >", application_types_path, :class => 'action-more'
     .span6
       .feature-block
         %h3 World-class support
-        %p Got a problem? Red Hat support is there for you!
-        %a{:class => "btn btn-primary", :href => customer_support_new_ticket_url } Open a support ticket      
+        %p Red Hat support is there for you, 24/7
+        = link_to "Browse the Customer Portal >", contact_customer_support_url, :class => 'action-more'
 
-%section
-  .row
-    .span12
-      %h3 Do more with your new plan
 %section
   .row
     .span6

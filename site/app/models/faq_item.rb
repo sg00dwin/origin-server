@@ -27,8 +27,8 @@ class FaqItem < CommunityApi::Base
         h = ActionController::Base.helpers
 
         faq.name = h.sanitize faq.name
-        faq.body = h.sanitize faq.body
-        faq.summary = h.sanitize faq.summary
+        faq.body = self.url_sanitizer.sanitize faq.body
+        faq.summary = self.url_sanitizer.sanitize faq.summary
 
         faq
       end

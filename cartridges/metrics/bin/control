@@ -43,12 +43,20 @@ function reload() {
     restart
 }
 
+# Clean up any log files
+function tidy() {
+  client_message "Emptying log dir: $OPENSHIFT_METRICS_LOG_DIR"
+  shopt -s dotglob
+  rm -rf $OPENSHIFT_METRICS_LOG_DIR/*
+}
+
 case "$1" in
   start)      start ;;
   stop)       stop ;;
   restart)    restart ;;
   status)     status ;;
   reload)     reload ;;
+  tidy)       tidy ;;
   *)          exit 0
 esac
 

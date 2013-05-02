@@ -94,6 +94,15 @@ class LogoutControllerTest < ActionController::TestCase
     end
   end
 
+  test 'should show the server unavailable page' do
+    get :show, {:cause => 'server_unavailable', :then => getting_started_path}
+    assert_response :success
+    assert_template :server_unavailable
+    assert_select 'a', 'Try again' do |el|
+      assert_equal getting_started_path, el.first['href']
+    end
+  end
+
   test 'should not redirect outside domain' do
     get :show, {:then => 'http://www.google.com/a_test_page'}
     assert_redirected_to '/a_test_page'

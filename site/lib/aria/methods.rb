@@ -23,15 +23,15 @@ module Aria
     end
 
     def get_client_plans_basic
-      super.plans_basic
+      super.plans_basic || []
     end
 
     def get_client_plans_all
-      super.all_client_plans
+      super.all_client_plans || []
     end
 
     def get_client_plan_services(plan_no)
-      super(:plan_no => plan_no).plan_services
+      super(:plan_no => plan_no).plan_services || []
     end
 
     def get_acct_no_from_user_id(user_id)
@@ -40,6 +40,10 @@ module Aria
 
     def get_acct_groups_by_client
       Array(super.acct_groups)
+    end
+
+    def get_acct_groups_by_acct(acct_no)
+      Array(super(:acct_no => acct_no).acct_groups)
     end
 
     def create_acct_complete(params)
@@ -56,7 +60,7 @@ module Aria
     end
 
     def get_acct_plans_all(acct_no)
-      super(:acct_no => acct_no).all_acct_plans
+      super(:acct_no => acct_no).all_acct_plans || []
     end
 
     def get_supp_field_values(acct_no, field_name)

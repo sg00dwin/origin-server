@@ -1,6 +1,8 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class BillingInfoControllerTest < ActionController::TestCase
+  with_aria
+
   test "should provide billing info on edit" do
     omit_if_aria_is_unavailable
     with_account_holder

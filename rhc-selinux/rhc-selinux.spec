@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 1.3.0
+Version: 1.3.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -66,6 +66,9 @@ fi
 
 
 %changelog
+* Thu Apr 25 2013 Adam Miller <admiller@redhat.com> 1.3.1-1
+- bump_minor_versions for sprint XX (tdawson@redhat.com)
+
 * Mon Apr 15 2013 Adam Miller <admiller@redhat.com> 1.2.3-1
 - That expression returns false if the package is instaleld before /sandbox is
   created. (rmillner@redhat.com)

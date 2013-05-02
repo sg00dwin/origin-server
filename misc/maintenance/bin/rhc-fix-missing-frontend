@@ -1,0 +1,55 @@
+#!/bin/bash
+
+#
+# Fix gears with broken front-end configurations by re-asserting them.
+#
+
+
+source /etc/openshift/node.conf
+
+RC='system_u:system_r:openshift_initrc_t:s0-s0:c0.c1023'
+
+DEBUG=""
+DEBUG="echo"
+
+for uuid in "$@"
+do
+    if ! [ -d "$GEAR_BASE_DIR/$uuid" ]
+    then
+        echo "ERROR: No such gear: $uuid" >&2
+        continue
+    fi
+
+    if ! [ -f "$GEAR_BASE_DIR/$uuid/.env/OPENSHIFT_GEAR_DNS" ]
+    then
+        echo "ERROR: No DNS information in uuid: $uuid" >&2
+        continue
+    fi
+
+    if ! [ -f "$GEAR_BASE_DIR/$uuid/.env/OPENSHIFT_GEAR_NAME" ]
+    then
+        echo "ERROR: No name for uuid: $uuid" >&2
+        continue
+    fi
+
+    for cartd in $GEAR_BASE_DIR/$uuid/*
+    do
+        cart=$(basename "$cartd")
+        hook="$CARTRIDGE_BASE_PATH/$cart/info/hooks/deploy-httpd-proxy"
+
+        if [ -f "$hook" ]
+        then
+            echo "Running deploy-httpd-proxy hook for [$uuid] cart [$cart]"
+            (
+                source "$GEAR_BASE_DIR/$uuid/.env/OPENSHIFT_GEAR_DNS"
+                source "$GEAR_BASE_DIR/$uuid/.env/OPENSHIFT_GEAR_NAME"
+                namespace=$(echo "$OPENSHIFT_GEAR_DNS" | cut -f 1 -d . | cut -f 2 -d -)
+                runcon "$RC" "$hook" "$OPENSHIFT_GEAR_NAME" "$namespace" "$uuid"
+                if [ $? -ne 0 ]
+                then
+                    echo "ERROR: hook failed for uuid: $uuid" >&2
+                fi
+            )
+        fi
+    done
+done

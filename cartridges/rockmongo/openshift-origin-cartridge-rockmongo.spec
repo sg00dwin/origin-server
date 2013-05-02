@@ -2,7 +2,7 @@
 
 Summary:   Embedded RockMongo support
 Name:      openshift-origin-cartridge-rockmongo
-Version: 0.1.0
+Version: 0.1.1
 Release:   1%{?dist}
 Group:     Applications/Internet
 License:   ASL 2.0 and NBSD
@@ -49,6 +49,12 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/README.md
 
 %changelog
+* Thu Apr 25 2013 Adam Miller <admiller@redhat.com> 0.1.1-1
+- Split v2 configure into configure/post-configure (ironcladlou@gmail.com)
+- implementing install and post-install (dmcphers@redhat.com)
+- Bug 954110 - Share RockMongo source across gear instances (jhonce@redhat.com)
+- bump_minor_versions for sprint XX (tdawson@redhat.com)
+
 * Mon Apr 15 2013 Adam Miller <admiller@redhat.com> 0.0.7-1
 - WIP Cartridge Refactor - Scrub manifests (jhonce@redhat.com)
 

@@ -1,0 +1,3 @@
+<Scripts>
+	<Script path="/usr/local/zend/gui/application/PE/batch/cleanupIssues.php" interval="86400" />
+</Scripts>

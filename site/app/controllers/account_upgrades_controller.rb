@@ -13,7 +13,7 @@ class AccountUpgradesController < ConsoleController
   before_filter :payment_method, :only => [:new, :create, :edit]
   before_filter :process_async
 
-  before_filter :streamline_account_in_supported_country!, :only => [:new, :create, :edit]
+  before_filter :account_in_supported_country!, :only => [:new, :create, :edit]
 
   rescue_from Aria::Error do |e|
     @message = case e
@@ -40,7 +40,7 @@ class AccountUpgradesController < ConsoleController
 
     if @user.save
       render :upgraded and return if (@current_plan.basic? and !@plan.basic?)
-      redirect_to account_path, ({:flash => {:info => "Plan changed to #{@plan.name}"}} if @plan.id != @current_plan.id)
+      redirect_to account_path, ({:flash => {:info => "Plan changed to #{@plan.name}"}} if @plan.id != @current_plan.id) || {}
     else
       render :unchanged and return if @plan == @current_plan
       render :downgrade and return if @plan.basic?
@@ -102,7 +102,10 @@ class AccountUpgradesController < ConsoleController
       redirect_to login_or_signup_path(account_plan_upgrade_path) unless user_signed_in?
     end
 
-    def streamline_account_in_supported_country!
+    def account_in_supported_country!
+      # If the user already has an Aria account, we do not prevent their access to billing
+      return if @aria_user.has_account?
+
       @full_user = @aria_user.full_user
       if @full_user.persisted?
         @contact_info = Aria::ContactInfo.from_full_user(@full_user)

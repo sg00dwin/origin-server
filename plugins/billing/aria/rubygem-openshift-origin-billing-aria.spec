@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.6.0
+Version: 1.6.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,26 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Wed May 01 2013 Adam Miller <admiller@redhat.com> 1.6.3-1
+- Expose 'plan_upgrade_enabled' capability in aria plugin conf file. Change
+  small gear CAD price from 0.05 to 0.04 (rpenta@redhat.com)
+
+* Tue Apr 30 2013 Adam Miller <admiller@redhat.com> 1.6.2-1
+- Expose usage rates in the conf file so that it is easily configurable.
+  (rpenta@redhat.com)
+- Removed 'max_storage_per_gear' capability for Silver plan Added
+  'max_untracked_addtl_storage_per_gear=5' and
+  'max_tracked_addtl_storage_per_gear=0' capabilities for Silver plan. Fixed
+  unit tests and models to accommodate the above change. Added migration script
+  for existing users Fixed devenv spec Fix migration script (rpenta@redhat.com)
+
+* Thu Apr 25 2013 Adam Miller <admiller@redhat.com> 1.6.1-1
+- Add 'Operating Unit' field to billing email notifications.
+  (rpenta@redhat.com)
+- Update test user generation to add contact info (jliggitt@redhat.com)
+- Cleanup Plan history as a post sync operation (rpenta@redhat.com)
+- bump_minor_versions for sprint XX (tdawson@redhat.com)
+
 * Tue Apr 16 2013 Troy Dawson <tdawson@redhat.com> 1.5.5-1
 - Billing email notification changes: -Added generic Counter mongoid model that
   will provide atomic sequence numbers -Added GSS sku for plans -Separate email

@@ -9,7 +9,7 @@
 
 Summary:        OpenShift plugin for streamline auth service
 Name:           rubygem-%{gem_name}
-Version: 1.6.0
+Version: 1.6.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -81,6 +81,9 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-auth-streamline-dev.conf
 
 %changelog
+* Thu Apr 25 2013 Adam Miller <admiller@redhat.com> 1.6.1-1
+- bump_minor_versions for sprint XX (tdawson@redhat.com)
+
 * Mon Apr 08 2013 Adam Miller <admiller@redhat.com> 1.5.2-1
 - Billing entitlement email notification changes:  - Don't capture all events
   from aria  - Plan change (upgrade/downgrade) will send revoke/assign

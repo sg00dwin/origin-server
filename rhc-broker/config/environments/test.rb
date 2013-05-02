@@ -42,7 +42,7 @@ Broker::Application.configure do
   ############################################
   config.dns = {
     :zone => "rhcloud.com",
-    :dynect_customer_name => "demo-redhat",
+    :dynect_customer_name => "redhat",
     :dynect_user_name => "dev-rhcloud-user",
     :dynect_password => "vo8zaijoN7Aecoo",
     :dynect_url => "https://api2.dynect.net"
@@ -108,6 +108,7 @@ Broker::Application.configure do
     :scopes => ['Scope::Session', 'Scope::Read', 'Scope::Application', 'Scope::Userinfo'],
     :default_scope => 'userinfo',
     :scope_expirations => OpenShift::Controller::Configuration.parse_expiration("session=1.days|2.days", 1.month),
+    :download_cartridges_enabled => true,
   }
 
   # Profiler config

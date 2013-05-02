@@ -1,0 +1,125 @@
+#!/bin/bash -e
+
+source $OPENSHIFT_CARTRIDGE_SDK_BASH
+
+HTTPD_CFG_FILE=$OPENSHIFT_ZEND_DIR/configuration/etc/conf/httpd_nolog.conf
+HTTPD_CFG_DIR=$OPENSHIFT_ZEND_DIR/configuration/etc/conf.d
+
+if [ -f /etc/zce.rc ]
+then
+    . /etc/zce.rc
+else
+    echo "/etc/zce.rc doesn't exist!"
+exit 1
+fi
+
+export PHPRC="$OPENSHIFT_ZEND_DIR/configuration/etc/php.ini"
+
+function start() {
+    client_message "Starting Zend Server Deployment daemon"
+    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/zdd.sh start || :
+
+    client_message "Starting Zend Server Monitor node"
+    # - logs errors and performance data to the Zend Server
+    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/monitor-node.sh start || :
+
+    client_message "Starting Apache"
+    /usr/sbin/httpd -C "Include $HTTPD_CFG_DIR/*.conf" -f $HTTPD_CFG_FILE -k start || :
+
+    # Session clustering daemon
+    # - for scaling apps
+    # - allows Zend Server to work in a multiple server environment
+    # - will work with Zend Server 6.0
+    #$OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/scd.sh start
+
+    client_message "Starting Zend Server Job queue daemon"
+    # - allows PHP applications to execute batch jobs using an api call
+    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/jqd.sh start || :
+
+    client_message "Starting Light HTTPd"
+    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/lighttpdctl.sh start || :
+}
+
+function stop() {
+    client_message "Stopping Zend Server"
+    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/lighttpdctl.sh stop
+    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/jqd.sh stop
+    #/usr/local/zend/bin/scd.sh stop
+    /usr/sbin/httpd -C "Include $HTTPD_CFG_DIR/*.conf" -f $HTTPD_CFG_FILE -k stop
+    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/monitor-node.sh stop
+    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/zdd.sh stop
+}
+
+function restart() {
+   client_message "Restarting Zend Server"
+   $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/zdd.sh restart
+   $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/monitor-node.sh restart
+   /usr/sbin/httpd -C "Include $HTTPD_CFG_DIR/*.conf" -f $HTTPD_CFG_FILE -k restart
+   #/usr/local/zend/bin/scd.sh restart
+   $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/jqd.sh restart
+   $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/lighttpdctl.sh restart
+}
+
+function status() {
+   if output=$(curl http://$OPENSHIFT_ZEND_IP:$OPENSHIFT_ZEND_PORT/server-status?auto 2>&1 )
+   then
+      echo "Application is running"
+      echo $output
+   else
+      echo "Application is either stopped or inaccessible"
+   fi
+}
+
+function reload() {
+    echo "Reloading Zend Server"
+    restart
+}
+
+function tidy() {
+    client_message "Emptying log dir: $OPENSHIFT_ZEND_LOG_DIR"
+    shopt -s dotglob
+    rm -rf $OPENSHIFT_ZEND_LOG_DIR/*
+}
+
+function build() {
+    if [ -f "${OPENSHIFT_REPO_DIR}/.openshift/markers/force_clean_build" ]
+    then
+        echo ".openshift/markers/force_clean_build found!  Recreating pear libs" 1>&2
+        rm -rf "${OPENSHIFT_ZEND_DIR}"/phplib/pear/*
+        mkdir -p "${OPENSHIFT_ZEND_DIR}"/phplib/pear/{docs,ext,php,cache,cfg,data,download,temp,tests,www}
+    fi
+
+    if [ -f ${OPENSHIFT_REPO_DIR}deplist.txt ]
+    then
+        for f in $(cat ${OPENSHIFT_REPO_DIR}deplist.txt)
+        do
+            echo "Checking pear: $f"
+            echo
+            if pear list "$f" > /dev/null
+            then
+                pear upgrade "$f"
+            elif ! ( php -c "${OPENSHIFT_ZEND_DIR}"/conf -m | grep -i -q \^`basename "$f"`\$ )
+            then
+                pear install --alldeps "$f"
+            else
+                echo "Extension already installed in the system: $f"
+            fi
+        done
+    fi
+}
+
+function deploy() {
+    echo "TODO"
+}
+
+case "$1" in
+  start)     start ;;
+  stop)      stop ;;
+  restart)   restart ;;
+  status)    status ;;
+  reload)    reload ;;
+  tidy)      tidy ;;
+  build)     build ;;
+  deploy)    deploy ;;
+  *)         exit 0
+esac

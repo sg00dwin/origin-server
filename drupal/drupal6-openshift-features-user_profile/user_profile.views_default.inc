@@ -83,6 +83,16 @@ function user_profile_views_default_views() {
       'relationship' => 'none',
     ),
   ));
+  $handler->override_option('sorts', array(
+    'timestamp' => array(
+      'order' => 'DESC',
+      'granularity' => 'second',
+      'id' => 'timestamp',
+      'table' => 'node_revisions',
+      'field' => 'timestamp',
+      'relationship' => 'none',
+    ),
+  ));
   $handler->override_option('filters', array(
     'type' => array(
       'operator' => 'in',
@@ -133,8 +143,6 @@ p.summary { padding-top: 13px; font-style: italic; }
 .featured .partner .action-call { position: static; }
 .program img { width: 150px; }
 .partner-list { 
-  margin: 40px 0 0 0;
-  list-style-type: none;
 }
 .partner-list li {
   margin: 30px 0;

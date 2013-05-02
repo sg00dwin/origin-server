@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/openshift/cartridges/v2/metrics
 
 Name: openshift-origin-cartridge-metrics
-Version: 1.8.0
+Version: 1.8.2
 Release: 1%{?dist}
 Summary: Metrics cartridge
 
@@ -42,6 +42,14 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/README.md
 
 %changelog
+* Mon Apr 29 2013 Adam Miller <admiller@redhat.com> 1.8.2-1
+- Bug 957073 (dmcphers@redhat.com)
+
+* Thu Apr 25 2013 Adam Miller <admiller@redhat.com> 1.8.1-1
+- Split v2 configure into configure/post-configure (ironcladlou@gmail.com)
+- more install and post-install (dmcphers@redhat.com)
+- bump_minor_versions for sprint XX (tdawson@redhat.com)
+
 * Mon Apr 15 2013 Adam Miller <admiller@redhat.com> 1.7.9-1
 - Merge pull request #1183 from jwhonce/wip/manifest_scrub
   (dmcphers+openshiftbot@redhat.com)

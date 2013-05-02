@@ -22,7 +22,6 @@ function redhat_frontpage_menu() {
     'page callback' => redhat_page_home,
     'access callback' => TRUE,
     'type' => MENU_CALLBACK,
-    'title' => "OpenShift by Red Hat",
   );
   $items['<front>'] = $item;
   $items['home'] = $item;

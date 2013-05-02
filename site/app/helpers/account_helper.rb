@@ -27,7 +27,11 @@ module AccountHelper
   end
 
   def customer_support_new_ticket_url
-    @customer_support_new_ticket_url ||= Rails.configuration.customer_support_new_ticket_url
+    "https://access.redhat.com/support/cases/new/"
+  end
+
+  def contact_customer_support_url
+    "https://access.redhat.com/customerservice"
   end
 
   def line_item_details(li)

@@ -28,13 +28,13 @@
         else { $layout = 'both'; }
       }
     ?> 
-    <link type="image/png" rel="shortcut icon" href="<?php print $openshift_server_url; ?>/app/assets/favicon-32.png"></link>
-    <link type="text/css" rel="stylesheet" href="<?php print $openshift_server_url; ?>/app/assets/overpass.css"></link>
-    <script src="<?php print $openshift_server_url; ?>/app/assets/modernizr.min.js" type="text/javascript"></script>
-    <link type="text/css" rel="stylesheet" href="<?php print $openshift_server_url; ?>/app/assets/common.css"></link>
-    <link type="text/css" rel="stylesheet" href="<?php print $openshift_server_url; ?>/app/assets/site.css"></link>
+    <link type="image/png" rel="shortcut icon" href="<?php print openshift_assets_url(); ?>/favicon-32.png"></link>
+    <link type="text/css" rel="stylesheet" href="<?php print openshift_assets_url(); ?>/overpass.css"></link>
+    <script src="<?php print openshift_assets_url(); ?>/modernizr.min.js" type="text/javascript"></script>
+    <link type="text/css" rel="stylesheet" href="<?php print openshift_assets_url(); ?>/common.css"></link>
+    <link type="text/css" rel="stylesheet" href="<?php print openshift_assets_url(); ?>/site.css"></link>
 	  <?php print $styles; ?>
-    <script type="text/javascript" src="<?php print $openshift_server_url; ?>/app/assets/application.js"></script>
+    <script type="text/javascript" src="<?php print openshift_assets_url(); ?>/application.js"></script>
 	  <?php print $scripts; ?>
     <meta content='' name='author'>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'>

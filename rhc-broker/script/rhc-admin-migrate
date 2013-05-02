@@ -38,7 +38,7 @@ def migrate_gear(login, app_name, gear_uuid, version)
   begin
     user = nil
     begin
-      user = CloudUser.find_by(login: login)
+      user = CloudUser.with(consistency: :eventual).find_by(login: login)
     rescue Mongoid::Errors::DocumentNotFound
     end
     if user
@@ -575,7 +575,7 @@ def migrate_from_file(file)
           else
             user = nil
             begin
-              user = CloudUser.find_by(login: login)
+              user = CloudUser.with(consistency: :eventual).find_by(login: login)
             rescue Mongoid::Errors::DocumentNotFound
             end
             if user && Application.find(user, app_name)

@@ -2,8 +2,8 @@ class ActiveSupport::TestCase
   def with_account_holder
     @@account_holder ||= begin
       Aria::UserContext.new(WebUser.new({
-        :email_address=> "openshift_test_account_perm_1",
-        :rhlogin=>       "openshift_test_account_perm_1",
+        :email_address=> "openshift_test_account_perm_2",
+        :rhlogin=>       "openshift_test_account_perm_2",
         :ticket => '1'
       })).tap do |u|
         begin
@@ -46,5 +46,17 @@ class ActiveSupport::TestCase
     id = "#{prefix}#{tag.gsub(/[^a-z0-9]+/i, '-')}-#{Time.now.strftime("%Y%m%d-%H%M%S")}"
     puts id
     id
+  end
+end
+
+class ActionController::TestCase
+  setup :stub_aria_checks
+  def stub_aria_checks
+    Aria.stubs(:get_acct_no_from_user_id).raises(Aria::AccountDoesNotExist)
+  end
+
+  def self.with_aria
+    setup{ omit_if_aria_is_unavailable }
+    define_method :stub_aria_checks do; end
   end
 end

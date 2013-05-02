@@ -5,7 +5,6 @@ Feature: Last Access Updater
   #@runtime_extended
   Scenario: Application Creation
     Given the libra client tools
-    And an accepted node
     And 1 php-5.3 applications are created
     Then the applications should be accessible
 

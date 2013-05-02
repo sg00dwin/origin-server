@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.8.0
+Version: 1.8.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -236,6 +236,35 @@ fi
 
 
 %changelog
+* Thu May 02 2013 Adam Miller <admiller@redhat.com> 1.8.4-1
+- Fix bug 958800: Update v2-migration version (pmorie@gmail.com)
+- Add post-migration validation step (pmorie@gmail.com)
+
+* Wed May 01 2013 Adam Miller <admiller@redhat.com> 1.8.3-1
+- Add cuke tests for mysql migrations (pmorie@gmail.com)
+- V1 -> V2 migrations (pmorie@gmail.com)
+- WIP Cartridge Refactor - Fix rhc-watchman for V2 nodes (jhonce@redhat.com)
+- WIP: migration cucumber tests (pmorie@gmail.com)
+
+* Mon Apr 29 2013 Adam Miller <admiller@redhat.com> 1.8.2-1
+- V1 -> V2 migrations (pmorie@gmail.com)
+
+* Thu Apr 25 2013 Adam Miller <admiller@redhat.com> 1.8.1-1
+- WIP: V2 Migrations (pmorie@gmail.com)
+- Creating fixer mechanism for replacing all ssh keys for an app
+  (abhgupta@redhat.com)
+- Merge pull request #1239 from danmcp/master
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1238 from jwhonce/wip/raw_envvar
+  (dmcphers+openshiftbot@redhat.com)
+- implementing install and post-install (dmcphers@redhat.com)
+- Card online_runtime_255 - Change environment variable files to be named KEY
+  and contain VALUE (jhonce@redhat.com)
+- Adding install and post setup steps (dmcphers@redhat.com)
+- Use require_relative in v2 migrations (pmorie@gmail.com)
+- WIP: V1 -> V2 migrations (pmorie@gmail.com)
+- bump_minor_versions for sprint XX (tdawson@redhat.com)
+
 * Fri Apr 12 2013 Adam Miller <admiller@redhat.com> 1.7.3-1
 - Call the ruby mcs label generator directly for speed. (rmillner@redhat.com)
 

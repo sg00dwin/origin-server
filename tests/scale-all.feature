@@ -3,7 +3,6 @@
 Feature: Scaling Verification Tests
   Scenario Outline: AutoScale App
     Given the libra client tools
-    And an accepted node
     When a scaled <type> application is created
     Then the haproxy-status page will be responding
     And the gear members will be UP
@@ -31,7 +30,6 @@ Feature: Scaling Verification Tests
 
   Scenario Outline: Scale App
     Given the libra client tools
-    And an accepted node
     When a scaled <type> application is created
     Then the haproxy-status page will be responding
     And the gear members will be UP

@@ -2,7 +2,6 @@
 Feature: Mongo standalone verification
   Scenario Outline: Mongo Scale App
     Given the libra client tools
-    And an accepted node
     When a scaled <type> application is created
     Then the haproxy-status page will be responding
     And the gear members will be UP
