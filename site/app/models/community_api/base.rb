@@ -1,5 +1,5 @@
 class CommunityApi::Base < RestApi::Base
-  self.site = Console.config.community_url || ('https://localhost:8118/' if Rails.env.development?)
+  self.site = Console.config.community_url || ('https://localhost:8118/' if Rails.env.development? || Rails.env.devenv?) || (raise "No community url set")
   self.proxy = nil
 
   def self.url_sanitizer
