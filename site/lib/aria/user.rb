@@ -280,7 +280,6 @@ module Aria
         clear_cache!
       end
     rescue Aria::AccountExists
-      clear_cache!
       raise
     rescue Aria::Error => e
       errors.add(:base, e.to_s)
