@@ -37,9 +37,18 @@ module Online
         11212 => 11212
       }
       say "Your local machine will now think '#{options.localhost}' is the hostname of your devenv."
-      cmd = "ssh -F ~/.ssh/config #{ports.map{ |k,v| "-L #{k}:#{options.localhost}:#{v}"}.join(' ')} #{hostname} -l root -i misc/libra.pem"
+      cmd = "sudo -E ssh -F #{File.expand_path('~/.ssh/config')} #{ports.map{ |k,v| "-L #{k}:#{options.localhost}:#{v}"}.join(' ')} #{hostname} -l root -i misc/libra.pem"
       exec cmd
     end
+
+    desc "remote", "Act as if the devenv is local"
+    method_option :localhost, :required => false, :default => 'localhost', :desc => "The hostname to use locally (default 'localhost')"
+    method_option :web_port, :required => false, :default => 443, :desc => "The HTTPS port to bind to locally (default 443, requires root)"
+    def remote(hostname='verifier')
+      system 'sudo', '-E', 'ssh', '-F', File.expand_path('~/.ssh/config'), hostname, '-l', 'root', '-i', 'misc/libra.pem', "/etc/drupal6/enable-local.sh"
+      tunnel(hostname)
+    end
+
 
     desc "watch", "Watch for changes to your source directory with the 'listen' gem and copy them to the remote image. Not a full replacement for 'sync' - intended to speed Rails development."
     method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
