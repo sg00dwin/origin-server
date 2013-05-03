@@ -112,7 +112,7 @@ module Aria
         :country => 'US',
         :region => 'TX',
         :zip => '10001',
-        :email => 'foo@bar.com',
+        :email => 'foo@example.com',
       }.merge(opts))
     end
 
