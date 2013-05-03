@@ -77,6 +77,10 @@ module Aria
       end
     end
 
+    def get_statement_for_invoice(acct_no, invoice_no)
+      super(:acct_no => acct_no, :invoice_no => invoice_no)
+    end
+
     def clear_reg_uss_config_params(set)
       super(:set_name => set)
     end
@@ -98,6 +102,7 @@ module Aria
     end
 
     def get_usage_history(acct_no, opts)
+      opts = opts.dup
       opts[:acct_no] = acct_no
       Array(super(opts).usage_history_records)
     rescue Aria::NoLineItemsProvided
@@ -119,11 +124,13 @@ module Aria
     end
 
     def get_acct_statement_history(acct_no, opts={})
+      opts = opts.dup
       opts[:acct_no] = acct_no
       Array(super(opts).statement_history)
     end
 
     def get_acct_trans_history(acct_no, opts={})
+      opts = opts.dup
       opts[:account_no] = acct_no
       Array(super(opts).history)
     end
@@ -141,6 +148,7 @@ module Aria
     end
 
     def record_usage(acct_no, usage_type, usage_units, opts={})
+      opts = opts.dup
       opts[:acct_no] = acct_no
       opts[:usage_type] = usage_type
       opts[:usage_units] = usage_units

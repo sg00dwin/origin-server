@@ -4,9 +4,9 @@ require File.expand_path('../../test_helper', __FILE__)
 
 class BillsControllerTest < ActionController::TestCase
 
-  setup {
-    Aria.expects(:gen_random_string).at_least(0).returns("123")
-  }
+  with_clean_cache
+  
+  setup { Aria.expects(:gen_random_string).at_least(0).returns("123") }
 
   def plan
     Aria::WDDX::Struct.new({
