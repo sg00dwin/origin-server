@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.6.3
+Version: 1.6.4
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,9 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Fri May 03 2013 Adam Miller <admiller@redhat.com> 1.6.4-1
+- Updated Silver plan usage rates in aria plugin conf file (rpenta@redhat.com)
+
 * Wed May 01 2013 Adam Miller <admiller@redhat.com> 1.6.3-1
 - Expose 'plan_upgrade_enabled' capability in aria plugin conf file. Change
   small gear CAD price from 0.05 to 0.04 (rpenta@redhat.com)
