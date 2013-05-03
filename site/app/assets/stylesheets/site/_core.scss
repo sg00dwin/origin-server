@@ -153,99 +153,50 @@ body.signup {
 }
 
 // Top bar
-
-// .home .section-top .masthead-enterprise {
-//   display: block;
-//   height: 117px;
-//   margin: 0 auto;
-//   background: #222 image-url("enterprise-banner.png") center center no-repeat;
-//   a {
-//     display: block;
-//     min-height: 117px;
-//     background: transparent;
-//     width:100%;
-//   }
-//   div {
-//     padding: 0;
-//   }
-// }
-
 .section-top {
   background-color: $topBarBackgroundColor; 
   color: #888;
   
-  // .masthead-enterprise {
-  //   display: none;
-  // }
-  
-  div div {
-    padding: 4px 0;
-  }
-  
-  div div.mobile-block {
-    float: none;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  .container {
+    > div {
+      padding: 4px 0;
 
-    a {
-      background: transparent image-url("sprite-vert.png") right -113px no-repeat;
-      color: #EA0011;
-      height: 24px;
-      line-height: 25px;
-      padding-right: 28px;
-      color: $openshiftBrightRed;
-      @media (max-width: 480px) {
-        margin-right: 0;
+      > .text {
+        padding: 5px 0;
+        @media (max-width: 480px) {
+          display: none;
+        }
       }
+    }
 
-      span {
-        text-transform: none;
-        color: #fff;
-        padding-right: 5px;
+    > .pull-right { 
+      a {
+        float: left;
+        @media (max-width: 480px) {
+          float: none;
+        }
       }
-
-      &:hover {background-position: right -56px;}
     }
   }
-  
-  div div.login a {
-    float: left;
-    @media (max-width: 480px) {
-      float: none;
-    }
-  }
-  
-  div a {
+
+  a {
     color: $signupLinkColor;
-    text-transform: uppercase;
-    font-size: 12px;
     
     &:hover {
-    text-decoration: none;
-    color: white;
+      text-decoration: none;
+      color: white;
     }
-  }
-  
-  a.sign_out {
-  	float:right;
-  }
-  
-  ul.pull-right {
-  	list-style-type:none;
-  	li {
-  		float:left;
-  	}
   }
 
   .btn {
-    border-radius: 0;
-    text-shadow: none;
+    background: #333;
     border: 0;
+    border-radius: 0;
     box-shadow: none;
     color: #ccc;
-    background: #333;
     margin-left: 2px;
+    text-shadow: none;
+    text-transform: uppercase;
 
     &:hover, &:active {
       background: #AAAAAA;
@@ -267,13 +218,6 @@ body.signup {
   
 }
 
-@media (max-width: 979px) {
-  // hide extra text when space is tight
-  .mobile-block > a > span {
-    display: none;
-  }
-}
-
 @media (max-width: 767px) {
 	.section-top {
 		#outage {
@@ -290,21 +234,7 @@ body.signup {
       padding: 0;
     }
     #outage {
-      margin: 5px 0;
-    }
-    .mobile-block {
-      display: block;
-      float: none;
-      text-align: center;
-      width: 100%;
-      margin-top: 32px; // vertical spacing needed for portait phone display
-      // hide extra text when space is tight
-      > a > span {
-        display: inline;
-      }
-    }
-    div a.sign_out {
-      float: none;
+      //margin: 5px 0;
     }
     .login {
       display: table;

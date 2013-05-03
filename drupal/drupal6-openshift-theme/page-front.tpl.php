@@ -1,7 +1,7 @@
 <?php include 'page_header.inc' ?>
 
     <header>
-      <?php include 'page-front_top.inc' ?>
+      <?php include 'page_top.inc' ?>
       <?php include 'page_nav.inc' ?>
     </header>
 

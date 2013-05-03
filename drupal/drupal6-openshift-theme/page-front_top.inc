@@ -1,4 +1,4 @@
-      <?php #<div id="top" class="section-top"></div> ?>
+    <div id="top" class="section-top"></div> ?
       <div class="container">
         <a title="Track open issues on the OpenShift status page" style="display:none;" id="outage" class="btn btn-small btn-warning" href="<?php print $openshift_server_url; ?>/app/status">Status</a>
           <div class="pull-right login">
@@ -23,3 +23,4 @@
           <div class=""><a href="/blogs">Blog</a></div>
         </div>
       </div>
+    </div>
