@@ -18,7 +18,7 @@ Rails.application.config.tap do |config|
   # These IDs should not change unless Aria changes the templates.
   # NOTE: For now, this simply maps everything to 'Red Hat HTML Statement'
   config.aria_invoice_template_id_map = 
-    Hash.new(
+    HashWithIndifferentAccess.new(
       Console.config.env(:ARIA_DEFAULT_INVOICE_TEMPLATE, '37546552')
     ).merge!(
       Console.config.env(:ARIA_INVOICE_TEMPLATE_MAP, { 'US' => '37546551', 'CA' => '37546553' })
@@ -35,9 +35,9 @@ Rails.application.config.tap do |config|
   #  - 'Postcode' for the postal code
   config.allowed_countries = Console.config.env(:ARIA_ALLOWED_COUNTRIES, [:AT, :BE, :CA, :CH, :DE, :DK, :ES, :FI, :FR, :GB, :IE, :IS, :IT, :LU, :NL, :NO, :PT, :SE, :US])
   config.preferred_countries = [:US]
-  config.currency_cd_by_country = Hash.new('eur').merge!({ 'US' => 'usd', 'CA' => 'cad' })
+  config.currency_cd_by_country = HashWithIndifferentAccess.new('eur').merge!({ 'US' => 'usd', 'CA' => 'cad' })
   config.collections_group_id_by_country =
-    Hash.new(
+    HashWithIndifferentAccess.new(
          Console.config.env(:ARIA_DEFAULT_COLLECTIONS_GROUP_ID, '3')
     ).merge!(
          Console.config.env(:ARIA_COLLECTIONS_GROUP_ID_MAP, { 'US' => '1', 'CA' => '2' })

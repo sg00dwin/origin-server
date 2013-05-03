@@ -19,7 +19,7 @@ module Aria
     end
 
     def self.find_all_by_current_plan(acct_no)
-      plan = Aria.get_acct_plans_all(acct_no).last
+      plan = Aria.cached.get_acct_plans_all(acct_no).last
       plan_services = (plan.plan_services if plan) || []
       plan_services.inject([]) do |a, s|
         a << Aria::RecurringLineItem.new({

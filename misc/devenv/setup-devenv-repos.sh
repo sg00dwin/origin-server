@@ -10,7 +10,7 @@ baseurl=http://mirror1.ops.rhcloud.com/mirror/epel/6/\$basearch/
 failovermethod=priority
 enabled=1
 gpgcheck=0
-exclude=libmongodb mongodb*
+exclude=libmongodb mongodb* nodejs
 
 [epel-testing]
 name=Extra Packages for Enterprise Linux 6 - Testing - \$basearch
@@ -19,7 +19,7 @@ baseurl=http://mirror1.ops.rhcloud.com/mirror/epel/testing/6/\$basearch/
 failovermethod=priority
 enabled=0
 gpgcheck=0
-exclude=libmongodb mongodb*
+exclude=libmongodb mongodb* nodejs
 
 EOF
 #sed -i s/sslverify=1/sslverify=0/g /etc/yum.repos.d/rh-cloud.repo

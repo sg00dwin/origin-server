@@ -24,7 +24,7 @@ class BillsController < ConsoleController
     @transactions.select {|t| t.transaction_type == 1 }.each_slice(Rails.configuration.aria_max_parallel_requests) do |slice|
       slice.each do |t|
         async do
-          @transaction_details[t.transaction_source_id] = Aria.get_invoice_details(@user.acct_no, t.transaction_source_id)
+          @transaction_details[t.transaction_source_id] = Aria.cached.get_invoice_details(@user.acct_no, t.transaction_source_id)
         end
       end
       join!

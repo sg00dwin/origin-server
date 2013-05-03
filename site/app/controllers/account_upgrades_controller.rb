@@ -44,6 +44,7 @@ class AccountUpgradesController < ConsoleController
     end
 
     if @user.save
+      @aria_user.clear_cache!
       render :upgraded and return if (@current_plan.basic? and !@plan.basic?)
       redirect_to account_path, ({:flash => {:info => "Plan changed to #{@plan.name}"}} if @plan.id != @current_plan.id) || {}
     else

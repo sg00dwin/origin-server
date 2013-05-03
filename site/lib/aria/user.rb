@@ -49,7 +49,7 @@ module Aria
 
     def account_details
       @account_details ||= begin
-        Aria.get_acct_details_all(acct_no)
+        Aria.cached.get_acct_details_all(acct_no)
       end
     end
 
@@ -162,12 +162,12 @@ module Aria
 
     def unbilled_usage_line_items
       @unbilled_usage_line_items ||=
-        Aria::UsageLineItem.for_usage(Aria.get_usage_history(acct_no, :date_range_start => current_period_start_date), plan_no).sort_by(&Aria::LineItem.plan_sort)
+        Aria::UsageLineItem.for_usage(Aria.cached.get_usage_history(acct_no, :date_range_start => current_period_start_date), plan_no).sort_by(&Aria::LineItem.plan_sort)
     end
 
     def unbilled_usage_balance
       @unbilled_usage_balance ||=
-        Aria.get_unbilled_usage_summary(acct_no).ptd_balance_amount.to_f
+        Aria.cached.get_unbilled_usage_summary(acct_no).ptd_balance_amount.to_f
     end
 
     def unpaid_invoices
@@ -187,15 +187,15 @@ module Aria
     end
 
     def invoices
-      @invoices ||= Aria.get_acct_invoice_history(acct_no).map {|i| Aria::Invoice.new(i, acct_no) }.sort_by(&:bill_date).reverse!
+      @invoices ||= Aria.cached.get_acct_invoice_history(acct_no).map {|i| Aria::Invoice.new(i, acct_no) }.sort_by(&:bill_date).reverse!
     end
 
     def transactions
-      @transactions ||= Aria.get_acct_trans_history(acct_no).sort_by(&:transaction_create_date)
+      @transactions ||= Aria.cached.get_acct_trans_history(acct_no).sort_by(&:transaction_create_date)
     end
 
     def statements
-      @statements ||= Aria.get_acct_statement_history(acct_no)
+      @statements ||= Aria.cached.get_acct_statement_history(acct_no)
     end
 
     def forwarded_balance(invoice=nil)
@@ -247,7 +247,7 @@ module Aria
     end
 
     def queued_plans
-      @queued_plans ||= Aria.get_queued_service_plans(acct_no)
+      @queued_plans ||= Aria.cached.get_queued_service_plans(acct_no)
     end
 
     def create_account(opts=nil)
@@ -273,9 +273,12 @@ module Aria
       # Set the collection group; always keyed to billing info.
       params['client_coll_acct_group_ids'] = Aria::User.collections_acct_group_id(params['bill_country'])
 
-      Aria.create_acct_complete(params)
-      clear_cache!
-      true
+      begin
+        Aria.create_acct_complete(params)
+        true
+      ensure
+        clear_cache!
+      end
     rescue Aria::AccountExists
       clear_cache!
       raise
@@ -315,7 +318,13 @@ module Aria
     end
 
     def clear_cache!
-      (instance_variables - [:@delegate_sd_obj, :@acct_no, :@mocha]).each{ |s| remove_instance_variable(s) }
+      (instance_variables - [:@delegate_sd_obj, :@mocha, :@acct_no]).each{ |s| remove_instance_variable(s) }
+    ensure
+      Rails.cache.delete([Aria::User.name, "acct_no", acct_no]) if has_account? rescue nil
+    end
+
+    def self.cache_key(acct_no)
+      Rails.cache.fetch([Aria::User.name, "acct_no", acct_no]) { [acct_no, Time.now.strftime("%Y-%m-%d %H:%M:%S.%N") ] }
     end
 
     private

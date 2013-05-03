@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.8.4
+Version: 1.8.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -753,6 +753,16 @@ rm -rf /tmp/phantomjs
 /etc/openshift/development
 
 %changelog
+* Fri May 03 2013 Adam Miller <admiller@redhat.com> 1.8.5-1
+- Merge pull request #1275 from jtharris/bugs/BZ862338
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1299 from smarterclayton/remote_asset_updates
+  (dmcphers+openshiftbot@redhat.com)
+- add nodejs to the exclude list (dmcphers@redhat.com)
+- Asset serving (ccoleman@redhat.com)
+- Add an easy to use remote option for community/site dev (ccoleman@redhat.com)
+- Status scripts check for lock file. (jharris@redhat.com)
+
 * Thu May 02 2013 Adam Miller <admiller@redhat.com> 1.8.4-1
 - Merge pull request #1292 from tkramer-
   rh/dev/tkramer/security/BZ917917_ssl.conf (dmcphers+openshiftbot@redhat.com)

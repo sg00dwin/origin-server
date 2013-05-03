@@ -52,6 +52,11 @@ class PaymentMethodsController < ConsoleController
         h
       end
       @user = Aria::UserContext.new(current_user)
+
+      # Always clear when returning from direct_post
+      # Updating payment method can change status, mark invoices paid, process payments, etc
+      @user.clear_cache!
+
       if not @user.has_valid_payment_method? and @errors.empty?
         (@errors[:base] ||= []).unshift :unknown
       end

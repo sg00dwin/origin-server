@@ -27,13 +27,14 @@ end
 
 SimpleCov.start 'rails' do
   coverage_dir 'test/coverage/'
-  command_name 'Site tests'
+  command_name (SimpleCov::CommandGuesser.original_run_command || 'Site tests').strip
 
   add_filter EngineFilter.new('Console::Engine')
 
   # Filters - these files will be ignored.
   add_filter 'app/controllers/styleguide_controller.rb'
 
+  use_merging
   merge_timeout 1000
 
   # Groups - general categories of test areas
@@ -45,7 +46,6 @@ SimpleCov.start 'rails' do
   #add_group('Test')        { |src_file| src_file.filename.include?(File.join(%w[features])) or
   #                                      src_file.filename.include?(File.join(%w[spec])) }
 
-  #use_merging = true
   # Note, the #:nocov: coverage exclusion  should only be used on external functions 
   #  that cannot be nondestructively tested in a developer environment.
 end
