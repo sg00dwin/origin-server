@@ -4,46 +4,48 @@
           <div class="row">
             <nav class="span3">
               <header>
-                <h3><a href="/developers">Developers</a></h3>
+                <h3>Online</h3>
               </header>
               <ul class="unstyled">
-                <li><a href="/get-started">Get Started Online</a></li>
-                <li><a href="<?php print openshift_user_guide_url(); ?>">User Guide</a></li>
-                <li><a href="/faq">FAQ</a></li>
-                <li><a href="/quickstarts">QuickStarts</a></li>
+                <li><a href="/get-started">Get Started</a></li>
+                <li><a href="/pricing">Pricing</a></li>
+                <li><a href="/legal/services_agreement">Terms of Service</a></li>
+                <li><a href="/policy/security">Security Policy</a></li>
+                <li><a href="<?php print $openshift_server_url; ?>/app/status">Status</a></li>
               </ul>
             </nav>
             <nav class="span3">
               <header>
-                <h3><a href="/community">Participate</a></h3>
+                <h3>Community</h3>
               </header>
               <ul class="unstyled">
-                <li><a href="/forums/">Forum</a></li>
+                <li><a href="http://openshift.github.io">Open Source</a></li>
+                <li><a href="https://plus.google.com/communities/114361859072744017486">Origin Developers</a></li>
+                <li><a href="/forum/openshift">Forum</a></li>
                 <li><a href="https://stackoverflow.com/questions/tagged/openshift">StackOverflow</a></li>
-                <li><a href="http://webchat.freenode.net/?randomnick=1&amp;channels=openshift&amp;uio=d4">IRC Channel</a></li>
-                <li><a href="mailto:openshift@redhat.com">Feedback</a></li>
               </ul>
             </nav>
             <nav class="span3">
               <header>
-                <h3><a href="/get-involved">Follow</a></h3>
+                <h3>Stay Connected</h3>
               </header>
               <ul class="unstyled">
                 <li><a href="/blogs">Blog</a></li>
-                <li><a href="http://openshift.github.io">Open Source</a></li>
-                <li><a href="/partner-programs">Partner Programs</a></li>
-                <li><a href="/newsletter/signup">Newsletter sign up</a></li>
+                <li><a href="/events">Events</a></li>
+                <li><a href="http://webchat.freenode.net/?randomnick=1&amp;channels=openshift&amp;uio=d4">#openshift on IRC</a></li>
+                <li><a href="/newsletter/signup">Newsletter Signup</a></li>
+                <li><a href="mailto:openshift@redhat.com">Contact Us</a></li>
               </ul>
             </nav>
             <nav class="span3">
               <header>
-                <h3><a href="<?php print $openshift_server_url; ?>/app/account">Account</a></h3>
+                <h3>About OpenShift</h3>
               </header>
               <ul class="unstyled">
-                <li><a href="/developers/pricing">Online Pricing</a></li>
-                <li><a href="/legal/services_agreement">Terms of Service</a></li>
-                <li><a href="/legal/openshift_privacy">Privacy Policy</a></li>
-                <li><a href="/policy/security">Security Policy</a></li>
+                <li><a href="/">Enterprise Sales Info !!!</a></li>
+                <li><a href="/partners">Partner Program</a></li>
+                <li><a href="http://jobs.redhat.com/job-search-results/?keywords=openshift">Careers</a></li>
+                <li><a href="https://www.redhat.com/about/">About Red Hat</a></li>
               </ul>
             </nav>
           </div>
