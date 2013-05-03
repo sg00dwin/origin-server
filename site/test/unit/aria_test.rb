@@ -291,16 +291,12 @@ class AriaUnitTest < ActiveSupport::TestCase
     assert user.errors.empty?
   end
 
-  # Temporary test case to accomodate Streamline bug. This should be removed when the
-  # ContactInfo models is updated for correct enforcement.
-  test 'should enable creation of ContactInfo without country' do
+  test 'should enable creation of ContactInfo from FullUser' do
+    email_address = "foo@bar.com"
     full_user = Streamline::FullUser.test
-    full_user.country = nil
+    full_user.expects(:email_address).returns(email_address)
     assert contact_info = Aria::ContactInfo.from_full_user(full_user)
-    assert_equal nil, contact_info.country
-    full_user.country = ''
-    assert contact_info = Aria::ContactInfo.from_full_user(full_user)
-    assert_equal '', contact_info.country
+    assert_equal email_address, contact_info.email
   end
 
   test 'get_acct_no_from_user_id is cacheable' do
@@ -353,6 +349,21 @@ class AriaUnitTest < ActiveSupport::TestCase
 
   test 'should throw when non hash passed' do
     assert_raise(ArgumentError){ Aria.get_test 'hello' }
+  end
+
+  test 'contact info should init from account details' do
+    attr = Aria::WDDX::Struct.new({'billing' => 'a', 'city' => 'Lund', 'address1' => '1 test', 'other' => '2', 'country' => 'SE', 'locality' => 'Scania', 'state_prov' => 'Invalid', 'alt_email' => 'foo@bar.com', 'mi' => 'Z', 'postal_code' => '223344' })
+    assert info = Aria::ContactInfo.from_account_details(attr)
+    assert info.persisted?
+    assert_equal 'Lund', info.city
+    assert_equal 'Scania', info.region
+    assert_equal({'city' => 'Lund', 'address1' => '1 test', 'region' => 'Scania', 'country' => 'SE', 'email' => 'foo@bar.com', 'middle_initial' => 'Z', 'zip' => '223344'}, info.attributes)
+    assert_equal({'city' => 'Lund', 'address1' => '1 test', 'locality' => 'Scania', 'country' => 'SE', 'email' => 'foo@bar.com', 'mi' => 'Z', 'postal_cd' => '223344'}, info.to_aria_attributes)
+    assert_equal({'city' => 'Lund', 'address1' => '1 test', 'locality' => 'Scania', 'country' => 'SE', 'state_prov' => '~', 'email' => 'foo@bar.com', 'middle_initial' => 'Z', 'postal_cd' => '223344'}, info.to_aria_attributes('update'))
+
+    info.address2 = ""
+    assert_equal({'city' => 'Lund', 'address1' => '1 test', 'locality' => 'Scania', 'country' => 'SE', 'address2' => '', 'email' => 'foo@bar.com', 'mi' => 'Z', 'postal_cd' => '223344'}, info.to_aria_attributes)
+    assert_equal({'city' => 'Lund', 'address1' => '1 test', 'locality' => 'Scania', 'country' => 'SE', 'address2' => '~', 'state_prov' => '~', 'email' => 'foo@bar.com', 'middle_initial' => 'Z', 'postal_cd' => '223344'}, info.to_aria_attributes('update'))
   end
 
   test 'billing info should init from billing details' do

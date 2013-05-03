@@ -9,7 +9,8 @@ module Aria
               :zip,
               :first_name,
               :middle_initial,
-              :last_name
+              :last_name,
+              :email
     # Rails 3.0 requires all define_attribute_method calls to be together
 
     # Aria makes us explicitly unset values on update
@@ -54,7 +55,9 @@ module Aria
                      'bill_middle_initial' => 'bill_mi',
                    },
                    :rename_to_load => {},
-                   :no_rename_to_update => ['bill_middle_initial'],
+                   :rename_to_update => {
+                     'bill_zip' => 'bill_postal_cd',
+                   },
                    :no_prefix => []
 
     #def tax_exempt?
@@ -62,15 +65,22 @@ module Aria
     #end
 
     class << self
-      def rename_to_save(hash, action='save')
-        super(hash, action)
+      def rename_to_save(hash)
+        super(hash)
 
         (region_set_key, region_clear_key) = @@region_save_map[hash['bill_country']]
         hash[region_set_key] = hash.delete('bill_region')
-        hash[region_clear_key] = '~' if action == 'update'
+      end
+
+      def rename_to_update(hash)
+        super(hash)
+
+        (region_set_key, region_clear_key) = @@region_save_map[hash['bill_country']]
+        hash[region_set_key] = hash.delete('bill_region')
+        hash[region_clear_key] = '~'
 
         # Explicitly nil empty string fields within Aria
-        @@nullable.each {|n| hash[n.to_s] = "~" if hash[n.to_s] == "" } if action == 'update'
+        @@nullable.each {|n| hash[n.to_s] = "~" if hash[n.to_s] == "" }
       end
 
       def rename_to_load(hash)
@@ -95,12 +105,14 @@ module Aria
     def self.test(opts={})
       new({
         :first_name => 'Test',
+        :middle_initial => 'T',
         :last_name => 'User',
         :address1 => '12345 Happy Street',
         :city => 'Happyville',
         :country => 'US',
         :region => 'TX',
         :zip => '10001',
+        :email => 'foo@example.com',
       }.merge(opts))
     end
 

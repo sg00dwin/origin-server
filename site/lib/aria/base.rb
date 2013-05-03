@@ -24,10 +24,18 @@ module Aria
 
     class << self
       attr_reader :from_prefix, :to_prefix, :no_prefix, :no_rename_to_update
-      def rename_to_save(hash, action='save')
+      def rename_to_save(hash)
         return unless @rename_to_save
         @rename_to_save.each_pair do |from, to|
-          next if action == 'update' and no_rename_to_update.include?(from)
+          old = hash[from]
+          hash[to] = old unless old.nil?
+          hash.delete(from)
+        end
+      end
+
+      def rename_to_update(hash)
+        return unless @rename_to_update
+        @rename_to_update.each_pair do |from, to|
           old = hash[from]
           hash[to] = old unless old.nil?
           hash.delete(from)
@@ -36,7 +44,7 @@ module Aria
 
       def rename_to_load(hash)
         return unless @rename_to_load
-        @rename_to_load.each_pair do |to, from|
+        @rename_to_load.each_pair do |from, to|
           old = hash[from]
           hash[to] = old unless old.nil?
           hash.delete(from)
@@ -52,7 +60,7 @@ module Aria
           @from_prefix = opts[:from].to_s
           @to_prefix = opts[:to].to_s
           @no_prefix = Array opts[:no_prefix]
-          @no_rename_to_update = opts[:no_rename_to_update]
+          @rename_to_update = opts[:rename_to_update]
           @rename_to_save = opts[:rename_to_save]
           @rename_to_load = opts[:rename_to_load]
           @supplemental = Array opts[:supplemental]
@@ -75,7 +83,7 @@ module Aria
           h["#{self.class.to_prefix}#{k}"] = v
         end
         h
-      end.tap{ |h| self.class.rename_to_save(h, action) }
+      end.tap{ |h| action == 'save' ? self.class.rename_to_save(h) : self.class.rename_to_update(h) }
     end
 
     protected
