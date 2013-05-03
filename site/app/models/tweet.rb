@@ -39,12 +39,17 @@ class Tweet < RestApi::Base
         "https://twitter.com/#{CGI.escape screen_name}"
       end
     end
+
+    has_many :hashtags, :class_name => Tweet::Entities::Hashtag
+    has_many :urls, :class_name => Tweet::Entities::Url
+    has_many :user_mentions, :class_name => Tweet::Entities::UserMention
   end
 
   class User < RestApi::Base
   end
 
   has_one :user, :class_name => Tweet::User
+  has_one :entities, :class_name => Tweet::Entities
   has_one :retweeted_status, :class_name => Tweet
 
   def all_entities

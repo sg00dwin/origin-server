@@ -47,8 +47,12 @@ class TweetTest < ActiveSupport::TestCase
     assert tw.retweeted_status.id.present?
     assert tw.retweeted_status.text.present?
     assert_equal 'Michael McGrath', tw.retweeted_status.user.name
-
     assert_equal tw.text, tw.text_with_entities.join
+
+    tw = t[3]
+    assert_equal '#openshift', tw.entities.hashtags[0].to_s
+    assert_equal '@thefotios', tw.entities.user_mentions[0].to_s
+    assert_equal 'hacknjill-fotiosprod.rhcloud.com', tw.entities.urls[0].to_s
   end
 end
 
