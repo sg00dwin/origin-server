@@ -59,6 +59,7 @@ class LoginController < ApplicationController
       when [
         login_path,
         reset_account_password_path,
+        new_account_password_path,
         new_account_path,
         complete_account_path,
       ].any? {|path| referrer.path.starts_with?(path) }
