@@ -90,7 +90,7 @@ case "$1" in
 	stop
 	;;
   status)
-        status -p ${pidfile} $httpd
+    status -p ${pidfile} -l ${lockfile} $httpd
 	RETVAL=$?
 	;;
   restart)
@@ -98,7 +98,7 @@ case "$1" in
 	start
 	;;
   condrestart|try-restart)
-	if status -p ${pidfile} $httpd >&/dev/null; then
+	if status -p ${pidfile} -l ${lockfile} $httpd >&/dev/null; then
 		stop
 		start
 	fi
