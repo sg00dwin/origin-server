@@ -77,7 +77,7 @@ $do = og_comment_perms_do();
   <?php if ($submitted): ?>
     <div class="submitted">
       <?php
-      print '<span>by <strong>' . theme('username', $node) . '</strong> on </span>' . format_date($created, $type='custom', $format = 'F j, Y');
+      print '<span>by <strong>' . theme('username', $node) . '</strong> on </span>' . format_date($created, $type='custom', $format = 'F j, Y \a\t H:i A');
       ?>
     </div>
   <?php endif; ?>
