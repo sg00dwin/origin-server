@@ -13,8 +13,6 @@ else
 exit 1
 fi
 
-export PHPRC="$OPENSHIFT_ZEND_DIR/configuration/etc/php.ini"
-
 function start() {
     client_message "Starting Zend Server Deployment daemon"
     $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/zdd.sh start || :

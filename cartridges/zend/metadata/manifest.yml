@@ -90,14 +90,14 @@ Endpoints:
       - Frontend:      "/health"
         Backend:       ""
         Options:       { health: true }
-  - Private-IP-Name:   CONSOLE_IP
+  - Private-IP-Name:   IP
     Private-Port-Name: CONSOLE_PORT
     Private-Port:      16081
     Public-Port-Name:  PROXY_CONSOLE_PORT
     Mappings:
       - Frontend:      "/ZendServer"
         Backend:       "/ZendServer"
-  - Private-IP-Name:   ZENDSERVER_IP
+  - Private-IP-Name:   IP
     Private-Port-Name: ZENDSERVER_PORT
     Private-Port:      16083
 Install-Build-Required: false

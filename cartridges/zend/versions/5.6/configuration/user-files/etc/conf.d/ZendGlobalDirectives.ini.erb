@@ -18,10 +18,10 @@ zend.log_dir=/usr/local/zend/var/log
 zend.data_dir=/usr/local/zend/var
 
 ; UID of httpd process
-zend.httpd_uid=<%= ENV['OPENSHIFT_GEAR_UUID'] %>
+zend.httpd_uid=<%= ENV['OPENSHIFT_ZEND_UID'] %>
 
 ; GID of httpd process
-zend.httpd_gid=<%= ENV['OPENSHIFT_GEAR_UUID'] %>
+zend.httpd_gid=<%= ENV['OPENSHIFT_ZEND_UID'] %>
 
 ; The directory where PHP configuration files are located
 zend.ini_scandir=conf.d
@@ -30,7 +30,7 @@ zend.ini_scandir=conf.d
 zend.serial_number=50UI6G100G18501C474DA8DB952EE43A 
 
 ; The user name
-zend.user_name=OpenShift-0001 
+zend.user_name=OpenShift-0001
 
 ; Zend Server Node ID
 zend.node_id=0

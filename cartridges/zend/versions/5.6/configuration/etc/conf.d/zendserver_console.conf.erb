@@ -1,17 +1,17 @@
 # Warning:
 # Modifying this file will break the Zend Server Console (Administration Interface)
 
-Listen <%= "#{ENV['OPENSHIFT_ZEND_ZENDSERVER_IP']}:#{ENV['OPENSHIFT_ZEND_ZENDSERVER_PORT']}" %>
-NameVirtualHost <%= "#{ENV['OPENSHIFT_ZEND_ZENDSERVER_IP']}:#{ENV['OPENSHIFT_ZEND_ZENDSERVER_PORT']}" %>
+Listen <%= "#{ENV['OPENSHIFT_ZEND_IP']}:#{ENV['OPENSHIFT_ZEND_ZENDSERVER_PORT']}" %>
+NameVirtualHost <%= "#{ENV['OPENSHIFT_ZEND_IP']}:#{ENV['OPENSHIFT_ZEND_ZENDSERVER_PORT']}" %>
 # do not allow override of this value for the UI's Vhost as it should
 # always be off when generating non-html content such as dynamic images
-<VirtualHost *:<%= "#{ENV['OPENSHIFT_ZEND_CONSOLE_PORT']}" %>>
+<VirtualHost *:<%= ENV['OPENSHIFT_ZEND_ZENDSERVER_PORT'] %>>
   php_admin_flag tidy.clean_output off
   php_admin_flag session.auto_start off
   Alias /ZendServer "/usr/local/zend/gui/UserServer"
   DocumentRoot /usr/local/zend/gui/UserServer
-  ErrorLog "|/usr/sbin/rotatelogs /logs/gui_vhost_error_log "
-  CustomLog "|/usr/sbin/rotatelogs /logs/gui_vhost_access_log " combined
+  ErrorLog "<%= "|/usr/sbin/rotatelogs #{ENV['OPENSHIFT_ZEND_DIR']}/logs/gui_vhost_error_log-%Y%m%d-%H%M%S-%Z 86400" %>"
+  CustomLog "<%= "|/usr/sbin/rotatelogs #{ENV['OPENSHIFT_ZEND_DIR']}/logs/gui_vhost_access_log-%Y%m%d-%H%M%S-%Z 86400" %>" combined
 
   <Directory /usr/local/zend/gui/UserServer>
     Options Indexes FollowSymLinks MultiViews

@@ -15,17 +15,6 @@ echo "$version" > "$OPENSHIFT_ZEND_DIR/env/OPENSHIFT_ZEND_VERSION"
 shopt -s dotglob
 cp -r $OPENSHIFT_ZEND_DIR/versions/$version/template/* $OPENSHIFT_ZEND_DIR/template
 
-# FIXME: delete ~/zend/modules;
-# /usr/lib64/httpd/modules/ vs. /usr/local/zend/gui/lighttpd/lib/
-ln -s /usr/lib64/httpd/modules $OPENSHIFT_ZEND_DIR/modules
-ln -s /etc/httpd/conf/magic $OPENSHIFT_ZEND_DIR/conf/magic
-
-# Pear setup
-rm -f $OPENSHIFT_HOMEDIR/.pearrc
-pear config-create "$OPENSHIFT_ZEND_DIR"/phplib/pear/ "$OPENSHIFT_HOMEDIR"/.pearrc
-pear -c "$OPENSHIFT_HOMEDIR"/.pearrc config-set php_ini "$OPENSHIFT_ZEND_DIR"/versions/shared/configuration/etc/conf/php.ini
-pear -c "$OPENSHIFT_HOMEDIR"/.pearrc config-set auto_discover 1
-
 # Configure Zend specific files
 
 mkdir -p $OPENSHIFT_ZEND_DIR/usr/local/zend
@@ -52,3 +41,28 @@ for path in ${paths[*]}; do
     [ -d "$zdir" ]  ||  mkdir -p $zdir
     ln -s $OPENSHIFT_ZEND_DIR/usr/local/zend/$path $zdir/$zfile
 done
+
+# Copy the version specific files up to zend directory
+mkdir -p $OPENSHIFT_ZEND_DIR/configuration/etc/conf.d
+cp $OPENSHIFT_ZEND_DIR/versions/$version/configuration/etc/conf.d/* $OPENSHIFT_ZEND_DIR/configuration/etc/conf.d/
+
+mkdir -p $OPENSHIFT_ZEND_DIR/configuration/etc/conf
+cp $OPENSHIFT_ZEND_DIR/versions/$version/configuration/etc/conf/* $OPENSHIFT_ZEND_DIR/configuration/etc/conf/
+
+# Copy php.ini file
+cp $OPENSHIFT_ZEND_DIR/versions/$version/configuration/etc/php.ini $OPENSHIFT_ZEND_DIR/configuration/etc/php.ini
+
+# Symlink php.ini in sandboxed dir, so /usr/local/zend/etc/php.ini is available
+ln -s $OPENSHIFT_ZEND_DIR/configuration/etc/php.ini $zend_sandbox/etc/php.ini
+
+# FIXME: delete ~/zend/modules;
+# /usr/lib64/httpd/modules/ vs. /usr/local/zend/gui/lighttpd/lib/
+ln -s /usr/lib64/httpd/modules $OPENSHIFT_ZEND_DIR/modules
+ln -s /etc/httpd/conf/magic $OPENSHIFT_ZEND_DIR/conf/magic
+
+# Pear setup
+rm -f $OPENSHIFT_HOMEDIR/.pearrc
+pear config-create "$OPENSHIFT_ZEND_DIR"/phplib/pear/ "$OPENSHIFT_HOMEDIR"/.pearrc
+pear -c "$OPENSHIFT_HOMEDIR"/.pearrc config-set php_ini /usr/local/zend/etc/php.ini
+pear -c "$OPENSHIFT_HOMEDIR"/.pearrc config-set auto_discover 1
+
