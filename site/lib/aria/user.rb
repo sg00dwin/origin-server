@@ -265,11 +265,13 @@ module Aria
       # Set the collection group; always keyed to billing info.
       params['client_coll_acct_group_ids'] = Aria::User.collections_acct_group_id(params['bill_country'])
 
-      Aria.create_acct_complete(params)
-      clear_cache!
-      true
+      begin
+        Aria.create_acct_complete(params)
+        true
+      ensure
+        clear_cache!
+      end
     rescue Aria::AccountExists
-      clear_cache!
       raise
     rescue Aria::Error => e
       errors.add(:base, e.to_s)
@@ -309,7 +311,7 @@ module Aria
     def clear_cache!
       (instance_variables - [:@delegate_sd_obj, :@mocha, :@acct_no]).each{ |s| remove_instance_variable(s) }
     ensure
-      Rails.cache.delete([Aria::User.name, "acct_no", acct_no]) if has_account?
+      Rails.cache.delete([Aria::User.name, "acct_no", acct_no]) if has_account? rescue nil
     end
 
     def self.cache_key(acct_no)
