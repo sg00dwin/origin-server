@@ -1,4 +1,0 @@
-metadata/
-conf/
-conf.d/
-env/
