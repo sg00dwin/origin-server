@@ -28,6 +28,8 @@ module OpenShiftMigration
       OpenShift::Utils.oo_spawn("pear -c #{pearrc} config-set php_ini #{php_dir}/versions/shared/configuration/etc/conf/php.ini", spawn_ops)
       OpenShift::Utils.oo_spawn("pear -c #{pearrc} config-set auto_discover 1", spawn_ops)
 
+      Util.add_cart_env_var(user, 'php', 'OPENSHIFT_PHP_VERSION', '5.3')
+
       output
     end
   end

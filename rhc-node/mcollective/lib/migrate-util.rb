@@ -210,5 +210,18 @@ module OpenShiftMigration
         
       output
     end
+
+    def self.add_cart_env_var(user, cart, key, value)
+      env_dir = File.join(user.homedir, cart, 'env')
+
+      filename = File.join(env_dir, key)
+      File.open(filename, File::WRONLY|File::TRUNC|File::CREAT) do |file|
+        file.write value.to_s
+      end
+
+      mcs_label = OpenShift::Utils::SELinux.get_mcs_label(user.uid)
+      PathUtils.oo_chown(user.uid, user.gid, filename)
+      OpenShift::Utils::SELinux.set_mcs_label(mcs_label, filename)
+    end
   end
 end
