@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.8.5
+Version: 1.8.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -753,6 +753,9 @@ rm -rf /tmp/phantomjs
 /etc/openshift/development
 
 %changelog
+* Mon May 06 2013 Adam Miller <admiller@redhat.com> 1.8.6-1
+- exclude all nodejs components from epel (tdawson@redhat.com)
+
 * Fri May 03 2013 Adam Miller <admiller@redhat.com> 1.8.5-1
 - Merge pull request #1275 from jtharris/bugs/BZ862338
   (dmcphers+openshiftbot@redhat.com)
