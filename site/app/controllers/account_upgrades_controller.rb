@@ -92,9 +92,9 @@ class AccountUpgradesController < ConsoleController
       @contact_info = Aria::ContactInfo.from_billing_info(@billing_info)
 
       @full_user = Streamline::FullUser.new(
-        {:postal_code => user_params[:aria_billing_info][:zip]}.
+        {:postal_code => user_params[:aria_billing_info][:zip], :state => user_params[:aria_billing_info][:region]}.
         merge!(user_params[:streamline_full_user]).
-        merge!(user_params[:aria_billing_info].slice(:address1, :address2, :address3, :city, :region, :country))
+        merge!(user_params[:aria_billing_info].slice(:address1, :address2, :address3, :city, :country))
       )
 
       render :edit and return unless @full_user.promote(user)
