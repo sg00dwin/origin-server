@@ -227,8 +227,8 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
   test "should get a next bill" do
     u = record_usage_for_user(with_account_holder)
     assert bill = u.next_bill
-    assert bill.due_date > bill.end_date
-    assert bill.start_date <= Aria::DateTime.today.to_datetime
+    assert bill.due_date > bill.usage_bill_thru
+    assert bill.usage_bill_from <= Aria::DateTime.today.to_datetime
     assert bill.line_items.present?
     assert bill.line_items.select(&:recurring?).present?
     assert bill.line_items.select(&:usage?).present?

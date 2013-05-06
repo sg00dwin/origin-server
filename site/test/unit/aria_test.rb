@@ -682,13 +682,12 @@ Features:
   end
 
   def test_bill_should_be_blank
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0).blank?
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0, 0).blank?
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0.01).present?
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0.01, 0.01).present?
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0.01, -0.01).present?
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [Aria::RecurringLineItem.new({'amount' => 0.01}, 1)], [], 0).present?
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [Aria::RecurringLineItem.new({'amount' => 0.00}, 1)], [], 0).present?
+    assert Aria::Bill.new().blank?
+    assert Aria::Bill.new(:unbilled_usage_balance => 0.01).present?
+    assert Aria::Bill.new(:unbilled_usage_balance => 0.01, :forwarded_balance => 0.01).present?
+    assert Aria::Bill.new(:unbilled_usage_balance => 0.01, :forwarded_balance => -0.01).present?
+    assert Aria::Bill.new(:invoice_line_items => [Aria::RecurringLineItem.new({'amount' => 0.01}, 1)]).present?
+    assert Aria::Bill.new(:invoice_line_items => [Aria::RecurringLineItem.new({'amount' => 0.00}, 1)]).present?
 
   end
 
@@ -725,13 +724,13 @@ Features:
       "client_receipt_id"=>nil
     }))
 
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0).show_payment_amounts
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [payment1], [], 0).show_payment_amounts, "A payment that doesn't match the balance should show the amount"
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [payment2], [], 50).show_payment_amounts, "A payment that is partially applied should show the amount"
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [payment2], [], 100).show_payment_amounts, "A payment that is partially applied should show the amount"
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [payment1, payment2], [], 100).show_payment_amounts, "When there are multiple payments, they should show their amounts"
+    assert Aria::Bill.new().show_payment_amounts
+    assert Aria::Bill.new(:invoice_payments => [payment1]).show_payment_amounts, "A payment that doesn't match the balance should show the amount"
+    assert Aria::Bill.new(:invoice_payments => [payment2], :unbilled_usage_balance => 50).show_payment_amounts, "A payment that is partially applied should show the amount"
+    assert Aria::Bill.new(:invoice_payments => [payment2], :unbilled_usage_balance => 100).show_payment_amounts, "A payment that is partially applied should show the amount"
+    assert Aria::Bill.new(:invoice_payments => [payment1, payment2], :unbilled_usage_balance => 100).show_payment_amounts, "When there are multiple payments, they should show their amounts"
     
-    assert !Aria::Bill.new(nil, nil, nil, nil, nil, [payment1], [], 100).show_payment_amounts, "A payment that is fully applied and matches the balance due shouldn't show its amount"
+    assert !Aria::Bill.new(:invoice_payments => [payment1], :unbilled_usage_balance => 100).show_payment_amounts, "A payment that is fully applied and matches the balance due shouldn't show its amount"
   end
 
   def test_line_item_prorated
@@ -849,8 +848,8 @@ Features:
     assert bill = u.next_bill
     assert bill.present?
     assert_equal 1, bill.day
-    assert_equal Date.today, bill.start_date
-    assert_equal Date.today, bill.end_date
+    assert_equal Date.today, bill.usage_bill_from
+    assert_equal Date.today, bill.usage_bill_thru
   end
 
   def test_user_should_have_bill_when_created_today
@@ -865,8 +864,8 @@ Features:
     assert bill = u.next_bill
     assert bill.present?
     assert_equal 1, bill.day
-    assert_equal Date.today, bill.start_date
-    assert_equal Date.today, bill.end_date
+    assert_equal Date.today, bill.usage_bill_from
+    assert_equal Date.today, bill.usage_bill_thru
   end
 
   def test_new_user_current_period

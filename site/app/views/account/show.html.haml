@@ -25,8 +25,9 @@
   %h2 Next Bill
 
   - if @bill
-    %p
-      Day #{@bill.day} of billing cycle #{@bill.start_date.to_s(:billing_date_no_year)} - #{@bill.end_date.to_s(:billing_date_no_year)}
+    - if @bill.day and @bill.usage_bill_from and @bill.usage_bill_thru
+      %p
+        Day #{@bill.day} of billing period #{collapse_dates(@bill.usage_bill_from, @bill.usage_bill_thru, :ordinalize => true)}
 
     - if @bill.empty?
       %p
