@@ -79,8 +79,8 @@ class AccountUpgradesControllerTest < ActionController::TestCase
     assert_equal 2, aria_acct_groups.count
     assert_equal 1, aria_coll_groups.count
     assert_equal 1, aria_func_groups.count
-    assert_equal aria_acct_groups[0].client_acct_group_id, config_collections_group_id
-    assert_equal aria_func_groups[0].client_acct_group_id, config_functional_group_id
+    assert_equal config_collections_group_id, aria_acct_groups[0].client_acct_group_id
+    assert_equal config_functional_group_id, aria_func_groups[0].client_acct_group_id
 
     assert_equal :full, session[:streamline_type]
     assert_redirected_to account_plan_upgrade_payment_method_path

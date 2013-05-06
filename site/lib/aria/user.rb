@@ -263,17 +263,21 @@ module Aria
       end if opts
       return false unless validates
 
-      # Set the invoice template ID based on the country
+      # Set the invoice template ID
+      # Try the account country first, which is coming from Streamline if the
+      # user has a pre-existing RHN account, then fall back to the billing country
       template_id = invoice_template_id(params['country'],params['bill_country'])
       params['alt_msg_template_no'] = template_id unless template_id.nil?
 
-      # Set the account currency CD based on the billing country
+      # Set the account currency based on the billing country
       params['currency_cd'] = Aria::User.account_currency_cd(params['bill_country'])
 
-      # Set the collection group; always keyed to billing info.
+      # Set the collection group; always keyed to billing country
       params['client_coll_acct_group_ids'] = Aria::User.collections_acct_group_id(params['bill_country'])
 
       # Set the functional group
+      # Try the account country first, which is coming from Streamline if the
+      # user has a pre-existing RHN account, then fall back to the billing country
       params['client_func_acct_group_ids'] = Aria::User.functional_acct_group_id(params['country'],params['bill_country'])
 
       begin
