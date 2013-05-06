@@ -60,6 +60,7 @@ class AccountUpgradesControllerTest < ActionController::TestCase
       }
 
     assert full_user = assigns[:full_user]
+    assert_not_nil full_user.state
     assert billing_info = assigns[:billing_info]
     assert !billing_info.persisted? # Existing behavior
 
