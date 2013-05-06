@@ -42,6 +42,12 @@ Rails.application.config.tap do |config|
     ).merge!(
          Console.config.env(:ARIA_COLLECTIONS_GROUP_ID_MAP, { 'US' => '1', 'CA' => '2' })
     )
+  config.functional_group_id_by_country =
+    HashWithIndifferentAccess.new(
+         Console.config.env(:ARIA_DEFAULT_FUNCTIONAL_GROUP_ID, 'F3')
+    ).merge!(
+         Console.config.env(:ARIA_FUNCTIONAL_GROUP_ID_MAP, { 'US' => 'F1', 'CA' => 'F2' })
+    )
 
   # Supported Credit Cards
   # Specify accepted cards here. Keys can be found in config/credit_cards.yml
