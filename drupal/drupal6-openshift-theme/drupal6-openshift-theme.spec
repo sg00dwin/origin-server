@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.16.3
+Version: 3.16.4
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon May 06 2013 Adam Miller <admiller@redhat.com> 3.16.4-1
+- Bug 956794 - adds timestamp info to blog posts (ffranz@redhat.com)
+- Bug 956794 - added timestamp to Forum threads (ffranz@redhat.com)
+
 * Thu May 02 2013 Adam Miller <admiller@redhat.com> 3.16.3-1
 - Added openshift_assets_url conf to allow loading assets from local site
   (jforrest@redhat.com)
