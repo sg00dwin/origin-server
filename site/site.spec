@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.8.6
+Version: 1.8.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -195,6 +195,22 @@ fi
 %{sitedir}/public
 
 %changelog
+* Tue May 07 2013 Adam Miller <admiller@redhat.com> 1.8.7-1
+- Revert drop-down title to "Bill date" on billing history page
+  (jliggitt@redhat.com)
+- Code review updates (jliggitt@redhat.com)
+- Merge pull request #1312 from liggitt/bug_959555_beta_wording_tweaks
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1311 from nhr/BZ960260 (dmcphers+openshiftbot@redhat.com)
+- Fix bug 959555 - Beta wording tweaks (jliggitt@redhat.com)
+- Merge pull request #1309 from nhr/functional_acct_groups
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 960260 - Explcitily map @billing_info 'region' to @full_user 'state'
+  (hripps@redhat.com)
+- Updated per PR feedback (hripps@redhat.com)
+- Add functional account group assignment to new Aria accounts
+  (hripps@redhat.com)
+
 * Mon May 06 2013 Adam Miller <admiller@redhat.com> 1.8.6-1
 - Add authorization controller test (ccoleman@redhat.com)
 - Merge pull request #1261 from nhr/aria_email_info
