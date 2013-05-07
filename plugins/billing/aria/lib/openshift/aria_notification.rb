@@ -33,7 +33,7 @@ module OpenShift
         body += "#{k} = #{v}\n"
         end if response
       end
-      send_email(email_to, subject, body, email_from, password)
+      send_email(email_to, subject, body, email_from, password) if email_to.to_s.length > 0
     end
   end
 end
