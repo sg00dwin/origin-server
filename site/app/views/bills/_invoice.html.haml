@@ -25,7 +25,7 @@
       = semantic_form_for current_user, :url => locate_account_bills_path, :html => { :id => 'bill_form', :method => 'post' } do |f|
         - if @invoice_options.count > 1
           = f.loading
-          = select_tag 'id', options_for_select([["Billing period:",""], *@invoice_options ], @id), {:title => 'Bill date'}
+          = select_tag 'id', options_for_select([["Bill date:",""], *@invoice_options ], @id), {:title => 'Bill date'}
           %noscript
             = submit_tag 'View', :class => 'btn'
         = link_to "Print", print_account_bill_path(@id), {:target => '_blank', :class => 'btn', :title => 'Print the statement for this bill'}

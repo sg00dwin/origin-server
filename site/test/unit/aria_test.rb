@@ -725,13 +725,13 @@ Features:
       "client_receipt_id"=>nil
     }))
 
-    assert Aria::Bill.new().show_payment_amounts
-    assert Aria::Bill.new(:invoice_payments => [payment1]).show_payment_amounts, "A payment that doesn't match the balance should show the amount"
-    assert Aria::Bill.new(:invoice_payments => [payment2], :unbilled_usage_balance => 50).show_payment_amounts, "A payment that is partially applied should show the amount"
-    assert Aria::Bill.new(:invoice_payments => [payment2], :unbilled_usage_balance => 100).show_payment_amounts, "A payment that is partially applied should show the amount"
-    assert Aria::Bill.new(:invoice_payments => [payment1, payment2], :unbilled_usage_balance => 100).show_payment_amounts, "When there are multiple payments, they should show their amounts"
+    assert Aria::Bill.new().show_payment_amounts?
+    assert Aria::Bill.new(:invoice_payments => [payment1]).show_payment_amounts?, "A payment that doesn't match the balance should show the amount"
+    assert Aria::Bill.new(:invoice_payments => [payment2], :unbilled_usage_balance => 50).show_payment_amounts?, "A payment that is partially applied should show the amount"
+    assert Aria::Bill.new(:invoice_payments => [payment2], :unbilled_usage_balance => 100).show_payment_amounts?, "A payment that is partially applied should show the amount"
+    assert Aria::Bill.new(:invoice_payments => [payment1, payment2], :unbilled_usage_balance => 100).show_payment_amounts?, "When there are multiple payments, they should show their amounts"
     
-    assert !Aria::Bill.new(:invoice_payments => [payment1], :unbilled_usage_balance => 100).show_payment_amounts, "A payment that is fully applied and matches the balance due shouldn't show its amount"
+    assert !Aria::Bill.new(:invoice_payments => [payment1], :unbilled_usage_balance => 100).show_payment_amounts?, "A payment that is fully applied and matches the balance due shouldn't show its amount"
   end
 
   def test_line_item_prorated
