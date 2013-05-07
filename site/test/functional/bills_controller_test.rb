@@ -341,11 +341,16 @@ class BillsControllerTest < ActionController::TestCase
     invoices.first.expects(:payments).at_least_once.returns([])
     Aria::UserContext.any_instance.expects(:invoices).at_least_once.returns(invoices)
     Aria::UserContext.any_instance.expects(:next_bill).at_least_once.returns(
-      Aria::Bill.new(Date.today, Date.today, Date.today, 1, [], [], [
-        Aria::UsageLineItem.new({'usage_type_description' => 'Medium Gear', 'units' => 2.00, 'rate_per_unit' => 2.0}, 1),
-        Aria::UsageLineItem.new({'usage_type_description' => 'Medium Gear', 'units' => 0.20, 'rate_per_unit' => 2.0}, 1),
-        Aria::UsageLineItem.new({'usage_type_description' => 'Medium Gear', 'units' => 0.02, 'rate_per_unit' => 2.0}, 1)
-      ], 0, 0)
+      Aria::Bill.new(
+        :start_date => Date.today, 
+        :end_date => Date.today, 
+        :due_date => Date.today, 
+        :day => 1, 
+        :unbilled_usage_line_items => [
+          Aria::UsageLineItem.new({'usage_type_description' => 'Medium Gear', 'units' => 2.00, 'rate_per_unit' => 2.0}, 1),
+          Aria::UsageLineItem.new({'usage_type_description' => 'Medium Gear', 'units' => 0.20, 'rate_per_unit' => 2.0}, 1),
+          Aria::UsageLineItem.new({'usage_type_description' => 'Medium Gear', 'units' => 0.02, 'rate_per_unit' => 2.0}, 1)
+        ])
     )
 
     get :show, :id => 3
@@ -357,7 +362,7 @@ class BillsControllerTest < ActionController::TestCase
     assert_select "table.usage-charges" do
       assert_select "caption", :text => "Usage Charges"
       assert_select "tbody tr", 2 do |tr|
-        assert_select tr[0], 'td:content(?)', 'Current'
+        assert_select tr[0], 'td:content(?)', 'Next bill'
         assert_select tr[0], 'div.graph-element.type-2[style*="100%"]'
         assert_select tr[0], 'td:content(?)', "#{currency_symbol}4.44"
 
@@ -370,7 +375,7 @@ class BillsControllerTest < ActionController::TestCase
     assert_select "table.usage-type-1" do
       assert_select "caption", :text => "Gear: Small"
       assert_select "tbody tr", 2 do |tr|
-        assert_select tr[0], 'td:content(?)', 'Current'
+        assert_select tr[0], 'td:content(?)', 'Next bill'
         assert_select tr[0], 'div.graph-element.type-1[style*="0%"]'
         assert_select tr[0], 'td:content(?)', '0.0 gear-hours'
 
@@ -383,7 +388,7 @@ class BillsControllerTest < ActionController::TestCase
     assert_select "table.usage-type-2" do
       assert_select "caption", :text => "Gear: Medium"
       assert_select "tbody tr", 2 do |tr|
-        assert_select tr[0], 'td:content(?)', 'Current'
+        assert_select tr[0], 'td:content(?)', 'Next bill'
         assert_select tr[0], 'div.graph-element.type-2[style*="100%"]'
         assert_select tr[0], 'td:content(?)', '2.22 gear-hours'
 

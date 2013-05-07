@@ -102,7 +102,7 @@ class BillsController < ConsoleController
         past_usage_items = invoice.line_items.select(&:usage?)
         if current_usage_items.present? or past_usage_items.present?
           @usage_items = {
-            "Current" => current_usage_items || [],
+            "Next bill" => current_usage_items || [],
             "This bill" => past_usage_items || []
           }
         end

@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 module AccountHelper
   include CountryHelper
 
@@ -34,6 +36,19 @@ module AccountHelper
     "https://access.redhat.com/customerservice"
   end
 
+  def bill_period_description(bill)
+    recurring_dates = collapse_dates(bill.recurring_bill_from, bill.recurring_bill_thru, :year => true) if bill.has_recurring?
+    usage_dates = collapse_dates(bill.usage_bill_from, bill.usage_bill_thru, :year => true) if bill.has_usage?
+
+    if recurring_dates and usage_dates
+      "Includes usage charges for #{usage_dates} and recurring charges for #{recurring_dates}"
+    elsif recurring_dates
+      "Includes recurring charges for #{recurring_dates}"
+    elsif usage_dates
+      "Includes usage charges for #{usage_dates}"
+    end
+  end
+
   def line_item_details(li)
     if li.tax?
     elsif li.usage?
@@ -50,4 +65,18 @@ module AccountHelper
   def dynamic_country_form
    !(Rails.configuration.respond_to?(:disable_dynamic_country_form) && Rails.configuration.disable_dynamic_country_form)
   end
+
+  def collapse_dates(date1, date2, opts = {})
+    year = opts[:year] ? ", %Y " : ""
+    day1 = opts[:ordinalize] ? ActiveSupport::Inflector.ordinalize(date1.day) : date1.day
+    day2 = opts[:ordinalize] ? ActiveSupport::Inflector.ordinalize(date2.day) : date2.day
+    if date1.year == date2.year and date1.month == date2.month
+      date1.strftime("%B #{day1}–#{day2}#{year}")
+    elsif date1.year == date2.year
+      date1.strftime("%B #{day1}") + " – " + date2.strftime("%B #{day2}#{year}")
+    else
+      date1.strftime("%B #{day1}#{year}") + " – " + date2.strftime("%B #{day2}#{year}")
+    end
+  end
+
 end
