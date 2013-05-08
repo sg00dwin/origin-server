@@ -38,9 +38,7 @@ class ApplicationController < ActionController::Base
     end
 
     def remote_request?(referrer)
-      referrer.present? && referrer.host && (
-        (request.host != referrer.host) || !referrer.path.start_with?('/app')
-      )
+      referrer.present? && referrer.host && !(request.host == referrer.host || referrer.host == URI.parse(community_url).host)
     end
 
     def server_relative_uri(s)
