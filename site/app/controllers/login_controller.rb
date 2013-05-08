@@ -2,10 +2,8 @@ class LoginController < ApplicationController
 
   layout 'simple'
 
-  before_filter :check_referrer, :only => :show
-
   def show
-    @redirectUrl = params[:then] || params[:redirectUrl] || @referrerRedirect
+    @redirectUrl = valid_referrer(params[:then] || params[:redirectUrl] || request.referrer)
     user_params = params[:web_user] || params
     @user = WebUser.new :rhlogin => (user_params[:rhlogin] || user_params[:login] || user_params[:email_address])
     @release_note = ReleaseNote.cached.latest rescue nil
@@ -13,7 +11,7 @@ class LoginController < ApplicationController
   end
 
   def create
-    @redirectUrl = server_relative_uri(params[:then] || params[:redirectUrl])
+    @redirectUrl = valid_referrer(params[:then] || params[:redirectUrl])
     user_params = params[:web_user] || params
 
     @user = WebUser.new
@@ -39,22 +37,10 @@ class LoginController < ApplicationController
       @redirectUrl || default_after_login_redirect
     end
 
-    def check_referrer
-      if request.referer && request.referer != '/'
-        referrer = URI.parse(request.referer) rescue nil
-        # of questionable utility - does not protect against cross domain CSRF
-        #if remote_request? referrer
-          #logger.debug "  Logging out user referred from: #{referrer.to_s}"
-          #reset_sso  
-        #end
-        @referrerRedirect = valid_referrer(referrer)
-        logger.debug "  Stored referrer #{@referrerRedirect}"
-      end
-    end
-
     def valid_referrer(referrer)
+      referrer = (URI.parse(referrer) rescue nil) if referrer.is_a? String
       case
-      when referrer.nil?
+      when referrer.nil?, remote_request?(referrer)
         nil
       when [
         login_path,
@@ -64,7 +50,10 @@ class LoginController < ApplicationController
         complete_account_path,
       ].any? {|path| referrer.path.starts_with?(path) }
         nil
-      else referrer.to_s
+      when !referrer.path.start_with?('/')
+        nil
+      else 
+        referrer.to_s
       end
     end
 
