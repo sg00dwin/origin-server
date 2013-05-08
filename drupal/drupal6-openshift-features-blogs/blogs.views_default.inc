@@ -4315,7 +4315,7 @@ $format_id = db_result(db_query("SELECT format FROM {filter_formats} WHERE name 
 ?><li><a class="link-tile" href="<?php print $this->render_altered(array(\'text\' => \'[path]\'), $tokens); ?>">
 <?php print check_markup($data->node_data_field_summary_field_summary_value, $format_id, false); ?>
 <aside><?php print $this->render_altered(array(\'text\' => \'[created]\'), $tokens); ?></aside>
-</a></i>',
+</a></li>',
       'exclude' => 0,
       'id' => 'phpcode',
       'table' => 'customfield',
