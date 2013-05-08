@@ -1,4 +1,5 @@
 Name: www-dynamic
+Cartridge-Vendor: redhat
 Display-Name: www-dynamic v2.2 (noarch)
 Description: Web server
 Version: 1.0.0
