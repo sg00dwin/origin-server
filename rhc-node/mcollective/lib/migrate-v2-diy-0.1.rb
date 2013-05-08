@@ -7,8 +7,6 @@ module OpenShiftMigration
 
       cart_dir = File.join(user.homedir, 'diy')
 
-      FileUtils.rm_rf(File.join(cart_dir, 'diy', 'logs'))
-
       directories = %w(logs)
       output << Util.move_directory_between_carts(user, 'diy-0.1', 'diy', directories)
 
