@@ -1,12 +1,12 @@
 When /^the application is migrated to the v2 cartridge system$/ do
-  output = `rhc-v2-migrate --app-name #{@app.name} --login #{@app.login} --migrate-gear #{@app.uid} --version 2.0.27`
+  output = `rhc-v2-migrate --app-name #{@app.name} --login #{@app.login} --migrate-gear #{@app.uid} --version 2.0.28`
   $logger.info("Migration output: #{output}")
 end
 
 Then /^the environment variables will be migrated to raw values$/ do
   Dir.glob(File.join($home_root, @app.uid, '.env', '*')).each do |entry|
     value = IO.read(entry)
-    assert !value.start_with?('export')
+    assert !value.start_with?('export'), entry
   end
 end
 
