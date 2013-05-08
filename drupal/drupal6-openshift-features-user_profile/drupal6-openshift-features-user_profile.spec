@@ -5,7 +5,7 @@
 %global modname             user_profile
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.14.0
+Version: 1.14.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom User Profile Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.14.1-1
+- bump_minor_versions for sprint 28 (admiller@redhat.com)
+
 * Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.13.3-1
 - Fix a typo in lists view and add a moderator permission (ccoleman@redhat.com)
 
