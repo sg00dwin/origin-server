@@ -336,8 +336,8 @@ module OpenShiftMigration
     # TODO: establish migration order of cartridges
     v1_cartridges(gear_home).each do |cartridge_name|
       tokens = cartridge_name.split('-')
-      name = tokens[0]
-      version = tokens[1]
+      version = tokens.pop
+      name = tokens.join('-')
       output << migrate_cartridge(progress, name, version, uuid, cartridge_migrators)
     end
 
