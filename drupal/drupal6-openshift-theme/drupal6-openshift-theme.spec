@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.16.4
+Version: 3.16.5
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,12 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed May 08 2013 Adam Miller <admiller@redhat.com> 3.16.5-1
+- Merge pull request #1322 from fabianofranz/master
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 959600 - fixes double slashes on share url (ffranz@redhat.com)
+- Bug 959600 - fixes Twitter share button on forum posts (ffranz@redhat.com)
+
 * Mon May 06 2013 Adam Miller <admiller@redhat.com> 3.16.4-1
 - Bug 956794 - adds timestamp info to blog posts (ffranz@redhat.com)
 - Bug 956794 - added timestamp to Forum threads (ffranz@redhat.com)
