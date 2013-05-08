@@ -1002,3 +1002,15 @@ html.js fieldset.collapsible .fieldset-wrapper {
   .row-content > .row { background: none; }
   .column-content { background: none; }
 }
+
+
+@media (max-width: 480px) {
+  html  body.admin-menu {
+    margin-top: 78px !important;
+  }
+}
+@media (max-width: 320px) {
+  html  body.admin-menu {
+    margin-top: 130px !important;
+  }
+}
