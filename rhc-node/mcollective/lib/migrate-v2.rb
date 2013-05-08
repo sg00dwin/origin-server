@@ -400,6 +400,8 @@ module OpenShiftMigration
 
     FileUtils.rm_rf(File.join(user.homedir, "#{name}-#{version}"))
 
+    FileUtils.ln_s(File.join(user.homedir, name), File.join(user.homedir, "#{name}-#{version}"))
+
     output
   end
 
