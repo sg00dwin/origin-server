@@ -102,5 +102,5 @@ $do = og_comment_perms_do();
     <div class="links"><?php print $links; ?></div>
   <?php endif; ?>
 
-  <?php print openshift_social_sharing($node_url); ?>
+  <?php print openshift_social_sharing($node_url, $title); ?>
 </div>

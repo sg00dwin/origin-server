@@ -31,10 +31,11 @@ module Online
     method_option :web_port, :required => false, :default => 443, :desc => "The HTTPS port to bind to locally (default 443, requires root)"
     def tunnel(hostname)
       ports = {
-        8118 => 8118,
-        options.web_port.to_i => 443,
-        11211 => 11211,
-        11212 => 11212
+        8118 => 8118,   #drupal
+        options.web_port.to_i => 443, #https
+        6163 => 6163,   #mcollective
+        11211 => 11211, #memcached1
+        11212 => 11212, #memcached2
       }
       say "Your local machine will now think '#{options.localhost}' is the hostname of your devenv."
       cmd = "sudo -E ssh -F #{File.expand_path('~/.ssh/config')} #{ports.map{ |k,v| "-L #{k}:#{options.localhost}:#{v}"}.join(' ')} #{hostname} -l root -i misc/libra.pem"
