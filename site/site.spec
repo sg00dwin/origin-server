@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.8.7
+Version: 1.8.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -195,6 +195,18 @@ fi
 %{sitedir}/public
 
 %changelog
+* Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.8.8-1
+- Merge pull request #1324 from detiber/bz959162
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1320 from liggitt/bug_959559_js_validation_errors
+  (dmcphers+openshiftbot@redhat.com)
+- Migrating some console base styling to origin-server/console
+  (jdetiber@redhat.com)
+- Fix bug 959559 - validate cc number on page load (jliggitt@redhat.com)
+- Updated per PR feedback (hripps@redhat.com)
+- Bug 960225 Add text to indicate that entitlements aren't instant.
+  (hripps@redhat.com)
+
 * Tue May 07 2013 Adam Miller <admiller@redhat.com> 1.8.7-1
 - Revert drop-down title to "Bill date" on billing history page
   (jliggitt@redhat.com)
