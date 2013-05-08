@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/openshift/cartridges/v2/metrics
 
 Name: openshift-origin-cartridge-metrics
-Version: 1.9.0
+Version: 1.9.1
 Release: 1%{?dist}
 Summary: Metrics cartridge
 
@@ -42,6 +42,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/README.md
 
 %changelog
+* Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.9.1-1
+- bump_minor_versions for sprint 28 (admiller@redhat.com)
+
 * Fri May 03 2013 Adam Miller <admiller@redhat.com> 1.8.3-1
 - Converted metadata/{locked_files,snapshot*}.txt (fotios@redhat.com)
 
