@@ -5,7 +5,7 @@
 %global modname             community_wiki
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.6.0
+Version: 1.6.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Community Wiki Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.6.1-1
+- bump_minor_versions for sprint 28 (admiller@redhat.com)
+
 * Thu Apr 25 2013 Adam Miller <admiller@redhat.com> 1.5.2-1
 - Update permissions, add content_author role, prepare for site IA changes
   (ccoleman@redhat.com)
