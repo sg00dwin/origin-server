@@ -356,7 +356,7 @@ function openshift_breadcrumb($breadcrumb) {
 }
 
 function openshift_menu_tree__menu_block__2($tree) {
-  return '<ul class="menu nav nav-tabs">'. $tree .'</ul>';
+  return '<ul class="nav nav-tabs nav-tabs-secondary">'. $tree .'</ul>';
 }
 
 function openshift_menu_tree($tree) {
@@ -372,6 +372,32 @@ function openshift_menu_item($link, $has_children, $menu = '', $in_active_trail 
     $class .= ' active';
   }
   return '<li class="'. $class .'">'. $link . $menu ."</li>\n";
+}
+
+function openshift_flat_menu_tree_output($tree) {
+  $output = '';
+  $items = array();
+  foreach ($tree as $data) {
+    if (!$data['link']['hidden'] && $data['link']['expanded'] && $data['link']['has_children']) {
+      $items[] = $data;
+    }
+  }
+  $num_items = count($items);
+  $class = 'span' . (12 / $num_items);
+  $output .= '<div class="row-fluid">';
+  foreach ($items as $i => $data) {
+    $output .= '<nav class="' . $class . '">' . '<header><h3>' . check_plain($data['link']['title']) . '</h3></header>';
+    $output .= '<ul class="unstyled">';
+    $children = $data['below'];
+    foreach ($children as $child) {
+      if ($child['link']['hidden']) { continue; }
+      $link = $child['link'];
+      $output .= '<li>' . l($link['title'], $link['href']) . '</li>';
+    }
+    $output .= '</ul></nav>';
+  }
+  $output .= '</div>';
+  return $output;
 }
 
 function openshift_preprocess_node(&$vars) {

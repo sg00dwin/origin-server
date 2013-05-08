@@ -1,8 +1,6 @@
-<?php
-?>
 <div id="block-<?php print $block->module .'-'. $block->delta; ?>" class="block block-<?php print $block->module ?>">
 <?php if ($block->subject): ?>
-  <div class="nav-location headline"><?php print $block->subject ?></div>
+  <h3><?php print $block->subject ?></h3>
 <?php endif;?>
 
   <div class="content">

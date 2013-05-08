@@ -8,7 +8,7 @@
     <div id="content" class="section-striped">
       <div class="container"><div class="row-content">
       <div class='row row-flush-right'>
-        <?php if ($layout == 'left') :?>
+        <?php if ($layout == 'left' || $layout == 'both') :?>
       	<div class="column-navbar">      	
         	<a data-toggle="collapse" data-target=".nav-collapse" class="btn btn-navbar">
         	<span class="pull-left">Navigate</span>
@@ -31,33 +31,24 @@
           <div class="column-content lift grid-wrapper">
             <div class="span9 span-flush-right">
 
-        <?php elseif ($layout == 'both') :?>
-          <div class="column-nav lift-less grid-wrapper">
-            <nav class="span3">
-              <div class="gutter-right">
-                <?php print $sidebar_left; ?>
-              </div>
-            </nav>
-          </div>
-          <div class="column-content lift grid-wrapper">
-            <div class="span6 span-flush-right">
-
-        <?php elseif ($layout == 'right') :?>
-          <div class="column-content lift grid-wrapper">
-            <div class="span9 span-flush-right">
-
-        <?php elseif ($layout == 'none') :?>
+        <?php else :?>
           <div class="column-content lift grid-wrapper">
             <div class="span12 span-flush-right">
         <?php endif; ?>
 
-            <?php print $content_header; # temporary ?>
+            <?php print $content_header; ?>
+          <?php if ($layout == 'right' || $layout == 'both') :?>
+            <div class="span4 pull-right column-floating">
+              <?php print $sidebar_right; ?>
+            </div>
+          <?php endif; ?>
 
-            <?php if ($heading) :?>
+            <?php if ($heading && ($layout == 'left' || $layout == 'both')) :?>
               <h1 class="ribbon"><?php print $heading; ?></h1>
+            <?php else :?>
+              <h1><?php print $heading; ?></h1>
             <?php endif; ?>
 
-            <section class='default' id='about'>
               <?php if ($show_messages && $messages): print $messages; endif; ?>
             <?php print $breadcrumb; ?>
             <?php if ($tabs) :?>
@@ -73,20 +64,8 @@
     
             <?php print $content_prefix; ?>
             <?php print $content; ?>
-
-            </section>
             <?php print $content_suffix; ?>
          </div>
-
-        <?php if ($layout == 'both' || $layout == 'right') :?>
-          <div class="column-nav lift-less grid-wrapper">
-            <div class="span3">
-              <div class="gutter-right">
-                <?php print $sidebar_right; ?>
-              </div>
-            </div>
-          </div>
-        <?php endif; ?>
 
           </div>
         </div>

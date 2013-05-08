@@ -550,7 +550,7 @@ function user_profile_context_default_contexts() {
         'views-user_profile_box-block_1' => array(
           'module' => 'views',
           'delta' => 'user_profile_box-block_1',
-          'region' => 'sidebar_left',
+          'region' => 'sidebar_right',
           'weight' => 10,
         ),
       ),
@@ -606,6 +606,11 @@ function user_profile_context_default_contexts() {
   $context->description = '';
   $context->tag = '';
   $context->conditions = array(
+    'menu' => array(
+      'values' => array(
+        'node/9435' => 'node/9435',
+      ),
+    ),
     'path' => array(
       'values' => array(
         '~admin' => '~admin',
@@ -620,12 +625,6 @@ function user_profile_context_default_contexts() {
   $context->reactions = array(
     'block' => array(
       'blocks' => array(
-        'menu_block-2' => array(
-          'module' => 'menu_block',
-          'delta' => 2,
-          'region' => 'content_header',
-          'weight' => 0,
-        ),
         'menu_block-1' => array(
           'module' => 'menu_block',
           'delta' => 1,
@@ -635,8 +634,45 @@ function user_profile_context_default_contexts() {
       ),
     ),
   );
-  $context->condition_mode = 0;
+  $context->condition_mode = 1;
   $export['viewing-hierarchy'] = $context;
+
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
+  $context->name = 'viewing-page';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+    'context' => array(
+      'values' => array(
+        '~viewing-hierarchy' => '~viewing-hierarchy',
+      ),
+    ),
+    'path' => array(
+      'values' => array(
+        '~admin' => '~admin',
+        '~admin/*' => '~admin/*',
+        '~<front>' => '~<front>',
+        '~_errors/*' => '~_errors/*',
+        '*' => '*',
+      ),
+    ),
+  );
+  $context->reactions = array(
+    'block' => array(
+      'blocks' => array(
+        'menu_block-2' => array(
+          'module' => 'menu_block',
+          'delta' => 2,
+          'region' => 'content_header',
+          'weight' => 0,
+        ),
+      ),
+    ),
+  );
+  $context->condition_mode = 1;
+  $export['viewing-page'] = $context;
 
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
@@ -670,8 +706,8 @@ function user_profile_context_default_contexts() {
         'poll-0' => array(
           'module' => 'poll',
           'delta' => 0,
-          'region' => 'sidebar_left',
-          'weight' => 15,
+          'region' => 'sidebar_right',
+          'weight' => 20,
         ),
       ),
     ),
