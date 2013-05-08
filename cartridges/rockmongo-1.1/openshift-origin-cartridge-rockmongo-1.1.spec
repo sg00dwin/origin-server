@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/rockmongo-1.1
 
 Name: openshift-origin-cartridge-rockmongo-1.1
-Version: 1.24.0
+Version: 1.24.1
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for OpenShift
 
@@ -59,6 +59,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.24.1-1
+- bump_minor_versions for sprint 28 (admiller@redhat.com)
+
 * Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.23.2-1
 - Add Cartridge-Vendor to v1 cartridge manifest.yml (asari.ruby@gmail.com)
 
