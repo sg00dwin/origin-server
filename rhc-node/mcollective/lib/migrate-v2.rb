@@ -28,6 +28,7 @@ require_relative "migrate-v2-10gen-mms-agent-0.1"
 require_relative "migrate-v2-mysql-5.1"
 require_relative "migrate-v2-phpmyadmin-3.4"
 require_relative "migrate-v2-postgresql-8.4"
+require_relative "migrate-v2-switchyard-0.6"
 
 require 'openshift-origin-node/model/cartridge_repository'
 require 'openshift-origin-node/model/unix_user'
@@ -109,7 +110,7 @@ module OpenShiftMigration
   # at any point and continue to pick up where it left off or make
   # harmless changes the 2-n times around.
   def self.migrate(uuid, namespace, version)
-    unless version == "2.0.27"
+    unless version == "2.0.28"
       return "Invalid version: #{version}", 255
     end
 
@@ -258,6 +259,7 @@ module OpenShiftMigration
     migrators[cr.select('mysql', '5.1')] = Mysql51Migration.new
     migrators[cr.select('phpmyadmin', '3.4')] = Phpmyadmin34Migration.new
     migrators[cr.select('postgresql', '8.4')] = Postgresql84Migration.new
+    #migrators[cr.select('switchyard', '0.6')] = Switchyard06Migration.new
 
     migrators
   end
@@ -334,8 +336,8 @@ module OpenShiftMigration
     # TODO: establish migration order of cartridges
     v1_cartridges(gear_home).each do |cartridge_name|
       tokens = cartridge_name.split('-')
-      name = tokens[0]
-      version = tokens[1]
+      version = tokens.pop
+      name = tokens.join('-')
       output << migrate_cartridge(progress, name, version, uuid, cartridge_migrators)
     end
 

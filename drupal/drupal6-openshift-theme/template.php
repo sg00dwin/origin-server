@@ -151,7 +151,7 @@ function _openshift_whitelist_css(&$vars)
 }
 
 function openshift_social_sharing($url, $title = NULL) {
-  $share_url = url($url, array('absolute' => TRUE));
+  $share_url = preg_replace('%([^:])([/]{2,})%', '\\1/', url($url, array('absolute' => TRUE)));
   if (isset($title)) {
     $tweet_text = 'via @openshift '.$title.' ';
   } else {

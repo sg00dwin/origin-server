@@ -195,8 +195,8 @@ def process_app(app)
           $cur_rec_count += 1
         end
         write_usage_records if $cur_rec_count >= $bulk_rec_threshold
-      end
-    end
+      end if gi['gears']
+    end if app['group_instances']
   rescue Exception => e
     puts "Failed for app, #{app['name']}: #{e.message}"
     puts e.backtrace.inspect

@@ -5,7 +5,7 @@
 %global modname             blogs
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.15.2
+Version: 1.15.3
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Blog Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,10 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Mon May 06 2013 Adam Miller <admiller@redhat.com> 1.15.3-1
+- Bug 956794 - adds timestamp info to blog posts (ffranz@redhat.com)
+- Bug 956794 - adds timestamp info to blog posts (ffranz@redhat.com)
+
 * Mon Apr 29 2013 Adam Miller <admiller@redhat.com> 1.15.2-1
 - Support semantic views (ccoleman@redhat.com)
 - Unformatted lists should write nothing (ccoleman@redhat.com)

@@ -278,6 +278,7 @@ class AriaUnitTest < ActiveSupport::TestCase
     api_args.merge!(billing_info.to_aria_attributes)
     api_args.merge!(contact_info.to_aria_attributes)
     api_args[:client_coll_acct_group_ids] = Rails.application.config.collections_group_id_by_country[api_args['bill_country']]
+    api_args[:client_func_acct_group_ids] = Rails.application.config.functional_group_id_by_country[api_args['country']]
     stub_aria(:create_acct_complete, api_args).to_return(resp(ok_wddx))
 
     stub_aria(:get_acct_no_from_user_id, {
@@ -291,16 +292,12 @@ class AriaUnitTest < ActiveSupport::TestCase
     assert user.errors.empty?
   end
 
-  # Temporary test case to accomodate Streamline bug. This should be removed when the
-  # ContactInfo models is updated for correct enforcement.
-  test 'should enable creation of ContactInfo without country' do
+  test 'should enable creation of ContactInfo from FullUser' do
+    email_address = "foo@bar.com"
     full_user = Streamline::FullUser.test
-    full_user.country = nil
+    full_user.expects(:email_address).returns(email_address)
     assert contact_info = Aria::ContactInfo.from_full_user(full_user)
-    assert_equal nil, contact_info.country
-    full_user.country = ''
-    assert contact_info = Aria::ContactInfo.from_full_user(full_user)
-    assert_equal '', contact_info.country
+    assert_equal email_address, contact_info.email
   end
 
   test 'get_acct_no_from_user_id is cacheable' do
@@ -353,6 +350,21 @@ class AriaUnitTest < ActiveSupport::TestCase
 
   test 'should throw when non hash passed' do
     assert_raise(ArgumentError){ Aria.get_test 'hello' }
+  end
+
+  test 'contact info should init from account details' do
+    attr = Aria::WDDX::Struct.new({'billing' => 'a', 'city' => 'Lund', 'address1' => '1 test', 'other' => '2', 'country' => 'SE', 'locality' => 'Scania', 'state_prov' => 'Invalid', 'alt_email' => 'foo@bar.com', 'mi' => 'Z', 'postal_code' => '223344' })
+    assert info = Aria::ContactInfo.from_account_details(attr)
+    assert info.persisted?
+    assert_equal 'Lund', info.city
+    assert_equal 'Scania', info.region
+    assert_equal({'city' => 'Lund', 'address1' => '1 test', 'region' => 'Scania', 'country' => 'SE', 'email' => 'foo@bar.com', 'middle_initial' => 'Z', 'zip' => '223344'}, info.attributes)
+    assert_equal({'city' => 'Lund', 'address1' => '1 test', 'locality' => 'Scania', 'country' => 'SE', 'email' => 'foo@bar.com', 'mi' => 'Z', 'postal_cd' => '223344'}, info.to_aria_attributes)
+    assert_equal({'city' => 'Lund', 'address1' => '1 test', 'locality' => 'Scania', 'country' => 'SE', 'state_prov' => '~', 'email' => 'foo@bar.com', 'middle_initial' => 'Z', 'postal_cd' => '223344'}, info.to_aria_attributes('update'))
+
+    info.address2 = ""
+    assert_equal({'city' => 'Lund', 'address1' => '1 test', 'locality' => 'Scania', 'country' => 'SE', 'address2' => '', 'email' => 'foo@bar.com', 'mi' => 'Z', 'postal_cd' => '223344'}, info.to_aria_attributes)
+    assert_equal({'city' => 'Lund', 'address1' => '1 test', 'locality' => 'Scania', 'country' => 'SE', 'address2' => '~', 'state_prov' => '~', 'email' => 'foo@bar.com', 'middle_initial' => 'Z', 'postal_cd' => '223344'}, info.to_aria_attributes('update'))
   end
 
   test 'billing info should init from billing details' do
@@ -671,13 +683,12 @@ Features:
   end
 
   def test_bill_should_be_blank
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0).blank?
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0, 0).blank?
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0.01).present?
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0.01, 0.01).present?
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0.01, -0.01).present?
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [Aria::RecurringLineItem.new({'amount' => 0.01}, 1)], [], 0).present?
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [Aria::RecurringLineItem.new({'amount' => 0.00}, 1)], [], 0).present?
+    assert Aria::Bill.new().blank?
+    assert Aria::Bill.new(:unbilled_usage_balance => 0.01).present?
+    assert Aria::Bill.new(:unbilled_usage_balance => 0.01, :forwarded_balance => 0.01).present?
+    assert Aria::Bill.new(:unbilled_usage_balance => 0.01, :forwarded_balance => -0.01).present?
+    assert Aria::Bill.new(:invoice_line_items => [Aria::RecurringLineItem.new({'amount' => 0.01}, 1)]).present?
+    assert Aria::Bill.new(:invoice_line_items => [Aria::RecurringLineItem.new({'amount' => 0.00}, 1)]).present?
 
   end
 
@@ -714,13 +725,13 @@ Features:
       "client_receipt_id"=>nil
     }))
 
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [], [], 0).show_payment_amounts
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [payment1], [], 0).show_payment_amounts, "A payment that doesn't match the balance should show the amount"
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [payment2], [], 50).show_payment_amounts, "A payment that is partially applied should show the amount"
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [payment2], [], 100).show_payment_amounts, "A payment that is partially applied should show the amount"
-    assert Aria::Bill.new(nil, nil, nil, nil, nil, [payment1, payment2], [], 100).show_payment_amounts, "When there are multiple payments, they should show their amounts"
+    assert Aria::Bill.new().show_payment_amounts?
+    assert Aria::Bill.new(:invoice_payments => [payment1]).show_payment_amounts?, "A payment that doesn't match the balance should show the amount"
+    assert Aria::Bill.new(:invoice_payments => [payment2], :unbilled_usage_balance => 50).show_payment_amounts?, "A payment that is partially applied should show the amount"
+    assert Aria::Bill.new(:invoice_payments => [payment2], :unbilled_usage_balance => 100).show_payment_amounts?, "A payment that is partially applied should show the amount"
+    assert Aria::Bill.new(:invoice_payments => [payment1, payment2], :unbilled_usage_balance => 100).show_payment_amounts?, "When there are multiple payments, they should show their amounts"
     
-    assert !Aria::Bill.new(nil, nil, nil, nil, nil, [payment1], [], 100).show_payment_amounts, "A payment that is fully applied and matches the balance due shouldn't show its amount"
+    assert !Aria::Bill.new(:invoice_payments => [payment1], :unbilled_usage_balance => 100).show_payment_amounts?, "A payment that is fully applied and matches the balance due shouldn't show its amount"
   end
 
   def test_line_item_prorated
@@ -838,8 +849,8 @@ Features:
     assert bill = u.next_bill
     assert bill.present?
     assert_equal 1, bill.day
-    assert_equal Date.today, bill.start_date
-    assert_equal Date.today, bill.end_date
+    assert_equal Date.today, bill.usage_bill_from
+    assert_equal Date.today, bill.usage_bill_thru
   end
 
   def test_user_should_have_bill_when_created_today
@@ -854,8 +865,8 @@ Features:
     assert bill = u.next_bill
     assert bill.present?
     assert_equal 1, bill.day
-    assert_equal Date.today, bill.start_date
-    assert_equal Date.today, bill.end_date
+    assert_equal Date.today, bill.usage_bill_from
+    assert_equal Date.today, bill.usage_bill_thru
   end
 
   def test_new_user_current_period

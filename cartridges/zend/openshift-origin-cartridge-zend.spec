@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/v2/zend
 
 Name:    openshift-origin-cartridge-zend
-Version: 0.1.9
+Version: 0.1.11
 Release: 1%{?dist}
 Summary: Zend Server cartridge
 Group:   Development/Languages
@@ -71,6 +71,18 @@ sh %{cartridgedir}/versions/5.6/rpm/zend_configure_filesystem.sh
 
 
 %changelog
+* Mon May 06 2013 Adam Miller <admiller@redhat.com> 0.1.11-1
+- Merge pull request #1301 from VojtechVitek/zend_bug_fixes
+  (dmcphers+openshiftbot@redhat.com)
+- Warn users to set Zend Server Console password (vvitek@redhat.com)
+- Improve Zend control client_* messages (vvitek@redhat.com)
+- Update Zend license key/serial (vvitek@redhat.com)
+- fix /ZendServer GUI Console (vvitek@redhat.com)
+
+* Fri May 03 2013 Adam Miller <admiller@redhat.com> 0.1.10-1
+- cleanup (dmcphers@redhat.com)
+- Converted metadata/{locked_files,snapshot*}.txt (fotios@redhat.com)
+
 * Thu May 02 2013 Adam Miller <admiller@redhat.com> 0.1.9-1
 - fix zend configuration (vvitek@redhat.com)
 

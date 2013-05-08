@@ -680,6 +680,7 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'doc content owner',
+      '2' => 'moderator',
     ),
   );
 

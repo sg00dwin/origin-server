@@ -154,6 +154,17 @@ function blogs_content_default_fields() {
     'display_settings' => array(
       'weight' => '-4',
       'parent' => '',
+      'label' => array(
+        'format' => 'above',
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
       'token' => array(
         'format' => 'default',
         'exclude' => 0,
@@ -169,17 +180,6 @@ function blogs_content_default_fields() {
       '4' => array(
         'format' => 'default',
         'exclude' => 0,
-      ),
-      'label' => array(
-        'format' => 'above',
-      ),
-      'teaser' => array(
-        'format' => 'default',
-        'exclude' => 1,
-      ),
-      'full' => array(
-        'format' => 'default',
-        'exclude' => 1,
       ),
     ),
     'widget_active' => '1',
@@ -227,6 +227,17 @@ function blogs_content_default_fields() {
     'display_settings' => array(
       'weight' => '-1',
       'parent' => '',
+      'label' => array(
+        'format' => 'above',
+      ),
+      'teaser' => array(
+        'format' => 'image_plain',
+        'exclude' => 1,
+      ),
+      'full' => array(
+        'format' => 'image_plain',
+        'exclude' => 1,
+      ),
       'token' => array(
         'format' => 'image_plain',
         'exclude' => 0,
@@ -242,17 +253,6 @@ function blogs_content_default_fields() {
       '4' => array(
         'format' => 'image_plain',
         'exclude' => 0,
-      ),
-      'label' => array(
-        'format' => 'above',
-      ),
-      'teaser' => array(
-        'format' => 'image_plain',
-        'exclude' => 1,
-      ),
-      'full' => array(
-        'format' => 'image_plain',
-        'exclude' => 1,
       ),
     ),
     'widget_active' => '1',
@@ -307,8 +307,19 @@ function blogs_content_default_fields() {
     'field_name' => 'field_search_meta_description',
     'type_name' => 'blog',
     'display_settings' => array(
-      'weight' => '31',
+      'weight' => '32',
       'parent' => '',
+      'label' => array(
+        'format' => 'hidden',
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      'full' => array(
+        'format' => 'hidden',
+        'exclude' => 1,
+      ),
       '2' => array(
         'format' => 'default',
         'exclude' => 0,
@@ -319,17 +330,6 @@ function blogs_content_default_fields() {
       ),
       '4' => array(
         'format' => 'default',
-        'exclude' => 1,
-      ),
-      'label' => array(
-        'format' => 'hidden',
-      ),
-      'teaser' => array(
-        'format' => 'default',
-        'exclude' => 1,
-      ),
-      'full' => array(
-        'format' => 'hidden',
         'exclude' => 1,
       ),
       'token' => array(
@@ -370,8 +370,19 @@ function blogs_content_default_fields() {
     'field_name' => 'field_summary',
     'type_name' => 'blog',
     'display_settings' => array(
-      'weight' => '10',
+      'weight' => 0,
       'parent' => '',
+      'label' => array(
+        'format' => 'hidden',
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      'full' => array(
+        'format' => 'hidden',
+        'exclude' => 1,
+      ),
       'token' => array(
         'format' => 'default',
         'exclude' => 1,
@@ -385,17 +396,6 @@ function blogs_content_default_fields() {
         'exclude' => 1,
       ),
       '4' => array(
-        'format' => 'default',
-        'exclude' => 1,
-      ),
-      'label' => array(
-        'format' => 'above',
-      ),
-      'teaser' => array(
-        'format' => 'default',
-        'exclude' => 1,
-      ),
-      'full' => array(
         'format' => 'default',
         'exclude' => 1,
       ),

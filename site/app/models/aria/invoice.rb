@@ -15,7 +15,7 @@ module Aria
     end
 
     def statement_content
-      Aria.get_statement_for_invoice(:acct_no => acct_no, :invoice_no => invoice_no).out_statement
+      Aria.cached.get_statement_for_invoice(acct_no, invoice_no).out_statement
     end
 
     def line_items
@@ -30,6 +30,14 @@ module Aria
           end
         end
         (recurring + UsageLineItem.for_usage(usage, master_plan_no)).sort_by(&Aria::LineItem.plan_sort)
+      end
+    end
+
+    def <=>(other)
+      if other.is_a? Aria::Invoice
+        invoice_no <=> other.invoice_no
+      else
+        super
       end
     end
 

@@ -72,7 +72,7 @@ class LoginControllerTest < ActionController::TestCase
 
   test "should not allow external redirectUrl param" do
     post :create, simple_user.merge(:redirectUrl => 'http://www.google.com/a_test_path')
-    assert_redirected_to '/a_test_path'
+    assert_redirected_to console_path
   end
 
   test "should not allow complex external redirectUrl param" do
@@ -89,7 +89,13 @@ class LoginControllerTest < ActionController::TestCase
   test "should ignore external referrer" do
     @request.env['HTTP_REFERER'] = 'http://external.com/test'
     get :show
-    assert_equal 'http://external.com/test', assigns(:redirectUrl)
+    assert_equal nil, assigns(:redirectUrl)
+  end
+
+  test "should allow community referrer" do
+    @request.env['HTTP_REFERER'] = community_base_url("test")
+    get :show
+    assert_equal community_base_url("test"), assigns(:redirectUrl)
   end
 
   test "should allow internal relative referrer" do
@@ -105,7 +111,7 @@ class LoginControllerTest < ActionController::TestCase
   end
 
   test "should send certain urls to default" do
-    [login_path, new_account_path, reset_account_password_path, complete_account_path].each do |path|
+    [login_path, new_account_path, reset_account_password_path, new_account_password_path, complete_account_path].each do |path|
       @request.env['HTTP_REFERER'] = path
       get :show
       assert_nil assigns(:redirectUrl)

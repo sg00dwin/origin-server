@@ -20,7 +20,7 @@ module Cacheable
         opts ||= {}
         #puts "about to define #{m}"
         singleton.send(:define_method, m) do |*args, &blk|
-          key = cache_key_for(m, args)
+          key = cache_key_for(m, *args)
           result = begin
             Rails.cache.fetch(key, options.merge(opts)) do
               target.send(m, *args, &blk).tap do |result|

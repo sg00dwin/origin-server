@@ -1,0 +1,6 @@
+---
+locked_files:
+- metadata/
+- conf/
+- conf.d/
+- env/

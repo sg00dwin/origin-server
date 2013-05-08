@@ -3,6 +3,7 @@
 module ApplicationHelper
   include Console::CommunityHelper
   include Console::ConsoleHelper
+  include Console::DateHelper
   include Console::HelpHelper
   include Console::Html5BoilerplateHelper
   include Console::LayoutHelper

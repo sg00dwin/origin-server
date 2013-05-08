@@ -4,15 +4,6 @@ class AccountUpgradesController < ConsoleController
   before_filter :authenticate_user!, :except => :show
   before_filter :authenticate_user_for_upgrade!, :only => :show
   before_filter :user_can_upgrade_plan!
-
-  # These filters set the user, aria, plan, etc instance variables
-  before_filter :streamline_type, :only => :show
-  before_filter :aria_user, :only => [:new, :create, :edit, :update]
-  before_filter :plan, :only => [:new, :create]
-  before_filter :billing_info, :only => [:new, :create, :edit]
-  before_filter :payment_method, :only => [:new, :create, :edit]
-  before_filter :process_async
-
   before_filter :account_in_supported_country!, :only => [:new, :create, :edit]
 
   rescue_from Aria::Error do |e|
@@ -25,12 +16,26 @@ class AccountUpgradesController < ConsoleController
   end
 
   def new
+    @aria_user = Aria::UserContext.new(current_user)
+    @billing_info = @aria_user.billing_info
+    @payment_method = @aria_user.payment_method
+    @plan = Aria::MasterPlan.cached.find(params[:plan_id])
+    @user = User.find :one, :as => current_user
+    @current_plan = @user.plan
+
     render :unchanged and return if @plan == @current_plan
     render :downgrade and return if @plan.basic?
     render :change and return unless @current_plan.basic?
   end
 
   def create
+    @aria_user = Aria::UserContext.new(current_user)
+    @billing_info = @aria_user.billing_info
+    @payment_method = @aria_user.payment_method
+    @plan = Aria::MasterPlan.cached.find(params[:plan_id])
+    @user = User.find :one, :as => current_user
+    @current_plan = @user.plan
+
     @user.plan_id = params[:plan_id]
 
     unless @payment_method.persisted? and @billing_info.persisted?
@@ -39,6 +44,7 @@ class AccountUpgradesController < ConsoleController
     end
 
     if @user.save
+      @aria_user.clear_cache!
       render :upgraded and return if (@current_plan.basic? and !@plan.basic?)
       redirect_to account_path, ({:flash => {:info => "Plan changed to #{@plan.name}"}} if @plan.id != @current_plan.id) || {}
     else
@@ -50,12 +56,19 @@ class AccountUpgradesController < ConsoleController
   end
 
   def show
+    user = current_user
+    user.streamline_type!
+    @aria_user = Aria::UserContext.new(user)
+
     redirect_to edit_account_plan_upgrade_path and return unless @aria_user.full_user? && @aria_user.has_complete_account?
     redirect_to account_plan_upgrade_payment_method_path and return unless @aria_user.has_valid_payment_method?
     redirect_to new_account_plan_upgrade_path
   end
 
   def edit
+    @aria_user = Aria::UserContext.new(current_user)
+    @billing_info = @aria_user.billing_info
+    @payment_method = @aria_user.payment_method
     @full_user = @aria_user.full_user
     @full_user = Streamline::FullUser.test if !@full_user.persisted? && Rails.env.development?
 
@@ -63,8 +76,11 @@ class AccountUpgradesController < ConsoleController
   end
 
   def update
+    @aria_user = Aria::UserContext.new(current_user)
     user_params = params[:streamline_full_user]
     @billing_info = Aria::BillingInfo.new(user_params[:aria_billing_info], @aria_user.has_account?)
+    @billing_info.email = @aria_user.email_address || @aria_user.load_email_address
+
     user = current_user
     @full_user = user.full_user
 
@@ -76,21 +92,27 @@ class AccountUpgradesController < ConsoleController
       @contact_info = Aria::ContactInfo.from_billing_info(@billing_info)
 
       @full_user = Streamline::FullUser.new(
-        {:postal_code => user_params[:aria_billing_info][:zip]}.
+        {:postal_code => user_params[:aria_billing_info][:zip], :state => user_params[:aria_billing_info][:region]}.
         merge!(user_params[:streamline_full_user]).
-        merge!(user_params[:aria_billing_info].slice(:address1, :address2, :address3, :city, :region, :country))
+        merge!(user_params[:aria_billing_info].slice(:address1, :address2, :address3, :city, :country))
       )
 
       render :edit and return unless @full_user.promote(user)
     end
 
     current_user_changed!
-    process_async(:aria_user => current_user)
+    @aria_user = Aria::UserContext.new(current_user)
 
-    begin
-      render :edit and return unless @aria_user.create_account(:billing_info => @billing_info, :contact_info => @contact_info)
-    rescue Aria::AccountExists
+    if @aria_user.has_account?
+      # This is definitely an update scenario
       render :edit and return unless @aria_user.update_account(:billing_info => @billing_info)
+    else
+      # This may or may not be an update scenario; try creating first.
+      begin
+        render :edit and return unless @aria_user.create_account(:billing_info => @billing_info, :contact_info => @contact_info)
+      rescue Aria::AccountExists
+        render :edit and return unless @aria_user.update_account(:billing_info => @billing_info)
+      end
     end
 
     redirect_to account_plan_upgrade_payment_method_path and return unless @aria_user.has_valid_payment_method?
@@ -103,13 +125,14 @@ class AccountUpgradesController < ConsoleController
     end
 
     def account_in_supported_country!
+      @aria_user = Aria::UserContext.new(current_user)
       # If the user already has an Aria account, we do not prevent their access to billing
       return if @aria_user.has_account?
 
       @full_user = @aria_user.full_user
       if @full_user.persisted?
         @contact_info = Aria::ContactInfo.from_full_user(@full_user)
-        render :no_upgrade and return false unless @contact_info.country.nil? or @contact_info.country.blank? or Rails.configuration.allowed_countries.include?(@contact_info.country.to_sym)
+        render :no_upgrade and return false if @contact_info.country.blank? or not Rails.configuration.allowed_countries.include?(@contact_info.country.to_sym)
       end
     end
 

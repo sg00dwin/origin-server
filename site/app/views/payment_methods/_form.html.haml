@@ -76,6 +76,12 @@
         $(".cc-card." + type).addClass('selected');
       });
 
+      if (cc_input.val()) {
+        // Trigger card format and type detection
+        cc_input.trigger("paste");
+        cc_input.trigger("keyup");
+      }
+
       var frame = $('#payment_frame');
       if (frame.length == 0) return;
       $('#payment_method')

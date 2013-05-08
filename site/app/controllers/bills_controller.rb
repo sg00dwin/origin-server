@@ -24,7 +24,7 @@ class BillsController < ConsoleController
     @transactions.select {|t| t.transaction_type == 1 }.each_slice(Rails.configuration.aria_max_parallel_requests) do |slice|
       slice.each do |t|
         async do
-          @transaction_details[t.transaction_source_id] = Aria.get_invoice_details(@user.acct_no, t.transaction_source_id)
+          @transaction_details[t.transaction_source_id] = Aria.cached.get_invoice_details(@user.acct_no, t.transaction_source_id)
         end
       end
       join!
@@ -102,7 +102,7 @@ class BillsController < ConsoleController
         past_usage_items = invoice.line_items.select(&:usage?)
         if current_usage_items.present? or past_usage_items.present?
           @usage_items = {
-            "Current" => current_usage_items || [],
+            "Next bill" => current_usage_items || [],
             "This bill" => past_usage_items || []
           }
         end

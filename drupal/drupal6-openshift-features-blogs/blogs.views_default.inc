@@ -1236,8 +1236,10 @@ function blogs_views_default_views() {
         'text' => '',
         'make_link' => 0,
         'path' => '',
+        'absolute' => 0,
         'link_class' => '',
         'alt' => '',
+        'rel' => '',
         'prefix' => '',
         'suffix' => '',
         'target' => '',
@@ -1252,8 +1254,9 @@ function blogs_views_default_views() {
       'empty' => '',
       'hide_empty' => 0,
       'empty_zero' => 0,
+      'hide_alter_empty' => 1,
       'date_format' => 'custom',
-      'custom_date_format' => 'l, F j, Y',
+      'custom_date_format' => 'F j, Y \\a\\t H:i A',
       'exclude' => 0,
       'id' => 'created',
       'table' => 'node',
@@ -4312,7 +4315,7 @@ $format_id = db_result(db_query("SELECT format FROM {filter_formats} WHERE name 
 ?><li><a class="link-tile" href="<?php print $this->render_altered(array(\'text\' => \'[path]\'), $tokens); ?>">
 <?php print check_markup($data->node_data_field_summary_field_summary_value, $format_id, false); ?>
 <aside><?php print $this->render_altered(array(\'text\' => \'[created]\'), $tokens); ?></aside>
-</a></i>',
+</a></li>',
       'exclude' => 0,
       'id' => 'phpcode',
       'table' => 'customfield',

@@ -125,15 +125,16 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
 
     # Do some direct checking here just to validate
     omit_if_aria_is_unavailable
-    user = Aria::UserContext.new(WebUser.new(:rhlogin => user.rhlogin))
-    assert_equal 'eur', user.currency_cd
+    aria_user = Aria::UserContext.new(WebUser.new(:rhlogin => user.rhlogin))
+    assert_equal 'eur', aria_user.currency_cd
+    assert_equal user.email_address, aria_user.account_details.alt_email
 
-    assert config_collections_group_id = Rails.configuration.collections_group_id_by_country[user.account_details.country]
-    assert account_collections_group_id = Aria.get_acct_groups_by_acct(user.acct_no)[0].client_acct_group_id
+    assert config_collections_group_id = Rails.configuration.collections_group_id_by_country[aria_user.account_details.country]
+    assert account_collections_group_id = Aria.get_acct_groups_by_acct(aria_user.acct_no)[0].client_acct_group_id
     assert_equal config_collections_group_id, account_collections_group_id
 
-    assert user.has_valid_payment_method?
-    assert payment_method = user.payment_method
+    assert aria_user.has_valid_payment_method?
+    assert payment_method = aria_user.payment_method
     assert payment_method.persisted?
     assert payment_method.cc_no.ends_with?(credit_card_params['cc_no'][-4..-1])
     assert_equal credit_card_params['cc_exp_yyyy'].to_i, payment_method.cc_exp_yyyy

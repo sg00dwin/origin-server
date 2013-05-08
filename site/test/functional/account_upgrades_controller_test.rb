@@ -60,6 +60,7 @@ class AccountUpgradesControllerTest < ActionController::TestCase
       }
 
     assert full_user = assigns[:full_user]
+    assert_not_nil full_user.state
     assert billing_info = assigns[:billing_info]
     assert !billing_info.persisted? # Existing behavior
 
@@ -68,10 +69,19 @@ class AccountUpgradesControllerTest < ActionController::TestCase
     assert aria_user.has_complete_account?
     assert aria_user.billing_info.persisted?
     assert_equal 'eur', aria_user.currency_cd
+    assert_equal @user.email_address, aria_user.account_details.alt_email
+    assert_equal @user.email_address, aria_user.account_details.billing_email
 
     assert config_collections_group_id = Rails.configuration.collections_group_id_by_country[test_country]
-    assert account_collections_group_id = Aria.get_acct_groups_by_acct(aria_user.acct_no)[0].client_acct_group_id
-    assert_equal config_collections_group_id, account_collections_group_id
+    assert config_functional_group_id = Rails.configuration.functional_group_id_by_country[test_country]
+    assert aria_acct_groups = Aria.get_acct_groups_by_acct(aria_user.acct_no)
+    assert aria_coll_groups = aria_acct_groups.select{ |g| g.group_type == 'C' }
+    assert aria_func_groups = aria_acct_groups.select{ |g| g.group_type == 'F' }
+    assert_equal 2, aria_acct_groups.count
+    assert_equal 1, aria_coll_groups.count
+    assert_equal 1, aria_func_groups.count
+    assert_equal config_collections_group_id, aria_acct_groups[0].client_acct_group_id
+    assert_equal config_functional_group_id, aria_func_groups[0].client_acct_group_id
 
     assert_equal :full, session[:streamline_type]
     assert_redirected_to account_plan_upgrade_payment_method_path

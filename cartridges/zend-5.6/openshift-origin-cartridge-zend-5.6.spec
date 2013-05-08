@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      openshift-origin-cartridge-zend-5.6
-Version: 1.8.1
+Version: 1.8.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -108,6 +108,12 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.8.3-1
+- Add Cartridge-Vendor to v1 cartridge manifest.yml (asari.ruby@gmail.com)
+
+* Fri May 03 2013 Adam Miller <admiller@redhat.com> 1.8.2-1
+- Bugs 958709, 958744, 958757 (dmcphers@redhat.com)
+
 * Thu Apr 25 2013 Adam Miller <admiller@redhat.com> 1.8.1-1
 - Warn user to set Zend Server Console password on app create
   (vvitek@redhat.com)

@@ -77,7 +77,7 @@ $do = og_comment_perms_do();
   <?php if ($submitted): ?>
     <div class="submitted">
       <?php
-      print '<span>by <strong>' . theme('username', $node) . '</strong> on </span>' . format_date($created, $type='custom', $format = 'F j, Y');
+      print '<span>by <strong>' . theme('username', $node) . '</strong> on </span>' . format_date($created, $type='custom', $format = 'F j, Y \a\t H:i A');
       ?>
     </div>
   <?php endif; ?>
@@ -102,5 +102,5 @@ $do = og_comment_perms_do();
     <div class="links"><?php print $links; ?></div>
   <?php endif; ?>
 
-  <?php print openshift_social_sharing($node_url); ?>
+  <?php print openshift_social_sharing($node_url, $title); ?>
 </div>

@@ -13,18 +13,19 @@ else
 exit 1
 fi
 
-export PHPRC="$OPENSHIFT_ZEND_DIR/configuration/etc/php.ini"
-
 function start() {
     client_message "Starting Zend Server Deployment daemon"
-    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/zdd.sh start || :
+    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/zdd.sh start || \
+        client_error "Failed to start Zend Server Deployment daemon"
 
     client_message "Starting Zend Server Monitor node"
     # - logs errors and performance data to the Zend Server
-    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/monitor-node.sh start || :
+    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/monitor-node.sh start || \
+        client_error "Failed to start Zend Server Monitor node"
 
     client_message "Starting Apache"
-    /usr/sbin/httpd -C "Include $HTTPD_CFG_DIR/*.conf" -f $HTTPD_CFG_FILE -k start || :
+    /usr/sbin/httpd -C "Include $HTTPD_CFG_DIR/*.conf" -f $HTTPD_CFG_FILE -k start || \
+        client_error "Failed to start Apache"
 
     # Session clustering daemon
     # - for scaling apps
@@ -32,32 +33,65 @@ function start() {
     # - will work with Zend Server 6.0
     #$OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/scd.sh start
 
-    client_message "Starting Zend Server Job queue daemon"
+    client_message "Starting Zend Server JobQueue daemon"
     # - allows PHP applications to execute batch jobs using an api call
-    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/jqd.sh start || :
+    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/jqd.sh start || \
+        client_error "Failed to start Zend Server JobQueue daemon"
 
-    client_message "Starting Light HTTPd"
-    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/lighttpdctl.sh start || :
+    client_message "Starting Zend Server Console"
+    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/lighttpdctl.sh start || \
+        client_error "Failed to start Zend Server Console"
+
+    client_result "Zend Server 5.6 started successfully"
 }
 
 function stop() {
-    client_message "Stopping Zend Server"
-    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/lighttpdctl.sh stop
-    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/jqd.sh stop
-    #/usr/local/zend/bin/scd.sh stop
-    /usr/sbin/httpd -C "Include $HTTPD_CFG_DIR/*.conf" -f $HTTPD_CFG_FILE -k stop
-    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/monitor-node.sh stop
-    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/zdd.sh stop
+    client_message "Stopping Zend Server Console"
+    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/lighttpdctl.sh stop || :
+
+    client_message "Stopping Zend Server JobQueue daemon"
+    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/jqd.sh stop || :
+
+    #/usr/local/zend/bin/scd.sh stop || :
+
+    client_message "Stopping Apache"
+    /usr/sbin/httpd -C "Include $HTTPD_CFG_DIR/*.conf" -f $HTTPD_CFG_FILE -k stop || :
+
+    client_message "Stopping Zend Server Monitor node"
+    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/monitor-node.sh stop || :
+
+    client_message "Stopping Zend Server Deployment daemon"
+    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/zdd.sh stop || :
+
+    client_result "Zend Server 5.6 stopped successfully"
 }
 
 function restart() {
-   client_message "Restarting Zend Server"
-   $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/zdd.sh restart
-   $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/monitor-node.sh restart
-   /usr/sbin/httpd -C "Include $HTTPD_CFG_DIR/*.conf" -f $HTTPD_CFG_FILE -k restart
-   #/usr/local/zend/bin/scd.sh restart
-   $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/jqd.sh restart
-   $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/lighttpdctl.sh restart
+    client_message "Restarting Zend Server Deployment daemon"
+    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/zdd.sh restart || \
+        client_error "Failed to restart Zend Server Deployment daemon"
+
+    client_message "Restarting Zend Server Monitor node"
+    # - logs errors and performance data to the Zend Server
+    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/monitor-node.sh restart || \
+        client_error "Failed to restart Zend Server Monitor node"
+
+    client_message "Restarting Apache"
+    /usr/sbin/httpd -C "Include $HTTPD_CFG_DIR/*.conf" -f $HTTPD_CFG_FILE -k restart || \
+        client_error "Failed to restart Apache"
+
+    #$OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/scd.sh restart
+
+    client_message "Restarting Zend Server JobQueue daemon"
+    # - allows PHP applications to execute batch jobs using an api call
+    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/jqd.sh restart || \
+        client_error "Failed to restart Zend Server JobQueue daemon"
+
+    client_message "Restarting Zend Server Console"
+    $OPENSHIFT_ZEND_DIR/versions/5.6/configuration/shared-files/usr/local/zend/bin/lighttpdctl.sh restart || \
+        client_error "Failed to restart Zend Server Console"
+
+    client_result "Zend Server 5.6 restarted successfully"
 }
 
 function status() {
@@ -68,11 +102,6 @@ function status() {
    else
       echo "Application is either stopped or inaccessible"
    fi
-}
-
-function reload() {
-    echo "Reloading Zend Server"
-    restart
 }
 
 function tidy() {
@@ -117,7 +146,7 @@ case "$1" in
   stop)      stop ;;
   restart)   restart ;;
   status)    status ;;
-  reload)    reload ;;
+  reload)    restart ;;
   tidy)      tidy ;;
   build)     build ;;
   deploy)    deploy ;;

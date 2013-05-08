@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.8.5
+Version: 1.8.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -195,6 +195,70 @@ fi
 %{sitedir}/public
 
 %changelog
+* Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.8.8-1
+- Merge pull request #1324 from detiber/bz959162
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1320 from liggitt/bug_959559_js_validation_errors
+  (dmcphers+openshiftbot@redhat.com)
+- Migrating some console base styling to origin-server/console
+  (jdetiber@redhat.com)
+- Fix bug 959559 - validate cc number on page load (jliggitt@redhat.com)
+- Updated per PR feedback (hripps@redhat.com)
+- Bug 960225 Add text to indicate that entitlements aren't instant.
+  (hripps@redhat.com)
+
+* Tue May 07 2013 Adam Miller <admiller@redhat.com> 1.8.7-1
+- Revert drop-down title to "Bill date" on billing history page
+  (jliggitt@redhat.com)
+- Code review updates (jliggitt@redhat.com)
+- Merge pull request #1312 from liggitt/bug_959555_beta_wording_tweaks
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1311 from nhr/BZ960260 (dmcphers+openshiftbot@redhat.com)
+- Fix bug 959555 - Beta wording tweaks (jliggitt@redhat.com)
+- Merge pull request #1309 from nhr/functional_acct_groups
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 960260 - Explcitily map @billing_info 'region' to @full_user 'state'
+  (hripps@redhat.com)
+- Updated per PR feedback (hripps@redhat.com)
+- Add functional account group assignment to new Aria accounts
+  (hripps@redhat.com)
+
+* Mon May 06 2013 Adam Miller <admiller@redhat.com> 1.8.6-1
+- Add authorization controller test (ccoleman@redhat.com)
+- Merge pull request #1261 from nhr/aria_email_info
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1306 from jwforres/Bug958525ResetPwdLoginLoop
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1303 from jwforres/Bug959163TwitterLinksNotRendered
+  (dmcphers+openshiftbot@redhat.com)
+- Remove extraneous clear_cache (hripps@redhat.com)
+- Bug 958525 - User enters infinite loop with Reset Password and login
+  (jforrest@redhat.com)
+- Merge remote-tracking branch 'upstream/master' into aria_email_info
+  (hripps@redhat.com)
+- Merge pull request #1300 from smarterclayton/merge_coverage_properly
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1295 from liggitt/cache_aria
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 959163 - Twitter links of "Check the buzz" not clickable
+  (jforrest@redhat.com)
+- Modify test address to use example.com (hripps@redhat.com)
+- Remove before_filters that obfuscated model setup (hripps@redhat.com)
+- Modified to cache & clear has_account? result as appropriate
+  (hripps@redhat.com)
+- Updated per Clayton's feedback (hripps@redhat.com)
+- Updated per PR feedback (hripps@redhat.com)
+- Add email attribute to BillingInfo and ContactInfo (hripps@redhat.com)
+- Allow arbitrary commands to be merged by giving them different command names
+  based on what is run (ccoleman@redhat.com)
+- Put clear_cache in ensure, make clear_cache safer, use with_clean_cache
+  (jliggitt@redhat.com)
+- Cache Aria user methods (jliggitt@redhat.com)
+- Fix bug calling cache_key_for (jliggitt@redhat.com)
+- Use Aria.cached, clear cache appropriately, stop modifying arg options
+  (jliggitt@redhat.com)
+- Use HasWithIndifferentAccess (jliggitt@redhat.com)
+
 * Thu May 02 2013 Adam Miller <admiller@redhat.com> 1.8.5-1
 - Merge pull request #1293 from jwforres/Bug958596_CantAccessAccountHelp
   (dmcphers+openshiftbot@redhat.com)

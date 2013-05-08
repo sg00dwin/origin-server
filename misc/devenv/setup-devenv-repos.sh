@@ -10,7 +10,7 @@ baseurl=http://mirror1.ops.rhcloud.com/mirror/epel/6/\$basearch/
 failovermethod=priority
 enabled=1
 gpgcheck=0
-exclude=libmongodb mongodb*
+exclude=libmongodb mongodb* nodejs*
 
 [epel-testing]
 name=Extra Packages for Enterprise Linux 6 - Testing - \$basearch
@@ -19,7 +19,7 @@ baseurl=http://mirror1.ops.rhcloud.com/mirror/epel/testing/6/\$basearch/
 failovermethod=priority
 enabled=0
 gpgcheck=0
-exclude=libmongodb mongodb*
+exclude=libmongodb mongodb* nodejs*
 
 EOF
 #sed -i s/sslverify=1/sslverify=0/g /etc/yum.repos.d/rh-cloud.repo
@@ -43,6 +43,17 @@ baseurl=https://mirror1.ops.rhcloud.com/libra/passenger
         https://mirror2.ops.rhcloud.com/libra/passenger
 failovermethod=priority
 enabled=1
+gpgcheck=0
+sslverify=0
+sslclientcert=/var/lib/yum/client-cert.pem
+sslclientkey=/var/lib/yum/client-key.pem
+
+[rhscl]
+name=RHSCL repo for Enterprise Linux 6
+baseurl=https://mirror1.ops.rhcloud.com/libra/rhscl-1.0-rhel-6/x86_64
+        https://mirror2.ops.rhcloud.com/libra/rhscl-1.0-rhel-6/x86_64
+failovermethod=priority
+enabled=0
 gpgcheck=0
 sslverify=0
 sslclientcert=/var/lib/yum/client-cert.pem

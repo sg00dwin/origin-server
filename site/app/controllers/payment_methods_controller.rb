@@ -5,13 +5,11 @@ class PaymentMethodsController < ConsoleController
   before_filter :authenticate_user!
   before_filter :user_can_upgrade_plan!
 
-  before_filter :aria_user, :only => [:edit]
-  before_filter :billing_info, :only => [:edit]
-  before_filter :payment_method, :only => [:edit]
-
-  before_filter :process_async
-
   def edit
+    @aria_user = Aria::UserContext.new(current_user)
+    @billing_info = @aria_user.billing_info
+    @payment_method = @aria_user.payment_method
+
     @previous_payment_method = @payment_method.dup
 
     update_errors(@payment_method.errors, (params[:payment_method] || {})[:errors] || {})
@@ -54,6 +52,11 @@ class PaymentMethodsController < ConsoleController
         h
       end
       @user = Aria::UserContext.new(current_user)
+
+      # Always clear when returning from direct_post
+      # Updating payment method can change status, mark invoices paid, process payments, etc
+      @user.clear_cache!
+
       if not @user.has_valid_payment_method? and @errors.empty?
         (@errors[:base] ||= []).unshift :unknown
       end
