@@ -239,7 +239,7 @@ module OpenShiftMigration
 
     # TODO: fix problems loading commented out lines
     migrators[cr.select('diy', '0.1')] = Diy01Migration.new
-    # migrators[cr.select('jbossas', '7')] = Jbossas7Migration.new # name changed to jbossas-7.1
+    migrators[cr.select('jbossas', '7')] = Jbossas7Migration.new # name changed to jbossas-7.1
     migrators[cr.select('jbosseap', '6.0')] = Jbosseap60Migration.new
     #migrators[cr.select('jbossews', '1.0')] = Jbossews10Migration.new
     #migrators[cr.select('jbossews', '2.0')] = Jbossews20Migration.new
