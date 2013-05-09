@@ -323,8 +323,8 @@ function _redhat_sso_user_is_blocked($uid) {
  *     User-Agent: Drupal (+http://drupal.org/)
  *     Content-Length: 33
  *     Content-Type: application/x-www-form-urlencoded
- *     login=xeops&secretKey=sw33tl1Qu0r
- *   [data] => {"emailAddress":"xeops_linux@deutsche-boerse.com","login":"XEOPS"}
+ *     login=xeops&secretKey=xxxx
+ *   [data] => {"emailAddress":"xeops_linux@boerse.com","login":"XEOPS"}
  *   [protocol] => HTTP/1.1
  *   [status_message] => OK
  *   [headers] => Array
