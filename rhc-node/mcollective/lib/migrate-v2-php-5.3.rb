@@ -29,10 +29,8 @@ module OpenShiftMigration
       OpenShift::Utils.oo_spawn("pear -c #{pearrc} config-set auto_discover 1", spawn_ops)
 
       Util.add_cart_env_var(user, 'php', 'OPENSHIFT_PHP_VERSION', '5.3')
-      
-      FileUtils.rm_rf(File.join(cartridge_dir, 'php', 'logs'))
 
-      directories = %w(logs)
+      directories = %w(logs sessions)
       output << Util.move_directory_between_carts(user, 'php-5.3', 'php', directories)
 
       output
