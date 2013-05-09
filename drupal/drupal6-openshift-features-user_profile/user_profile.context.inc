@@ -602,6 +602,19 @@ function user_profile_context_default_contexts() {
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
+  $context->name = 'viewing-book';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+  );
+  $context->reactions = array(
+  );
+  $context->condition_mode = 0;
+  $export['viewing-book'] = $context;
+
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
   $context->name = 'viewing-hierarchy';
   $context->description = '';
   $context->tag = '';

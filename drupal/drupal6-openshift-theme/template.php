@@ -287,6 +287,12 @@ function _openshift_heading(&$vars) {
   elseif ($item['link_path'] == 'user' && $user->uid == 0) {
     $title = '';
   }
+  elseif ($item['module'] == 'book' && $vars['node'] && $vars['node']->type == 'book') {
+    $node = $vars['node'];
+    $data = menu_tree_all_data($item['menu_name']);
+    $data = reset($data);
+    $title = $data['link']['title'];
+  }
   elseif ($item['link_path']) {
     $type = $item['link_path'];
     $title = $page_title;
