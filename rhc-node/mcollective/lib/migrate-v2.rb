@@ -32,6 +32,7 @@ require_relative "migrate-v2-switchyard-0.6"
 
 require 'openshift-origin-node/model/cartridge_repository'
 require 'openshift-origin-node/model/unix_user'
+require 'openshift-origin-node/model/application_repository'
 require 'openshift-origin-node/utils/sdk'
 require 'openshift-origin-node/utils/cgroups'
 require 'openshift-origin-node/utils/application_state'
@@ -67,7 +68,7 @@ module OpenShift
         cart_status = do_control('status', cartridge)
         output << cart_status
 
-        if cart_status !~ /running|enabled/i
+        if cart_status !~ /running|enabled|Tail of JBoss/i
           problem = true
         end
       end
@@ -141,33 +142,39 @@ module OpenShiftMigration
       return output, exitcode
     end
 
-    progress = MigrationProgress.new(uuid)
+    begin
+      progress = MigrationProgress.new(uuid)
 
-    output << inspect_gear_state(progress, gear_home)
-    output << migrate_stop_lock(progress, uuid, gear_home)
-    output << stop_gear(progress, uuid)
-    output << migrate_typeless_translated_vars(progress, uuid, gear_home)
-    output << cleanup_gear_env(progress, gear_home)
-    output << migrate_env_vars_to_raw(progress, gear_home)
+      output << inspect_gear_state(progress, gear_home)
+      output << migrate_stop_lock(progress, uuid, gear_home)
+      output << stop_gear(progress, uuid)
+      output << migrate_typeless_translated_vars(progress, uuid, gear_home)
+      output << cleanup_gear_env(progress, gear_home)
+      output << migrate_env_vars_to_raw(progress, gear_home)
 
-    OpenShift::Utils::Sdk.mark_new_sdk_app(gear_home)
-    cartridge_migrators = load_cartridge_migrators 
+      OpenShift::Utils::Sdk.mark_new_sdk_app(gear_home)
+      cartridge_migrators = load_cartridge_migrators 
 
-    output << migrate_cartridges(progress, gear_home, uuid, cartridge_migrators)
+      output << migrate_cartridges(progress, gear_home, uuid, cartridge_migrators)
 
-    start_gear(progress, uuid)
+      start_gear(progress, uuid)
 
-    output << validate_gear(progress, uuid, gear_home)
-    output << cleanup(progress, gear_home)
+      output << validate_gear(progress, uuid, gear_home)
+      output << cleanup(progress, gear_home)
 
-    env_echos.each do |env_echo|
-      echo_output, echo_exitcode = Util.execute_script(env_echo)
-      output += echo_output
+      env_echos.each do |env_echo|
+        echo_output, echo_exitcode = Util.execute_script(env_echo)
+        output += echo_output
+      end
+
+      total_time = (Time.now.to_f * 1000).to_i - start_time
+      output += "***time_migrate_on_node_measured_from_node=#{total_time}***\n"
+    rescue => e
+      output << "Caught an exception during internal migration steps: #{e.message}\n"
+      output << e.backtrace.join("\n")
+    ensure
+      return output, exitcode
     end
-
-    total_time = (Time.now.to_f * 1000).to_i - start_time
-    output += "***time_migrate_on_node_measured_from_node=#{total_time}***\n"
-    return output, exitcode
   end
 
   def self.inspect_gear_state(progress, gear_home)
@@ -241,8 +248,9 @@ module OpenShiftMigration
     migrators[cr.select('diy', '0.1')] = Diy01Migration.new
     migrators[cr.select('jbossas', '7')] = Jbossas7Migration.new # name changed to jbossas-7.1
     migrators[cr.select('jbosseap', '6.0')] = Jbosseap60Migration.new
-    #migrators[cr.select('jbossews', '1.0')] = Jbossews10Migration.new
-    #migrators[cr.select('jbossews', '2.0')] = Jbossews20Migration.new
+    # One migrator can handle both jbossews cartridges
+    migrators[cr.select('jbossews', '1.0')] = Jbossews10Migration.new
+    migrators[cr.select('jbossews', '2.0')] = Jbossews10Migration.new
     migrators[cr.select('nodejs', '0.6')] = Nodejs06Migration.new
     migrators[cr.select('perl', '5.10')] = Perl510Migration.new
     migrators[cr.select('php', '5.3')] = Php53Migration.new
@@ -390,6 +398,11 @@ module OpenShiftMigration
             output << progress.mark_complete("#{name}_hook")
           end
         end
+      end
+
+      if progress.incomplete? "#{name}_reconfigure_git_repo"
+        OpenShift::ApplicationRepository.new(user).configure
+        output << progress.mark_complete("#{name}_reconfigure_git_repo")
       end
 
       if progress.incomplete? "#{name}_connect_frontend"
