@@ -7,8 +7,8 @@ module OpenShiftMigration
 
       cartridge_dir = File.join(user.homedir, 'metrics')
       
-      FileUtils.ln_s('/usr/lib64/httpd/modules', File.join(cartridge_dir, 'modules'))
-      FileUtils.ln_s('/etc/httpd/conf/magic', File.join(cartridge_dir, 'conf', 'magic'))
+      FileUtils.ln_sf('/usr/lib64/httpd/modules', File.join(cartridge_dir, 'modules'))
+      FileUtils.ln_sf('/etc/httpd/conf/magic', File.join(cartridge_dir, 'conf', 'magic'))
         
       directories = %w(logs sessions)
       output << Util.move_directory_between_carts(user, 'metrics-0.1', 'metrics', directories)

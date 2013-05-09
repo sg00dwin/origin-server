@@ -16,6 +16,8 @@ require_relative "migrate-v2-nodejs-0.6"
 require_relative "migrate-v2-perl-5.10"
 require_relative "migrate-v2-php-5.3"
 require_relative "migrate-v2-python-2.6"
+require_relative "migrate-v2-python-2.7"
+require_relative "migrate-v2-python-3.3"
 require_relative "migrate-v2-ruby-1.8"
 require_relative "migrate-v2-ruby-1.9"
 require_relative "migrate-v2-zend-5.6"
@@ -247,6 +249,8 @@ module OpenShiftMigration
     migrators[cr.select('perl', '5.10')] = Perl510Migration.new
     migrators[cr.select('php', '5.3')] = Php53Migration.new
     migrators[cr.select('python', '2.6')] = Python26Migration.new
+    migrators[cr.select('python', '2.7')] = Python27Migration.new
+    migrators[cr.select('python', '3.3')] = Python33Migration.new
     migrators[cr.select('ruby', '1.8')] = Ruby18Migration.new
     migrators[cr.select('ruby', '1.9')] = Ruby19Migration.new
     #migrators[cr.select('zend', '5.6')] = Zend56Migration.new # not in li yet
