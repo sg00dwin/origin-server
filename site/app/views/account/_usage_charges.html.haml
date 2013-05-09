@@ -38,4 +38,4 @@
             %td.usage-period{:scope => 'row'}= period_name
             %td.usage-data.graph-data
               .graph-element{:class => type_data.class_name, :style => "width: #{(100 * units / max).floor}%;"}> &nbsp;
-            %td.usage-amount.right= pluralize(units.round(units < 10 ? 2 : 0), type_data.units)
+            %td.usage-amount.right= usage_amount_with_units(units, type_data.units)
