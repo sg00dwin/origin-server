@@ -1,4 +1,4 @@
-@runtime_other4
+@runtime_extended2
 @not-enterprise
 Feature: Rockmongo Embedded Cartridge
 
