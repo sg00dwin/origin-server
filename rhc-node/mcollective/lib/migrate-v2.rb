@@ -67,7 +67,7 @@ module OpenShift
         cart_status = do_control('status', cartridge)
         output << cart_status
 
-        if cart_status !~ /running/i
+        if cart_status !~ /running|enabled/i
           problem = true
         end
       end
