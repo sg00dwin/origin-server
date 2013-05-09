@@ -836,3 +836,40 @@ function openshift_ends_with($s, $substr)
     $start  = -1 * $length;
     return (substr($s, $start) === $substr);
 }
+
+function openshift_primary_link_custom_block($path) {
+  $menuMap = variable_get("megamenu_custom_blocks", array());
+  $block = array();
+  if(is_array($menuMap) && $menuMap[$path]) {
+    $mockedBlock = (object)array('module'=>'block', 'delta'=>$menuMap[$path], 'cache'=>BLOCK_CACHE_GLOBAL);
+    if(($cid = _block_get_cache_id($mockedBlock)) && ($cache = cache_get($cid, 'cache_block'))) {
+      $block = $cache->data;
+    }
+    else {
+      $block = module_invoke($mockedBlock->module, 'block', 'view', $mockedBlock->delta);
+      if (isset($cid)) {
+        cache_set($cid, $block, 'cache_block', CACHE_TEMPORARY);
+      }
+    }
+  }
+  return $block;
+}
+
+function openshift_render_primary_link_megamenu($link, $visibleChildren) {
+  $path = url($link['href']);
+  $block = openshift_primary_link_custom_block($path);
+  if($block['content']) {
+    print $block['content'];
+  }
+  else if(!empty($visibleChildren)){
+    print '<div class="dropdown-menu" role="menu"><div class="col"><ul>';
+    foreach( $visibleChildren as $key=>$child) {
+      $sublink = $child["link"];                                 
+      $sublink['options']['html'] = TRUE;
+      print '<li>';
+      print l($sublink['title'], $sublink['href'], $sublink['options']);
+      print '</li>';
+    }
+    print '</ul></div></div>';
+  }
+}

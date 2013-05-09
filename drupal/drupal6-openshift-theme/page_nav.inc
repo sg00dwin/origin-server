@@ -8,14 +8,23 @@
               </a>
             </div>
             <ul class="nav">
-                <?php $i = 0; foreach( $primary_links as $key=>$link) {
-                if ($i++ == 2) {
-                  print '<li class="divider">&nbsp;</li>';
-                }
-                $link['options']['html'] = TRUE;
-              ?>
-                <li class="<?php print strpos($key,'active-trail') ? "active" : ""; ?>"><?php print l("<span>" . $link['title'] . "</span>", $link['href'], $link['options']); ?></li>
-              <?php } ?>
+                <?php foreach( menu_tree_page_data('primary-links') as $key=>$item) {
+                $link = $item["link"];
+                if (!$link['hidden']) {
+                  $link['options']['html'] = TRUE;
+
+                  $visibleChildren = array();
+                  foreach($item['below'] as $childkey=>$child) {
+                    if(!$child['hidden']) {
+                      $visibleChildren[$childkey] = $child;
+                    }
+                  }
+                  $hasChildren = !empty($visibleChildren);
+                    ?>
+                    <li class="<?php print $hasChildren ? "dropdown " : ""; ?><?php print $link['in_active_trail'] ? "active" : ""; ?>"><?php print l("<span>" . $link['title'] . "</span>", $link['href'], $link['options']); ?>
+                      <?php openshift_render_primary_link_megamenu($link, $visibleChildren); ?>
+                    </li>
+              <?php }} ?>
             </ul>
           </div>
         </div>
