@@ -1,13 +1,13 @@
-PEP: 2
-Title: Online Integration with Aria billing provider
+PEP: 2  
+Title: Online Integration with Aria billing provider  
 Status: draft  
 Author: Clayton Coleman <ccoleman@redhat.com>  
 Arch Priority: high  
-Complexity: 100 (implemented)
+Complexity: 100 (implemented)  
 Affected Components: web, api, runtime, cartridges, broker, admin_tools, cli  
-Affected Teams: Runtime (1), UI (8), Broker (8), Enterprise (0)
-User Impact: high
-Epic: 
+Affected Teams: Runtime (1), UI (8), Broker (8), Enterprise (0)  
+User Impact: high  
+Epic:  
 
 Abstract
 --------
