@@ -37,4 +37,22 @@ class CommunityFlowsTest < ActionDispatch::IntegrationTest
 
     assert has_content? /Develop and scale apps in the cloud/i
   end
+
+  test 'megamenu dropdowns' do
+    visit community_url
+
+    #check that the menu is there but hidden
+    link = all('ul.nav li.dropdown').last
+    dropdown = link.find('.dropdown-menu', :visible => false)
+    assert !dropdown.visible?
+
+    link.hover
+
+    #check that the menu can still be found but only if it is visible, and a link can be clicked
+    assert dropdown.visible?
+    menu_link = dropdown.all('a').first
+    href = menu_link['href']
+    menu_link.click
+    assert_equal href, URI(page.current_url).path
+  end
 end

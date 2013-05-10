@@ -43,7 +43,7 @@
         @include transform(rotate(-9deg));
       }
       > .brand-text {
-      	border-bottom: 2px solid #EB0011;
+       border-bottom: 2px solid #EB0011;
       }
     }
   }
@@ -52,7 +52,7 @@
     /* reset styles */
     float: none;
     width: 100%;
-    font-size: 14px; 
+    font-size: 14px;
 
     > li {
       float: left;
