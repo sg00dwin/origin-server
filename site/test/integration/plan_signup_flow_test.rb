@@ -84,6 +84,56 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     assert_redirected_to login_path(:then => account_plan_upgrade_path('silver'))
   end
 
+  test 'direct post collects outstanding payment' do
+    omit_if_aria_is_unavailable
+
+    Rails.configuration.expects(:aria_direct_post_name).at_least_once.returns(nil)
+
+    user = new_streamline_user
+    omit_on_register unless user.register('/email_confirm')
+    assert user.confirm_email
+    post '/login', {:web_user => {:rhlogin => user.email_address, :password => user.password}}
+
+    # Create Aria account
+    put '/account/plans/silver/upgrade/edit', :streamline_full_user => user_params
+    assert_redirected_to '/account/plans/silver/upgrade/payment_method'
+
+    # Set active (so broker will upgrade), and non-test (so aria will generate invoices)
+    aria_user = Aria::UserContext.new(WebUser.new(:rhlogin => user.rhlogin))
+    aria_user.update_account :status_cd => 1, :test_acct_ind => 0
+
+    # Upgrade without a payment method to generate an unpaid invoice
+    User.find(:one, :as => user).tap{ |a| a.plan_id = :silver; assert a.save }
+    aria_user.clear_cache!
+    assert_equal "Silver", aria_user.account_details.plan_name
+    assert_equal 1, aria_user.unpaid_invoices.count
+
+    # Place into dunning
+    aria_user.update_account :status_cd => 11
+
+    # Get payment page to generate direct_post config
+    get '/account/payment_method/edit'
+    assert_response :success
+
+    res = submit_form('form#payment_method', credit_card_params)
+    assert Net::HTTPRedirection === res, res.inspect
+    redirect = res['Location']
+    assert redirect.starts_with?(direct_update_account_payment_method_url), redirect
+
+    aria_user.clear_cache!
+    assert_equal [], aria_user.unpaid_invoices
+    assert_equal '1', aria_user.account_details.status_cd
+    assert aria_user.has_valid_payment_method?
+    assert payment_method = aria_user.payment_method
+    assert payment_method.persisted?
+    assert payment_method.cc_no.ends_with?(credit_card_params['cc_no'][-4..-1])
+    assert_equal credit_card_params['cc_exp_yyyy'].to_i, payment_method.cc_exp_yyyy
+    assert_equal credit_card_params['cc_exp_mm'].to_i, payment_method.cc_exp_mm
+
+    # Leave as test acct
+    aria_user.update_account :test_acct_ind => 1
+  end
+
   test 'user can signup' do
     Rails.configuration.expects(:aria_direct_post_name).at_least_once.returns(nil)
 
