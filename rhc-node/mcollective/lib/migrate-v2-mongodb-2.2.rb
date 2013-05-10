@@ -8,7 +8,7 @@ module OpenShiftMigration
       env_vars = %w(USERNAME PASSWORD URL)
       env_vars.map! { |x| "OPENSHIFT_MONGODB_DB_#{x}" }
 
-      output << Util.move_gear_env_var_to_cart(user.homedir, 'mongodb', env_vars)
+      output << Util.move_gear_env_var_to_cart(user, 'mongodb', env_vars)
       cart_dir = File.join(user.homedir, 'mongodb')
       cart_env = File.join(cart_dir, 'env')
       Util.make_user_owned(cart_env, user)

@@ -381,7 +381,7 @@ class BillsControllerTest < ActionController::TestCase
 
         assert_select tr[1], 'td:content(?)', 'This bill'
         assert_select tr[1], 'div.graph-element.type-1[style*="100%"]'
-        assert_select tr[1], 'td:content(?)', '1.11 gear-hours'
+        assert_select tr[1], 'td:content(?)', '1.1 gear-hours'
       end
     end
 
@@ -390,7 +390,7 @@ class BillsControllerTest < ActionController::TestCase
       assert_select "tbody tr", 2 do |tr|
         assert_select tr[0], 'td:content(?)', 'Next bill'
         assert_select tr[0], 'div.graph-element.type-2[style*="100%"]'
-        assert_select tr[0], 'td:content(?)', '2.22 gear-hours'
+        assert_select tr[0], 'td:content(?)', '2.2 gear-hours'
 
         assert_select tr[1], 'td:content(?)', 'This bill'
         assert_select tr[1], 'div.graph-element.type-2[style*="0%"]'

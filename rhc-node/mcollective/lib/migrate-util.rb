@@ -68,7 +68,7 @@ module OpenShiftMigration
     def self.set_env_var_value(homedir, name, value)
       envfile = File.join(homedir, ".env", name)
       File.open(envfile, File::WRONLY|File::TRUNC|File::CREAT) do |file|
-        file.write "export #{name}='#{value}'"
+        file.write "#{value}"
       end
     end
 
@@ -88,13 +88,13 @@ module OpenShiftMigration
     # Copy value from old env var and write to new, deleting old env var
     #   NO-OP if old env var does not exist
     #
-    # @param [String] homedir OPENSHIFT_HOMEDIR for gear under operation
+    # @param [String] user    User for gear under operation
     # @param [String] old     Old environment variable name
     # @param [String] new     New environment variable name
-    def self.mv_env_var_value(homedir, old, new)
-      old_file = File.join(homedir, ".env", old)
+    def self.mv_env_var_value(user, old, new)
+      old_file = File.join(user.homedir, ".env", old)
       if File.exists?(old_file)
-        self.set_env_var_value(homedir, new, self.get_env_var_value(homedir, old))
+        self.add_gear_env_var(user, new, self.get_env_var_value(user.homedir, old))
         FileUtils.rm(old_file)
       end
     end
@@ -107,7 +107,7 @@ module OpenShiftMigration
     def self.rm_env_var(homedir, *name)
       name.each { |file|
         path = File.join(homedir, ".env", file)
-        FileUtils.rm(path) if File.exists?(path)
+        FileUtils.rm_f(path) if File.exists?(path)
       }
     end
 
@@ -156,22 +156,20 @@ module OpenShiftMigration
 
     # Move a list of environment variables from the gear environment 
     # to a cartridge environment
-    def self.move_gear_env_var_to_cart(homedir, cartridge_name, vars)
+    def self.move_gear_env_var_to_cart(user, cartridge_name, vars)
       output = ''
 
-      gear_env = File.join(homedir, '.env')
-      cart_env = File.join(homedir, cartridge_name, 'env')
-
       vars.each do |env_var_name|
-        gear_env_var = File.join(gear_env, env_var_name)
+        gear_env_var = File.join(user.homedir, '.env', env_var_name)
 
         next if !File.exists?(gear_env_var)
 
-        cart_env_var = File.join(cart_env, env_var_name)
+        value = self.get_env_var_value(user.homedir, env_var_name)
 
         output << "Moving env var #{env_var_name} to #{cartridge_name} env var directory\n"
 
-        FileUtils.mv(gear_env_var, cart_env_var)
+        self.add_cart_env_var(user, cartridge_name, env_var_name, value)
+        FileUtils.rm_f(gear_env_var)
       end
 
       output
@@ -213,7 +211,15 @@ module OpenShiftMigration
 
     def self.add_cart_env_var(user, cart, key, value)
       env_dir = File.join(user.homedir, cart, 'env')
+      self.add_user_owned_env_var(user, env_dir, key, value)
+    end
 
+    def self.add_gear_env_var(user, key, value)
+      env_dir = File.join(user.homedir, '.env')
+      self.add_user_owned_env_var(user, env_dir, key, value)
+    end
+
+    def self.add_user_owned_env_var(user, env_dir, key, value)
       filename = File.join(env_dir, key)
       File.open(filename, File::WRONLY|File::TRUNC|File::CREAT) do |file|
         file.write value.to_s

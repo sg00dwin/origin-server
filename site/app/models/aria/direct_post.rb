@@ -22,12 +22,10 @@ module Aria
         name = plan.nil? ? prefix : "#{prefix}_#{plan.is_a?(String) ? plan : plan.id}"
         Aria.set_reg_uss_config_params("direct_post_#{name}", {
           :redirecturl => url,
-          :do_cc_auth => 1,
+          :do_collect_or_validate => 1,
           :min_auth_threshold => 0,
           :change_status_on_cc_auth_success => 1,
-          :status_on_cc_auth_success => 1,
-          :change_status_on_cc_auth_failure => 1,
-          :status_on_cc_auth_failure => -1,
+          :status_on_cc_auth_success => 1
         })
         name
       end

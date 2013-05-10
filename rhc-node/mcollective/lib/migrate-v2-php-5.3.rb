@@ -10,8 +10,8 @@ module OpenShiftMigration
 
       cartridge_dir = File.join(user.homedir, 'php')
       
-      FileUtils.ln_s('/usr/lib64/httpd/modules', File.join(cartridge_dir, 'modules'))
-      FileUtils.ln_s('/etc/httpd/conf/magic', File.join(cartridge_dir, 'conf', 'magic'))
+      FileUtils.ln_sf('/usr/lib64/httpd/modules', File.join(cartridge_dir, 'modules'))
+      FileUtils.ln_sf('/etc/httpd/conf/magic', File.join(cartridge_dir, 'conf', 'magic'))
 
       FileUtils.rm_f(File.join(user.homedir, '.pearrc'))
 
@@ -29,6 +29,9 @@ module OpenShiftMigration
       OpenShift::Utils.oo_spawn("pear -c #{pearrc} config-set auto_discover 1", spawn_ops)
 
       Util.add_cart_env_var(user, 'php', 'OPENSHIFT_PHP_VERSION', '5.3')
+
+      directories = %w(logs sessions)
+      output << Util.move_directory_between_carts(user, 'php-5.3', 'php', directories)
 
       output
     end

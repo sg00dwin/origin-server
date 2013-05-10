@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.6.4
+Version: 1.7.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,13 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.7.1-1
+- bump_minor_versions for sprint 28 (admiller@redhat.com)
+
+* Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.6.5-1
+- Remove GSS email values from dev/test aria plugin configuration Minor fix to
+  migrate-mongo-2.0.24 (rpenta@redhat.com)
+
 * Fri May 03 2013 Adam Miller <admiller@redhat.com> 1.6.4-1
 - Updated Silver plan usage rates in aria plugin conf file (rpenta@redhat.com)
 

@@ -48,8 +48,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     assert_not_equal(user["usage_account_id"], nil)
     assert_equal(user["max_gears"], 16)
     assert_equal(user["capabilities"]["gear_sizes"].sort, ["medium", "small"])
-    assert_equal(user["capabilities"]["max_untracked_addtl_storage_per_gear"], 5)
-    assert_equal(user["capabilities"]["max_tracked_addtl_storage_per_gear"], 0)
+    assert_equal(user["capabilities"]["max_storage_per_gear"], 5)
 
     user = CloudUser.find_by(login: @login)
     assert_equal(user.pending_plan_id, nil)
@@ -261,8 +260,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     assert_not_equal(user["usage_account_id"], nil)
     assert_equal(user["max_gears"], 16)
     assert_equal(user["capabilities"]["gear_sizes"].sort, ["medium", "small"])
-    assert_equal(user["capabilities"]["max_untracked_addtl_storage_per_gear"], 5)
-    assert_equal(user["capabilities"]["max_tracked_addtl_storage_per_gear"], 0)
+    assert_equal(user["capabilities"]["max_storage_per_gear"], 5)
 
     #simulate silver to free failure
     user = CloudUser.find_by(login: @login)

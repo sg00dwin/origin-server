@@ -136,12 +136,10 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     params = Aria.get_reg_uss_config_params("direct_post_#{set}")
     assert_equal({
       'redirecturl' => 'https://example.com',
-      'do_cc_auth' => '1',
+      'do_collect_or_validate' => '1',
       'min_auth_threshold' => '0',
       'change_status_on_cc_auth_success' => '1',
-      'status_on_cc_auth_success' => '1',
-      'change_status_on_cc_auth_failure' => '1',
-      'status_on_cc_auth_failure' => '-1',
+      'status_on_cc_auth_success' => '1'
     }, params)
 
     Aria::DirectPost.destroy(set)
