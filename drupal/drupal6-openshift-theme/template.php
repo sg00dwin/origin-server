@@ -855,21 +855,19 @@ function openshift_primary_link_custom_block($path) {
   return $block;
 }
 
-function openshift_render_primary_link_megamenu($link, $visibleChildren) {
+function openshift_primary_link_megamenu($link, $visibleChildren) {
   $path = url($link['href']);
   $block = openshift_primary_link_custom_block($path);
   if($block['content']) {
-    print $block['content'];
+    return $block['content'];
   }
   else if(!empty($visibleChildren)){
-    print '<div class="dropdown-menu" role="menu"><div class="col"><ul>';
+    $content = '<div class="dropdown-menu dropdown-menu-mega"><div class="dropdown-menu-body"><ul class="unstyled">';
     foreach( $visibleChildren as $key=>$child) {
       $sublink = $child["link"];                                 
       $sublink['options']['html'] = TRUE;
-      print '<li>';
-      print l($sublink['title'], $sublink['href'], $sublink['options']);
-      print '</li>';
+      $content .= '<li>' . l($sublink['title'], $sublink['href'], $sublink['options']) . '</li>';
     }
-    print '</ul></div></div>';
+    return $content . '</ul></div></div>';
   }
 }

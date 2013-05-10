@@ -48,98 +48,6 @@
     }
   }
 
-  .dropdown-menu {
-    left: -7px;
-    font-size: 14px;
-    position: absolute;
-    width: 160px;
-    z-index: 10;
-    display: none;
-
-    &.twoCol {
-      left: -77px;
-      width: 300px;
-
-      .col:before {
-        left: 140px;
-      }
-
-      .col > ul {
-        float: left;
-        width: 50%;
-
-        + ul {
-          border-left: 1px solid #DFDFDF;
-          padding-left: 10%;
-          width: 39%;
-        }
-      }
-    }
-
-    .col {
-      background: none repeat scroll 0 0 #F5F5F5;
-      box-shadow: 0 0 8px rgba(0, 0, 0, 0.65);
-      margin: 25px 0 0;
-      padding: 20px;
-
-      &:before {
-        -moz-border-bottom-colors: none;
-        -moz-border-left-colors: none;
-        -moz-border-right-colors: none;
-        -moz-border-top-colors: none;
-        border-color: transparent transparent #F5F5F5;
-        border-image: none;
-        border-right: 10px solid transparent;
-        border-style: solid;
-        border-width: 0 10px 10px;
-        content: "";
-        display: block;
-        height: 0;
-        left: 70px;
-        position: absolute;
-        top: 15px;
-        width: 0;
-      }
-
-      &:after {
-       clear: both;
-       content: ".";
-       display: block;
-       height: 0;
-       visibility: hidden;
-      }
-      
-      > ul {
-        margin: 0;
-        > li {
-          list-style: none outside none;
-          text-align: left;
-          margin-bottom: 10px;
-
-          &:last-child {
-            margin-bottom: 0;
-          }
-
-          a {
-            display: block;
-            color: #111111;
-          }
-        }
-
-        ul {
-          font-family: $headerFontFamily;
-          font-size: 12px;
-          margin-left: 10px;
-          margin-top: 6px;
-
-          li {
-            margin-bottom: 4px;
-          }
-        }
-      }
-    }
-  }
-
   .nav {
     /* reset styles */
     float: none;
@@ -160,12 +68,6 @@
         padding: 15px 0;
         border-radius: 0;
         text-shadow:0 1px 1px rgba(0, 0, 0, 0.5)
-      }
-
-      &:hover {
-        .dropdown-menu {
-          display: block;
-        }
       }
     }
 

@@ -21,8 +21,8 @@
                   }
                   $hasChildren = !empty($visibleChildren);
                     ?>
-                    <li class="<?php print $hasChildren ? "dropdown " : ""; ?><?php print $link['in_active_trail'] ? "active" : ""; ?>"><?php print l("<span>" . $link['title'] . "</span>", $link['href'], $link['options']); ?>
-                      <?php openshift_render_primary_link_megamenu($link, $visibleChildren); ?>
+                    <li class="<?php print $hasChildren ? "dropdown dropdown-toggle " : ""; ?><?php print $link['in_active_trail'] ? "active" : ""; ?>"><?php print l("<span>" . $link['title'] . "</span>", $link['href'], $link['options']); ?>
+                      <?php print openshift_primary_link_megamenu($link, $visibleChildren); ?>
                     </li>
               <?php }} ?>
             </ul>
