@@ -752,33 +752,69 @@ Features:
   end
 
   def test_get_recurring_line_items
+    Rails.logger.expects(:error).never
     stub_client_plans_all([stub_plan_free, stub_plan_pay])
 
     assert items = Aria::RecurringLineItem.find_all_by_plan_no(stub_plan_free['plan_no'])
-    assert items.length == 0
+    assert_equal [], items
 
     assert items = Aria::RecurringLineItem.find_all_by_plan_no(stub_plan_pay['plan_no'])
     assert items.length == 1
+    assert_equal "SuperMockShift", items.first.plan_name
+    assert_equal "Plan: SuperMockShift", items.first.name
+    assert_equal 41.0, items.first.amount
   end
 
   def test_tolerate_missing_plans
+    Rails.logger.expects(:error).once
     stub_client_plans_all([])
     assert items = Aria::RecurringLineItem.find_all_by_plan_no(1)
-    assert_equal 0, items.length
+    assert_equal 1, items.length
+    assert_equal "Unknown", items.first.plan_name
+    assert_equal 0, items.first.amount
 
+    Rails.logger.expects(:error).once
     stub_acct_plans_all(1, [])
     assert items = Aria::RecurringLineItem.find_all_by_current_plan(1)
-    assert_equal 0, items.length
+    assert_equal 1, items.length
+    assert_equal "Unknown", items.first.plan_name
+    assert_equal 0, items.first.amount
   end
 
   def test_tolerate_missing_services
+    Rails.logger.expects(:error).once
     stub_client_plans_all([stub_plan_serviceless])
     assert items = Aria::RecurringLineItem.find_all_by_plan_no(3)
-    assert_equal 0, items.length
+    assert_equal 1, items.length
+    assert_equal "SuperServiceless", items.first.plan_name
+    assert items.first.name =~ /customer service/
+    assert_equal 0, items.first.amount
 
+    Rails.logger.expects(:error).once
     stub_acct_plans_all(1, [stub_plan_serviceless])
     assert items = Aria::RecurringLineItem.find_all_by_current_plan(1)
-    assert_equal 0, items.length
+    assert_equal 1, items.length
+    assert_equal "SuperServiceless", items.first.plan_name
+    assert items.first.name =~ /customer service/
+    assert_equal 0, items.first.amount
+  end
+
+  def test_tolerate_missing_rates
+    Rails.logger.expects(:error).once
+    stub_client_plans_all([stub_plan_rateless])
+    assert items = Aria::RecurringLineItem.find_all_by_plan_no(3)
+    assert_equal 1, items.length
+    assert_equal "SuperRateless", items.first.plan_name
+    assert items.first.name =~ /customer service/
+    assert_equal 0, items.first.amount
+
+    Rails.logger.expects(:error).once
+    stub_acct_plans_all(1, [stub_plan_rateless])
+    assert items = Aria::RecurringLineItem.find_all_by_current_plan(1)
+    assert_equal 1, items.length
+    assert_equal "SuperRateless", items.first.plan_name
+    assert items.first.name =~ /customer service/
+    assert_equal 0, items.first.amount
   end
 
   def test_collapse_identical_usage_line_items
@@ -1026,6 +1062,33 @@ Features:
       'plan_no' => '3',
       'plan_name' => 'SuperServiceless',
       'plan_services' => nil
+    }
+  end
+
+  def stub_plan_rateless
+    {
+      'plan_no' => '3',
+      'plan_name' => 'SuperRateless',
+      'plan_services' => [
+        {
+          'service_desc' => 'Recurring',
+          'is_recurring_ind' => 1,
+          'usage_type' => nil,
+          'is_usage_based_ind' => 0,
+          'plan_service_rates' => nil
+        },
+        {
+          'service_desc' => 'Recurring 2',
+          'is_recurring_ind' => 1,
+          'usage_type' => nil,
+          'is_usage_based_ind' => 0,
+          'plan_service_rates' => [
+            {
+              'monthly_fee' => nil
+            }
+          ]
+        }
+      ]
     }
   end
 
