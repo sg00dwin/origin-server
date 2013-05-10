@@ -1,6 +1,5 @@
-#!/bin/bash -e
+#!/bin/bash -eu
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
-set -u
 
 HTTPD_CFG_FILE=${OPENSHIFT_ROCKMONGO_DIR}etc/conf/httpd_nolog.conf
 HTTPD_PID_FILE=${OPENSHIFT_ROCKMONGO_DIR}run/httpd.pid
@@ -28,13 +27,16 @@ function restart() {
 
 # Is the packaged software really running?
 function status() {
-  if ps --no-headers --pid $(< $HTTPD_PID_FILE) > /dev/null
+  if [ -f $HTTPD_PID_FILE ]
   then
-    client_result 'Rockmongo is running'
-  else
-    client_result 'Rockmongo is either stopped or inaccessible'
+    if ps --no-headers --pid $(< $HTTPD_PID_FILE) > /dev/null
+    then
+      client_result 'Rockmongo is running'
+      exit 0
+    fi
   fi
-  exit 0
+  client_result 'Rockmongo is either stopped or inaccessible'
+  exit 1
 }
 
 # Clean up any log files
