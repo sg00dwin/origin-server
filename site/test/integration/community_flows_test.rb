@@ -42,15 +42,17 @@ class CommunityFlowsTest < ActionDispatch::IntegrationTest
     visit community_url
 
     #check that the menu is there but hidden
-    assert !find('ul.nav li.dropdown:last-of-type div.dropdown-menu', :visible => false).visible?
+    link = all('ul.nav li.dropdown').last
+    dropdown = link.find('.dropdown-menu', :visible => false)
+    assert !dropdown.visible?
 
-    find('ul.nav li.dropdown:last-of-type', :visible => false).hover
+    link.hover
 
     #check that the menu can still be found but only if it is visible, and a link can be clicked
-    find('ul.nav li.dropdown:last-of-type div.dropdown-menu', :visible => true)
-    link = find('ul.nav li.dropdown:last-of-type div.dropdown-menu li:last-of-type a:last-of-type')
-    href = link['href']
-    link.click
+    assert dropdown.visible?
+    menu_link = dropdown.all('a').first
+    href = menu_link['href']
+    menu_link.click
     assert_equal href, URI(page.current_url).path
   end
 end
