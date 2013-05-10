@@ -36,6 +36,21 @@ function redhat_frontpage_menu() {
   return $items;
 }
 
+function redhat_frontpage_form_menu_configure_alter(&$form, &$form_state) {
+  $form['reset_primary_nav_fieldset'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Reset primary link blocks'),
+    '#collapsible' => FALSE,
+    '#collapsed' => FALSE, 
+  );
+  $form['reset_primary_nav_fieldset']['reset_primary_nav'] = array (
+    '#type' => 'submit',
+    '#value' => 'Reset',
+    '#submit' => array('redhat_reset_nav_map'),
+    '#prefix'=> '<div class="description">Reset the cached map of the primary link megamenu custom blocks.  Megamenu custom blocks have titles that match the pattern megamenu_custom_/path where /path is the external href of the primary link.</div>'
+  );
+}
+
 function redhat_page_not_found() {
   $content = ' <section class="row">
                   <div class="span12">
@@ -111,6 +126,20 @@ function redhat_page_community(){
   $content .= views_embed_view('faq_frontpage');
 
   return $content;
+}
+
+function redhat_reset_nav_map($form, &$form_state) {
+  $menuMap = array();
+  $result = db_query("SELECT bid, info FROM {boxes} WHERE info LIKE '%s%'", "megamenu_custom_");
+  if ($result) {
+    while($row = db_fetch_array($result)) {
+      $info = $row['info'];
+      $path = substr($info, 16);
+      $menuMap[$path] = $row['bid'];
+    }
+  }
+  variable_set("megamenu_custom_blocks", $menuMap);
+  drupal_goto("admin/build/menu/settings");
 }
 
 function _redhat_frontpage_load_tweets() {

@@ -66,10 +66,15 @@
         overflow: hidden;
       }
     }
+    .nav {
+      /* reset styles */
+      float: none;
+      width: 100%;
+      font-size: 14px;
+    }
   }
 }
 
-.ie8 .brand-image {background: image-url("logo-horizontal.png") center top no-repeat;}
 
 
 // Plain text in topbar
