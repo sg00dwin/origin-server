@@ -5,7 +5,7 @@
 %global modname             redhat_frontpage
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.7.5
+Version: 1.8.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Front Page Custom Module for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.8.1-1
+- bump_minor_versions for sprint 28 (admiller@redhat.com)
+
 * Tue Apr 30 2013 Adam Miller <admiller@redhat.com> 1.7.5-1
 - Homepage shows duplicate title (ccoleman@redhat.com)
 

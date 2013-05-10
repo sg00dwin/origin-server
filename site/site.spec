@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.8.8
+Version: 1.9.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -195,6 +195,21 @@ fi
 %{sitedir}/public
 
 %changelog
+* Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.9.1-1
+- bump_minor_versions for sprint 28 (admiller@redhat.com)
+
+* Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.8.9-1
+- Merge pull request #1327 from liggitt/bug_959559_js_validation_errors
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1325 from smarterclayton/disallow_external_referrers
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1323 from nhr/Bug_961043
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 959559 - add test for jquery validate (jliggitt@redhat.com)
+- Bug 960018 - Disallow external redirection (ccoleman@redhat.com)
+- Bug 961043 Update plan comparison logic to handle new field name
+  (hripps@redhat.com)
+
 * Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.8.8-1
 - Merge pull request #1324 from detiber/bz959162
   (dmcphers+openshiftbot@redhat.com)

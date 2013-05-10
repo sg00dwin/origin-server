@@ -7,10 +7,10 @@ module OpenShiftMigration
       
       cartridge_dir = File.join(user.homedir, 'phpmyadmin')
       
-      FileUtils.ln_s('/usr/lib64/httpd/modules', File.join(cartridge_dir, 'modules'))
-      FileUtils.ln_s('/etc/httpd/conf/magic', File.join(cartridge_dir, 'conf', 'magic'))
+      FileUtils.ln_sf('/usr/lib64/httpd/modules', File.join(cartridge_dir, 'modules'))
+      FileUtils.ln_sf('/etc/httpd/conf/magic', File.join(cartridge_dir, 'conf', 'magic'))
         
-      directories = %w(logs)
+      directories = %w(logs sessions)
       output << Util.move_directory_between_carts(user, 'phpmyadmin-3.4', 'phpmyadmin', directories)
 
       output

@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.8.7
+Version: 1.9.1
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -753,6 +753,9 @@ rm -rf /tmp/phantomjs
 /etc/openshift/development
 
 %changelog
+* Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.9.1-1
+- bump_minor_versions for sprint 28 (admiller@redhat.com)
+
 * Tue May 07 2013 Adam Miller <admiller@redhat.com> 1.8.7-1
 - set rhscl repo enable=0 (tdawson@redhat.com)
 - fixing rhscl repo typo (tdawson@redhat.com)

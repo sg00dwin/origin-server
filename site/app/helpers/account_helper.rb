@@ -49,10 +49,16 @@ module AccountHelper
     end
   end
 
+  def usage_amount_with_units(amount, units)
+    amount = amount.round(1)
+    amount = amount.round(0) if amount >= 10
+    "#{number_with_delimiter(amount)} #{units.pluralize(amount)}"
+  end
+
   def line_item_details(li)
     if li.tax?
     elsif li.usage?
-      "#{number_with_precision(li.units, :precision => (li.units < 1 ? 2 : 0))} @ #{number_to_user_currency(li.rate)} / #{li.units_label}"
+      "#{usage_amount_with_units(li.units, li.units_label)} × #{number_to_user_currency(li.rate)}"
     elsif li.recurring?
       if li.rate
         "#{number_to_user_currency(li.rate)} / month#{" (prorated)" if li.units != 1}"
