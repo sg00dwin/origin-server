@@ -1,4 +1,3 @@
-#@runtime_other4
 @runtime
 @runtime2
 Feature: Account Management

@@ -54,7 +54,6 @@ Feature: Application Performance Tests
     When I restore the application
     When the application is aliased
     When the application is unaliased
-    When the application namespace is updated
     When the application is started
     When the application is stopped
     When the application is restarted
