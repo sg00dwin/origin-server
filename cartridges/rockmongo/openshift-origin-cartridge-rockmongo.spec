@@ -12,6 +12,7 @@ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 Requires:  openshift-origin-cartridge-mongodb
 Requires:  rubygem(openshift-origin-node)
+Requires:  openshift-origin-node-util
 
 %description
 Provides RockMongo V2 cartridge support
@@ -20,30 +21,24 @@ Provides RockMongo V2 cartridge support
 %setup -q
 
 %build
+%__rm %{name}.spec
 
 %install
-rm -rf %{buildroot}
-mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/openshift/cartridges/v2
-cp -r * %{buildroot}%{cartridgedir}/
+%__rm -rf %{buildroot}
+%__mkdir -p %{buildroot}%{cartridgedir}
+%__cp -r * %{buildroot}%{cartridgedir}
 
 %post
+%{_sbindir}/oo-admin-cartridge --action install --source %{cartridgedir}
 
 %clean
-rm -rf %{buildroot}
+%__rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%dir %{cartridgedir}/env
-%dir %{cartridgedir}/usr
-%dir %{cartridgedir}/etc
-%dir %{cartridgedir}/logs
-%dir %{cartridgedir}/metadata
-%dir %{cartridgedir}/run
-%dir %{cartridgedir}/sessions
+%dir %{cartridgedir}
 %attr(0755,-,-) %{cartridgedir}/bin/
 %attr(0755,-,-) %{cartridgedir}
-%{cartridgedir}/metadata/manifest.yml
 %doc %{cartridgedir}/COPYRIGHT
 %doc %{cartridgedir}/LICENSE
 %doc %{cartridgedir}/README.md
