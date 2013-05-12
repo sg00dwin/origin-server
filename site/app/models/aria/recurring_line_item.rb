@@ -3,34 +3,13 @@ module Aria
 
     def self.find_all_by_plan_no(plan_no)
       plan = Aria.cached.get_client_plans_all.find{ |plan| plan.plan_no.to_s == plan_no.to_s }
-      plan_services = (plan.plan_services if plan) || []
-      plan_services.inject([]) do |a, s|
-        next a if s.is_usage_based_ind == 1 || s.plan_service_rates.empty?
-        rate = s.plan_service_rates.first.monthly_fee
-        a << Aria::RecurringLineItem.new({
-          'service_name' => s.service_desc,
-          'description' => s.service_desc,
-          'plan_name' => plan.plan_name,
-          'rate_per_unit' => rate,
-          'units' => 1.0,
-        }, plan_no) if rate >= 0.01
-        a
-      end || []
+
+      from_plan(plan)
     end
 
     def self.find_all_by_current_plan(acct_no)
       plan = Aria.cached.get_acct_plans_all(acct_no).last
-      plan_services = (plan.plan_services if plan) || []
-      plan_services.inject([]) do |a, s|
-        a << Aria::RecurringLineItem.new({
-          'service_name' => s.service_desc,
-          'description' => s.service_desc,
-          'plan_name' => plan.plan_name,
-          'rate_per_unit' => s.plan_service_rates.map(&:monthly_fee).max,
-          'units' => 1.0,
-        }, plan.plan_no) if s.is_recurring_ind == 1
-        a
-      end || []
+      from_plan(plan)
     end
 
     def recurring?
@@ -74,5 +53,45 @@ module Aria
                                :description,
                                :plan_name,
                                :date_range_start]
+
+      def self.from_error(msg, plan_name = "Unknown", plan_no = 0)
+        new({
+          'service_name' => 'Could not retrieve plan information. Please contact customer service.',
+          'description' => 'Could not retrieve plan information. Please contact customer service.',
+          'plan_name' => plan_name,
+          'rate_per_unit' => 0,
+          'units' => 1.0,
+        }, plan_no)
+      end
+
+      def self.from_plan(plan)
+        if plan.blank?
+          Rails.logger.error "Unable to get recurring line items from plan"
+          [from_error('Could not retrieve plan information. Please contact customer service.')]
+        elsif plan.plan_services.blank?
+          Rails.logger.error "Unable to get recurring line items from plan: #{plan.plan_name} (##{plan.plan_no})"
+          [from_error('Could not retrieve plan service information. Please contact customer service.', plan.plan_name, plan.plan_no)]
+        else
+          items = []
+          plan.plan_services.each do |s|
+              begin
+                next if s.blank? || s.is_recurring_ind == 0
+                rate = s.plan_service_rates.select(&:monthly_fee).first.monthly_fee
+                items << new({
+                  'service_name' => s.service_desc,
+                  'description' => s.service_desc,
+                  'plan_name' => plan.plan_name,
+                  'rate_per_unit' => rate,
+                  'units' => 1.0,
+                }, plan.plan_no) if rate >= 0.01
+              rescue
+                Rails.logger.error "Could not retrieve rates for #{s.service_desc} in plan #{plan.plan_name} (##{plan.plan_no})."
+                items = [from_error('Could not retrieve plan rates. Please contact customer service.', plan.plan_name, plan.plan_no)]
+                break
+              end
+          end
+          items
+        end
+      end
   end
 end

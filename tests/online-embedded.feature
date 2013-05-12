@@ -1,6 +1,6 @@
-#@runtime_extended_other3
+#@runtime_extended3
 @runtime_extended
-@runtime_extended3
+@runtime_extended_other3
 Feature: Embedded Cartridge Verification Tests
 
 # This feature covers the cartridges that are express specific and not available in OpenShift Origin 

@@ -1,4 +1,4 @@
-@runtime_other4
+@runtime_extended3
 Feature: Metrics Application Sub-Cartridge
   
   Scenario: Create Delete one application with a Metrics database

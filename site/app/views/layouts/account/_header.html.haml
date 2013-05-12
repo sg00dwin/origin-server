@@ -3,7 +3,6 @@
     .container
 	  
       %ul.navbar-text.pull-right#utility-nav
-        %li.hidden-phone= link_to "Community", community_url, :class => 'community'
         %li.hidden-phone= link_to "Developer Center", developers_url, :class => 'developer'
         - if user_signed_in?
           %li.dropdown.username.hidden-phone
@@ -37,7 +36,6 @@
           -#= navigation_tab :help, :show
           
         %ul.nav.visible-phone
-          %li= link_to "Community", community_url, :class => 'community'
           %li= link_to "Developer Center", developers_url, :class => 'developer'
           
         %ul.nav.visible-phone
