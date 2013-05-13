@@ -8,6 +8,7 @@ require 'pp'
 require_relative "migrate-util"
 require_relative "migrate-progress"
 require_relative "migrate-v2-diy-0.1"
+require_relative "migrate-v2-haproxy-1.4"
 require_relative "migrate-v2-jbossas-7"
 require_relative "migrate-v2-jbosseap-6.0"
 require_relative "migrate-v2-jbossews-1.0"
@@ -248,6 +249,7 @@ module OpenShiftMigration
 
     # TODO: fix problems loading commented out lines
     migrators[cr.select('diy', '0.1')] = Diy01Migration.new
+    migrators[cr.select('haproxy', '1.4')] = Haproxy14Migration.new
     migrators[cr.select('jbossas', '7')] = Jbossas7Migration.new # name changed to jbossas-7.1
     migrators[cr.select('jbosseap', '6.0')] = Jbosseap60Migration.new
     # One migrator can handle both jbossews cartridges
