@@ -31,6 +31,7 @@ require_relative "migrate-v2-mysql-5.1"
 require_relative "migrate-v2-phpmyadmin-3.4"
 require_relative "migrate-v2-postgresql-8.4"
 require_relative "migrate-v2-switchyard-0.6"
+require_relative "migrate-v2-cron-1.4"
 
 require 'openshift-origin-node/model/cartridge_repository'
 require 'openshift-origin-node/model/unix_user'
@@ -271,6 +272,7 @@ module OpenShiftMigration
     migrators[cr.select('mysql', '5.1')] = Mysql51Migration.new
     migrators[cr.select('phpmyadmin', '3.4')] = Phpmyadmin34Migration.new
     migrators[cr.select('postgresql', '8.4')] = Postgresql84Migration.new
+    migrators[cr.select('cron', '1.4')] = Cron14Migration.new
     #migrators[cr.select('switchyard', '0.6')] = Switchyard06Migration.new
 
     migrators
