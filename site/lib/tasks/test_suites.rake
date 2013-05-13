@@ -132,6 +132,9 @@ namespace :test do
         # Streamline only
         'test/integration/streamline_test.rb',
         'test/integration/login_flows_test.rb',
+
+        # External community links
+        'test/integration/help_link_test.rb',
       ])
     end
 
