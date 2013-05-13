@@ -144,9 +144,9 @@ module OpenShiftMigration
       return output, exitcode
     end
 
-    begin
-      progress = MigrationProgress.new(uuid)
+    progress = MigrationProgress.new(uuid)
 
+    begin
       output << inspect_gear_state(progress, gear_home)
       output << migrate_stop_lock(progress, uuid, gear_home)
       output << stop_gear(progress, uuid)
@@ -171,12 +171,13 @@ module OpenShiftMigration
 
       total_time = (Time.now.to_f * 1000).to_i - start_time
       output += "***time_migrate_on_node_measured_from_node=#{total_time}***\n"
-    rescue => e
+    rescue Exception => e
       output << "Caught an exception during internal migration steps: #{e.message}\n"
       output << e.backtrace.join("\n")
-    ensure
-      return output, exitcode
+      exitcode = 1
     end
+
+    [output, exitcode]
   end
 
   def self.inspect_gear_state(progress, gear_home)
@@ -346,10 +347,15 @@ module OpenShiftMigration
     output = ''
 
     # TODO: establish migration order of cartridges
-    v1_cartridges(gear_home).each do |cartridge_name|
+    carts_to_migrate = v1_cartridges(gear_home)
+
+    output << "Carts to migrate: #{carts_to_migrate}\n"
+
+    carts_to_migrate.each do |cartridge_name|
       tokens = cartridge_name.split('-')
       version = tokens.pop
       name = tokens.join('-')
+      output << "Migrating cartridge #{name}\n"
       output << migrate_cartridge(progress, name, version, uuid, cartridge_migrators)
     end
 
