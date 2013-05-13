@@ -1,4 +1,4 @@
-#@runtime_extended_other1
+@runtime_extended_other1
 @runtime
 @runtime_extended
 @runtime_extended1
@@ -62,15 +62,6 @@ Feature: Cartridge Lifecycle Zend Verification Tests
     Given an existing <type> application, verify it can be snapshotted and restored
 
   Scenarios: Application Snapshot Scenarios
-    |      type     |
-    |   zend-5.6     |
-
-  Scenario Outline: Application Change Namespace
-    Given an existing <type> application
-    When the application namespace is updated
-    Then the application should be accessible
-
-  Scenarios: Application Change Namespace Scenarios
     |      type     |
     |   zend-5.6     |
     
