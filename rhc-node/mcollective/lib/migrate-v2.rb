@@ -397,8 +397,10 @@ module OpenShiftMigration
             output << progress.mark_complete("#{name}_erb")
           end
 
+          env = OpenShift::Utils::Environ.for_gear(user.homedir, name)
+
           if progress.incomplete? "#{name}_hook"
-            output << migration_post_process_hook(user, c, cartridge_migrators)
+            output << migration_post_process_hook(user, c, cartridge_migrators, progress, env)
             output << progress.mark_complete("#{name}_hook")
           end
         end
@@ -422,12 +424,12 @@ module OpenShiftMigration
     output
   end
 
-  def self.migration_post_process_hook(user, cartridge, cartridge_migrators)
+  def self.migration_post_process_hook(user, cartridge, cartridge_migrators, progress, env)
     output = ''
     cartridge_migrator = cartridge_migrators[cartridge]
 
     if cartridge_migrator
-      output << cartridge_migrator.post_process(user)
+      output << cartridge_migrator.post_process(user, progress, env)
     else
       output << "Unable to find migrator for #{cartridge}\n"
     end

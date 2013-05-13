@@ -1,6 +1,6 @@
 module OpenShiftMigration
   class Metrics01Migration
-    def post_process(user)
+    def post_process(user, progress, env)
       output = "applying metrics-0.1 migration post-process\n"
       
       Util.rm_env_var(user.homedir, 'OPENSHIFT_METRICS_LOG_DIR')
