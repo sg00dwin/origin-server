@@ -792,9 +792,9 @@ function openshift_menu_local_tasks() {
 
 function openshift_preprocess_views_view(&$vars) {
 
-  if ($vars['view']->name === 'knowledge_base') {
-    drupal_add_js(drupal_get_path('theme', 'redhat') .'/js/redhat.js', 'theme');
-  }
+  #if ($vars['view']->name === 'knowledge_base') {
+  #  drupal_add_js(drupal_get_path('theme', 'redhat') .'/js/redhat.js', 'theme');
+  #}
   
   // We are displaying a thread list from a group.
   if ($vars['view']->name === 'og_ghp_thread_list') {

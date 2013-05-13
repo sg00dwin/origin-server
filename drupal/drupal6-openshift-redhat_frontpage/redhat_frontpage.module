@@ -51,6 +51,49 @@ function redhat_frontpage_form_menu_configure_alter(&$form, &$form_state) {
   );
 }
 
+/**
+ * Implementation of hook_context_page_condition().
+ */
+function redhat_frontpage_context_page_condition() {
+  $map = context_condition_map();
+  #watchdog('redhat_frontpage', '=== Init ===');
+  if (!empty($map['context_active']) && $plugin = context_get_plugin('condition', 'context_active')) {
+    $plugin->execute();
+  }
+}
+
+/**
+ * Implementation of hook_context_plugins().
+ */
+function redhat_frontpage_context_plugins() {
+  $plugins = array();
+  $plugins['context_condition_context_active'] = array(
+    'handler' => array(
+      'path' => drupal_get_path('module', 'redhat_frontpage') . '/plugins',
+      'file' => 'context_condition_context_active.inc',
+      'class' => 'context_condition_context_active',
+      'parent' => 'context_condition',
+    ),
+  );
+  return $plugins;
+}
+
+/**
+ * Implementation of hook_context_registry().
+ */
+function redhat_frontpage_context_registry() {
+  return array(
+    'conditions' => array(
+      'context_active' => array(
+        'title' => t('Active Context'),
+        'description' => t('Activate this context only if other contexts are live or not'),
+        'plugin' => 'context_condition_context_active',
+      ),
+    ),
+  );
+}
+
+
 function redhat_page_not_found() {
   $content = ' <section class="row">
                   <div class="span12">
