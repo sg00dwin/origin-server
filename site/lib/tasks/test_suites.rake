@@ -134,7 +134,7 @@ namespace :test do
         'test/integration/login_flows_test.rb',
 
         # External community links
-        'test/integration/community_link_test.rb',
+        'test/integration/help_link_test.rb',
       ])
     end
 
