@@ -605,12 +605,92 @@ function user_profile_context_default_contexts() {
   $context->name = 'viewing-book';
   $context->description = '';
   $context->tag = '';
+  $context->conditions = array();
+  $context->reactions = array();
+  $context->condition_mode = 0;
+  $export['viewing-book'] = $context;
+
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
+  $context->name = 'viewing-developer-center';
+  $context->description = '';
+  $context->tag = '';
   $context->conditions = array(
+    'context' => array(
+      'values' => array(
+        'menu-active-faq' => 'menu-active-faq',
+        'menu-active-kb' => 'menu-active-kb',
+        'menu-active-quickstarts' => 'menu-active-quickstarts',
+      ),
+    ),
+    'menu' => array(
+      'values' => array(
+        'documentation' => 'documentation',
+        'faq' => 'faq',
+        'https://access.redhat.com/knowledge/docs/en-US/OpenShift/2.0/html/User_Guide/index.html' => 'https://access.redhat.com/knowledge/docs/en-US/OpenShift/2.0/html/User_Guide/index.html',
+        'kb' => 'kb',
+        'node/10295' => 'node/10295',
+        'node/10777' => 'node/10777',
+        'node/10863' => 'node/10863',
+        'node/10866' => 'node/10866',
+        'node/10999' => 'node/10999',
+        'node/11066' => 'node/11066',
+        'node/11129' => 'node/11129',
+        'node/11158' => 'node/11158',
+        'node/11187' => 'node/11187',
+        'node/11327' => 'node/11327',
+        'node/11422' => 'node/11422',
+        'node/12009' => 'node/12009',
+        'node/12010' => 'node/12010',
+        'node/12036' => 'node/12036',
+        'node/12037' => 'node/12037',
+        'node/12038' => 'node/12038',
+        'node/12255' => 'node/12255',
+        'node/12419' => 'node/12419',
+        'node/12420' => 'node/12420',
+        'node/5085' => 'node/5085',
+        'node/5475' => 'node/5475',
+        'node/9435' => 'node/9435',
+        'node/9445' => 'node/9445',
+        'node/9515' => 'node/9515',
+        'node/9525' => 'node/9525',
+        'partners' => 'partners',
+        'quickstarts' => 'quickstarts',
+      ),
+    ),
+    'node' => array(
+      'values' => array(
+        'faq' => 'faq',
+        'knowledge_base' => 'knowledge_base',
+        'quickstart' => 'quickstart',
+      ),
+      'options' => array(
+        'node_form' => '1',
+      ),
+    ),
+    'node_taxonomy' => array(
+      'values' => array(
+        2 => 2,
+        5 => 5,
+        6 => 6,
+      ),
+      'options' => array(
+        'node_form' => '1',
+      ),
+    ),
+    'path' => array(
+      'values' => array(
+        'kb' => 'kb',
+        'faq' => 'faq',
+        'developers' => 'developers',
+      ),
+    ),
   );
   $context->reactions = array(
   );
   $context->condition_mode = 0;
-  $export['viewing-book'] = $context;
+  $export['viewing-developer-center'] = $context;
 
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
@@ -619,19 +699,9 @@ function user_profile_context_default_contexts() {
   $context->description = '';
   $context->tag = '';
   $context->conditions = array(
-    'menu' => array(
+    'context_active' => array(
       'values' => array(
-        'node/9435' => 'node/9435',
-      ),
-    ),
-    'path' => array(
-      'values' => array(
-        '~admin' => '~admin',
-        '~admin/*' => '~admin/*',
-        '~<front>' => '~<front>',
-        '~get-started' => '~get-started',
-        '~_errors/*' => '~_errors/*',
-        '*' => '*',
+        'viewing-developer-center' => 'viewing-developer-center',
       ),
     ),
   );
@@ -647,7 +717,7 @@ function user_profile_context_default_contexts() {
       ),
     ),
   );
-  $context->condition_mode = 1;
+  $context->condition_mode = 0;
   $export['viewing-hierarchy'] = $context;
 
   $context = new stdClass;
@@ -657,7 +727,7 @@ function user_profile_context_default_contexts() {
   $context->description = '';
   $context->tag = '';
   $context->conditions = array(
-    'context' => array(
+    'context_active' => array(
       'values' => array(
         '~viewing-hierarchy' => '~viewing-hierarchy',
       ),

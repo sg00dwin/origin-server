@@ -14,9 +14,11 @@
                   $link['options']['html'] = TRUE;
 
                   $visibleChildren = array();
-                  foreach($item['below'] as $childkey=>$child) {
-                    if(!$child['hidden']) {
-                      $visibleChildren[$childkey] = $child;
+                  if ($item['below']) {
+                    foreach($item['below'] as $childkey=>$child) {
+                      if(!$child['hidden']) {
+                        $visibleChildren[$childkey] = $child;
+                      }
                     }
                   }
                   $hasChildren = !empty($visibleChildren);

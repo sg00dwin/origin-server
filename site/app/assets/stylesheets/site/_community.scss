@@ -992,3 +992,8 @@ html.js fieldset.collapsible .fieldset-wrapper {
   .row-content > .row { background: none; }
   .column-content { background: none; }
 }
+
+// Make the menu select dropdown on Contexts more useful
+#edit-conditions-plugins-menu-values.form-select {
+  height: 400px;
+}
