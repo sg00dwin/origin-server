@@ -1,0 +1,848 @@
+
+<link rel="stylesheet" type="text/css" href="/assets/site.css" />
+<style type="text/css">
+.navbar .nav > li .menu { display: none; }
+/*
+.navbar .nav {
+    font-size: 18px;
+    margin: 13px 0 0 260px;
+}
+.navbar .nav>li {
+    float: left;
+    width: 20%;
+    text-align: center;
+}
+.navbar .nav>li>a {
+    color: #e0e0e0;
+    text-transform: uppercase;
+    font-family: Overpass,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    padding: 0;
+    border-radius: 0;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.5);
+    font-weight: normal;
+}
+.navbar .nav>.active>a,
+.navbar .nav>.active>a:hover,
+.navbar .nav>li>a:hover {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    color: #fff;
+    text-decoration: none;
+}
+.navbar .nav>.active>a>span,
+.navbar .nav>.active>a:hover>span,
+.navbar .nav>li:hover>a>span {
+    border-bottom: 2px solid #db212f;
+}
+.navbar .nav>li>a:focus {
+    outline: thin dotted;
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: 12px;
+}
+
+.navbar .nav > li > .menu { display: none; }
+@media (min-width: 768px) {
+  .navbar {
+    padding-bottom: 15px;
+    padding-top: 30px;
+  }
+  .navbar .nav > li { position: relative; }
+  .navbar .nav > li > .menu {
+    font-size: 14px;
+    position: absolute;
+    width: 160px;
+    z-index: 10;
+  }
+  .navbar .nav > li > .menu.twoCol {
+    width: 300px;
+  }
+  .navbar .nav > li > .menu .col {
+    background: #f5f5f5;
+    box-shadow: 0 0 8px rgba(0,0,0,.65);
+    padding: 20px;
+    margin: 25px 0 0;
+  }
+  .navbar .nav > li > .menu .col:after {
+    clear: both;
+    content: "."; 
+    display: block; 
+    height: 0; 
+    visibility: hidden; 
+  }
+  .navbar .nav > li > .menu .col:before {
+    border: 10px solid transparent;
+    border-bottom-color: #f5f5f5;
+    border-top-width: 0;
+    display: block;
+    content: "";
+    height: 0;
+    position: absolute;
+      left: 70px;
+      top: 15px;
+    width: 0;
+  }
+  .navbar .nav > li > .menu.twoCol .col:before {
+    left: 140px;
+  }
+  .navbar .nav > li > .menu ul a { 
+    color: #111;
+    display: block;
+    word-wrap: none;
+  }
+  .navbar .nav > li > .menu ul a.active { text-decoration: underline; }
+  .navbar .nav > li > .menu .col > ul > li { margin-bottom: 10px;}
+  .navbar .nav > li > .menu .col > ul > li:last-child, .navbar .nav > li > .menu > ul > li > li:last-child { margin-bottom: 0;}
+  .navbar .nav > li > .menu .col > ul > li li { margin-bottom: 4px;}
+  .navbar .nav > li > .menu .col > ul ul {
+    font-family: 'helvetica neue', helvetica, arial, sans-serif;
+    font-size: 12px;
+    margin-left: 10px;
+    margin-top: 6px;
+  }
+  .navbar .nav > li ul ul ul { display: none; }
+  .navbar .nav ul { 
+    list-style: none;
+    margin: 0;
+    text-align: left;
+  }
+  .navbar .nav .menu.twoCol .col > ul { 
+    float: left;
+    width: 50%;
+  }
+  .navbar .nav .menu.twoCol .col > ul + ul {
+    border-left: 1px solid #dfdfdf;
+    padding-left: 10%;
+    width: 39%;
+  }
+}
+*/
+</style>
+
+    <header>
+      <div id="top" class="section-top">
+        <div class="container">
+        <a title="Track open issues on the OpenShift status page" style="display:none;" id="outage" class="btn btn-small btn-warning" href="https://openshift.redhat.com/app/status">Status</a>
+          <div class="pull-right login">
+
+          <form action="/search/node" method="get" id="search-top">
+             <input name="keys" class="search-query" placeholder="SEARCH" type="text">
+             <button type="submit" class="search" value="Search"></button>
+                       </form>
+
+            <a class="btn btn-small" href="https://openshift.redhat.com/app/console">My Apps</a> <a class="btn btn-small" href="https://openshift.redhat.com/app/account/new">Sign Up</a>           </div>
+          <div class="mobile-block"><a href="https://www.openshift.com/enterprise-paas"><span>Streamline App Delivery with  </span>OpenShift Enterprise</a></div>
+        </div>
+      </div>
+
+<nav id="nav" class="section-nav lift-counter">
+        
+<div class="navbar">
+   <div class="container">
+              <div class="brand">
+                <a href="/">
+                  <div class="brand-image"></div>
+                  <div class="brand-text"> <strong>Open</strong>Shift
+                  </div>
+                </a>
+              </div>
+              <ul class="nav">
+                <li class="active">
+                  <a href="#products">
+                    <span>Products</span>
+                  </a>
+                  <div class="menu">
+                    <div class="col">
+                      <ul class="">
+                        <li class="first">
+                          <a href="#" title="">Overview</a>
+                        </li>
+                        <li class="">
+                          <a href="#" title="">Online</a>
+                        </li>
+                        <li class="">
+                          <a href="#" title="">Enterprise</a>
+                        </li>
+                        <li class="last">
+                          <a href="#" title="">Open Source</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </li>
+                <li class="">
+                  <a href="#news" class="active">
+                    <span>Get Involved</span>
+                  </a>
+                  <div class="menu">
+                    <div class="col">
+                      <ul class="">
+                        <li class="first">
+                          <a href="#" title="">Front Page</a>
+                        </li>
+                        <li class="">
+                          <a href="#" title="">App Gallery</a>
+                        </li>
+                        <li class="">
+                          <a href="#" title="">Blog</a>
+                        </li>
+                        <li class="">
+                          <a href="#" title="">Events</a>
+                        </li>
+                        <li class="last">
+                          <a href="#" title="">Vote on Features</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <a href="/developers">
+                    <span>Dev Center</span>
+                  </a>
+                  <div class="menu twoCol">
+                    <div class="col">
+                      <ul>
+                        <li class="">Overview</li>
+                        <li class="">Technologies
+                          <ul>
+                            <li><a href="">Java</a></li>
+                            <li><a href="">PHP</a></li>
+                            <li><a href="">Ruby</a></li>
+                            <li><a href="">Node.js</a></li>
+                            <li><a href="">Python</a></li>
+                            <li><a href="">MongoDB</a></li>
+                          </ul>
+                        </li>
+                      </ul>
+                      <ul>
+                        <li class="">Quickstarts</li>
+                        <li class="">Cartridges</li>
+                        <li class="">Documentation
+                          <ul>
+                            <li><a href="">User Guide</a></li>
+                            <li><a href="">Tools</a></li>
+                            <li><a href="">How-tos</a></li>
+                            <li><a href="">PDFs</a></li>
+                            <li><a href="">Knowledge Base</a></li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </li>
+                <li class="">
+                    <a href="#support">
+                      <span>Support</span>
+                    </a>
+                    <div class="menu">
+                      <div class="col">
+                        <ul class="">
+                          <li class="first">
+                            <a href="#" title="">Get Support</a>
+                          </li>
+                          <li class="">
+                            <a href="#" title="">FAQs</a>
+                          </li>
+                          <li class="last">
+                            <a href="#" title="">Vote on Features</a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                </li>
+                <li class="">
+                    <a href="#partners">
+                      <span>Partners</span>
+                    </a>
+                    <div class="menu">
+                      <div class="col">
+                        <ul class="">
+                          <li class="first">
+                            <a href="#" title="">Overview</a>
+                          </li>
+                          <li class="">
+                            <a href="#" title="">Partners</a>
+                          </li>
+                          <li class="last">
+                            <a href="#" title="">Partner Programs</a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                </li>
+              </ul>
+          </div>
+</div>
+
+
+<!--div id="block-user_profile-get-started-messaging" class="block  block-user_profile">
+<div class="content">
+    <div class="messaging"><div class="container"><div class="primary headline">Launch your <strong>Big Idea</strong> in minutes</div><div class="secondary">OpenShift is a next generation application hosting environment. Read on to see how easy it is to get started in the cloud.</div></div></div>  </div>
+</div-->
+
+      </nav>
+    </header>
+
+    <div id="content" class="section-striped">
+      <div class="container"><div class="row-content">
+      <div class="row row-flush-right">
+                  <div class="column-content lift grid-wrapper">
+
+                  <ul class="nav nav-tabs-secondary">
+                      <li><a href="#">Overview</a></li>
+                      <li class="active"><a href="#">Online</a></li>
+                      <li><a href="#">Enterprise</a></li>
+                      <li><a href="#">Open Source</a></li>
+                  </ul>
+                  
+              
+                    
+            <div class="span12 span-flush-right">
+            
+            <section class="default" id="about">
+            
+            <div class="column-floating span3 pull-right">
+                  <ul class="nav nav-list tertiary">
+                    <li class="nav-header">Get Started</li>
+                    <li class="active"><a href="#"><span aria-hidden="true" class="icon-angle-right"> </span>Summary</a></li>
+                    <li><a href="#"><span aria-hidden="true" class="icon-angle-right"> </span>Pricing</a></li>
+                    <li><a href="#"><span aria-hidden="true" class="icon-angle-right"> </span>Get Started</a></li>
+                  </ul>
+            </div>
+        
+              <h1>Get Started with OpenShift Online</h1>
+           
+           <div id="node-11652" class="page node">
+
+    
+  <div class="content clear-block">
+    <div class="all-attached-images"><div class="image-attach-body image-attach-node-11103" style="width: 100px;"><a href="https://www.openshift.com/image/java-developers-studio"><img src="Get%20Started%20with%20OpenShift%20%7C%20OpenShift%20by%20Red%20Hat_files/jbds_running.png" alt="Java Developers Studio" title="Java Developers Studio" class="image image-thumbnail " height="56" width="100"></a></div>
+<div class="image-attach-body image-attach-node-12981" style="width: 100px;"><a href="https://www.openshift.com/image/jboss-devstudio"><img src="Get%20Started%20with%20OpenShift%20%7C%20OpenShift%20by%20Red%20Hat_files/devstudio_logo_132x95.png" alt="JBoss DevStudio" title="JBoss DevStudio" class="image image-thumbnail " height="72" width="100"></a></div>
+</div><style>
+.column-content .row-blocks { margin-bottom: 50px; }
+.row-blocks a {opacity: 0.5; display: inline-block; width: 33%; padding: 15px 20px; text-decoration: none !important; text-align: center; min-height: 180px;  -moz-transition: opacity 0.11s ease; position: relative; -moz-box-sizing: border-box; box-sizing: border-box; vertical-align: top; color: #858789; background-color: #f0f0f0;  }
+.row-blocks a:hover,
+.row-blocks a.active { opacity: 1.0; }
+.row-blocks h2 { padding-top: 10px; text-transform: uppercase; font-size: 30px; color: #101010;}
+.row-blocks img { min-height: 90px; }
+.row-blocks h3,
+.row-blocks p { color: #101010; }
+.row-blocks p { margin-bottom: 5px; }
+.row-blocks h3, .row-blocks ul { text-align: left;}
+.row-blocks .pre { font-size: 40px; line-height: 93px; font-family: Overpass, "Helvetica Neue", Helvetica; }
+.row-blocks aside { font-size: 15px; }
+.row-blocks .blink { opacity: 1; -moz-transition: opacity 0.1s ease; }
+.row-blocks .active .blink-off { opacity: 0; }
+.row-blocks .learn { margin-top: 18px; display: inline-block; text-align: left; width: 80%; }
+.block-info { display: none; }
+.block-info .block-info-header { display: none; }
+.block-info > h2 { display: none; }
+.block-info.active { display: block; }
+
+@media (max-width: 768px) {
+  .row-blocks .learn { display: none; }
+}
+
+@media (max-width: 600px) {
+   #tool-blocks.row-blocks a { float: none; width: auto; min-height: 0; margin-bottom: 6px; padding: 6px 0;}
+   .row-blocks aside {position: relative; top: 0;}
+   .row-blocks h2 { padding: 0; margin: 0; font-size: 20px; }
+   .row-blocks img,
+   .row-blocks .pre { display: none; }
+}
+
+@media (min-width: 769px) {
+    .row-blocks a:hover:after,
+    .row-blocks a.active:after { content: ""; border: 10px solid transparent; border-top-color: #f0f0f0; position: absolute; bottom: -20px; display: block; left: 50%; margin-left: -10px; }
+    .row-blocks a.active { background-color: transparent; border-bottom: 1px solid #aaa; }
+    .row-blocks a.active:after { border-top-color: #aaa; }
+}
+
+#install-blocks a.active { text-decoration: none; color: #EA0011; }
+
+ol.wizard.vertical {
+    display: block;
+    margin: 15px 0;
+} 
+ol.wizard > li {
+    background-position: 0 -84px;
+    background-repeat: no-repeat;
+    line-height: 25px;
+    list-style-position: inside;
+    list-style-type: none;
+}
+ol.wizard > li h3 {
+  position: relative;
+  margin-bottom: 1em;
+  margin-top: 0.25em;
+}
+ol.wizard > li h4 {
+  margin-bottom: 1.5em;
+}
+ol.wizard > li .list-number {
+    height: 40px;
+    position: absolute;
+    left: -70px;
+    top: -6px;
+    vertical-align: baseline;
+}
+ol.wizard > li .list-number > i {
+    background: #eee;
+    font-style: normal;
+    border: 4px solid #aaa;
+    border-radius: 30px 30px 30px 30px;
+    height: 33px;
+    left: 10px;
+    line-height: 33px;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    width: 33px;
+}
+
+.hr {
+  border-top: 0;
+  border-bottom-width: 3px;
+  border-bottom-color: #808080;
+  border-bottom-color: rgba(128, 128, 128, 0.25);
+  border-bottom-style: solid;
+  margin: 50px 50px 50px 25%;
+  padding: 0;
+  width: 50%;
+}
+
+.sp30 {
+  margin-bottom: 30px;
+}
+
+@media (max-width: 767px) {
+  ol.wizard > li .list-number {
+    display: inline;
+    position: static;
+  }
+  ol.wizard > li .list-number > i {
+    background: none;
+    border: 0;
+    padding: 0;
+    display: inline;
+    position: static;
+  }
+  ol.wizard > li .list-number > i:after {
+    content: '. ';
+  }
+}
+
+img#devstudio-logo { margin-left: 10px; }
+
+</style>
+<noscript>
+<style>
+.row-blocks a { opacity: 1; }
+.block-info { display: block; }
+.block-info > .block-info-header { display: block; }
+</style>
+</noscript>
+<!-- section id="tool-blocks" class="row-blocks block-links row-fluid">
+<a id="web-link" href="#web" class="span4 active"><img src="Get%20Started%20with%20OpenShift%20%7C%20OpenShift%20by%20Red%20Hat_files/cloud_icon.png"><h2>Web</h2><aside>Fastest way to start</aside>
+<div class="learn">
+<p>Quickly create an app from any browser</p>
+<h3>Good for</h3>
+<ul class="unstyled"><li>Launching new applications</li><li>Management and monitoring</li></ul>
+</div>
+</a>
+<a id="cli-link" href="#cli" class="span4"><div class="pre">$&gt; rhc<span class="blink">_</span></div><h2>Command Line</h2><aside>Code and manage everywhere</aside>
+<div class="learn">
+<p>Full control of your applications and code on any platform</p>
+<h3>Good for</h3>
+<ul class="unstyled"><li>Coding and debugging</li><li>Application management</li></ul>
+</div>
+</a>
+<a href="#ide" id="ide-link" class="span4"><img src="Get%20Started%20with%20OpenShift%20%7C%20OpenShift%20by%20Red%20Hat_files/ide_icon.png"><h2>IDE</h2><aside>Rapid development with an IDE</aside>
+<div class="learn">
+<p>Seamless integration with the Eclipse development platform</p>
+<h3>Good for</h3>
+<ul class="unstyled"><li>Coding and debugging</li><li>Application management</li></ul>
+</div>
+</a></section -->
+
+<section id="web" class="block-info active"><h2>From a web browser</h2>
+<p class="larger">OpenShift's web console gives you the power to create 
+and manage your
+apps without installing anything or going to the command line. The 
+console guides you through each application creation and suggests
+additional capabilities to complement it.  Examples include, MongoDB, 
+MySQL, or Jenkins continuous integration builds.</p>
+
+<ol class="wizard vertical">
+<li class="row"><section class="span11 offset1">
+<h3><span class="list-number"><i>1</i></span><a href="https://openshift.redhat.com/app/account/new?then=/community/get-started">Sign up for an account</a></h3>
+<p>Every OpenShift account lets you create up to three applications for
+free and see the benefits of running those apps in the cloud. Try it out today.</p> 
+</section></li>
+
+<li class="row"><section class="span11 offset1">
+<h3><span class="list-number"><i>2</i></span><a target="blank" href="https://openshift.redhat.com/app/console">Open the Console and Create an Application</a></h3>
+<div class="row-fluid"><div class="span7">
+<p>The console makes it easy to create an application to code to while 
+also creating applications that are up and running instantly. Deploy a 
+powerful content management system like Drupal or the industry standard 
+blogging platform, WordPress, at the click of a button.</p>
+<p><a class="action-more" href="https://www.openshift.com/developers/get-started">See a list of popular quickstarts</a></p>
+</div><div class="span5">
+<img class="pull-right" src="Get%20Started%20with%20OpenShift%20%7C%20OpenShift%20by%20Red%20Hat_files/mgt-console-create-app2.png" alt="screenshot" title="OpenShift Management Console">
+</div></div>
+</section></li>
+
+<li class="row"><section class="span11 offset1">
+<h3><span class="list-number"><i>3</i></span>Install Git and start coding (optional)</h3>
+<div class="row-fluid"><div class="span7">
+<p>When you're ready to start making changes to source code, you can use
+ the Git version control program to check in and publish your code 
+directly to OpenShift.  The <a href="https://www.openshift.com/developers/install-the-client-tools">client tools installation page</a>
+ has detailed information about installing Git on different platforms, 
+and many popular development environments like Eclipse and Visual Studio
+ have deep integration with Git.</p>
+</div></div>
+<div class="row-fluid"><div class="span7">
+<p>To download and upload source code, you must provide OpenShift with 
+your public SSH key. After setting that key in the console (just a copy
+and paste) your application's Git URL appears. Pass that URL to the Git 
+clone command which creates a local copy of
+the source code repo for you.</p>
+</div><div class="span5"><pre>git clone ssh://...rhcloud.com/~/git/myapp.git/
+</pre></div></div>
+</section></li>
+
+<li class="row"><section class="span11 offset1">
+<h3><span class="list-number"><i>4</i></span>Upload your changes to OpenShift</h3>
+<div class="row-fluid"><div class="span7"><p>Now that you've got the code, make a change and push those changes back to OpenShift</p>
+<p>Check your application URL - your changes are now live.</p>
+
+<p><a class="action-more" href="https://www.openshift.com/developers/deploying-and-building-applications">Learn more about deploying changes to your application</a></p>
+</div><div class="span5"><pre>$ cd myapp
+$ vim php/index.php
+(Make a change...  :wq)
+$ git commit -a -m "My first change"
+$ git push
+</pre></div></div>
+</section></li>
+</ol>
+
+</section>
+
+<section id="cli" class="block-info">
+<section>
+<h2 class="block-info-header">From the command line</h2>
+<p class="larger">Try out our powerful command line client by following the simple steps below.</p>
+<p class="larger">The OpenShift client tools are packaged as a Ruby Gem.
+ To run the tools on your platform, you'll need Ruby 1.8.7 or newer, the
+ ability to install a gem (on Linux this requires root access), and the 
+Git version control tool. Detailed help installing the client tools is 
+available <a href="https://www.openshift.com/developers/install-the-client-tools">in the Developer Center</a>.</p>
+
+</section>
+
+<ol class="wizard vertical">
+<li class="row"><section class="span11 offset1">
+<h3><span class="list-number"><i>1</i></span><a href="https://openshift.redhat.com/app/account/new?then=/community/get-started">Sign up for an account</a></h3>
+<p>Every OpenShift accounts lets you create up to three applications for
+ free and see the benefits of running those apps in the cloud. Try it 
+out today.</p> 
+</section></li>
+
+<li class="row"><section class="span11 offset1">
+<h3><span class="list-number"><i>2</i></span>Install the client tools on: </h3>
+<h4 id="install-blocks" class="block-links">
+<a id="win-link" href="#win">Windows</a> |
+<a id="mac-link" href="#mac">Mac OS X</a> |
+<a id="rhel-link" href="#rhel">Fedora and Red Hat Enterprise Linux</a> |
+<a id="other_nix-link" href="#other_nix">Linux</a>
+</h4>
+
+<div class="block-info" id="rhel">
+<h3 class="block-info-header">Fedora and Red Hat Enterprise Linux</h3>
+
+<div class="row-fluid"><div class="span7"><p>Install the OpenShift prerequisites via YUM</p></div>
+<div class="span5"><pre>$ sudo yum install rubygems git
+</pre></div></div>
+
+<div class="row-fluid"><div class="span7"><p>(RHEL 6.2 only) If you are 
+using RHN Classic, you may need to add the RHEL 6.2 Optional Channel in 
+order to install the 'rubygems' package.</p></div>
+<div class="span5"><pre>$ sudo rhn-channel --add --channel=rhel-x86_64-server-optional-6
+</pre></div></div>
+
+<div class="row-fluid"><div class="span7"><p>Install the gem:</p></div>
+<div class="span5"><pre>$ sudo gem install rhc
+</pre></div></div>
+
+</div>
+
+<div class="block-info" id="other_nix">
+<h3 class="block-info-header">Other Linuxes</h3>
+<div class="row-fluid"><div class="span7"><p>Install the required packages: Ruby 1.8.7 or newer, rubygems, and git</p></div></div>
+
+<div class="row-fluid"><div class="span7"><p>Install the gem:</p></div>
+<div class="span5"><pre>$ sudo gem install rhc
+</pre></div></div>
+
+</div>
+
+<div class="block-info" id="win">
+<h3 class="block-info-header">Windows</h3>
+
+<div class="row-fluid"><div class="span7"><p>Download and install <a href="http://rubyinstaller.org/">RubyInstaller 1.9 for Windows</a>.  <strong>Important!</strong> Make sure to check the option "Add Ruby executables to your PATH".</p>
+
+<p>Download and install <a href="http://msysgit.github.com/">Git for Windows</a>.  <strong>Important!</strong> Make sure to check the option "Run Git from the Windows Command Prompt".</p></div></div>
+
+<div class="row-fluid"><div class="span7"><p>From the Windows Command Prompt install the gem:</p></div>
+<div class="span5"><pre>$ gem install rhc
+</pre></div></div>
+
+</div>
+
+<div class="block-info" id="mac">
+<h3 class="block-info-header">Mac</h3>
+<div class="row-fluid"><div class="span7"><p>On OS X, you'll need to install either the <a href="http://developer.apple.com/xcode">Full Xcode Suite</a> – or – <a href="http://code.google.com/p/git-osx-installer/">git for OS X</a>.  These packages ensure that Ruby and Git are configured are installed.</p></div></div>
+
+<div class="row-fluid"><div class="span7"><p>Install the gem:</p></div>
+<div class="span5"><pre>$ sudo gem install rhc
+</pre></div></div>
+
+</div>
+
+<div class="row-fluid"><div class="span7"><p>To update to the latest version of the client tools, use the gem update command:</p></div>
+<div class="span5"><pre>$ gem update rhc
+</pre></div></div>
+
+<p><a class="action-more" href="https://www.openshift.com/developers/install-the-client-tools">Read the client installation guide for more help</a></p>
+</section>
+</li>
+
+<li class="row" id="create_domain_name"><section class="span11 offset1">
+<h3><span class="list-number"><i>3</i></span>Setup your environment</h3>
+<div class="row-fluid"><div class="span7"><p>Using your OpenShift login and password, run <code>rhc setup</code> to connect to OpenShift and create a unique namespace for your applications.</p>
+
+<p>The wizard will help you upload your SSH keys so you can communicate 
+with Git, check to see if you are missing any required configuration, 
+and then help you create a domain name. On OpenShift, domain names make 
+up part of your app's url. They are also unique across all OpenShift 
+users so choose wisely and be creative!</p><p>When the wizard runs it 
+creates a configuration file in &lt;your home 
+directory&gt;/.openshift/express.conf which includes your login id. If 
+you ever need to set your machine up a second time, just run <code>rhc setup</code> again.</p></div>
+<div class="span5"><pre>$ rhc setup
+
+Starting Interactive Setup for OpenShift's command line interface
+
+We'll help get you setup with just a couple of questions.
+
+To connect to openshift.redhat.com enter your OpenShift login (email or Red Hat login id):
+</pre></div></div>
+</section></li>
+
+<li class="row" id="create_application"><section class="span11 offset1">
+<h3><span class="list-number"><i>4</i></span>Create your first application</h3>
+
+<div class="row-fluid"><div class="span7"><p>Now you can create an application.</p>
+<p>This creates a remote git repository for your application and clones it locally to your current directory.</p>
+<p>OpenShift offers many application stacks. Run <code>rhc cartridge list</code> to see all of your options.</p>
+<p>Your application's domain name will be &lt;your app name&gt;-&lt;your
+ namespace&gt;.rhcloud.com. So, the application created by the example 
+commands would be located at myapp-mydomain.rhcloud.com</p>
+<!--<a class="action-more" href="http://www.youtube.com/watch?v=p83Cx6s_q1U" target="_blank">Creating an application video walkthrough</a>--></div>
+<div class="span5"><pre>$ rhc app create myapp php-5.3
+Password: (Enter your account password)
+</pre></div></div>
+</section></li>
+
+<li class="row" id="publish"><section class="span11 offset1">
+<h3><span class="list-number"><i>5</i></span>Make a change, publish</h3>
+
+<div class="row-fluid"><div class="span7"><p>Getting an application 
+running is only the first step. Now you are on the road to making it 
+your own. Here's an example for the php framework.</p>
+<p>Use whichever IDE or editor works best for you. Chances are, it'll 
+have git support. Even if it doesn't, you're just two simple commands 
+away from glory!</p><p>Now, check your URL - your change will be live.</p><p><a class="action-more" href="https://www.openshift.com/developers/get-started">Check out these great guides for deploying popular frameworks</a></p>
+</div><div class="span5"><pre>$ cd myapp
+$ vim php/index.php
+(Make a change...  :wq)
+$ git commit -a -m "My first change"
+$ git push
+</pre></div></div>
+</section></li>
+
+<li class="row" id="next_steps"><section class="span11 offset1">
+<h3><span class="list-number"><i>6</i></span>Next steps</h3>
+<p>Now that we have you started, there's lots of different things you 
+can do with OpenShift. Check out the following pages for videos, blogs, 
+and
+tutorials:</p>
+<ul class="unstyled"><li><a href="https://www.openshift.com/blogs">Blogs</a></li><li><a href="https://www.openshift.com/videos">Videos</a></li><li><a href="https://www.openshift.com/developers">Developer Center</a></li><li><a href="http://stackoverflow.com/questions/tagged/openshift">OpenShift on StackOverflow</a></li><li><a href="https://www.openshift.com/forums/openshift">Forums</a></li><li><a href="https://www.openshift.com/developers/pricing">Pricing</a></li></ul>
+
+</section></li></ol>
+</section>
+
+<section id="ide" class="block-info"><h2>JBoss Developer Studio IDE</h2>
+
+<p class="larger"><img id="devstudio-logo" src="Get%20Started%20with%20OpenShift%20%7C%20OpenShift%20by%20Red%20Hat_files/devstudio_logo_132x95_002.png" alt="Logo" title="JBoss Developer Studio" class="pull-right">JBoss
+ Developer Studio, with its Eclipse Based integrated development 
+environment, gives developers everything they need to build rich web 
+applications and transactional enterprise applications. It integrates 
+with the OpenShift platform to put the ability to create,
+edit, and deploy applications right at your fingertips.</p>
+
+<ol class="wizard vertical">
+<li class="row"><section class="span11 offset1">
+<h3><span class="list-number"><i>1</i></span><a href="https://openshift.redhat.com/app/account/new?then=/community/get-started">Sign up for an account</a></h3>
+<p>Every OpenShift accounts lets you create up to three applications for
+ free and see the benefits of running those apps in the cloud.  Try it 
+out today.</p> 
+</section></li>
+
+<li class="row"><section class="span11 offset1">
+<h3><span class="list-number"><i>2</i></span><a href="https://devstudio.jboss.com/download/">Download JBoss Developer Studio (sign-in required)</a></h3>
+</section></li>
+</ol>
+
+<h3>Documents</h3>
+
+<ul>
+<li><a href="https://www.openshift.com/page/install-jboss-developer-studio">Step by Step: Install JBoss Developer Studio with OpenShift</a></li>
+<li><a href="http://docs.jboss.org/tools/latest/en/openshift_tools_reference_guide/html/chap-OpenSift_Tools_Reference_Guide-Creating_an_OpenShift_Application.html">Creating an OpenShift Application</a></li>
+</ul>
+
+<h3>Videos</h3>
+
+<ul>
+<li><a href="http://docs.jboss.org/tools/movies/#jbdsinstallation">Installation, HTML5, Mobil and OpenShift</a></li>
+</ul>
+</section>
+
+<script>
+function show_info(id, skipDefault) {
+  if (!skipDefault && window['default_'+id]) 
+    id = window['default_'+id]() || id;
+  var section = $('#'+id);
+  var parent = section.parent().closest('.block-info')[0];
+  if (parent) show_info(parent.id, true);
+  $('.block-links a.active', parent).removeClass('active');
+  $('.block-info.active', parent).removeClass('active');
+  var block = $('#'+id);
+  block.addClass('active');
+  $('#'+id+"-link").addClass('active');
+}
+
+function default_cli() {
+   var platform = window.navigator.platform;
+   var value = null;
+   if (/linux/i.exec(platform))
+      value = 'rhel';
+   else if (/windows/i.exec(platform))
+      value = 'win';
+   else if (/mac/i.exec(platform))
+      value = 'mac';
+   return value;
+}
+
+var hash = (window.location.hash || '').replace('#','') || 'web';
+show_info($('#'+hash).length ? hash : 'web');
+
+$(function() {
+  $('.block-links a').click(function(event) {
+    var hash = this.id.indexOf('-');
+    show_info(this.id.substring(0,hash));
+    return false;
+  });
+  setInterval(function() {
+    $('.blink').toggleClass('blink-off');
+  }, 1300);
+});
+
+$(document).ready(function() {
+  $('.navbar .nav > li').hover(function() {
+    var menuItem = parseInt($(this).width());
+    var megaMenu = parseInt($(this).find('div').width());
+    var difference = (menuItem - megaMenu) / 2;
+    $(this).find('div').css('left', difference);
+  });
+});
+  
+</script>  </div>
+
+  
+  
+</div>
+
+            </section>
+                     </div>
+
+        
+          </div>
+        </div>
+      </div>
+      </div></div>
+    
+
+    <footer>
+      <div id="footer-nav">
+        <div class="container">
+          <div class="row">
+            <nav class="span3">
+              <header>
+                <h3><a href="https://www.openshift.com/developers">Developers</a></h3>
+              </header>
+              <ul class="unstyled">
+                <li><a href="https://www.openshift.com/get-started">Get Started</a></li>
+                <li><a href="http://access.redhat.com/knowledge/docs/en-US/OpenShift/2.0/html/User_Guide/index.html">User Guide</a></li>
+                <li><a href="https://www.openshift.com/faq">FAQ</a></li>
+                <li><a href="https://www.openshift.com/developers/pricing">Pricing</a></li>
+              </ul>
+            </nav>
+            <nav class="span3">
+              <header>
+                <h3><a href="https://www.openshift.com/community">Community</a></h3>
+              </header>
+              <ul class="unstyled">
+                <li><a href="https://www.openshift.com/blogs">Blog</a></li>
+                <li><a href="https://www.openshift.com/forums/">Forum</a></li>
+                <li><a href="http://webchat.freenode.net/?randomnick=1&amp;channels=openshift&amp;uio=d4">IRC Channel</a></li>
+                <li><a href="mailto:openshift@redhat.com">Feedback</a></li>
+              </ul>
+            </nav>
+            <nav class="span3">
+              <header>
+                <h3><a href="https://www.openshift.com/get-involved">Get Involved</a></h3>
+              </header>
+              <ul class="unstyled">
+                <li><a href="https://www.openshift.com/open-source">Open Source</a></li>
+                <li><a href="https://www.openshift.com/partners">Partners</a></li>
+                <li><a href="https://github.com/openshift">OpenShift on GitHub</a></li>
+                <li><a href="https://www.openshift.com/newsletter/signup">Newsletter sign up</a></li>
+              </ul>
+            </nav>
+            <nav class="span3">
+              <header>
+                <h3><a href="https://openshift.redhat.com/app/account">Account</a></h3>
+              </header>
+              <ul class="unstyled">
+                <li><a href="https://www.openshift.com/legal/services_agreement">Terms of Service</a></li>
+                <li><a href="https://www.openshift.com/legal/openshift_privacy">Privacy Policy</a></li>
+                <li><a href="https://www.openshift.com/policy/security">Security Policy</a></li>
+                <li><a href="https://www.openshift.com/developers/pricing">Plans</a></li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+      <section id="copyright">
+        <div class="container">
+          <a href="https://www.redhat.com/">
+            <img src="Get%20Started%20with%20OpenShift%20%7C%20OpenShift%20by%20Red%20Hat_files/redhat.png" alt="Red Hat">
+          </a>
+          <div class="pull-right">Copyright © 2013 Red Hat, Inc.</div>
+        </div>
+      </section>
+    </footer>

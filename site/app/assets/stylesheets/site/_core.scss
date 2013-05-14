@@ -39,14 +39,14 @@ textarea::-webkit-input-placeholder {
 
 /* Hitch a div out of its parent */
 .lift {
-  margin-top: -90px;
+  margin-top: -250px;
 }
 .lift-less {
-  margin-top: -80px;
+  margin-top: -230px;
 }
 // Apply to the appropriate element above a lifted item
 .lift-counter {
-  padding-bottom: 90px;
+  padding-bottom: 290px;
 }
 @media (max-width: 767px) {
   .lift,
@@ -84,10 +84,6 @@ body.signup {
   /*background-color: $navBackgroundColor; */
   color: white;
   padding-bottom: 50px;
-  
-  > .navbar:last-child {
-    margin-bottom: 20px;
-	}
 }
 
 .recaptcha table {
@@ -96,19 +92,15 @@ body.signup {
 
 
 .section-nav.lift-counter {
-    padding-bottom: 90px;
+    padding-bottom: 300px;
 }
 
 @media (max-width: 767px) {
   .section-nav {
     padding-bottom: 20px;
-    
-    > .navbar:last-child {
-   		margin-bottom: 0;
-		}
   }
   .section-nav.lift-counter {
-    padding-bottom: 25px;
+    padding-bottom: 15px;
 	}
 }
 .simple .section-nav { padding-bottom: 0; }
@@ -234,7 +226,7 @@ body.signup {
       padding: 0;
     }
     #outage {
-      //margin: 5px 0;
+      margin: 0;
     }
     .login {
       display: table;
@@ -252,7 +244,7 @@ body.signup {
 }
 
 // Central messaging content
-.messaging {
+.messaging {      display: none; /* hidden till markup is removed */
   clear: both;
   color: white;
   text-align: center;
@@ -703,6 +695,7 @@ h1.ribbon {
 	.nav-list {
 	  padding: 0;
 	  margin-bottom: 0;
+	  margin-left: 0;
 
     > li {
       > a {
@@ -774,9 +767,20 @@ h1.ribbon {
   }
 }
 
+.column-floating {
+  margin-top: 15px; /* specific to not override [class*="span"] responsive left margin */
+  margin-bottom: 15px;
+  float: right;
+  clear: right;
+}
+
 @media (max-width: 768px) {
-	.nav-list > li > a {
+	.column-nav .nav-list > li > a {
     margin-left: 0;
+  }
+  .column-floating {
+    margin-left: 0;
+    float: none;
   }
 }
 
@@ -881,6 +885,21 @@ h1.ribbon {
 
 .column-content {
   background-color: $contentColumnBackgroundColor;
+  position: relative;
+  padding-top: 50px;
+  position: relative;
+  &:before {
+    position: absolute;
+    content: "";
+    background-image: image-url('diagonals-bottom2.png');
+    background-repeat: no-repeat;
+    clip:rect(10px 700px 500px 35px);
+    top: -10px;
+    left: -35px;
+    height: 300px;
+    width: 420px;
+    opacity: .07;
+  }
 }
 
 /* Background */
@@ -925,9 +944,9 @@ body.community > header {
     image-url('planets.png'),
     $noiseImage;
   background-repeat:
-    repeat-x,
+    repeat,
     repeat;
-  background-position: center bottom;
+  background-position: center -250px;
 }
 
 
@@ -1068,6 +1087,10 @@ body.home {
       padding: 30px $gridGutterWidthTablet 40px;
     }
   }
+  .column-content:before {
+    left: -60px;
+    top: -20px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1090,6 +1113,9 @@ body.home {
     .align-right {
       text-align: center;
     }
+  }
+  .column-content:before {
+    width: 320px
   }
 }
 
@@ -1271,4 +1297,10 @@ body.simple {
 div.social-sharing {
   margin-top: 10px;
   font-size: 20px;
+}
+
+.font-icon,
+[class*="icon-"]:before {
+  @include icon-text-shadow(rgba(255, 255, 255, 0.75));
+
 }
