@@ -883,27 +883,29 @@ h1.ribbon {
 } }
 
 
-.column-content.column-content-page {
+.column-content {
   background-color: $contentColumnBackgroundColor;
   position: relative;
   padding-top: 50px;
   position: relative;
-  &:before {
-    position: absolute;
-    content: "";
-    background-image: image-url('diagonals-bottom2.png');
-    background-repeat: no-repeat;
-    clip:rect(10px 700px 500px 35px);
-    top: -10px;
-    left: -35px;
-    height: 300px;
-    width: 420px;
-    opacity: .07;
-    z-index: 1;
-  }
-  > div:first-child {
-    position: relative;
-    z-index: 2;
+  &.column-content-page {
+    &:before {
+      position: absolute;
+      content: "";
+      background-image: image-url('diagonals-bottom2.png');
+      background-repeat: no-repeat;
+      clip:rect(10px 700px 500px 35px);
+      top: -10px;
+      left: -35px;
+      height: 300px;
+      width: 420px;
+      opacity: .07;
+      z-index: 1;
+    }
+    > div:first-child {
+      position: relative;
+      z-index: 2;
+    }
   }
 }
 
