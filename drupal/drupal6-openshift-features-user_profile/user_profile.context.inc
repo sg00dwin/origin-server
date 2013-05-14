@@ -383,23 +383,7 @@ function user_profile_context_default_contexts() {
   $context->name = 'recent-changes-sidebar';
   $context->description = '';
   $context->tag = '';
-  $context->conditions = array(
-    'menu' => array(
-      'values' => array(
-        'documentation' => 'documentation',
-        'faq' => 'faq',
-        'kb' => 'kb',
-        'node/10295' => 'node/10295',
-        'node/10863' => 'node/10863',
-        'node/5085' => 'node/5085',
-        'node/5475' => 'node/5475',
-        'node/9435' => 'node/9435',
-        'node/9445' => 'node/9445',
-        'node/9515' => 'node/9515',
-        'node/9525' => 'node/9525',
-      ),
-    ),
-  );
+  $context->conditions = array();
   $context->reactions = array(
     'block' => array(
       'blocks' => array(
@@ -407,7 +391,7 @@ function user_profile_context_default_contexts() {
           'module' => 'views',
           'delta' => 'nodes_by_category-block_3',
           'region' => 'sidebar_left',
-          'weight' => 20,
+          'weight' => 0,
         ),
       ),
     ),
@@ -507,8 +491,6 @@ function user_profile_context_default_contexts() {
   $context->conditions = array(
     'context' => array(
       'values' => array(
-        'menu-active-faq' => 'menu-active-faq',
-        'menu-active-kb' => 'menu-active-kb',
         'menu-active-quickstarts' => 'menu-active-quickstarts',
       ),
     ),
@@ -523,7 +505,6 @@ function user_profile_context_default_contexts() {
         'node/11066' => 'node/11066',
         'node/11129' => 'node/11129',
         'node/11158' => 'node/11158',
-        'node/11187' => 'node/11187',
         'node/11327' => 'node/11327',
         'node/11422' => 'node/11422',
         'node/12009' => 'node/12009',
@@ -537,26 +518,13 @@ function user_profile_context_default_contexts() {
         'node/5475' => 'node/5475',
         'node/9435' => 'node/9435',
         'node/9445' => 'node/9445',
-        'node/9515' => 'node/9515',
         'node/9525' => 'node/9525',
         'quickstarts' => 'quickstarts',
       ),
     ),
     'node' => array(
       'values' => array(
-        'faq' => 'faq',
-        'knowledge_base' => 'knowledge_base',
         'quickstart' => 'quickstart',
-      ),
-      'options' => array(
-        'node_form' => '1',
-      ),
-    ),
-    'node_taxonomy' => array(
-      'values' => array(
-        2 => 2,
-        5 => 5,
-        6 => 6,
       ),
       'options' => array(
         'node_form' => '1',
@@ -564,8 +532,6 @@ function user_profile_context_default_contexts() {
     ),
     'path' => array(
       'values' => array(
-        'kb' => 'kb',
-        'faq' => 'faq',
         'developers' => 'developers',
       ),
     ),
@@ -631,6 +597,12 @@ function user_profile_context_default_contexts() {
           'module' => 'menu_block',
           'delta' => 2,
           'region' => 'content_header',
+          'weight' => 0,
+        ),
+        'menu_block-3' => array(
+          'module' => 'menu_block',
+          'delta' => 3,
+          'region' => 'sidebar_right',
           'weight' => 0,
         ),
       ),
