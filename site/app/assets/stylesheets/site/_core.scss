@@ -42,7 +42,7 @@ textarea::-webkit-input-placeholder {
   margin-top: -250px;
 }
 .lift-less {
-  margin-top: -80px;
+  margin-top: -230px;
 }
 // Apply to the appropriate element above a lifted item
 .lift-counter {
@@ -100,7 +100,7 @@ body.signup {
     padding-bottom: 20px;
   }
   .section-nav.lift-counter {
-    padding-bottom: 26px;
+    padding-bottom: 15px;
 	}
 }
 .simple .section-nav { padding-bottom: 0; }
@@ -226,7 +226,7 @@ body.signup {
       padding: 0;
     }
     #outage {
-      //margin: 5px 0;
+      margin: 0;
     }
     .login {
       display: table;
@@ -244,7 +244,7 @@ body.signup {
 }
 
 // Central messaging content
-.messaging {
+.messaging {      display: none; /* hidden till markup is removed */
   clear: both;
   color: white;
   text-align: center;
@@ -695,6 +695,7 @@ h1.ribbon {
 	.nav-list {
 	  padding: 0;
 	  margin-bottom: 0;
+	  margin-left: 0;
 
     > li {
       > a {
@@ -776,6 +777,10 @@ h1.ribbon {
 @media (max-width: 768px) {
 	.column-nav .nav-list > li > a {
     margin-left: 0;
+  }
+  .column-floating {
+    margin-left: 0;
+    float: none;
   }
 }
 
