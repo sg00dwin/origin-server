@@ -85,7 +85,6 @@ mkdir -p -m 770 %{buildroot}%{brokerdir}/tmp/sessions
 mkdir -p -m 770 %{buildroot}%{brokerdir}/tmp/sockets
 
 mv %{buildroot}%{brokerdir}/script/rhc-admin-migrate %{buildroot}/%{_bindir}
-mv %{buildroot}%{brokerdir}/script/rhc-v2-migrate %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-plan %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-stale-dns %{buildroot}/%{_bindir}
 
@@ -117,7 +116,6 @@ rm -rf $RPM_BUILD_ROOT
 %{brokerdir}
 %{htmldir}/broker
 %attr(0750,-,-) %{_bindir}/rhc-admin-migrate
-%attr(0750,-,-) %{_bindir}/rhc-v2-migrate
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-plan
 %attr(0750,-,-) %{_bindir}/rhc-admin-stale-dns
 
