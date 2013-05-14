@@ -32,7 +32,7 @@
             <div class="span9 span-flush-right">
 
         <?php else :?>
-          <div class="column-content lift grid-wrapper">
+          <div class="column-content column-content-page lift grid-wrapper">
             <div class="span12 span-flush-right">
         <?php endif; ?>
 
