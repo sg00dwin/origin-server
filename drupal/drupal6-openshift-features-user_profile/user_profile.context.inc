@@ -626,10 +626,7 @@ function user_profile_context_default_contexts() {
     ),
     'menu' => array(
       'values' => array(
-        'documentation' => 'documentation',
-        'faq' => 'faq',
         'https://access.redhat.com/knowledge/docs/en-US/OpenShift/2.0/html/User_Guide/index.html' => 'https://access.redhat.com/knowledge/docs/en-US/OpenShift/2.0/html/User_Guide/index.html',
-        'kb' => 'kb',
         'node/10295' => 'node/10295',
         'node/10777' => 'node/10777',
         'node/10863' => 'node/10863',
@@ -647,15 +644,13 @@ function user_profile_context_default_contexts() {
         'node/12037' => 'node/12037',
         'node/12038' => 'node/12038',
         'node/12255' => 'node/12255',
-        'node/12419' => 'node/12419',
-        'node/12420' => 'node/12420',
+        'node/14083' => 'node/14083',
         'node/5085' => 'node/5085',
         'node/5475' => 'node/5475',
         'node/9435' => 'node/9435',
         'node/9445' => 'node/9445',
         'node/9515' => 'node/9515',
         'node/9525' => 'node/9525',
-        'partners' => 'partners',
         'quickstarts' => 'quickstarts',
       ),
     ),
@@ -687,8 +682,7 @@ function user_profile_context_default_contexts() {
       ),
     ),
   );
-  $context->reactions = array(
-  );
+  $context->reactions = array();
   $context->condition_mode = 0;
   $export['viewing-developer-center'] = $context;
 
