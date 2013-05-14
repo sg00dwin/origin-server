@@ -156,7 +156,7 @@ module OpenShiftMigration
 
     # Move a list of environment variables from the gear environment 
     # to a cartridge environment
-    def self.move_gear_env_var_to_cart(user, cartridge_name, vars)
+    def self.move_gear_env_var_to_cart(user, cartridge_name, vars, remove_gear_env=true)
       output = ''
 
       vars.each do |env_var_name|
@@ -169,7 +169,7 @@ module OpenShiftMigration
         output << "Moving env var #{env_var_name} to #{cartridge_name} env var directory\n"
 
         self.add_cart_env_var(user, cartridge_name, env_var_name, value)
-        FileUtils.rm_f(gear_env_var)
+        FileUtils.rm_f(gear_env_var) if remove_gear_env
       end
 
       output
