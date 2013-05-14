@@ -1,6 +1,6 @@
 module OpenShiftMigration
   class Python26Migration
-    def post_process(user)
+    def post_process(user, progress, env)
       output = "applying python-2.6 migration post-process\n"
 
 

@@ -1,6 +1,6 @@
 module OpenShiftMigration
   class Rockmongo11Migration
-    def post_process(user)
+    def post_process(user, progress, env)
       output = "applying rockmongo-1.1 migration post-process\n"
 
       Util.rm_env_var(user.homedir, 'OPENSHIFT_ROCKMONGO_LOG_DIR')
