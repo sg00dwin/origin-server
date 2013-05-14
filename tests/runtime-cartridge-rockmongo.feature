@@ -11,8 +11,7 @@ Feature: Rockmongo Embedded Cartridge
     And I embed a rockmongo-1.1 cartridge into the application
 
     Then 2 process named httpd will be running
-    And the embedded rockmongo cartridge subdirectory named usr/rockmongo will exist
-    And the embedded rockmongo cartridge log files will exist
+    And the embedded rockmongo-1.1 cartridge log files will exist
 
     When I stop the rockmongo-1.1 cartridge
     Then 0 processes named httpd will be running
@@ -25,5 +24,4 @@ Feature: Rockmongo Embedded Cartridge
 
     When I destroy the application
     Then 0 processes named httpd will be running
-    And the embedded rockmongo cartridge subdirectory named usr/rockmongo will not exist
-    And the embedded rockmongo cartridge log files will not exist
+    And the embedded rockmongo-1.1 cartridge log files will not exist
