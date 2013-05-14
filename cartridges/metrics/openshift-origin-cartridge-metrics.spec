@@ -12,7 +12,8 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
-Requires: rubygem(openshift-origin-node)
+Requires:      rubygem(openshift-origin-node)
+Requires:      openshift-origin-node-util
 
 %description
 Provides metrics cartridge support
@@ -22,24 +23,28 @@ Provides metrics cartridge support
 
 
 %build
+%__rm %{name}.spec
 
 
 %install
-rm -rf %{buildroot}
-mkdir -p %{buildroot}%{cartridgedir}
-cp -r * %{buildroot}%{cartridgedir}/
+%__rm -rf %{buildroot}
+%__mkdir -p %{buildroot}%{cartridgedir}
+%__cp -r * %{buildroot}%{cartridgedir}
 
 %clean
-rm -rf %{buildroot}
+%__rm -rf %{buildroot}
 
+%post
+%{_sbindir}/oo-admin-cartridge --action install --source %{cartridgedir}
 
 %files
 %defattr(-,root,root,-)
 %dir %{cartridgedir}
 %attr(0755,-,-) %{cartridgedir}/bin/
 %attr(0755,-,-) %{cartridgedir}
-%{cartridgedir}/metadata/manifest.yml
 %doc %{cartridgedir}/README.md
+%doc %{cartridgedir}/COPYRIGHT
+%doc %{cartridgedir}/LICENSE
 
 %changelog
 * Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.9.1-1
