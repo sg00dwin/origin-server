@@ -237,33 +237,10 @@ allows developers to focus on what is most important - building amazing apps.
 </div>');
   $handler->override_option('header_format', '46');
   $handler->override_option('header_empty', 1);
-  $handler->override_option('footer', '<h2 style="clear: both; border-top: 3px solid #CCCCCC; padding-top: 30px">
-Partner Programs
-</h2>
-
-<p style="font-size: medium">
-For more information on the OpenShift Partner Program contact us at <a href="mailto:openshift@redhat.com">openshift@redhat.com</a>. Check out our existing <a href="https://github.com/search?q=%22openshift-quickstart%22&type=Repositories&s=">partner quickstarts on GitHub</a> to get started today!</p>
-
-<div class="row-fluid">
-
-<div class="span6">
-<div id="community" class="program" style="">
-<h3 style="padding: 0 0 15px">Community Partners</h3>
-<p class="larger">Building a community quickstart or cartridge is the first step for any partner interested in engaging with OpenShift. A cartridge is essentially a configuration template or script that enables a third-party addition or extension to OpenShift. Partners looking to engage with OpenShift can start by understanding the <a href="/wiki/introduction-to-cartridge-building">steps required to create a cartridge</a> and can begin developing in collaboration with OpenShift through the open source <a href="/open-source">OpenShift Origin</a> project at the Community Partner level.</p>
-<p class="larger"> Inclusion in the Community Partner program will allow partners to reach a quickly growing base of developers. Through this program, Community Partners will be able to maintain a preferred presence in the OpenShift properties to help broaden their exposure.</p>
-</div></div>
-
-<div class="span6">
-<div id="supported" class="program" style="">
-<h3 style="padding: 0 0 15px">Certified Partners</h3>
-<p class="larger">This program is for partners with complementary solutions to OpenShift Online or Enterprise such as development tools, frameworks, datastores, IDEs and Management tools. Partner solutions may integrate and run directly within OpenShift through the OpenShift Cartridge APIs or through web APIs in the case of partner hosted service offerings. By being presented and featured in OpenShift, certified partners will benefit from exposure to potential customers and commercial engagements.  </p>
-</div></div>
-</div>
-
-<div id="poweredby" class="program" style="">
-<h3 style="padding: 0 0 15px">Powered by OpenShift</h3>
-<p class="larger">Partners in the Powered by OpenShift Partner Program are actively using OpenShift to power their own Software-as-a-Service (SaaS) applications and solutions and will gain the opportunity for expanded market reach and close alignment with the OpenShift roadmap by participating in this program category. Current Powered by OpenShift Partners are already leveraging the OpenShift online service available at openshift.redhat.com and will be able to also utilize OpenShift Enterprise.</p>
-</div>
+  $handler->override_option('footer', '<section>
+<p>Interested in becoming an OpenShift partner?</p>
+<a class="action-more" href="/partner-programs">Join a Partner Program</a>
+</section>
 
 <script type="text/javascript">
   $(function() {$(\'div[class|="image-attach-node"]\').removeAttr(\'style\');});
@@ -430,7 +407,7 @@ For more information on the OpenShift Partner Program contact us at <a href="mai
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('title', 'Partner Programs');
+  $handler->override_option('title', 'Partners');
   $handler->override_option('items_per_page', 50);
   $handler->override_option('use_pager', '1');
   $handler->override_option('row_options', array(
