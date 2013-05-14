@@ -889,6 +889,7 @@ h1.ribbon {
   padding-top: 50px;
   position: relative;
   &.column-content-page {
+    padding-top: 60px;
     &:before {
       position: absolute;
       content: "";
