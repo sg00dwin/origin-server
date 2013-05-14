@@ -9,7 +9,7 @@ module OpenShiftMigration
       Util.rm_env_var(user.homedir, 'OPENSHIFT_PHP_LOG_DIR')
 
       cartridge_dir = File.join(user.homedir, 'php')
-      
+
       FileUtils.ln_sf('/usr/lib64/httpd/modules', File.join(cartridge_dir, 'modules'))
       FileUtils.ln_sf('/etc/httpd/conf/magic', File.join(cartridge_dir, 'conf', 'magic'))
 
@@ -19,7 +19,7 @@ module OpenShiftMigration
       pearrc = File.join(user.homedir, '.pearrc')
 
       spawn_ops = { chdir: user.homedir,
-                    unsetenv_others: true, 
+                    unsetenv_others: true,
                     uid: user.uid,
                     expected_exitstatus: 0
                   }
@@ -30,7 +30,7 @@ module OpenShiftMigration
 
       Util.add_cart_env_var(user, 'php', 'OPENSHIFT_PHP_VERSION', '5.3')
 
-      directories = %w(logs sessions)
+      directories = %w(logs sessions phplib)
       output << Util.move_directory_between_carts(user, 'php-5.3', 'php', directories)
 
       output
