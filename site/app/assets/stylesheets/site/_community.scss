@@ -744,6 +744,9 @@ html.js fieldset.collapsible .fieldset-wrapper {
     font-weight: bold;
     line-height: 30px;
   }
+  .calendar-calendar td {
+    font-size: 11px;
+  }
 }
   
 
@@ -844,6 +847,13 @@ html.js fieldset.collapsible .fieldset-wrapper {
     .links {
       margin-left: 12px;
     }
+  }
+  .date-nav div.date-heading h3 {
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .calendar-calendar .mini td {
+    text-align: center;
   }
 }
 
@@ -996,4 +1006,15 @@ html.js fieldset.collapsible .fieldset-wrapper {
 // Make the menu select dropdown on Contexts more useful
 #edit-conditions-plugins-menu-values.form-select {
   height: 400px;
+}
+
+@media (max-width: 480px) {
+  html  body.admin-menu {
+    margin-top: 78px !important;
+  }
+}
+@media (max-width: 320px) {
+  html  body.admin-menu {
+    margin-top: 130px !important;
+  }
 }

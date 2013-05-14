@@ -2,7 +2,7 @@ require_relative 'migrate-util'
 
 module OpenShiftMigration
   class Jbossews10Migration
-    def post_process(user)
+    def post_process(user, progress, env)
       output = "applying jbossews-1.0 migration post-process\n"
 
       cart_name = 'jbossews'

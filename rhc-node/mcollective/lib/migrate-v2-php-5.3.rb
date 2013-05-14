@@ -3,7 +3,7 @@ require 'openshift-origin-node/utils/shell_exec'
 
 module OpenShiftMigration
   class Php53Migration
-    def post_process(user)
+    def post_process(user, progress, env)
       output = "applying php-5.3 migration post-process\n"
 
       Util.rm_env_var(user.homedir, 'OPENSHIFT_PHP_LOG_DIR')

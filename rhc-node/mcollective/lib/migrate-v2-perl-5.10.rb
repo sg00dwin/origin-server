@@ -1,6 +1,6 @@
 module OpenShiftMigration
   class Perl510Migration
-    def post_process(user)
+    def post_process(user, progress, env)
       output = "applying perl-5.10 migration post-process\n"
 
       Util.rm_env_var(user.homedir, 'OPENSHIFT_PERL_LOG_DIR')
