@@ -37,6 +37,8 @@
         <?php endif; ?>
 
             <?php print $content_header; ?>
+            <?php if ($tabs) :?><?php print $tabs; ?><?php endif; ?>
+            
           <?php if ($layout == 'right' || $layout == 'both') :?>
             <div class="span4 pull-right column-floating">
               <?php print $sidebar_right; ?>
@@ -51,9 +53,6 @@
 
               <?php if ($show_messages && $messages): print $messages; endif; ?>
             <?php print $breadcrumb; ?>
-            <?php if ($tabs) :?>
-            <div id="tabs"><?php print $tabs; ?></div>
-            <?php endif; ?>
             <?php if ($forum['new-topic'] == TRUE) :?>
             <div id="forum-header" class="forum-new-topic">
               <div class="forum-header-left">

@@ -365,6 +365,10 @@ function openshift_menu_tree__menu_block__2($tree) {
   return '<ul class="nav nav-tabs nav-tabs-secondary">'. $tree .'</ul>';
 }
 
+function openshift_menu_tree__menu_block__3($tree) {
+  return '<ul class="nav nav-list nav-tertiary">'. $tree .'</ul>';
+}
+
 function openshift_menu_tree($tree) {
   return '<ul class="menu nav nav-list">'. $tree .'</ul>';
 }
@@ -781,7 +785,7 @@ function openshift_menu_local_tasks() {
   $output = '';
 
   if ($primary = menu_primary_local_tasks()) {
-    $output .= "<ul class=\"nav nav-tabs primary\">\n". $primary ."</ul>\n";
+    $output .= "<ul class=\"nav nav-pills pull-right primary\">\n". $primary ."</ul>\n";
   }
   if ($secondary = menu_secondary_local_tasks()) {
     $output .= "<ul class=\"nav nav-tabs secondary\">\n". $secondary ."</ul>\n";
