@@ -1,4 +1,5 @@
 class LoginController < ApplicationController
+  include LogHelper
 
   layout 'simple'
 
@@ -21,6 +22,8 @@ class LoginController < ApplicationController
 
       if validate_user
         logger.debug "  Authenticated with user #{@user.login}, redirecting"
+
+        user_action :login, true, :login => @user.login
         redirect_to after_login_redirect
       end
 
@@ -28,6 +31,7 @@ class LoginController < ApplicationController
       logger.debug "  Authentication failed"
       @release_note = ReleaseNote.cached.latest rescue nil
       @events = Event.cached.upcoming.first(3) rescue []
+      user_action :login, false, :login => @user.login
       render :show
     end
   end
@@ -52,7 +56,7 @@ class LoginController < ApplicationController
         nil
       when !referrer.path.start_with?('/')
         nil
-      else 
+      else
         referrer.to_s
       end
     end

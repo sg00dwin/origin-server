@@ -29,7 +29,11 @@ class EmailConfirmController < SiteController
 
       self.current_user = @user
 
+      user_action :confirm_user_email, true, :login => @user.login, :email => email, :confirmation_code => @user.token
+
       redirect_to redirect_path and return
+    else
+      user_action :confirm_user_email, false, :login => @user.login, :email => email, :confirmation_code => @user.token
     end
 
     logger.debug "  Errors during confirmation #{@user.errors.inspect}"
