@@ -8,15 +8,12 @@ module OpenShiftMigration
 
       ruby_dir = File.join(user.homedir, 'ruby')
 
-      env_vars = [
-      	'OPENSHIFT_RUBY_IP',
-      	'OPENSHIFT_RUBY_LOG_DIR',
-      	'OPENSHIFT_RUBY_PORT',
-      	'LD_LIBRARY_PATH',
-      	'MANPATH'
-      ]
+      Util.rm_env_var(user.homedir, 'OPENSHIFT_RUBY_LOG_DIR')
+      Util.rm_env_var(user.homedir, 'LD_LIBRARY_PATH')
+      Util.rm_env_var(user.homedir, 'MANPATH')
 
-      output << Util.move_gear_env_var_to_cart(user, 'ruby', env_vars)
+      Util.cp_env_var_value(user.homedir, 'OPENSHIFT_INTERNAL_IP', 'OPENSHIFT_RUBY_IP')
+      Util.cp_env_var_value(user.homedir, 'OPENSHIFT_INTERNAL_PORT', 'OPENSHIFT_RUBY_PORT')
 
       cart_dir = File.join(user.homedir, 'ruby')
       cart_env = File.join(cart_dir, 'env')
