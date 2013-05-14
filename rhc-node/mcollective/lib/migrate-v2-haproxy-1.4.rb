@@ -1,6 +1,6 @@
 module OpenShiftMigration
   class Haproxy14Migration
-    def post_process(user)
+    def post_process(user, progress, env)
       output = "applying haproxy-1.4 migration post-process\n"
       Util.rm_env_var(user.homedir, 'OPENSHIFT_HAPROXY_LOG_DIR')
       Util.mv_env_var_value(user, 'OPENSHIFT_HAPROXY_INTERNAL_IP', 'OPENSHIFT_HAPROXY_IP')

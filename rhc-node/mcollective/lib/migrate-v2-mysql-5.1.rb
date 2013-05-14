@@ -2,7 +2,7 @@ require_relative 'migrate-util'
 
 module OpenShiftMigration
   class Mysql51Migration
-    def post_process(user)
+    def post_process(user, progress, env)
       output = "applying mysql-5.1 migration post-process:\n"
 
       Util.rm_env_var(user.homedir, 'OPENSHIFT_MYSQL_DB_SOCKET')

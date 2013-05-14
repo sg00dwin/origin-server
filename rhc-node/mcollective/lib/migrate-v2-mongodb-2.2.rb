@@ -1,6 +1,6 @@
 module OpenShiftMigration
   class Mongodb22Migration
-    def post_process(user)
+    def post_process(user, progress, env)
       output = "applying mongodb-2.2 migration post-process\n"
       
       Util.rm_env_var(user.homedir, 'OPENSHIFT_MONGODB_DB_LOG_DIR')
