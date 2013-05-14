@@ -333,7 +333,7 @@ module OpenShiftMigration
         content = IO.read(entry).chomp
         if content =~ /^export /
           output << "Migrating #{File.basename(entry)} to raw value\n"
-          content.sub!(/^export [^=]+=\'([^\']*)\'/, '\1')
+          content.sub!(/^export [^=]+=\'?([^\']*)\'?/, '\1')
           IO.write(entry, content)
         end
       end
