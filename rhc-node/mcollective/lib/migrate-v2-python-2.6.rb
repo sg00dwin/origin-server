@@ -12,6 +12,9 @@ module OpenShiftMigration
       FileUtils.ln_sf('/etc/httpd/conf/magic', File.join(cartridge_dir, 'etc', 'magic'))
 
       Util.add_cart_env_var(user, 'python', 'OPENSHIFT_PYTHON_VERSION', '2.6')
+      Util.add_cart_env_var(user, 'python', 'OPENSHIFT_PYTHON_PATH_ELEMENT',
+                            File.join(cartridge_dir, 'bin'))
+
       FileUtils.mkpath(File.join(cartridge_dir, 'virtenv'))
 
       directories = %w(logs virtenv)
