@@ -247,36 +247,33 @@ module OpenShiftMigration
   def self.load_cartridge_migrators
     migrators = {}
 
-    cr = OpenShift::CartridgeRepository.instance
-
     # TODO: fix problems loading commented out lines
-    migrators[cr.select('diy', '0.1')] = Diy01Migration.new
-    migrators[cr.select('haproxy', '1.4')] = Haproxy14Migration.new
-    migrators[cr.select('jbossas', '7')] = Jbossas7Migration.new # name changed to jbossas-7.1
-    migrators[cr.select('jbosseap', '6.0')] = Jbosseap60Migration.new
+    migrators['diy-0.1'] = Diy01Migration.new
+    migrators['haproxy-1.4'] = Haproxy14Migration.new
+    migrators['jbossas-7'] = Jbossas7Migration.new # name changed to jbossas-7.1
+    migrators['jbosseap-6.0'] = Jbosseap60Migration.new
     # One migrator can handle both jbossews cartridges
-    migrators[cr.select('jbossews', '1.0')] = Jbossews10Migration.new
-    migrators[cr.select('jbossews', '2.0')] = Jbossews10Migration.new
-    migrators[cr.select('nodejs', '0.6')] = Nodejs06Migration.new
-    migrators[cr.select('perl', '5.10')] = Perl510Migration.new
-    migrators[cr.select('php', '5.3')] = Php53Migration.new
-    migrators[cr.select('python', '2.6')] = Python26Migration.new
-    migrators[cr.select('python', '2.7')] = Python27Migration.new
-    migrators[cr.select('python', '3.3')] = Python33Migration.new
-    migrators[cr.select('ruby', '1.8')] = Ruby18Migration.new
-    migrators[cr.select('ruby', '1.9')] = Ruby19Migration.new
-    #migrators[cr.select('zend', '5.6')] = Zend56Migration.new # not in li yet
-    migrators[cr.select('metrics', '0.1')] = Metrics01Migration.new
-    migrators[cr.select('jenkins', '1.4')] = Jenkins14Migration.new
-    migrators[cr.select('jenkins-client', '1.4')] = JenkinsClient14Migration.new
-    migrators[cr.select('mongodb', '2.2')] = Mongodb22Migration.new
-    migrators[cr.select('rockmongo', '1.1')] = Rockmongo11Migration.new
-    migrators[cr.select('10gen-mms-agent', '0.1')] = Tengenmmsagent01Migration.new
-    migrators[cr.select('mysql', '5.1')] = Mysql51Migration.new
-    migrators[cr.select('phpmyadmin', '3.4')] = Phpmyadmin34Migration.new
-    migrators[cr.select('postgresql', '8.4')] = Postgresql84Migration.new
-    migrators[cr.select('cron', '1.4')] = Cron14Migration.new
-    #migrators[cr.select('switchyard', '0.6')] = Switchyard06Migration.new
+    migrators['jbossews-1.0'] = Jbossews10Migration.new
+    migrators['jbossews-2.0'] = Jbossews10Migration.new
+    migrators['nodejs-0.6'] = Nodejs06Migration.new
+    migrators['perl-5.10'] = Perl510Migration.new
+    migrators['php-5.3'] = Php53Migration.new
+    migrators['python-2.6'] = Python26Migration.new
+    migrators['python-2.7'] = Python27Migration.new
+    migrators['python-3.3'] = Python33Migration.new
+    migrators['ruby-1.8'] = Ruby18Migration.new
+    migrators['ruby-1.9'] = Ruby19Migration.new
+    #migrators['zend-5.6'] = Zend56Migration.new # not in li yet
+    migrators['metrics-0.1'] = Metrics01Migration.new
+    migrators['jenkins-1.4'] = Jenkins14Migration.new
+    migrators['jenkins-client-1.4'] = JenkinsClient14Migration.new
+    migrators['mongodb-2.2'] = Mongodb22Migration.new
+    migrators['rockmongo-1.1'] = Rockmongo11Migration.new
+    migrators['10gen-mms-agent-0.1'] = Tengenmmsagent01Migration.new
+    migrators['mysql-5.1'] = Mysql51Migration.new
+    migrators['phpmyadmin-3.4'] = Phpmyadmin34Migration.new
+    migrators['postgresql-8.4'] = Postgresql84Migration.new
+    #migrators['switchyard-0.6'] = Switchyard06Migration.new
 
     migrators
   end
@@ -410,7 +407,12 @@ module OpenShiftMigration
           env = OpenShift::Utils::Environ.for_gear(user.homedir, name)
 
           if progress.incomplete? "#{name}_hook"
-            output << migration_post_process_hook(user, c, cartridge_migrators, progress, env)
+            cartridge_migrator = cartridge_migrators["#{name}-#{version}"]
+            if cartridge_migrator
+              output << cartridge_migrator.post_process(user, progress, env)
+            else
+              output << "Unable to find migrator for #{cartridge}\n"
+            end
             output << progress.mark_complete("#{name}_hook")
           end
         end
@@ -430,19 +432,6 @@ module OpenShiftMigration
     FileUtils.rm_rf(File.join(user.homedir, "#{name}-#{version}"))
 
     FileUtils.ln_s(File.join(user.homedir, name), File.join(user.homedir, "#{name}-#{version}"))
-
-    output
-  end
-
-  def self.migration_post_process_hook(user, cartridge, cartridge_migrators, progress, env)
-    output = ''
-    cartridge_migrator = cartridge_migrators[cartridge]
-
-    if cartridge_migrator
-      output << cartridge_migrator.post_process(user, progress, env)
-    else
-      output << "Unable to find migrator for #{cartridge}\n"
-    end
 
     output
   end
