@@ -160,6 +160,7 @@ module OpenShiftMigration
       output << migrate_typeless_translated_vars(progress, uuid, gear_home)
       output << cleanup_gear_env(progress, gear_home)
       output << migrate_env_vars_to_raw(progress, gear_home)
+      output << migrate_git_repo(progress, uuid)
 
       OpenShift::Utils::Sdk.mark_new_sdk_app(gear_home)
       cartridge_migrators = load_cartridge_migrators 
@@ -354,6 +355,20 @@ module OpenShiftMigration
     output
   end
 
+  def self.migrate_git_repo(progress, uuid)
+    output = ''
+
+    user = OpenShift::UnixUser.from_uuid(uuid)
+    repo = OpenShift::ApplicationRepository.new(user)
+
+    if repo.exists? && progress.incomplete?("reconfigure_git_repo")
+      repo.configure  
+      output << progress.mark_complete("reconfigure_git_repo")
+    end
+
+    output
+  end
+
   def self.migrate_cartridges(progress, gear_home, uuid, cartridge_migrators)
     output = ''
 
@@ -426,11 +441,6 @@ module OpenShiftMigration
             output << progress.mark_complete("#{name}_hook")
           end
         end
-      end
-
-      if progress.incomplete? "#{name}_reconfigure_git_repo"
-        OpenShift::ApplicationRepository.new(user).configure
-        output << progress.mark_complete("#{name}_reconfigure_git_repo")
       end
 
       if progress.incomplete? "#{name}_connect_frontend"
