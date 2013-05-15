@@ -1148,6 +1148,11 @@ function blogs_views_default_views() {
       'field' => 'status',
       'relationship' => 'none',
     ),
+    'field_author_nid' => array(
+      'id' => 'field_author_nid',
+      'table' => 'node_data_field_author',
+      'field' => 'field_author_nid',
+    ),
   ));
   $handler->override_option('access', array(
     'type' => 'none',
@@ -2839,7 +2844,7 @@ function blogs_views_default_views() {
     ),
   ));
   $handler->override_option('arguments', array(
-    'uid' => array(
+    'field_author_nid' => array(
       'default_action' => 'default',
       'style_plugin' => 'default_summary',
       'style_options' => array(),
@@ -2847,20 +2852,21 @@ function blogs_views_default_views() {
       'wildcard_substitution' => 'All',
       'title' => '',
       'breadcrumb' => '',
-      'default_argument_type' => 'user',
+      'default_argument_type' => 'php',
       'default_argument' => '',
       'validate_type' => 'none',
       'validate_fail' => 'not found',
       'break_phrase' => 0,
       'not' => 0,
-      'id' => 'uid',
-      'table' => 'users',
-      'field' => 'uid',
+      'id' => 'field_author_nid',
+      'table' => 'node_data_field_author',
+      'field' => 'field_author_nid',
       'validate_user_argument_type' => 'uid',
       'validate_user_roles' => array(
         2 => 0,
         3 => 0,
         15 => 0,
+        26 => 0,
         5 => 0,
         4 => 0,
         25 => 0,
@@ -2876,11 +2882,20 @@ function blogs_views_default_views() {
       'default_taxonomy_tid_limit' => 0,
       'default_taxonomy_tid_vids' => array(
         2 => 0,
+        4 => 0,
+        3 => 0,
         1 => 0,
       ),
-      'default_argument_user' => 1,
+      'default_argument_user' => 0,
       'default_argument_fixed' => '',
-      'default_argument_php' => '',
+      'default_argument_php' => 'if (arg(0) == \'node\' && is_numeric(arg(1))) {
+    $node = node_load(arg(1));
+    $value = $node->field_author;
+    if ($value && $value[0] && $value[0][\'nid\']) {
+      $value = $value[0][\'nid\'];
+    }
+}
+return $value;',
       'image_size' => array(
         '_original' => '_original',
         'thumbnail' => 'thumbnail',
@@ -2892,6 +2907,7 @@ function blogs_views_default_views() {
         'event' => 0,
         'idea' => 0,
         'faq' => 0,
+        'quickstart' => 0,
         'author' => 0,
         'blog' => 0,
         'newsletter' => 0,
@@ -2902,6 +2918,9 @@ function blogs_views_default_views() {
         'knowledge_base' => 0,
         'page' => 0,
         'promotion_blocks' => 0,
+        'book' => 0,
+        'file' => 0,
+        'partner' => 0,
         'video' => 0,
         'story' => 0,
       ),
@@ -2909,6 +2928,8 @@ function blogs_views_default_views() {
       'validate_argument_nid_type' => 'nid',
       'validate_argument_vocabulary' => array(
         2 => 0,
+        4 => 0,
+        3 => 0,
         1 => 0,
       ),
       'validate_argument_type' => 'tid',
