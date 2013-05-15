@@ -12,3 +12,5 @@ locked_files:
 - lib/
 - tmp/
 - var/
+processed_templates:
+- '**/*.erb'
