@@ -1014,7 +1014,7 @@ function openshift_menu_tree_block_output($tree, $config) {
 }
 
 
-function openshift_menu_block_tree_output(&$tree, $config = array(), $nested = 0) {
+function openshift_menu_block_tree_output(&$tree, $config = array(), $nested = 0, $parent = NULL) {
   $output = '';
 
   // Create context if no config was provided.
@@ -1024,16 +1024,17 @@ function openshift_menu_block_tree_output(&$tree, $config = array(), $nested = 0
     $menu_item = current($tree);
     $config['menu_name'] = $menu_item['link']['menu_name'];
   }
+
   $hook_delta = str_replace('-', '_', $config['delta']);
   $hook_menu_name = str_replace('-', '_', $config['menu_name']);
 
   $items = array();
   foreach (array_keys($tree) as $key) {
-    if (!$tree[$key]['link']['hidden']) {
+    $item = $tree[$key];
+    if (!$item['link']['hidden']) {
       $items[$key] = array(
-        'link' => $tree[$key]['link'],
-        // To prevent copying the entire child array, we render it first.
-        'below' => !empty($tree[$key]['below']) ? openshift_menu_block_tree_output($tree[$key]['below'], $config, $nested + 1) : '',
+        'link' => $item['link'],
+        'below' => !empty($item['below']) ? openshift_menu_block_tree_output($item['below'], $config, $nested + 1, $item) : '',
       );
     }
   }
@@ -1050,7 +1051,9 @@ function openshift_menu_block_tree_output(&$tree, $config = array(), $nested = 0
     $item = $items[$key];
     $link = $item['link'];
 
-    $in_active_trail = $link['in_active_trail'] || $link['href'] == $get_q || ($link['href'] == '<front>' && $is_drupal_front);
+    $active = $link['href'] == $get_q || ($link['href'] == '<front>' && $is_drupal_front);
+    $in_active_trail = $link['in_active_trail'] || $active;
+    $collapsible = $item['below'] && $config['collapsible']['from_depth'] && $link['depth'] >= ($config['collapsible']['from_depth'] + 1);
 
     if (!empty($link['localized_options']['attributes']['class'])) {
       $link_class[] = $link['localized_options']['attributes']['class'];
@@ -1070,15 +1073,17 @@ function openshift_menu_block_tree_output(&$tree, $config = array(), $nested = 0
       $extra_class[] = 'has-children';
     }
 
-    $menu = $item['below'];
-
-    $extra_class[] = $menu ? 'in' : '';
-
-    if ($in_active_trail) { 
+    if ($active) { 
       $extra_class[] = 'active';
     }
 
-    $output .= '<li class="'.implode($extra_class, ' ').'">' . $link . $menu . '</li>';
+    if ($collapsible) {
+      $extra_class[] = 'collapsible';
+      $link = '<a href="#m'. $item['link']['mlid'] .'" data-toggle="collapse" class="'. ($in_active_trail ? 'in' : '') .'">Toggle</a>' . $link;
+    }
+
+    $output .= '<li class="'. implode(' ', $extra_class).'">' . $link . $item['below'] . '</li>';
+
     $i++;
   }
 
@@ -1088,7 +1093,14 @@ function openshift_menu_block_tree_output(&$tree, $config = array(), $nested = 0
 
   $render_classes = ($nested > 0 ? $config['sub_menu_class'] : $config['menu_class']);
   if ($render_classes) {
-    return '<ul class="'. $render_classes .'">' . $output . '</ul>';
+    $in_active_trail = $parent['link']['in_active_trail'];
+    $collapsible = $parent['link']['mlid'] && $nested >= $config['collapsible']['from_depth'];
+    if ($collapsible && $in_active_trail) {
+      $render_classes = $config['collapsible']['expanded_menu_class'];
+    } elseif ($collapsible) {
+      $render_classes = $config['collapsible']['collapse_menu_class'];
+    }
+    return '<ul ' . ($collapsible ? 'id="m'. $parent['link']['mlid'] .'" ' : '') . 'class="'. $render_classes .'">' . $output . '</ul>';
   }
 
   $hooks = array();

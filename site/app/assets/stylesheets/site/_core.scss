@@ -753,53 +753,104 @@ h1.ribbon {
 		margin-bottom: 30px;
 	}
 
-	.nav-list {
-	  padding: 0;
-	  margin-bottom: 0;
-	  margin-left: 0;
+  .nav-list {
+    padding: 0;
+    margin-bottom: 0;
+    > li > a:hover {
+      background-color: transparent;
+      color: #fff;
+    }
+  }
+}
+
+.nav-list {
+  > li {
+    > a {
+      padding: 7px 16px;
+      text-shadow: none;
+    }
+    &.active > a {
+      &.active-trail {
+        background-color: transparent;
+        &.active {
+          background-color: #181818;
+        }
+      }
+      background-color: #292929;
+      color: #fff;
+      &:hover {
+        background-color: #292929;
+        color: #fff;
+      }
+    }
+  }
+  .nav-header {
+    text-shadow: none;
+  }
+  > li.collapsible > a {
+    display: inline-block;
+    width: 100%;
+    margin-left: 10px;
+    &[data-toggle='collapse'] {
+      width: 10px;
+      text-indent: -9999px;
+      margin-left: -15px;
+      outline: 0;
+    }
+  }
+  .nav-list {
+    padding-left: 8px;
+    margin: 0;
+    font-size: 12px;
+    line-height: 17px;
+    li {
+      position: relative;
+    }
+    .active > .nav-list {
+      display: block;
+    }
+    .collapsible > a[data-toggle='collapse'] {
+      &:after {
+        border: 4px solid transparent;
+        border-color: transparent transparent transparent red;
+        content: "";
+        display: block;
+        height: 0;
+        position: absolute;
+        width: 0;
+        border-left-color: #ddd;
+        left: -3px;
+        top: 9px;
+      }
+      &:hover:after {
+        border-color: transparent transparent transparent red;
+      }
+      &.in {
+        &:after {
+          border-bottom-width: 0;
+          border-left-color: transparent;
+          border-right-width: 4px;
+          border-top-color: #ddd;
+          left: -7px;
+          top: 11px;
+        }
+        &:hover:after {
+          border-top-color: red;
+        }
+      }
+    }
 
     > li {
       > a {
-        border-top: 1px solid #212121;
-  	    padding: 12px 15px;
-
-    	  text-shadow: none;
-    		background: transparent image-url("sprite-vert.png") right -157px no-repeat;
-
-        &:hover {
-          background-color: #181818;
-          background-position: right -100px;
-          color: #fff;
-        }
+        border: 0;
+        padding: 5px;
+        background-image: none;
+        font-family: $headerFontFamily;
+        font-size: $smallFontSize;
+        padding-left: 22px;
       }
-      &:last-child > a {
-	 	    border-bottom: 1px solid #212121;
-      }
-
-      &.expanded > a {
-  	    border-bottom: 0;
-      }
-
-      &.active {
-        // should be overriden by :hover rule
-        > a.active-trail {
-          background-color: transparent;
-          &.active {
-            background-color: #181818;
-          }
-        }
-
-        > a,
-        > a:hover {
-          background-color: #181818;
-          color: #fff;
-          background-position: right -43px;
-
-        }
-      }
-
-      > ul.nav-list {
-        margin: 0 0 7px;
+      &.collapsible > a {
+        padding-left: 5px;
       }
     }
 

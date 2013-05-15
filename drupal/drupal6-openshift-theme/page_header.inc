@@ -4,11 +4,16 @@
   if (array_key_exists('viewing-developer-center', $contexts)) {
     $config = array(
       'menu_name' => 'primary-links',
-      'level' => '2',
+      'level' => 2,
       'menu_class' => 'nav nav-list',
-      'hide_titles' => 1,
       'sub_menu_class' => 'nav nav-list',
+      'hide_titles' => 1,
       'delta' => '1',
+      'collapsible' => array(
+        'from_depth' => 2,
+        'collapse_menu_class' => 'nav nav-list collapse',
+        'expanded_menu_class' => 'nav nav-list collapse in',
+      ),
     );
     $tree = openshift_menu_tree_build($config);
     if ($tree) {
