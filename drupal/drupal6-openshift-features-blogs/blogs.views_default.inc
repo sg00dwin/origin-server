@@ -2953,7 +2953,7 @@ return $value;',
     'results_lifespan' => '3600',
     'output_lifespan' => '3600',
   ));
-  $handler->override_option('title', 'By this Author');
+  $handler->override_option('title', 'More from this author');
   $handler->override_option('empty', 'No other posts by this author.');
   $handler->override_option('empty_format', '1');
   $handler->override_option('items_per_page', 4);
