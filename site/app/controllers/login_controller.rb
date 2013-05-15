@@ -14,16 +14,17 @@ class LoginController < ApplicationController
   def create
     @redirectUrl = valid_referrer(params[:then] || params[:redirectUrl])
     user_params = params[:web_user] || params
+    login = user_params[:rhlogin] || user_params[:login]
 
     @user = WebUser.new
-    if @user.authenticate(user_params[:rhlogin] || user_params[:login], user_params[:password])
+    if @user.authenticate(login, user_params[:password])
 
       self.current_user = @user
 
       if validate_user
         logger.debug "  Authenticated with user #{@user.login}, redirecting"
 
-        user_action :login, true, :login => @user.login
+        user_action :login, true, :login => login
         redirect_to after_login_redirect
       end
 
@@ -31,7 +32,7 @@ class LoginController < ApplicationController
       logger.debug "  Authentication failed"
       @release_note = ReleaseNote.cached.latest rescue nil
       @events = Event.cached.upcoming.first(3) rescue []
-      user_action :login, false, :login => @user.login
+      user_action :login, false, :login => login
       render :show
     end
   end

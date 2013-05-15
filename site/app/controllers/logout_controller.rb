@@ -7,7 +7,7 @@ class LogoutController < ApplicationController
     @redirect = server_relative_uri(params[:then] || params[:redirectUrl] || root_path)
     @cause = params[:cause].presence
 
-    user_action :logout, true, :login => current_user.login
+    user_action :logout, true, :login => (current_user and current_user.login)
 
     reset_sso
     reset_session

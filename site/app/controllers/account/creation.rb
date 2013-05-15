@@ -29,16 +29,16 @@ module Account
       # Run validations
       valid = @user.valid?
 
-      logger.warn "Starting user creation: #{@user.email_address}"
+      logger.debug "Starting user creation: #{@user.email_address}"
 
       # See if the captcha secret was provided
       if skip_captcha?
-        logger.warn "Captcha secret provided - ignoring captcha"
+        logger.debug "Captcha secret provided - ignoring captcha"
       else
         # Remove the captcha_secret since it was wrong
         @captcha_secret = nil
         if sauce_testing? #Checks for sauce_testing cookie and development Rails
-          logger.warn "Sauce testing cookie provided - ignoring captcha"
+          logger.debug "Sauce testing cookie provided - ignoring captcha"
         else
           logger.debug "Checking captcha"
           # Verify the captcha
@@ -95,7 +95,7 @@ module Account
       session[:captcha_type]   = @captcha_type
 
       # Log the successful user creation
-      user_action :create_user, true, :email => @user.email_address, :confirmation_code => @user.token
+      user_action :create_user, true, :email => @user.email_address, :confirmation_code => @user.token, :promo_code => @user.promo_code.presence
 
       redirect_to complete_account_path(:promo_code => @user.promo_code.presence)
     end
