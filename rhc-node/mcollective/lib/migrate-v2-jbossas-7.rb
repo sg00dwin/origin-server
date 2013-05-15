@@ -3,7 +3,7 @@ module OpenShiftMigration
     def post_process(user, progress, env)
       output = "applying jbossas-7 migration post-process\n"
 
-      Util.mv_env_var_value(user.homedir, 'OPENSHIFT_JBOSSAS_PORT', 'OPENSHIFT_JBOSSAS_HTTP_PORT')
+      Util.mv_env_var_value(user, 'OPENSHIFT_JBOSSAS_PORT', 'OPENSHIFT_JBOSSAS_HTTP_PORT')
       
       cartridge_dir = File.join(user.homedir, 'jbossas')
       

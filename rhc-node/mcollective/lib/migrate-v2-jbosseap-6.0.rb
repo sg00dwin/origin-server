@@ -3,7 +3,7 @@ module OpenShiftMigration
     def post_process(user, progress, env)
       output = "applying jbosseap-6.0 migration post-process\n"
 
-      Util.mv_env_var_value(user.homedir, 'OPENSHIFT_JBOSSEAP_PORT', 'OPENSHIFT_JBOSSEAP_HTTP_PORT')
+      Util.mv_env_var_value(user, 'OPENSHIFT_JBOSSEAP_PORT', 'OPENSHIFT_JBOSSEAP_HTTP_PORT')
             
       cartridge_dir = File.join(user.homedir, 'jbosseap')
             
