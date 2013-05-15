@@ -33,12 +33,10 @@
 
         <?php else :?>
           <div class="column-content column-content-page lift grid-wrapper">
-            <div class="nav-collapse collapse"></div>
+            <div class="nav-collapse collapse"><?php print $content_header; ?></div>
             <div class="span12 span-flush-right">
         <?php endif; ?>
 
-            <?php print $content_header; ?>
-            
           <?php if ($layout == 'right' || $layout == 'both') :?>
             <div class="span4 pull-right column-floating">
               <?php print $sidebar_right; ?>

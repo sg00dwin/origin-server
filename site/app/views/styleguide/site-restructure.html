@@ -1,5 +1,6 @@
 
 <link rel="stylesheet" type="text/css" href="/assets/site.css" />
+<script src="/assets/console.js"></script>
 <style type="text/css">
 .navbar .nav > li .menu { display: none; }
 
@@ -177,23 +178,36 @@ section.testing > div {
     <div id="content" class="section-striped">
       <div class="container"><div class="row-content">
       <div class="row row-flush-right">
-                  <div class="column-content column-content-page lift grid-wrapper">
 
-                  <ul class="nav nav-tabs nav-tabs-secondary">
-                      <li><a href="#">Overview</a></li>
-                      <li class="active"><a href="#">Online</a></li>
-                      <li><a href="#">Enterprise</a></li>
-                      <li><a href="#">Open Source</a></li>
-                  </ul>
-                  
-              
-                    
+
+        <div class="column-navbar">       
+          <a class="btn btn-navbar" data-target=".nav-collapse" data-toggle="collapse">
+          <span class="pull-left">Navigate</span>
+          <span class="pull-right">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          </span>
+          </a>
+        </div>
+        <div class="column-navbar-secondary lift">
+          <div class="nav-collapse collapse">
+            <ul class="nav nav-tabs nav-tabs-secondary">
+              <li class="leaf first menu-mlid-15696 active"><a class="active" title="" href="/page/support">Overview</a></li>
+              <li class="leaf menu-mlid-1013"><a title="" href="/frequently-asked-questions">FAQs</a></li>
+              <li class="leaf menu-mlid-796"><a title="The OpenShift community forum" href="/forums/openshift">Forum</a></li>
+              <li class="leaf last menu-mlid-11905"><a title="Known problems and workarounds and documentation on specific topics in OpenShift" href="/kb">Knowledge Base</a></li>
+            </ul>
+          </div>
+        </div>
+
+          <div class="column-content column-content-page lift grid-wrapper">
             <div class="span12 span-flush-right">
             
             <section class="default" id="about">
             
             <div class="column-floating row pull-right">
-                  <ul class="nav nav-list span3 tertiary">
+                  <ul class="nav nav-list span3 nav-tertiary">
                     <li class="nav-header">Get Started</li>
                     <li class="active"><a href="#"><span aria-hidden="true" class="icon-angle-right"> </span>Summary</a></li>
                     <li><a href="#"><span aria-hidden="true" class="icon-angle-right"> </span>Pricing</a></li>
@@ -340,3 +354,8 @@ section.testing > div {
         </div>
       </section>
     </footer>
+    <script>
+      $('.column-navbar > .btn-navbar').on('show', function () {
+        console.log('show');
+      });
+    </script>
