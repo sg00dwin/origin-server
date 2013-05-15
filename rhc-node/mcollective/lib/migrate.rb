@@ -160,6 +160,7 @@ module OpenShiftMigration
       output << migrate_typeless_translated_vars(progress, uuid, gear_home)
       output << cleanup_gear_env(progress, gear_home)
       output << migrate_env_vars_to_raw(progress, gear_home)
+      output << relocate_uservars(progress, gear_home)
       output << migrate_git_repo(progress, uuid)
 
       OpenShift::Utils::Sdk.mark_new_sdk_app(gear_home)
@@ -364,6 +365,32 @@ module OpenShiftMigration
     if repo.exists? && progress.incomplete?("reconfigure_git_repo")
       repo.configure  
       output << progress.mark_complete("reconfigure_git_repo")
+    end
+
+    output
+  end
+
+  def self.relocate_uservars(progress, gear_home)
+    output = ''
+
+    if progress.incomplete? 'relocate_uservars'
+      uservars_dir = File.join(gear_home, '.env', '.uservars')
+
+      Dir.glob(File.join(uservars_dir, '*')).each do |entry|
+        name = File.basename(entry)
+
+        name =~ /OPENSHIFT_([^_]+)/
+        cart = $1.downcase
+        
+        namespaced_dir = File.join(gear_home, '.env', cart)
+        FileUtils.mkpath(namespaced_dir)
+
+        FileUtils.mv(entry, File.join(namespaced_dir, name))
+      end
+
+      FileUtils.rm_rf(uservars_dir)
+
+      output << progress.mark_complete('relocate_uservars')
     end
 
     output
