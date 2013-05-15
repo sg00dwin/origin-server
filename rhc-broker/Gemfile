@@ -13,7 +13,7 @@ gem 'openshift-origin-controller'
 group :other do
   gem 'minitest', '~> 3.5.0'
   gem 'simplecov'
-  gem 'mocha',    '~> 0.12.10'
+  gem 'mocha',    '~> 0.13.1'
 end
 
 gem 'mongoid'
