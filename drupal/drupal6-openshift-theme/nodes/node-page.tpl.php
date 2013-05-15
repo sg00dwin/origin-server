@@ -1,14 +1,10 @@
-<div id="node-<?php print $node->nid; ?>" class="<?php print $node->type; ?> node<?php if ($sticky) { print ' sticky'; } ?><?php if (!$status) { print ' node-unpublished'; } ?>">
+<?php if (!$status) { ?><div class="node-unpublished"><?php } ?>
 
-<?php //print theme('user_picture', $node); ?>
-  <?php // Don't print title on page content, it'll be at the top of the page ?>
   <?php if ($submitted): ?>
     <span class="submitted"><?php print $submitted; ?></span>
   <?php endif; ?>
 
-  <div class="content clear-block">
-    <?php print $content ?>
-  </div>
+  <?php print $content ?>
 
   <?php if ($taxonomy): ?>
     <div class="terms">Tags: <?php print $terms ?></div>
@@ -18,4 +14,4 @@
     <div class="links"><?php print $links; ?></div>
   <?php endif; ?>
 
-</div>
+<?php if (!$status) { ?></div><?php } ?>

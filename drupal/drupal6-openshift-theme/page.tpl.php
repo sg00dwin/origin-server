@@ -8,17 +8,17 @@
     <div id="content" class="section-striped">
       <div class="container"><div class="row-content">
       <div class='row row-flush-right'>
-        <?php if ($layout == 'left' || $layout == 'both') :?>
-      	<div class="column-navbar">      	
-        	<a data-toggle="collapse" data-target=".nav-collapse" class="btn btn-navbar">
-        	<span class="pull-left">Navigate</span>
-        	<span class="pull-right">
-        	<span class="icon-bar"></span>
-        	<span class="icon-bar"></span>
-        	<span class="icon-bar"></span>
-        	</span>
-        	</a>
+        <div class="column-navbar">       
+          <a data-toggle="collapse" data-target=".nav-collapse" class="btn btn-navbar">
+          <span class="pull-left">Navigate</span>
+          <span class="pull-right">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          </span>
+          </a>
         </div>
+        <?php if ($layout == 'left' || $layout == 'both') :?>
         <div class="column-nav lift-less grid-wrapper">
           <div class="nav-collapse collapse">
             <nav class="span3">
@@ -33,6 +33,7 @@
 
         <?php else :?>
           <div class="column-content column-content-page lift grid-wrapper">
+            <div class="nav-collapse collapse"></div>
             <div class="span12 span-flush-right">
         <?php endif; ?>
 
