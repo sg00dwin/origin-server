@@ -1,4 +1,3 @@
-#@runtime_extended1
 @runtime_extended
 @runtime_extended_other1
 Feature: Scaling Verification Tests

@@ -7,6 +7,7 @@ module Account
 
     # This mixin allows us to define multiple Captcha types
     include CaptchaHelper
+    include LogHelper
 
     included do
       before_filter :set_captcha_vars
@@ -28,16 +29,16 @@ module Account
       # Run validations
       valid = @user.valid?
 
-      logger.warn "Starting user creation: #{@user.email_address}"
+      logger.debug "Starting user creation: #{@user.email_address}"
 
       # See if the captcha secret was provided
       if skip_captcha?
-        logger.warn "Captcha secret provided - ignoring captcha"
+        logger.debug "Captcha secret provided - ignoring captcha"
       else
         # Remove the captcha_secret since it was wrong
         @captcha_secret = nil
         if sauce_testing? #Checks for sauce_testing cookie and development Rails
-          logger.warn "Sauce testing cookie provided - ignoring captcha"
+          logger.debug "Sauce testing cookie provided - ignoring captcha"
         else
           logger.debug "Checking captcha"
           # Verify the captcha
@@ -45,6 +46,8 @@ module Account
             logger.debug "Captcha check failed"
             @captcha_status = "Failed"
             @user.errors[:captcha] = "Incorrect captcha submitted"
+
+            user_action :captcha, false, :email => @user.email_address
           else
             logger.debug "Captcha check passed"
           end
@@ -73,7 +76,11 @@ module Account
 
       logger.debug "Confirmation URL: #{confirmationUrl}"
 
-      render :new and return unless @user.errors.empty?
+      unless @user.errors.empty?
+        user_action :create_user, false, :email => @user.email_address, :confirmation_code => @user.token
+
+        render :new and return
+      end
 
       # Successful user registration event for analytics
       @event = 'event29'
@@ -86,6 +93,9 @@ module Account
       # Store these in session so we can use it in the redirected method
       session[:captcha_status] = "Passed"
       session[:captcha_type]   = @captcha_type
+
+      # Log the successful user creation
+      user_action :create_user, true, :email => @user.email_address, :confirmation_code => @user.token, :promo_code => @user.promo_code.presence
 
       redirect_to complete_account_path(:promo_code => @user.promo_code.presence)
     end

@@ -1,4 +1,3 @@
-#@runtime_extended1
 @runtime
 @runtime_extended_other1
 Feature: Cartridge Runtime Standard Checks (Zend)
