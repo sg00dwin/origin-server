@@ -123,6 +123,8 @@ def migrate_gear(login, app_name, gear_uuid, version)
           rescue Timeout::Error
             raise "Command '#{migrate_cmd}' timed out"
           end
+          gear.quarantined = false
+          gear.save
         else
           out << "WARNING: Gear not found with uuid #{gear_uuid} for app '#{app_name}' and user '#{login}'\n"
         end
