@@ -4,6 +4,7 @@
 # All agents allowed
 User-agent: *
 
+Allow: /app/account/new
 Disallow: /broker/
 Disallow: /app/console/
 Disallow: /app/account/
