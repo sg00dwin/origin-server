@@ -127,7 +127,7 @@ module OpenShiftMigration
     libra_domain = get_config_value('CLOUD_DOMAIN')
     gear_name = nil
     app_name = nil
-    output = "Beginning V1 -> V2 migration\n"
+    output = ''
 
     gear_home = "#{libra_home}/#{uuid}"
     begin
@@ -146,9 +146,14 @@ module OpenShiftMigration
       return output, exitcode
     end
 
+    if already_v2_gear(gear_home)
+      return "Skipping V1 -> V2 migration because gear appears to already be V2\n", 0
+    end
+
     progress = MigrationProgress.new(uuid)
 
     begin
+      output << "Beginning V1 -> V2 migration\n"
       output << inspect_gear_state(progress, gear_home)
       output << migrate_stop_lock(progress, uuid, gear_home)
       output << stop_gear(progress, uuid)
@@ -180,6 +185,11 @@ module OpenShiftMigration
     end
 
     [output, exitcode]
+  end
+
+  def self.already_v2_gear(gear_home)
+    migration_metadata = Dir.glob(File.join(gear_home, 'app-root', 'data', '.migration_complete*'))
+    (OpenShift::Utils::Sdk.new_sdk_app?(gear_home) && migration_metadata.size == 0)
   end
 
   def self.inspect_gear_state(progress, gear_home)
@@ -400,7 +410,7 @@ module OpenShiftMigration
           end
 
           if progress.incomplete? "#{name}_erb"
-            cart_model.process_erb_templates(c.directory)
+            cart_model.process_erb_templates(c)
             output << progress.mark_complete("#{name}_erb")
           end
 
