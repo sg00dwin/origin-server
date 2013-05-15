@@ -8,6 +8,11 @@ module OpenShiftMigration
       cartridge_dir = File.join(user.homedir, 'python')
 
       Util.add_cart_env_var(user, 'python', 'OPENSHIFT_PYTHON_VERSION', '3.3')
+      Util.add_cart_env_var(user, 'python', 'OPENSHIFT_PYTHON_PATH_ELEMENT',
+                            File.join(cartridge_dir, 'virtenv','venv', 'bin'))
+      Util.add_cart_env_var(user, 'python', 'LD_LIBRARY_PATH',
+                            File.join(cartridge_dir, 'opt', 'lib'))
+
       FileUtils.mkpath(File.join(cartridge_dir, 'virtenv'))
 
       directories = %w(logs virtenv)
