@@ -42,7 +42,7 @@ textarea::-webkit-input-placeholder {
   margin-top: -250px;
 }
 .lift-less {
-  margin-top: -230px;
+  margin-top: -240px;
 }
 // Apply to the appropriate element above a lifted item
 .lift-counter {
@@ -886,10 +886,12 @@ h1.ribbon {
 .column-content {
   background-color: $contentColumnBackgroundColor;
   position: relative;
-  padding-top: 50px;
+  padding-top: 25px;
   position: relative;
+
   &.column-content-page {
     padding-top: 60px;
+
     &:before {
       position: absolute;
       content: "";
@@ -903,6 +905,7 @@ h1.ribbon {
       opacity: .07;
       z-index: 1;
     }
+
     > div:first-child {
       position: relative;
       z-index: 2;
@@ -1044,7 +1047,7 @@ body.home {
   }
 }
 
-@media (min-width: 767px) {
+@media (min-width: 768px) {
 	.nav-collapse.collapse {
     height: auto !important;
     overflow: visible !important;
@@ -1055,7 +1058,7 @@ body.home {
 	overflow: visible !important; /* display column-nav */ 
 }
 
-@media (min-width: 767px) and (max-width: 980px) {
+@media (min-width: 768px) and (max-width: 980px) {
 	.home #buzz .column-buzz {
   	margin-left:22px;
   	margin-right:22px;

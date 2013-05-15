@@ -37,7 +37,6 @@
         <?php endif; ?>
 
             <?php print $content_header; ?>
-            <?php if ($tabs) :?><?php print $tabs; ?><?php endif; ?>
             
           <?php if ($layout == 'right' || $layout == 'both') :?>
             <div class="span4 pull-right column-floating">
@@ -64,6 +63,8 @@
             <?php print $content_prefix; ?>
             <?php print $content; ?>
             <?php print $content_suffix; ?>
+
+            <?php if ($tabs) :?><?php print $tabs; ?><?php endif; ?>
          </div>
 
           </div>

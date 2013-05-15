@@ -1,5 +1,9 @@
 <?php
 
+function redhat_frontpage_install() {
+  db_query("UPDATE {system} SET weight = 50 where type = 'module' and name = 'redhat_frontpage'");
+}
+
 function redhat_frontpage_menu() {
 
   $not_found = array(
