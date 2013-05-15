@@ -3,9 +3,11 @@ locked_files:
 - ~/.pearrc
 - configuration/
 - metadata/
+- metadata/*
 - env/
 - conf/
-- template/
+- bin/
+- bin/*
 - gui/
 - doc/
 - include/
