@@ -302,7 +302,7 @@ module OpenShiftMigration
         content = IO.read(vars_file)
 
         content.each_line do |line|
-          if line.chomp =~ /export ([^=]+)=\'([^\']+)\'/
+          if line.chomp =~ /export ([^=]+)=[\'\"]([^\'\"]+)[\'\"]/
             key = $1
             value = $2
 
@@ -345,7 +345,7 @@ module OpenShiftMigration
         content = IO.read(entry).chomp
         if content =~ /^export /
           output << "Migrating #{File.basename(entry)} to raw value\n"
-          content.sub!(/^export [^=]+=\'?([^\']*)\'?/, '\1')
+          content.sub!(/^export [^=]+=[\'\"]?([^\'\"]*)[\'\"]?/, '\1')
           IO.write(entry, content)
         end
       end

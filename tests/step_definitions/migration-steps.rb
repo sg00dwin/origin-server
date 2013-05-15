@@ -87,24 +87,23 @@ end
 Given /^the application has a TYPELESS_TRANSLATED_VARS env file$/ do
   typeless_vars = %Q{
 export TEST_VAR_1='foo'
-export TEST_VAR_2='bar'    
+export TEST_VAR_2='bar'
+export TEST_VAR_3="baz"   
   }
 
   IO.write(File.join($home_root, @app.uid, '.env', 'TYPELESS_TRANSLATED_VARS'), typeless_vars)
 end
 
 Then /^the TYPELESS_TRANSLATED_VARS variables will be discrete variables$/ do
-  test_var = File.join($home_root, @app.uid, '.env', 'TEST_VAR_1')
+  check_var('TEST_VAR_1', 'foo')
+  check_var('TEST_VAR_2', 'bar')
+  check_var('TEST_VAR_3', 'baz')
+end
 
-  content = IO.read(test_var)
-
-  assert content == 'foo'
-
-  test_var = File.join($home_root, @app.uid, '.env', 'TEST_VAR_2')
-
-  content = IO.read(test_var)
-
-  assert content == 'bar'  
+def check_var(name, content)
+  var = File.join($home_root, @app.uid, '.env', name)
+  actual_content = IO.read(var)
+  assert actual_content == content
 end
 
 Then /^the migration metadata will be cleaned up$/ do 
