@@ -26,6 +26,14 @@ Feature: V2 Migrations for V1 apps
     And the application should not be accessible
     And the migration metadata will be cleaned up
 
+  Scenario: Scalable PHP + mysql app migration
+    Given a new client created scalable php-5.3 application
+    And the embedded mysql-5.1 cartridge is added
+    And the application is migrated to the v2 cartridge system
+
+    Then the environment variables will be migrated to raw values
+    And the mysql uservars entries will be migrated to a namespaced env directory
+
   Scenario: PHP + Mysql migration
     Given a new client created php-5.3 application
     Given the embedded mysql-5.1 cartridge is added
