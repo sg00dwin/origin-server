@@ -617,39 +617,9 @@ function user_profile_context_default_contexts() {
   $context->name = 'viewing-poll';
   $context->description = '';
   $context->tag = '';
-  $context->conditions = array(
-    'path' => array(
-      'values' => array(
-        'forums/*' => 'forums/*',
-        'community' => 'community',
-        'ideas' => 'ideas',
-        'videos' => 'videos',
-        'ideas/*' => 'ideas/*',
-        'events' => 'events',
-        'events/*' => 'events/*',
-        'blogs' => 'blogs',
-        'get-involved' => 'get-involved',
-      ),
-    ),
-    'user' => array(
-      'values' => array(
-        'authenticated user' => 'authenticated user',
-      ),
-    ),
-  );
-  $context->reactions = array(
-    'block' => array(
-      'blocks' => array(
-        'poll-0' => array(
-          'module' => 'poll',
-          'delta' => 0,
-          'region' => 'sidebar_right',
-          'weight' => 20,
-        ),
-      ),
-    ),
-  );
-  $context->condition_mode = 1;
+  $context->conditions = array();
+  $context->reactions = array();
+  $context->condition_mode = 0;
   $export['viewing-poll'] = $context;
 
   return $export;
