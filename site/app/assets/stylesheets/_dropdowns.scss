@@ -1,21 +1,40 @@
+.dropdown-menu {
+  @include border-radius(0);
+}
+
+.dropdown-toggle {
+  &:hover {
+    .dropdown-menu {
+      display: block;
+    }
+  }
+}
+
 .dropdown-menu-mega {
-  background: none;
+  background: none repeat scroll 0 0 #F5F5F5;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.65);
   border: none;
-  box-shadow: none;
-  left: -7px;
+  left: 50%;
+  margin-left: -80px;
   position: absolute;
-  width: 160px;
-  padding: 0;
+  width: 120px;
+  min-width: 120px;
+  padding: 20px;
+
+  .nav-list {
+    padding: 0;
+    margin: 0;
+  }
 
   &.dropdown-menu-two-column {
-    left: -77px;
-    width: 300px;
+    width: 260px;
+    margin-left: -150px;
 
-    .dropdown-menu-body:before {
+    &:before {
       left: 140px;
     }
 
-    .dropdown-menu-body > ul {
+    > ul {
       float: left;
       width: 50%;
 
@@ -27,9 +46,10 @@
     }
   }
 
-  li > a{
+  .nav-list > li > a{
     color: #111111;
     padding: 0;
+    margin: 0;
 
     &:hover {
       color: #111111;
@@ -38,60 +58,49 @@
     }
   }
 
-  .dropdown-menu-body {
-    background: none repeat scroll 0 0 #F5F5F5;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.65);
-    margin: 25px 0 0;
-    padding: 20px;
-
-    &:before {
-      border-color: transparent transparent #F5F5F5;
-      border-style: solid;
-      border-width: 0 10px 10px;
-      content: "";
-      left: 70px;
-      position: absolute;
-      top: 15px;
-    }
-
-    &:after {
-     clear: both;
-     content: ".";
-     display: block;
-     height: 0;
-     visibility: hidden;
-    }
+  &:after {
+   clear: both;
+   content: ".";
+   display: block;
+   height: 0;
+   visibility: hidden;
+  }
     
-    > ul {
-      margin: 0;
+  > ul {
+    margin: 0;
 
-      > li {
-        text-align: left;
-        margin-bottom: 10px;
+    > li {
+      text-align: left;
+      margin-bottom: 10px;
 
-        &:last-child {
-          margin-bottom: 0;
-        }
+      &:last-child {
+        margin-bottom: 0;
       }
+    }
 
-      ul {
-        font-family: $headerFontFamily;
-        font-size: 12px;
-        margin-left: 10px;
-        margin-top: 6px;
+    ul.nav-list {
+      font-family: $headerFontFamily;
+      font-size: 12px;
+      margin-left: 10px;
+      margin-top: 6px;
 
-        li {
-          margin-bottom: 4px;
-        }
+      li {
+        margin-bottom: 4px;
       }
     }
   }
 }
 
-.dropdown-toggle {
-  &:hover {
-    .dropdown-menu {
-      display: block;
+@media (max-width: 767px) {
+  .dropdown-menu-mega.dropdown-menu-two-column {
+    width: 120px;
+    > ul {
+      float: none;
+      + ul {
+        margin-top: 10px;
+        border-left: none;
+        padding-left: 0;
+      }
     }
   }
 }
