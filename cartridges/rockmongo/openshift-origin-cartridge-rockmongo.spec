@@ -2,7 +2,7 @@
 
 Summary:   Embedded RockMongo support
 Name:      openshift-origin-cartridge-rockmongo
-Version: 0.2.1
+Version: 0.2.2
 Release:   1%{?dist}
 Group:     Applications/Internet
 License:   ASL 2.0 and NBSD
@@ -44,6 +44,18 @@ Provides RockMongo V2 cartridge support
 %doc %{cartridgedir}/README.md
 
 %changelog
+* Thu May 16 2013 Adam Miller <admiller@redhat.com> 0.2.2-1
+- locking fixes and adjustments (dmcphers@redhat.com)
+- Merge pull request #1367 from fotioslindiakos/locked_files
+  (dmcphers+openshiftbot@redhat.com)
+- WIP Cartridge Refactor -- Cleanup spec files (jhonce@redhat.com)
+- Added erb processing to managed_files.yml (fotios@redhat.com)
+- Card online_runtime_297 - Allow cartridges to use more resources
+  (jhonce@redhat.com)
+- Card online_runtime_297 - Allow cartridges to use more resources
+  (jhonce@redhat.com)
+- Card online_runtime_272 - RockMongo migration (jhonce@redhat.com)
+
 * Wed May 08 2013 Adam Miller <admiller@redhat.com> 0.2.1-1
 - bump_minor_versions for sprint 28 (admiller@redhat.com)
 
