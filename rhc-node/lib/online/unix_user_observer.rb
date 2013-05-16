@@ -45,7 +45,7 @@ module OpenShift
     def before_unix_user_destroy(user)
       out,err,rc = shellCmd("service libra-tc status #{user.name} > /dev/null 2>&1")
       if rc == 0
-        shellCmd("service libra-tc stopuser #{user.name} > /dev/null")
+        shellCmd("service libra-tc deluser #{user.name} > /dev/null")
       end
     end
 

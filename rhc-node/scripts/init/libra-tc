@@ -52,7 +52,8 @@ function netclass() {
 # List the OpenShift guest users
 #
 libra_users() {
-    grep 'OpenShift guest' /etc/passwd | cut -d: -f1
+    GEAR_GECOS=${GEAR_GECOS:='OpenShift guest'}
+    grep "$GEAR_GECOS" /etc/passwd | cut -d: -f1
 }
 
 #
@@ -81,6 +82,8 @@ TC=/sbin/tc
 
 # The network interface we're planning on limiting bandwidth.
 tc_if=${tc_if:="eth0"}             # Interface
+tc_if_mtu=$( ip link show dev $tc_if | sed -n -e '/mtu / { s/.*mtu \([0-9]*\).*/\1/; p }' )
+
 
 # total bandwidth = 10240mbit
 # libra bandwidth = 80% ~= 8000mbit
@@ -92,70 +95,169 @@ tc_user_share=${tc_user_share:=2}
 tc_oversubscribe=${tc_oversubscribe:=10}
 OVERSUBSCRIBE=$(expr $tc_user_share \* $tc_oversubscribe)
 tc_user_limit=${tc_user_limit:=$OVERSUBSCRIBE}
-# tc quantum is rate / r2q
-# r2q is 10 by default
-# r2q will generate a warning if 1500 > quantum > 60000 
-tc_rate_to_quantum_ratio=200
+tc_min_quantum=${tc_min_quantum:=$tc_if_mtu}
+tc_user_quantum=${tc_user_quantum:=$(expr $tc_if_mtu \* 8)}
+
+# "Unlimited" users get a higher share and are allowed to burst up to
+# the max bandwidth.
+tc_high_user_share=${tc_high_user_share:=$(expr $tc_user_share \* 10)}
+tc_high_user_limit=${tc_high_user_limit:=$tc_max_libra}
+tc_high_user_quantum=${tc_high_quantum:=$(expr $tc_if_mtu \* 16)}
+
+# These are in kilobits/s
+tc_throttle_user_share=${tc_throttle_user_share:=$(expr $tc_user_share \* 1024 \/ 10)}
+tc_throttle_user_limit=${tc_throttle_user_limit:=$tc_throttle_user_share}
+tc_throttle_user_quantum=${tc_throttle_quantum:=$tc_min_quantum}
+
+# Where we keep track of throttled/high users
+tc_user_dir=${tc_user_dir:="${GEAR_BASE_DIR}/.tc_user_dir"}
+
 
 start() {
 
 # We'll use Hierarchical Token Bucket (HTB) to shape bandwidth.
 # For detailed configuration options, please consult Linux man
 # page.
+    echo -n "Starting bandwidth shaping: "
 
-# The first line creates the root qdisc
-    ${NOOP} $TC qdisc add dev $tc_if root handle 1: htb r2q $tc_rate_to_quantum_ratio
+    cat <<EOF | ${NOOP} $TC -force -batch
+qdisc add dev $tc_if root handle 1: htb
+class add dev $tc_if parent 1: classid 1:1 htb rate ${tc_max_libra}mbit
+filter add dev $tc_if parent 1: protocol ip prio 10 handle 1: cgroup
+EOF
+    if [ $? -eq 0 ]
+    then
+        echo_success
+    else
+        echo_failure
+    fi
+    echo
 
-# This line creates a container for tagged Libra traffic
-    # Since user classes start at 1:1
-    ${NOOP} $TC class add dev $tc_if parent 1: classid 1:1 htb rate ${tc_max_libra}mbit
-
-# for each user
     for USERNAME in `libra_users`
     do
 	startuser $USERNAME
     done
 
-    # add the filter line to put cgroup tagged traffic into the correct class
-    ${NOOP} $TC filter add dev $tc_if parent 1: protocol ip prio 10 handle 1: cgroup
 }
 
 stop() {
-
-# Stop the bandwidth shaping.
+    echo -n "Stopping bandwidth shaping: "
     ${NOOP} $TC qdisc del dev $tc_if root
 
+    if [ $? -eq 0 ]
+    then
+        echo_success
+    else
+        echo_failure
+    fi
+    echo
 }
 
 startuser() {
     # USERNAME=$1
-    echo "Starting user $1"
+    echo -n "Starting tc for $1: "
     USERID=`uid $1`
     NETCLASS=`netclass $USERID`
-    ${NOOP} $TC class add dev $tc_if parent 1:1 classid 1:$NETCLASS htb rate ${tc_user_share}mbit ceil ${tc_user_limit}mbit
 
-    ${NOOP} $TC qdisc add dev $tc_if parent 1:$NETCLASS handle ${NETCLASS}: htb r2q $tc_rate_to_quantum_ratio default 1
-    ${NOOP} $TC class add dev $tc_if parent ${NETCLASS}: classid ${NETCLASS}:1 htb rate ${tc_user_share}mbit ceil ${tc_user_limit}mbit
-    ${NOOP} $TC class add dev $tc_if parent ${NETCLASS}: classid ${NETCLASS}:2 htb rate 128kbit ceil 256kbit
-    ${NOOP} $TC class add dev $tc_if parent ${NETCLASS}: classid ${NETCLASS}:3 htb rate  12kbit ceil  24kbit
-    ${NOOP} $TC filter add dev $tc_if parent ${NETCLASS}: protocol ip prio 10 u32 match ip dport 587 0xffff flowid ${NETCLASS}:2
-    ${NOOP} $TC filter add dev $tc_if parent ${NETCLASS}: protocol ip prio 10 u32 match ip dport  25 0xffff flowid ${NETCLASS}:3
-    ${NOOP} $TC filter add dev $tc_if parent ${NETCLASS}: protocol ip prio 10 u32 match ip dport 465 0xffff flowid ${NETCLASS}:3
+    # Select what type of user.  Note that a user can high bandwidth
+    # normally but throttled for a specific and temporary reason.
+    if [ -e "${tc_user_dir}/${1}_throttle" ]
+    then
+        echo -n "throttled"
+        this_user_share="${tc_throttle_user_share}kbit"
+        this_user_limit="${tc_throttle_user_limit}kbit"
+        this_user_quantum="${tc_throttle_user_quantum}"
+    elif [ -e "${tc_user_dir}/${1}_high" ]
+    then
+        echo -n "high"
+        this_user_share="${tc_high_user_share}mbit"
+        this_user_limit="${tc_high_user_limit}mbit"
+        this_user_quantum="${tc_high_user_quantum}"
+    else
+        echo -n "normal"
+        this_user_share="${tc_user_share}mbit"
+        this_user_limit="${tc_user_limit}mbit"
+        this_user_quantum="${tc_user_quantum}"
+    fi
+
+    cat <<EOF | ${NOOP} $TC -force -batch
+# Overall class for the gear
+class add dev $tc_if parent 1:1 classid 1:$NETCLASS htb rate ${this_user_share} ceil ${this_user_limit} quantum ${this_user_quantum}
+
+# Specific constraints within the gear's limit
+qdisc add dev $tc_if parent 1:$NETCLASS handle ${NETCLASS}: htb default 0
+class add dev $tc_if parent ${NETCLASS}: classid ${NETCLASS}:2 htb rate 128kbit ceil 256kbit quantum $tc_min_quantum
+class add dev $tc_if parent ${NETCLASS}: classid ${NETCLASS}:3 htb rate  12kbit ceil  24kbit quantum $tc_min_quantum
+filter add dev $tc_if parent ${NETCLASS}: protocol ip prio 10 u32 match ip dport 587 0xffff flowid ${NETCLASS}:2
+filter add dev $tc_if parent ${NETCLASS}: protocol ip prio 10 u32 match ip dport  25 0xffff flowid ${NETCLASS}:3
+filter add dev $tc_if parent ${NETCLASS}: protocol ip prio 10 u32 match ip dport 465 0xffff flowid ${NETCLASS}:3
+EOF
+
+    if [ $? -eq 0 ]
+    then
+        echo_success
+    else
+        echo_failure
+    fi
+    echo
 }
 
 stopuser() {
     # USERNAME=$1
 
-    echo "Stopping user $1"
+    echo -n "Stopping tc for $1: "
     USERID=`uid $1`
     NETCLASS=`netclass $USERID`
     ${NOOP} $TC class del dev $tc_if parent 1:1 classid 1:$NETCLASS
+
+    if [ $? -eq 0 ]
+    then
+        echo_success
+    else
+        echo_failure
+    fi
+    echo
 }
 
 
-restart() {
+throttleuser() {
+    touch "${tc_user_dir}/${1}_throttle"
+    restartuser $1
+}
 
-    # Self-explanatory.
+nothrottleuser() {
+    rm -f "${tc_user_dir}/${1}_throttle"
+    restartuser $1
+}
+
+highuser() {
+    touch "${tc_user_dir}/${1}_high"
+    restartuser $1
+}
+
+nohighuser() {
+    rm -f "${tc_user_dir}/${1}_high"
+    restartuser $1
+}
+
+normaluser() {
+    rm -f "${tc_user_dir}/${1}_high"
+    rm -f "${tc_user_dir}/${1}_throttle"
+    restartuser $1
+}
+
+deluser() {
+    rm -f "${tc_user_dir}/${1}_high"
+    rm -f "${tc_user_dir}/${1}_throttle"
+    stopuser $1
+}
+
+restartuser() {
+    stopuser $1
+    startuser $1
+}
+
+restart() {
     stop
     sleep 1
     start
@@ -194,32 +296,52 @@ status() {
 case "$1" in
 
     start)
-
-	echo -n "Starting bandwidth shaping: "
 	start
-	echo "done"
 	;;
 
     stop)
-
-	echo -n "Stopping bandwidth shaping: "
 	stop
-	echo "done"
 	;;
 
     startuser)
-	echo -n "Starting bandwidth shaping for user $2"
 	startuser $2
 	;;
 
     stopuser)
-	echo -n "Stopping bandwidth shaping for user $2"
 	stopuser $2
 	;;
 
+    restartuser)
+	restartuser $2
+	;;
+
+    throttleuser)
+	throttleuser $2
+	;;
+
+    nothrottleuser)
+	nothrottleuser $2
+	;;
+
+    highuser)
+	highuser $2
+	;;
+
+    nohighuser)
+	nohighuser $2
+	;;
+
+    normaluser)
+	normaluser $2
+	;;
+
+    deluser)
+        deluser $2
+        ;;
+
     restart)
 
-	echo -n "Restarting bandwidth shaping: "
+	echo "Restarting bandwidth shaping: "
 	restart
 	echo "done"
 	;;
@@ -234,7 +356,7 @@ case "$1" in
     *)
 
 	pwd=$(pwd)
-	echo "Usage: $0 {start|stop|restart|status [username]|startuser <username>|stopuser <username>}"
+	echo "Usage: $0 {start|stop|restart|status [username]|startuser <username>|stopuser <username>|restartuser <username>|throttleuser <username>|highuser <username>|normaluser <username>|deluser <username>}"
 	;;
 
 esac
