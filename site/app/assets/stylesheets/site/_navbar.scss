@@ -451,84 +451,6 @@
   }
 }
 
-
-.nav.nav-tabs.nav-tabs-secondary {
-  background-color: #f0f0f0;
-  border-bottom: 0;
-  display: block;
-  float: right;
-  margin-top: -30px;
-  padding: 0 6px;
-  position: relative;
-  z-index: 1;
-
-  &:before {
-    border-bottom: 6px solid rgba(0, 0, 0, 0.35);
-    border-left: 6px solid rgba(0, 0, 0, 0.35);
-    content: "";
-    height: 44px;
-    left: -6px;
-    position: absolute;
-    top: 6px;
-    width: 100%;
-  }
-  &:first-child li:before {
-    border-bottom: 6px solid rgba(0, 0, 0, 0.075);
-    border-left: 6px solid transparent;
-    content: "";
-    left: -6px;
-    position: absolute;
-  }
-  > li {
-    display: inline-block;
-    text-align: center;
-    margin: 0;
-    &.active,
-    &.active:hover {
-      opacity: 1;
-      color: #000;
-      a:after {
-        background-color: $openshiftBrightRed;
-        bottom: 16px;
-        content: "";
-        display: block;
-        height: 2px;
-        left: 35px;
-        right: 35px;
-        position: absolute;
-      }
-    }
-    &:hover {
-      a:after {
-        background-color: $grayLight;
-        bottom: 16px;
-        content: "";
-        display: block;
-        height: 2px;
-        left: 35px;
-        right: 35px;
-        position: absolute;
-      }
-    }
-    a {
-      padding: 18px 36px;
-      color: inherit;
-      opacity: .8;
-      font-size: 15px;
-      white-space: nowrap;
-      position: relative;
-      border: 0;
-      background-color: transparent;
-      @include border-radius(0);
-      &:hover {
-        opacity: 1;
-        background-color: transparent;
-      }
-    }
-  }
-}
-
-
 // Responsive styles
 // --------------------------
 
@@ -539,9 +461,6 @@
         padding: 18px 24px;
       }
     }
-  }
-  .nav.nav-tabs.nav-tabs-secondary {
-    //margin-top: -30px;
   }
 }
 @media (max-width: 979px) {
@@ -567,33 +486,6 @@
       > li > a {
         padding: 10px;
         font-size: 14.25px;
-      }
-    }
-  }
-  .nav.nav-tabs.nav-tabs-secondary {
-    margin-top: -24px;
-    &:before {
-      height: 36px
-    }
-    > li {
-      &.active,
-      &.active:hover {
-        a:after {
-          bottom: 10px;
-          left: 22px;
-          right: 22px;
-        }
-      }
-      &:hover {
-        a:after {
-          bottom: 10px;
-          left: 22px;
-          right: 22px;
-        }
-      }
-      a {
-        padding: 14px 14px;
-        font-size: 14px;
       }
     }
   }
@@ -650,7 +542,169 @@
       }
     }
   }
+}
+@media (max-width: 480px) {
+  .navbar {
+    .brand {
+      margin-left: 0;
+      a .brand-image {
+        width: 70px;
+        height: 73px;
+      }
+    }
+    .nav {
+      margin-left: 32%;
+      li {
+        width: 50%;
+        a {
+          padding: 0 0 10px;
+          font-size: 12.5px;
+        }
+      }
+    }
+  }
+}
 
+/* ie conditionals */
+
+.ie8 .navbar .brand a .brand-image {
+  background: image-url("logo-wide-white.png") no-repeat;
+  }
+
+@media (max-width: 979px) {
+.ie8 .navbar .brand a .brand-image {
+  background: image-url("openshift-logo-horizontal194.png") no-repeat;
+  }
+}
+@media (max-width: 767px) {
+  .ie8 .navbar .brand a .brand-image {
+    background: image-url("openshift-logo-vertical86.png") center top no-repeat;
+    height: 86px;
+    padding-bottom: 3px;
+    width: 86px;
+  }
+}
+
+// Secondary tabs
+// --------------------------
+
+$tabPaddingTop: 18px;
+$tabPaddingTopNarrow: 14px;
+$tabPaddingTopTablet: 10px;
+
+.nav.nav-tabs.nav-tabs-secondary {
+  background-color: #f0f0f0;
+  border-bottom: 0;
+  display: block;
+  float: right;
+  margin-top: -$tabPaddingTop;
+  padding: 0 6px;
+  position: relative;
+  z-index: 2;
+
+  &:before {
+    border-bottom: 6px solid rgba(0, 0, 0, 0.35);
+    border-left: 6px solid rgba(0, 0, 0, 0.35);
+    content: "";
+    height: 44px;
+    left: -6px;
+    position: absolute;
+    top: 6px;
+    width: 100%;
+  }
+  &:first-child li:before {
+    border-bottom: 6px solid rgba(0, 0, 0, 0.075);
+    border-left: 6px solid transparent;
+    content: "";
+    left: -6px;
+    position: absolute;
+  }
+
+  > li {
+    display: inline-block;
+    text-align: center;
+    margin: 0;
+    &.active,
+    &.active:hover {
+      opacity: 1;
+      color: #000;
+      a:after {
+        background-color: $openshiftBrightRed;
+        bottom: 16px;
+        content: "";
+        display: block;
+        height: 2px;
+        left: 35px;
+        right: 35px;
+        position: absolute;
+      }
+    }
+    &:hover {
+      a:after {
+        background-color: $grayLight;
+        bottom: 16px;
+        content: "";
+        display: block;
+        height: 2px;
+        left: 35px;
+        right: 35px;
+        position: absolute;
+      }
+    }
+    a {
+      padding: $tabPaddingTop 36px;
+      color: inherit;
+      opacity: .8;
+      font-size: 15px;
+      white-space: nowrap;
+      position: relative;
+      border: 0;
+      background-color: transparent;
+      @include border-radius(0);
+      &:hover {
+        opacity: 1;
+        background-color: transparent;
+      }
+    }
+  }
+}
+
+
+// Responsive styles
+// --------------------------
+
+@media (max-width: 1199px) {
+}
+@media (max-width: 979px) {
+  .nav.nav-tabs.nav-tabs-secondary {
+    margin-top: -$tabPaddingTopNarrow;
+    &:before {
+      height: 36px
+    }
+    > li {
+      &.active,
+      &.active:hover {
+        a:after {
+          bottom: 10px;
+          left: 22px;
+          right: 22px;
+        }
+      }
+      &:hover {
+        a:after {
+          bottom: 10px;
+          left: 22px;
+          right: 22px;
+        }
+      }
+      a {
+        padding: $tabPaddingTopNarrow 14px;
+        font-size: 14px;
+      }
+    }
+  }
+}
+@media (max-width: 767px) {
   .nav.nav-tabs.nav-tabs-secondary {
     margin: 0;
     float: none;
@@ -676,54 +730,11 @@
         }
       }
       a {
-        padding: 10px 16px;
+        padding: $tabPaddingTopTablet 16px;
         font-size: 13.5px
       }
     }
   }
 }
-
 @media (max-width: 480px) {
-  .navbar {
-    .brand {
-      margin-left: 0;
-      a .brand-image {
-        width: 70px;
-        height: 73px;
-      }
-    }
-    .nav {
-      margin-left: 32%;
-      li {
-        width: 50%;
-        a {
-          padding: 0 0 10px;
-          font-size: 12.5px;
-        }
-      }
-    }
-  }
-  .nav.nav-tabs.nav-tabs-secondary {
-  }
-}
-
-
-/* ie conditionals */
-
-.ie8 .navbar .brand a .brand-image {
-  background: image-url("logo-wide-white.png") no-repeat;
-  }
-
-@media (max-width: 979px) {
-.ie8 .navbar .brand a .brand-image {
-  background: image-url("openshift-logo-horizontal194.png") no-repeat;
-  }
-}
-@media (max-width: 767px) {
-  .ie8 .navbar .brand a .brand-image {
-    background: image-url("openshift-logo-vertical86.png") center top no-repeat;
-    height: 86px;
-    padding-bottom: 3px;
-    width: 86px;
-  }
 }

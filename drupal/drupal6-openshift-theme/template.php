@@ -785,7 +785,7 @@ function openshift_menu_local_tasks() {
   $output = '';
 
   if ($primary = menu_primary_local_tasks()) {
-    $output .= "<ul class=\"nav nav-pills pull-right primary\">\n". $primary ."</ul>\n";
+    $output .= "<ul class=\"nav nav-pills primary\">\n". $primary ."</ul>\n";
   }
   if ($secondary = menu_secondary_local_tasks()) {
     $output .= "<ul class=\"nav nav-tabs secondary\">\n". $secondary ."</ul>\n";

@@ -18,6 +18,9 @@
           </span>
           </a>
         </div>
+
+        <?php if ($content_header) :?><div class="column-navbar-secondary lift"><div class="nav-collapse collapse"><?php print $content_header; ?></div></div><?php endif; ?>
+
         <?php if ($layout == 'left' || $layout == 'both') :?>
         <div class="column-nav lift-less grid-wrapper">
           <div class="nav-collapse collapse">
@@ -33,12 +36,11 @@
 
         <?php else :?>
           <div class="column-content column-content-page lift grid-wrapper">
-            <div class="nav-collapse collapse"><?php print $content_header; ?></div>
             <div class="span12 span-flush-right">
         <?php endif; ?>
 
           <?php if ($layout == 'right' || $layout == 'both') :?>
-            <div class="span4 pull-right column-floating">
+            <div class="span3 pull-right column-floating nav-collapse collapse">
               <?php print $sidebar_right; ?>
             </div>
           <?php endif; ?>
@@ -49,7 +51,7 @@
               <h1><?php print $heading; ?></h1>
             <?php endif; ?>
 
-              <?php if ($show_messages && $messages): print $messages; endif; ?>
+            <?php if ($show_messages && $messages): print $messages; endif; ?>
             <?php print $breadcrumb; ?>
             <?php if ($forum['new-topic'] == TRUE) :?>
             <div id="forum-header" class="forum-new-topic">
