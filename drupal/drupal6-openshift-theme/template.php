@@ -323,27 +323,21 @@ function _openshift_heading(&$vars) {
   }
   switch ($type) {
   case 'home': $heading = "Overview"; break;
-  case 'ideas':
-  case 'idea': $heading = "Vote on Features"; break;
+  case 'ideas': $heading = "Vote on Features"; break;
   case 'poll':
   case 'polls': $heading = "Polls"; break;
-  case 'wiki_page':
   case 'wikis': $heading = "Open Source Wiki"; break;
-  case 'discussion':
-  case 'groups':
-  case 'group': $heading = "Forum"; break;
+  #case 'discussion':
+  case 'group':
+  case 'groups': $heading = "Forum"; break;
   #case 'documentation': $heading = "Documentation"; break; // no title for some reason
   case 'community': $heading = "Welcome to OpenShift"; break; // override the default link title
   case 'calendar':
-  #case 'event':
-  #case 'events': $heading = "Upcoming Events"; break; // no title for some reason
-  case 'knowledge_base':
-  case 'kb': $heading = "Knowledge Base"; break; // no title for some reason
-  case 'blogs': // no title for some reason
-  case 'blog': $heading = "OpenShift Blog"; break;
-  case 'quickstarts':
-  case 'quickstart': $heading = "QuickStarts"; break;
-  case 'faq': $heading = "Frequently Asked Questions"; break;
+  #case 'knowledge_base': $heading = "Knowledge Base"; break; // no title for some reason
+  #case 'blogs': $heading = "OpenShift Blog"; break;
+  #case 'quickstarts':
+  #case 'quickstart': $heading = "QuickStarts"; break;
+  #case 'faq': $heading = "Frequently Asked Questions"; break;
   #case 'videos': // no title for some reason
   #case 'video': $heading = "Videos"; break;
   default:
@@ -354,9 +348,8 @@ function _openshift_heading(&$vars) {
 }
 
 function openshift_breadcrumb($breadcrumb) {
-  if (!empty($breadcrumb) && count($breadcrumb) > 2) {
-    //array_unshift($breadcrumb, "<a href='http://openshift.redhat.com/app' class='active'>OpenShift</a>");
-    array_shift($breadcrumb);
+  if (!empty($breadcrumb) && count($breadcrumb) > 1) {
+    #array_shift($breadcrumb);
     return '<div class="breadcrumb">' . implode('<span class="divider"> /</span>', $breadcrumb) . '</div>';
   }
 }
@@ -448,8 +441,8 @@ function openshift_preprocess_node(&$vars) {
 function _openshift_theme_subscription_links(&$links) {
   $links = str_replace('<em>', '', $links);
   $links = str_replace('</em>', '', $links);
-  $links = str_replace('Subscribe to: This post', 'Subscribe to this thread', $links);
-  $links = str_replace('Unsubscribe from: This post', 'Unsubscribe from this thread', $links);
+  $links = str_replace('Subscribe to: This post', 'Subscribe to', $links);
+  $links = str_replace('Unsubscribe from: This post', 'Unsubscribe from', $links);
   $links = str_replace('Subscribe to: Discussion posts in', 'Subscribe to ', $links);
   $links = str_replace('Unsubscribe from: Discussion posts in', 'Unsubscribe from ', $links);
   $links = str_replace('Subscribe to: Posts by ', 'Subscribe to ', $links);

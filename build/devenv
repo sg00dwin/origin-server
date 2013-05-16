@@ -53,13 +53,8 @@ module Online
 
     desc "watch", "Watch for changes to your source directory with the 'listen' gem and copy them to the remote image. Not a full replacement for 'sync' - intended to speed Rails development."
     method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-
-    def watch
+    def watch(hostname='verifier')
       config = File.join ENV['HOME'], '.openshiftdev/watch.lua'
-      if File.exists? config
-        say "You have #{config}, which was used for an old mechanism which relied on lsyncd to check for local file changes. It is no longer used. Please remove it."
-      end
-
       @rsync_default_opts = ['-vuzt', '--chmod=ug+rwX']
 
       @source_dir_for = {
@@ -128,7 +123,7 @@ module Online
         :rpm => 0.2,
       }
 
-      @rsync_target_host = 'verifier'
+      @rsync_target_host = hostname
 
       begin
         require 'listen'

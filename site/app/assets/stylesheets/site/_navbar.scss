@@ -591,6 +591,7 @@
 $tabPaddingTop: 18px;
 $tabPaddingTopNarrow: 14px;
 $tabPaddingTopTablet: 10px;
+$tabPaddingSide: 24px;
 
 .nav.nav-tabs.nav-tabs-secondary {
   background-color: #f0f0f0;
@@ -652,7 +653,7 @@ $tabPaddingTopTablet: 10px;
       }
     }
     a {
-      padding: $tabPaddingTop 36px;
+      padding: $tabPaddingTop $tabPaddingSide;
       color: inherit;
       opacity: .8;
       font-size: 15px;
