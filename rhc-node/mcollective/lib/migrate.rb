@@ -296,7 +296,7 @@ module OpenShiftMigration
     output = ''
 
     if progress.incomplete? 'typeless_translated_vars'
-      blacklist = %w(OPENSHIFT_GEAR_CTL_SCRIPT OPENSHIFT_GEAR_TYPE)
+      blacklist = %w(OPENSHIFT_GEAR_CTL_SCRIPT OPENSHIFT_LOG_DIR OPENSHIFT_GEAR_TYPE)
       user = OpenShift::UnixUser.from_uuid(uuid)
       vars_file = File.join(gear_home, '.env', 'TYPELESS_TRANSLATED_VARS')
 
