@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.9.1
+Version: 1.9.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -151,6 +151,18 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Thu May 16 2013 Adam Miller <admiller@redhat.com> 1.9.2-1
+- match node timeouts (dmcphers@redhat.com)
+- fix builds (dmcphers@redhat.com)
+- Merge pull request #1385 from danmcp/master
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1351 from smarterclayton/upgrade_to_mocha_0_13_3
+  (admiller@redhat.com)
+- adding update in progress at the gear level (dmcphers@redhat.com)
+- move v2 migration into standard migration (dmcphers@redhat.com)
+- Upgrade to mocha 0.13.3 (compatible with Rails 3.2.12) (ccoleman@redhat.com)
+- Fix Broker extended usage tests (rpenta@redhat.com)
+
 * Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.9.1-1
 - bump_minor_versions for sprint 28 (admiller@redhat.com)
 
