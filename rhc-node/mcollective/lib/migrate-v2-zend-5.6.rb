@@ -1,5 +1,6 @@
 require_relative 'migrate-util'
 require 'openshift-origin-node/utils/shell_exec'
+require 'openshift-origin-common/utils/path_utils'
 
 module OpenShiftMigration
   class Zend56Migration
@@ -10,27 +11,32 @@ module OpenShiftMigration
 
       cartridge_dir = File.join(user.homedir, 'zend')
       zend_dir = File.join(user.homedir, 'zend')
+      zend_usr_dir = File.join(zend_dir, 'usr/local/zend')
 
-      # FIXME: Sandbox dir is not available in the gear
-      # oo-namespace-init
-      sandbox_dir = File.join('/sandbox/zend')
-      output << "fixing " << sandbox_dir << " " << user.name << "\n"
-      PathUtils.oo_chown(user.name, nil, sandbox_dir)
-      
-      FileUtils.rm_f(File.join(sandbox_dir, 'etc'))
-      FileUtils.ln_sf(File.join(cartridge_dir, 'etc'), File.join(sandbox_dir, 'etc'))
-      FileUtils.rm_f(File.join(sandbox_dir, 'tmp'))
-      FileUtils.ln_sf(File.join(cartridge_dir, 'tmp'), File.join(sandbox_dir, 'etc'))
-      FileUtils.rm_f(File.join(sandbox_dir, 'var'))
-      FileUtils.ln_sf(File.join(cartridge_dir, 'var'), File.join(sandbox_dir, 'var'))
-      FileUtils.rm_f(File.join(sandbox_dir, 'gui/application/data'))
-      FileUtils.ln_sf(File.join(cartridge_dir, 'gui/application/data'), File.join(sandbox_dir, 'gui/application/data'))
-      FileUtils.rm_f(File.join(sandbox_dir, 'gui/lighttpd/etc'))
-      FileUtils.ln_sf(File.join(cartridge_dir, 'gui/lighttpd/etc'), File.join(sandbox_dir, 'gui/lighttpd/etc'))
-      FileUtils.rm_f(File.join(sandbox_dir, 'gui/lighttpd/logs'))
-      FileUtils.ln_sf(File.join(cartridge_dir, 'gui/lighttpd/logs'), File.join(sandbox_dir, 'gui/lighttpd/logs'))
-      FileUtils.rm_f(File.join(sandbox_dir, 'gui/lighttpd/tmp'))
-      FileUtils.ln_sf(File.join(cartridge_dir, 'gui/lighttpd/tmp'), File.join(sandbox_dir, 'gui/lighttpd/tmp'))
+      sandbox_dir = File.join(user.homedir, '.sandbox', user.name)
+      zend_sandbox_dir = File.join(sandbox_dir, 'zend')
+
+      output << "fixing " << zend_sandbox_dir << " " << user.name << "\n"
+
+      PathUtils.oo_chown('root', user.name, sandbox_dir)
+      FileUtils.chmod(0o0755, sandbox_dir)
+      PathUtils.oo_chown('root', user.name, zend_sandbox_dir)
+      FileUtils.chmod(0o0755, zend_sandbox_dir)
+     
+      FileUtils.rm_f(File.join(zend_sandbox_dir, 'etc'))
+      FileUtils.ln_sf(File.join(zend_usr_dir, 'etc'), File.join(zend_sandbox_dir, 'etc'))
+      FileUtils.rm_f(File.join(zend_sandbox_dir, 'tmp'))
+      FileUtils.ln_sf(File.join(zend_usr_dir, 'tmp'), File.join(zend_sandbox_dir, 'tmp'))
+      FileUtils.rm_f(File.join(zend_sandbox_dir, 'var'))
+      FileUtils.ln_sf(File.join(zend_usr_dir, 'var'), File.join(zend_sandbox_dir, 'var'))
+      FileUtils.rm_f(File.join(zend_sandbox_dir, 'gui/application/data'))
+      FileUtils.ln_sf(File.join(zend_usr_dir, 'gui/application/data'), File.join(zend_sandbox_dir, 'gui/application/data'))
+      FileUtils.rm_f(File.join(zend_sandbox_dir, 'gui/lighttpd/etc'))
+      FileUtils.ln_sf(File.join(zend_usr_dir, 'gui/lighttpd/etc'), File.join(zend_sandbox_dir, 'gui/lighttpd/etc'))
+      FileUtils.rm_f(File.join(zend_sandbox_dir, 'gui/lighttpd/logs'))
+      FileUtils.ln_sf(File.join(zend_usr_dir, 'gui/lighttpd/logs'), File.join(zend_sandbox_dir, 'gui/lighttpd/logs'))
+      FileUtils.rm_f(File.join(zend_sandbox_dir, 'gui/lighttpd/tmp'))
+      FileUtils.ln_sf(File.join(zend_usr_dir, 'gui/lighttpd/tmp'), File.join(zend_sandbox_dir, 'gui/lighttpd/tmp'))
      
       output << "generating new .pearrc\n"
       FileUtils.rm_f(File.join(user.homedir, '.pearrc'))
@@ -67,17 +73,6 @@ module OpenShiftMigration
       FileUtils.mkdir_p(File.join(cartridge_dir, 'usr/local/zend/tmp'))
       FileUtils.mkdir_p(File.join(cartridge_dir, 'usr/local/zend/var'))
       FileUtils.mkdir_p(File.join(cartridge_dir, 'usr/local/zend/gui'))
-
-      # FIXME: Workaround until /sandbox symlinks point to the right direction
-      FileUtils.ln_sf(File.join(cartridge_dir, 'usr/local/zend/etc'), File.join(cartridge_dir, 'etc'))
-      FileUtils.ln_sf(File.join(cartridge_dir, 'usr/local/zend/tmp'), File.join(cartridge_dir, 'tmp'))
-      FileUtils.ln_sf(File.join(cartridge_dir, 'usr/local/zend/var'), File.join(cartridge_dir, 'var'))
-      FileUtils.mkdir_p(File.join(cartridge_dir, 'gui/application'))
-      FileUtils.mkdir_p(File.join(cartridge_dir, 'gui/lighttpd'))
-      FileUtils.ln_sf(File.join(cartridge_dir, 'usr/local/zend/gui/application/data'), File.join(cartridge_dir, 'gui/application/data'))
-      FileUtils.ln_sf(File.join(cartridge_dir, 'usr/local/zend/gui/lighttpd/etc'), File.join(cartridge_dir, 'gui/lighttpd/etc'))
-      FileUtils.ln_sf(File.join(cartridge_dir, 'usr/local/zend/gui/lighttpd/logs'), File.join(cartridge_dir, 'gui/lighttpd/logs'))
-      FileUtils.ln_sf(File.join(cartridge_dir, 'usr/local/zend/gui/lighttpd/tmp'), File.join(cartridge_dir, 'gui/lighttpd/tmp'))
 
       directories = %w(etc tmp var gui)
       output << Util.move_directory_between_carts(user, 'zend-5.6', 'zend/usr/local/zend', directories)
