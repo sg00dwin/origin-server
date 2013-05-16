@@ -441,8 +441,8 @@ function openshift_preprocess_node(&$vars) {
 function _openshift_theme_subscription_links(&$links) {
   $links = str_replace('<em>', '', $links);
   $links = str_replace('</em>', '', $links);
-  $links = str_replace('Subscribe to: This post', 'Subscribe to', $links);
-  $links = str_replace('Unsubscribe from: This post', 'Unsubscribe from', $links);
+  $links = str_replace('Subscribe to: This post', 'Subscribe to this', $links);
+  $links = str_replace('Unsubscribe from: This post', 'Unsubscribe from this', $links);
   $links = str_replace('Subscribe to: Discussion posts in', 'Subscribe to ', $links);
   $links = str_replace('Unsubscribe from: Discussion posts in', 'Unsubscribe from ', $links);
   $links = str_replace('Subscribe to: Posts by ', 'Subscribe to ', $links);

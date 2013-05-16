@@ -671,7 +671,11 @@ html.js fieldset.collapsible .fieldset-wrapper {
     .author-bio-box  {
       .author-bio { display: none; }
     }
-  }  
+  }
+
+  .tile .metadata {
+    margin-bottom: 5px;
+  }
 }
 
 .community .quickstart {
