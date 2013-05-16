@@ -238,7 +238,9 @@ module OpenShiftMigration
     if progress.incomplete? 'stop_gear'
       container = OpenShift::ApplicationContainer.from_uuid(uuid)
       container.stop_gear(user_initiated: false)
-      container.force_stop
+
+      OpenShift::UnixUser.kill_procs(container.user.uid)
+
       output << progress.mark_complete('stop_gear')
     end
 
