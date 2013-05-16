@@ -14,6 +14,7 @@ Feature: V2 Migrations for V1 apps
     And the USER_VARS file will not exist
     And the TRANSLATE_GEAR_VARS file will not exist
     And the TYPELESS_TRANSLATED_VARS variables will be discrete variables
+    And the OPENSHIFT_LOG_DIR variable will not be present
     And the migration metadata will be cleaned up
 
   Scenario: Stopped PHP app migration
