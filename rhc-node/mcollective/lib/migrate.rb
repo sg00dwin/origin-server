@@ -440,6 +440,7 @@ module OpenShiftMigration
 
     output = ''
 
+    # Special case: zend has new endpoints in V2
     if name == 'zend'
       output << create_v2_zend_endpoints(progress, user)
     end
@@ -472,6 +473,24 @@ module OpenShiftMigration
               output << "Unable to find migrator for #{cartridge}\n"
             end
             output << progress.mark_complete("#{name}_hook")
+          end
+
+          if progress.incomplete? "#{name}_ownership"
+            target = File.join(user.homedir, c.directory)
+
+            mcs_label = OpenShift::Utils::SELinux.get_mcs_label(user.uid)
+            PathUtils.oo_chown_R(user.uid, user.gid, target)
+            OpenShift::Utils::SELinux.set_mcs_label_R(mcs_label, target)
+
+            # BZ 950752
+            # Find out if we can have upstream set a context for /var/lib/openshift/*/*/bin/*.
+            # The following will break WHEN the inevitable restorecon is run in production.
+            OpenShift::Utils.oo_spawn(
+                "chcon system_u:object_r:bin_t:s0 #{File.join(target, 'bin', '*')}",
+                expected_exitstatus: 0
+            )
+
+            output << progress.mark_complete("#{name}_ownership")
           end
         end
       end
