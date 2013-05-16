@@ -217,7 +217,7 @@
 // NAVIGATION
 // ----------
 
-.navbar .nav {
+.navbar .nav-primary {
   position: relative;
   left: 0;
   display: block;
@@ -228,12 +228,12 @@
   float: right; // redeclare due to specificity
   margin-right: 0; // remove margin on float right nav
 }
-.navbar .nav > li {
+.navbar .nav-primary > li {
   float: left;
 }
 
 // Links
-.navbar .nav > li > a {
+.navbar .nav-primary > li > a {
   float: none;
   // Vertically center the text given $navbarHeight
   padding: 18px 25px;
@@ -394,6 +394,19 @@
     top: -6px;
     left: 10px;
   }
+  &.dropdown-menu-mega {
+    &:before {
+      border-width: 10px;
+      border-bottom-color: #F5F5F5;
+      top: -10px;
+      left: 50%;
+      margin-left: -10px;
+    }
+
+    &:after {
+      display: none;
+    }
+  }
 }
 // Menu position and menu caret support for dropups via extra dropup class
 .navbar-fixed-bottom .nav > li > .dropdown-menu {
@@ -534,7 +547,7 @@
 
 @media (max-width: 1199px) {
   .navbar {
-    .nav {
+    .nav-primary {
       > li > a {
         padding: 18px 24px;
       }
@@ -562,7 +575,7 @@
         }
       }
     }
-    .nav {
+    .nav-primary {
       margin-right: 0;
       > li > a {
         padding: 10px;
@@ -634,19 +647,31 @@
         }
       }
     }
-    .nav {
+    .nav-primary {
       margin-left: 25%;
       width: inherit;
       float: none;
-      li {
+      > li {
         float: left;
         text-align: left;
         width: 33%;
-        a {
+        >a {
           padding: 10px 0;
           font-size: 13.5px;
           margin-bottom: 0;
         }
+      }
+    }
+
+    .nav > li >.dropdown-menu.dropdown-menu-mega {
+      margin-left: 0;
+      left: 0;
+
+      &:before {
+        border-width: 7px;
+        top: -7px;
+        left: 7px;
+        margin-left: 0;
       }
     }
   }

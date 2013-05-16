@@ -898,12 +898,12 @@ function openshift_primary_link_megamenu($link, $visibleChildren) {
     return $block['content'];
   }
   else if(!empty($visibleChildren)){
-    $content = '<div class="dropdown-menu dropdown-menu-mega"><div class="dropdown-menu-body"><ul class="unstyled">';
+    $content = '<div class="dropdown-menu dropdown-menu-mega"><ul class="nav nav-list">';
     foreach( $visibleChildren as $key=>$child) {
       $sublink = $child["link"];                                 
       $sublink['options']['html'] = TRUE;
       $content .= '<li>' . l($sublink['title'], $sublink['href'], $sublink['options']) . '</li>';
     }
-    return $content . '</ul></div></div>';
+    return $content . '</ul></div>';
   }
 }

@@ -7,7 +7,7 @@
                 <div class="brand-text"><strong>Open</strong>Shift</div>
               </a>
             </div>
-            <ul class="nav">
+            <ul class="nav nav-primary">
                 <?php foreach( menu_tree_page_data('primary-links') as $key=>$item) {
                 $link = $item["link"];
                 if (!$link['hidden']) {
@@ -16,7 +16,7 @@
                   $visibleChildren = array();
                   if ($item['below']) {
                     foreach($item['below'] as $childkey=>$child) {
-                      if(!$child['hidden']) {
+                      if(!$child['link']['hidden']) {
                         $visibleChildren[$childkey] = $child;
                       }
                     }
