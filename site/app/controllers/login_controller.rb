@@ -1,5 +1,5 @@
 class LoginController < ApplicationController
-  include LogHelper
+  include Console::LogHelper
 
   layout 'simple'
 

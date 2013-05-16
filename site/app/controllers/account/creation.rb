@@ -7,7 +7,7 @@ module Account
 
     # This mixin allows us to define multiple Captcha types
     include CaptchaHelper
-    include LogHelper
+    include Console::LogHelper
 
     included do
       before_filter :set_captcha_vars
