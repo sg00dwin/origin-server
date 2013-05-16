@@ -376,10 +376,17 @@ module OpenShiftMigration
     output = ''
 
     if progress.incomplete? 'relocate_uservars'
+      blacklist = %w(PYTHON_EGG_CACHE)
+
       uservars_dir = File.join(gear_home, '.env', '.uservars')
 
       Dir.glob(File.join(uservars_dir, '*')).each do |entry|
         name = File.basename(entry)
+
+        if blacklist.include?(name)
+          FileUtils.rm_f(entry)
+          next
+        end
 
         name =~ /OPENSHIFT_([^_]+)/
         cart = $1.downcase
