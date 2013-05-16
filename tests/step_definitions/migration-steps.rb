@@ -111,7 +111,7 @@ Then /^the migration metadata will be cleaned up$/ do
   assert_file_not_exists File.join($home_root, @app.uid, 'app-root', 'runtime', '.premigration_state')
 end
 
-Then /^the (mysql|mongodb) uservars entries will be migrated to a namespaced env directory$/ do |cart|
+Then /^the (mysql|mongodb|postgresql) uservars entries will be migrated to a namespaced env directory$/ do |cart|
   cart_namespaced_dir = File.join($home_root, @app.uid, '.env', cart)
 
   vars = %w(USERNAME PASSWORD HOST PORT URL GEAR_UUID GEAR_DNS).map { |x| "OPENSHIFT_#{cart.upcase}_DB_#{x}"}
