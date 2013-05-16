@@ -11,8 +11,7 @@ require_relative "migrate-v2-diy-0.1"
 require_relative "migrate-v2-haproxy-1.4"
 require_relative "migrate-v2-jbossas-7"
 require_relative "migrate-v2-jbosseap-6.0"
-require_relative "migrate-v2-jbossews-1.0"
-require_relative "migrate-v2-jbossews-2.0"
+require_relative "migrate-v2-jbossews"
 require_relative "migrate-v2-nodejs-0.6"
 require_relative "migrate-v2-perl-5.10"
 require_relative "migrate-v2-php-5.3"
@@ -95,6 +94,11 @@ end
 
 module OpenShiftMigration
   PREMIGRATION_STATE = '.premigration_state'
+
+  # Categorize cartridges to drive the correct configure order during migration
+  FRAMEWORK_CARTS = %w(zend-5.6 diy-0.1 jbossas-7 jbosseap-6.0 jbossews-1.0 jbossews-2.0 jenkins-1.4 nodejs-0.6 perl-5.10 php-5.3 python-2.6 python-2.7 python-3.3 ruby-1.8 ruby-1.9)
+  DB_CARTS        = %w(mysql-5.1 mongodb-2.2 postgresql-8.4)
+  PLUGIN_CARTS    = %w(metrics-0.1 rockmongo-1.1 10gen-mms-agent-0.1 cron-1.4 jenkins-client-1.4 phpmyadmin-3.4 switchyard-0.6)
 
   def self.rm_exists(file)
     # We want all errors reported, except for missing file...
@@ -267,8 +271,8 @@ module OpenShiftMigration
     migrators['jbossas-7'] = Jbossas7Migration.new # name changed to jbossas-7.1
     migrators['jbosseap-6.0'] = Jbosseap60Migration.new
     # One migrator can handle both jbossews cartridges
-    migrators['jbossews-1.0'] = Jbossews10Migration.new
-    migrators['jbossews-2.0'] = Jbossews10Migration.new
+    migrators['jbossews-1.0'] = JbossewsMigration.new
+    migrators['jbossews-2.0'] = JbossewsMigration.new
     migrators['nodejs-0.6'] = Nodejs06Migration.new
     migrators['perl-5.10'] = Perl510Migration.new
     migrators['php-5.3'] = Php53Migration.new
@@ -408,7 +412,6 @@ module OpenShiftMigration
   def self.migrate_cartridges(progress, gear_home, uuid, cartridge_migrators)
     output = ''
 
-    # TODO: establish migration order of cartridges
     carts_to_migrate = v1_cartridges(gear_home)
 
     output << "Carts to migrate: #{carts_to_migrate}\n"
@@ -425,16 +428,33 @@ module OpenShiftMigration
   end
 
   def self.v1_cartridges(gear_home)
-    v1_carts = []
+    output = ''
+
+    framework_carts = []
+    plugin_carts    = []
+    db_carts        = []
+    leftover_carts  = []
 
     Dir.glob(File.join(gear_home, '*-*')).each do |entry|
       # Account for app-root and V2 carts matching the glob which already may be installed
       next if entry.end_with?('app-root') || entry.end_with?('jenkins-client') || entry.end_with?('mms-agent') || !File.directory?(entry)
         
-      v1_carts << File.basename(entry)
+      cart_name = File.basename(entry)
+
+      if FRAMEWORK_CARTS.include?(cart_name)
+        framework_carts << cart_name
+      elsif PLUGIN_CARTS.include?(cart_name)
+        plugin_carts << cart_name
+      elsif DB_CARTS.include?(cart_name)
+        db_carts << cart_name
+      else
+        # should be haproxy...
+        leftover_carts << cart_name
+      end
     end
 
-    v1_carts
+    # Establish the correct configure order for the migrated carts
+    framework_carts + plugin_carts + db_carts + leftover_carts
   end
 
   def self.migrate_cartridge(progress, name, version, uuid, cartridge_migrators)
