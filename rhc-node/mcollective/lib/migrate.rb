@@ -275,7 +275,7 @@ module OpenShiftMigration
     migrators['python-3.3'] = Python33Migration.new
     migrators['ruby-1.8'] = Ruby18Migration.new
     migrators['ruby-1.9'] = Ruby19Migration.new
-    #migrators['zend-5.6'] = Zend56Migration.new # not in li yet
+    migrators['zend-5.6'] = Zend56Migration.new
     migrators['metrics-0.1'] = Metrics01Migration.new
     migrators['jenkins-1.4'] = Jenkins14Migration.new
     migrators['jenkins-client-1.4'] = JenkinsClient14Migration.new
@@ -438,6 +438,10 @@ module OpenShiftMigration
 
     output = ''
 
+    if name == 'zend'
+      output << create_v2_zend_endpoints(progress, user)
+    end
+
     OpenShift::Utils::Cgroups.with_no_cpu_limits(uuid) do
       if progress.incomplete? "#{name}_create_directory"
         cart_model.create_cartridge_directory(cartridge, version)
@@ -479,6 +483,19 @@ module OpenShiftMigration
     FileUtils.rm_rf(File.join(user.homedir, "#{name}-#{version}"))
 
     FileUtils.ln_s(File.join(user.homedir, name), File.join(user.homedir, "#{name}-#{version}"))
+
+    output
+  end
+
+  def self.create_v2_zend_endpoints(progress, user)
+    output = ''
+
+    if progress.incomplete? 'zend_endpoints'
+      Util.add_gear_env_var(user, 'OPENSHIFT_ZEND_CONSOLE_PORT', '16081')
+      Util.add_gear_env_var(user, 'OPENSHIFT_ZEND_ZENDSERVER_PORT', '16083')
+
+      output << progress.mark_complete('zend_endpoints')
+    end
 
     output
   end
