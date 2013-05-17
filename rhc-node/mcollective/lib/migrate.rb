@@ -593,14 +593,15 @@ module OpenShiftMigration
 
       output << "Pre-migration state: #{premigration_state.value}\n"
 
-      if premigration_state.value == 'started'
+      if premigration_state.value != 'stopped' && premigration_state.value != 'idle'
         config = OpenShift::Config.new
         state  = OpenShift::Utils::ApplicationState.new(uuid)
         user   = OpenShift::UnixUser.from_uuid(uuid)
 
         cart_model = OpenShift::V2MigrationCartridgeModel.new(config, user, state)
 
-        if cart_model.primary_cartridge
+        # only validate via http query on the head gear
+        if cart_model.primary_cartridge && (user.uuid == user.application_uuid)
           env = OpenShift::Utils::Environ.for_gear(gear_home)
 
           dns = env['OPENSHIFT_GEAR_DNS']
