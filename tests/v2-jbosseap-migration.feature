@@ -44,7 +44,8 @@ Feature: V2 Migrations for V1 apps
 
   Scenario: Scaled jbosseap-6.0 app migration
     Given a new client created scalable jbosseap-6.0 application
-    Given the application has a USER_VARS env file
+    And the minimum scaling parameter is set to 2
+    And the application has a USER_VARS env file
     Then the application should be accessible
 
     When the application is migrated to the v2 cartridge system
