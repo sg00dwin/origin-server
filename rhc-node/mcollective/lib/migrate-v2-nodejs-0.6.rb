@@ -9,26 +9,9 @@ module OpenShiftMigration
 
       Util.rm_env_var(user.homedir, 'OPENSHIFT_NODEJS_LOG_DIR')
 
-      ### npm modules manipulation
-      modules = []
-      File.open(File.join(nodejs_dir, 'versions', NODEJS_VERSION, 'configuration', 'npm_global_module_list')) do |f|
-      	modules = f.readlines.select do |line|
-      		line =~ /^\s*[^#\s]/
-      	end
+      ['.npm', '.npmrc', '.node-gyp'].each do |dir|
+        Util.make_user_owned File.join(user.homedir, dir), user
       end
-
-      %x(npm link #{modules.map(&:chomp).join(' ')})
-      node_modules_dir = File.join(user.homedir, 'node_modules')
-      FileUtils.mv node_modules_dir, File.join(user.homedir, '.node_modules')
-
-			%x(touch #{File.join(user.homedir, '.npmrc')})
-			FileUtils.mkdir_p(File.join(user.homedir, '.npm'))
-			FileUtils.mkdir_p(File.join(user.homedir, '.node-gyp'))
-			['.npm', '.npmrc', '.node-gyp'].each do |dir|
-				Util.make_user_owned File.join(user.homedir, dir), user
-			end
-
-			%x(npm config set tmp #{env['OPENSHIFT_TMP_DIR']})
 
       Util.cp_env_var_value(user.homedir, 'OPENSHIFT_INTERNAL_IP',   'OPENSHIFT_NODEJS_IP')
       Util.cp_env_var_value(user.homedir, 'OPENSHIFT_INTERNAL_PORT', 'OPENSHIFT_NODEJS_PORT')
