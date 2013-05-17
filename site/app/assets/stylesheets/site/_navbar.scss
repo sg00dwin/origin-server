@@ -2,7 +2,6 @@
 // Navbars (Redux)
 // --------------------------------------------------
 
-
 // COMMON STYLES
 // -------------
 
@@ -650,30 +649,32 @@ $tabPaddingSide: 24px;
     display: inline-block;
     text-align: center;
     margin: 0;
+    $nav-underline-left-right: 25px;
+    $nav-underline-bottom: 14px;
     &.active,
     &.active:hover {
       opacity: 1;
       color: #000;
       a:after {
         background-color: $openshiftBrightRed;
-        bottom: 16px;
+        bottom: $nav-underline-bottom;
         content: "";
         display: block;
         height: 2px;
-        left: 35px;
-        right: 35px;
+        left: $nav-underline-left-right;
+        right: $nav-underline-left-right;
         position: absolute;
       }
     }
     &:hover {
       a:after {
         background-color: $grayLight;
-        bottom: 16px;
+        bottom: $nav-underline-bottom;
         content: "";
         display: block;
         height: 2px;
-        left: 35px;
-        right: 35px;
+        left: $nav-underline-left-right;
+        right: $nav-underline-left-right;
         position: absolute;
       }
     }
@@ -701,26 +702,31 @@ $tabPaddingSide: 24px;
 
 @media (max-width: 1199px) {
 }
+
+
 @media (max-width: 979px) {
   .nav.nav-tabs.nav-tabs-secondary {
     margin-top: -$tabPaddingTopNarrow;
+    margin-right: 1px;
     &:before {
       height: 36px
     }
     > li {
+      $nav-underline-left-right: 15px;
+      $nav-underline-bottom: 10px;
       &.active,
       &.active:hover {
         a:after {
-          bottom: 10px;
-          left: 22px;
-          right: 22px;
+          bottom: $nav-underline-bottom;
+          left: $nav-underline-left-right;
+          right: $nav-underline-left-right;
         }
       }
       &:hover {
         a:after {
-          bottom: 10px;
-          left: 22px;
-          right: 22px;
+          bottom: $nav-underline-bottom;
+          left: $nav-underline-left-right;
+          right: $nav-underline-left-right;
         }
       }
       a {

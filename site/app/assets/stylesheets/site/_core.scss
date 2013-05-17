@@ -127,7 +127,7 @@ body.signup {
 @if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
   .section-striped .link-tile { padding: 10px $gridGutterWidthTablet; }
 } }
-@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
+@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1240px) {
   .section-striped .link-tile { padding: 15px $gridGutterWidthLarge; }
 } }
 
@@ -435,7 +435,7 @@ body.signup {
 @if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
   .action-call > div { padding: 0 $gridGutterWidthTablet; }
 } }
-@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
+@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1240px) {
   .action-call > div { padding: 0 $gridGutterWidthLarge; }
 } }
 
@@ -592,7 +592,7 @@ h1.ribbon {
 @if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
   h1.ribbon { @include ribbon_gutters($gridGutterWidthTablet); }
 } }
-@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
+@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1240px) {
   h1.ribbon { @include ribbon_gutters($gridGutterWidthLarge); }
 } }
 
@@ -609,7 +609,7 @@ h1.ribbon {
   @media (max-width: 480px) { left: -$gridGutterWidthPhone; }
   @media (min-width: 768px) and (max-width: 979px) { right: 40px; }
   @media (min-width: 980px) and (max-width: 1199px) { right: 32px; }
-  @media (min-width: 1200px) { right: $gridGutterWidthLarge; }
+  @media (min-width: 1240px) { right: $gridGutterWidthLarge; }
 
   @media (min-width: 768px) {
     float: right;
@@ -887,7 +887,7 @@ h1.ribbon {
 @if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
   .nav-stacked > li > .nav-stacked { margin-left: $gridGutterWidthTablet/2; }
 } }
-@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
+@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1240px) {
   .nav-stacked > li > .nav-stacked { margin-left: $gridGutterWidthLarge/2; }
 } }
 
