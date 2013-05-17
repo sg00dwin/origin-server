@@ -354,9 +354,11 @@ module OpenShiftMigration
       Dir.glob(File.join(gear_home, '.env', '*')).each do |entry|
         content = IO.read(entry).chomp
         if content =~ /^export /
-          output << "Migrating #{File.basename(entry)} to raw value\n"
-          content.sub!(/^export [^=]+=[\'\"]?([^\'\"]*)[\'\"]?/, '\1')
-          IO.write(entry, content)
+          index          = content.index('=')
+          parsed_content = content[(index + 1)..-1]
+          parsed_content.gsub!(/\A["']|["']\Z/, '')
+          output << "Migrated #{File.basename(entry)} v1 value [#{content}] to raw value [#{parsed_content}]\n"
+          IO.write(entry, parsed_content)
         end
       end
 
