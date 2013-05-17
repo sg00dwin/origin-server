@@ -7,8 +7,10 @@ module OpenShiftMigration
 
       if Dir.exists?(File.join(user.homedir, 'jbossews-1.0'))
         old_cart_name = 'jbossews-1.0'
+        Util.add_cart_env_var(user, cart_name, "OPENSHIFT_JBOSSEWS_VERSION", "1.0")
       elsif Dir.exists?(File.join(user.homedir, 'jbossews-2.0'))
         old_cart_name = 'jbossews-2.0'
+        Util.add_cart_env_var(user, cart_name, "OPENSHIFT_JBOSSEWS_VERSION", "2.0")
       else
         raise "Couldn't find a v1 jbossews directory in #{user.homedir}"
       end
