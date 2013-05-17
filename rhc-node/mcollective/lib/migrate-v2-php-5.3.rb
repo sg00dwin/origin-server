@@ -7,6 +7,8 @@ module OpenShiftMigration
       output = "applying php-5.3 migration post-process\n"
 
       Util.rm_env_var(user.homedir, 'OPENSHIFT_PHP_LOG_DIR')
+      # There was no PHPRC variable in v1, it was hard-coded in control scripts
+      # Util.rm_env_var(user.homedir, 'PHPRC')
 
       cartridge_dir = File.join(user.homedir, 'php')
 
@@ -25,10 +27,11 @@ module OpenShiftMigration
                   }
 
       OpenShift::Utils.oo_spawn("pear config-create #{php_dir}/phplib/pear/ #{pearrc}", spawn_ops)
-      OpenShift::Utils.oo_spawn("pear -c #{pearrc} config-set php_ini #{php_dir}/versions/shared/configuration/etc/conf/php.ini", spawn_ops)
+      OpenShift::Utils.oo_spawn("pear -c #{pearrc} config-set php_ini #{php_dir}/configuration/etc/php.ini", spawn_ops)
       OpenShift::Utils.oo_spawn("pear -c #{pearrc} config-set auto_discover 1", spawn_ops)
 
       Util.add_cart_env_var(user, 'php', 'OPENSHIFT_PHP_VERSION', '5.3')
+      Util.add_cart_env_var(user, 'php', 'PHPRC', "#{php_dir}/configuration/etc/php.ini")
 
       directories = %w(logs sessions phplib)
       output << Util.move_directory_between_carts(user, 'php-5.3', 'php', directories)

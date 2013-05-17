@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.9.1
+Version: 1.9.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -195,6 +195,51 @@ fi
 %{sitedir}/public
 
 %changelog
+* Thu May 16 2013 Adam Miller <admiller@redhat.com> 1.9.2-1
+- Rename log helper (jharris@redhat.com)
+- fix builds (dmcphers@redhat.com)
+- Merge pull request #1351 from smarterclayton/upgrade_to_mocha_0_13_3
+  (admiller@redhat.com)
+- Bug 961525 - Robots.txt change for crawling of account new
+  (ccoleman@redhat.com)
+- Code slipped in with failing tests, fix to handle nil users
+  (ccoleman@redhat.com)
+- Card online_ui_278 - User action logging (jharris@redhat.com)
+- Merge pull request #1364 from fabianofranz/master (dmcphers@redhat.com)
+- Moved Help Link Tests do extended (ffranz@redhat.com)
+- Moved Help Link Tests do extended (ffranz@redhat.com)
+- Merge pull request #1326 from sg00dwin/508dev
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1349 from
+  liggitt/bug_961672_tolerate_plans_with_no_service_rates
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1350 from smarterclayton/bug_961671_remove_community_link
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 961672 - tolerate users assigned plans with no service rates
+  (jliggitt@redhat.com)
+- Merge pull request #1352 from smarterclayton/simplify_blog_test
+  (ccoleman@redhat.com)
+- Allow test to pass cleanly (ccoleman@redhat.com)
+- Bug 961671 - Remove the community link from the header (ccoleman@redhat.com)
+- Upgrade to mocha 0.13.3 (compatible with Rails 3.2.12) (ccoleman@redhat.com)
+- Merge pull request #1347 from liggitt/direct_post
+  (dmcphers+openshiftbot@redhat.com)
+- Collect on direct_post (jliggitt@redhat.com)
+- Merge pull request #1335 from liggitt/line_item_text
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1333 from nhr/Bug_961267
+  (dmcphers+openshiftbot@redhat.com)
+- Tweak usage line item display (jliggitt@redhat.com)
+- Change storage max text from '30GB' to '6GB' (hripps@redhat.com)
+- Add sequence functional group spec to create_acct_complete
+  (hripps@redhat.com)
+- Merge branch 'master' of github.com:openshift/li into 508dev
+  (sgoodwin@redhat.com)
+- body.admin-menu specific styles for mobile resolutions so they don't cover
+  the top bar links (sgoodwin@redhat.com)
+- Fix for Bug 902173 - Events page /community/calendar is out of bounds on
+  Safari Iphone4S (sgoodwin@redhat.com)
+
 * Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.9.1-1
 - bump_minor_versions for sprint 28 (admiller@redhat.com)
 

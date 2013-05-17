@@ -35,4 +35,8 @@ module CommunityHelper
   def openshift_customer_portal_url
     'https://access.redhat.com/support/offerings/openshift/'
   end
+
+  def open_bug_url
+    'http://www.openshift.com/open-new-bug'
+  end
 end

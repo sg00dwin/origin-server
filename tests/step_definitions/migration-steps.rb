@@ -89,6 +89,7 @@ Given /^the application has a TYPELESS_TRANSLATED_VARS env file$/ do
 export TEST_VAR_1='foo'
 export TEST_VAR_2='bar'
 export TEST_VAR_3="baz"   
+export OPENSHIFT_LOG_DIR="$OPENSHIFT_PHP_DIR"
   }
 
   IO.write(File.join($home_root, @app.uid, '.env', 'TYPELESS_TRANSLATED_VARS'), typeless_vars)
@@ -98,6 +99,10 @@ Then /^the TYPELESS_TRANSLATED_VARS variables will be discrete variables$/ do
   check_var('TEST_VAR_1', 'foo')
   check_var('TEST_VAR_2', 'bar')
   check_var('TEST_VAR_3', 'baz')
+end
+
+Then /^the OPENSHIFT_LOG_DIR variable will not be present$/ do
+  assert_file_not_exists File.join($home_root, @app.uid, '.env', 'OPENSHIFT_LOG_DIR')
 end
 
 def check_var(name, content)
@@ -111,7 +116,7 @@ Then /^the migration metadata will be cleaned up$/ do
   assert_file_not_exists File.join($home_root, @app.uid, 'app-root', 'runtime', '.premigration_state')
 end
 
-Then /^the (mysql|mongodb) uservars entries will be migrated to a namespaced env directory$/ do |cart|
+Then /^the (mysql|mongodb|postgresql) uservars entries will be migrated to a namespaced env directory$/ do |cart|
   cart_namespaced_dir = File.join($home_root, @app.uid, '.env', cart)
 
   vars = %w(USERNAME PASSWORD HOST PORT URL GEAR_UUID GEAR_DNS).map { |x| "OPENSHIFT_#{cart.upcase}_DB_#{x}"}
