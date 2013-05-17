@@ -354,29 +354,6 @@ function openshift_breadcrumb($breadcrumb) {
   }
 }
 
-function openshift_menu_tree__menu_block__2($tree) {
-  return '<ul class="nav nav-tabs nav-tabs-secondary">'. $tree .'</ul>';
-}
-
-function openshift_menu_tree__menu_block__3($tree) {
-  return '<ul class="nav nav-list nav-tertiary">'. $tree .'</ul>';
-}
-
-function openshift_menu_tree($tree) {
-  return '<ul class="menu nav nav-list">'. $tree .'</ul>';
-}
-
-function openshift_menu_item($link, $has_children, $menu = '', $in_active_trail = FALSE, $extra_class = NULL) {
-  $class = ($menu ? 'expanded' : ($has_children ? 'collapsed' : 'leaf'));
-  if (!empty($extra_class)) {
-    $class .= ' '. $extra_class;
-  }
-  if ($in_active_trail) {
-    $class .= ' active';
-  }
-  return '<li class="'. $class .'">'. $link . $menu ."</li>\n";
-}
-
 function openshift_flat_menu_tree_output($tree) {
   $output = '';
   $items = array();
@@ -899,4 +876,230 @@ function openshift_primary_link_megamenu($link, $visibleChildren) {
     }
     return $content . '</ul></div>';
   }
+}
+
+/*
+ * Source: http://drupalcode.org/project/menu_block.git/blob_plain/refs/heads/6.x-2.x:/menu_block.module
+ * function menu_tree_build($config)
+ */
+function openshift_menu_tree_build($config) {
+  // Retrieve the active menu item from the database.
+  if ($config['menu_name'] == MENU_TREE__CURRENT_PAGE_MENU) {
+    // Retrieve the list of available menus.
+    $menu_order = variable_get('menu_block_menu_order', array('primary-links' => '', 'secondary-links' => ''));
+
+    // Check for regular expressions as menu keys.
+    $patterns = array();
+    foreach (array_keys($menu_order) as $pattern) {
+      if ($pattern[0] == '/') {
+        $patterns[$pattern] = NULL;
+      }
+    }
+
+    // Retrieve all the menus containing a link to the current page.
+    $result = db_query("SELECT menu_name FROM {menu_links} WHERE link_path = '%s'", $_GET['q'] ? $_GET['q'] : '<front>');
+    while ($item = db_fetch_array($result)) {
+      // Check if the menu is in the list of available menus.
+      if (isset($menu_order[$item['menu_name']])) {
+        // Mark the menu.
+        $menu_order[$item['menu_name']] = MENU_TREE__CURRENT_PAGE_MENU;
+      }
+      else {
+        // Check if the menu matches one of the available patterns.
+        foreach (array_keys($patterns) as $pattern) {
+          if (preg_match($pattern, $item['menu_name'])) {
+            // Mark the menu.
+            $menu_order[$pattern] = MENU_TREE__CURRENT_PAGE_MENU;
+            // Store the actual menu name.
+            $patterns[$pattern] = $item['menu_name'];
+          }
+        }
+      }
+    }
+    // Find the first marked menu.
+    $config['menu_name'] = array_search(MENU_TREE__CURRENT_PAGE_MENU, $menu_order);
+    // If a pattern was matched, use the actual menu name instead of the pattern.
+    if (!empty($patterns[$config['menu_name']])) {
+      $config['menu_name'] = $patterns[$config['menu_name']];
+    }
+    $config['parent_mlid'] = 0;
+
+    // If no menu link was found, don't display the block.
+    if (empty($config['menu_name'])) {
+      return array();
+    }
+  }
+
+  // Get the default block name.
+  $menu_names = menu_block_get_all_menus();
+  menu_block_set_title(t($menu_names[$config['menu_name']]));
+
+  if ($config['expanded'] || $config['parent_mlid']) {
+    // Get the full, un-pruned tree.
+    $tree = menu_tree_all_data($config['menu_name']);
+    // And add the active trail data back to the full tree.
+    menu_tree_add_active_path($tree);
+
+    // ADDED
+    if ($config['require_active_trail']) {
+      $found_active_trail = FALSE;
+      foreach (array_keys($tree) as $key) {
+        if ($tree[$key]['link']['in_active_trail']) {
+          $found_active_trail = TRUE;
+          break;
+        }
+      }
+      if (!$found_active_trail) {
+        return NULL;
+      }
+    }
+    // END ADDED  
+  }
+  else {
+    // Get the tree pruned for just the active trail.
+    $tree = menu_tree_page_data($config['menu_name']);
+  }
+
+  // Allow other modules to alter the tree before we begin operations on it.
+  $alter_data = &$tree;
+  // Also allow modules to alter the config.
+  $alter_data['__drupal_alter_by_ref'] = array(&$config);
+  drupal_alter('menu_block_tree', $alter_data);
+
+  // Localize the tree.
+  if (module_exists('i18nmenu')) {
+    i18nmenu_localize_tree($tree);
+  }
+
+  // Prune the tree along the active trail to the specified level.
+  if ($config['level'] > 1 || $config['parent_mlid']) {
+    if ($config['parent_mlid']) {
+      $parent_item = menu_link_load($config['parent_mlid']);
+      menu_tree_prune_tree($tree, $config['level'], $parent_item);
+    }
+    else {
+      menu_tree_prune_tree($tree, $config['level']);
+    }
+  }
+
+  // Prune the tree to the active menu item.
+  if ($config['follow']) {
+    menu_tree_prune_active_tree($tree, $config['follow']);
+  }
+
+  // If the menu-item-based tree is not "expanded", trim the tree to the active path.
+  if ($config['parent_mlid'] && !$config['expanded']) {
+    menu_tree_trim_active_path($tree);
+  }
+
+  // Trim the branches that extend beyond the specified depth.
+  if ($config['depth'] > 0) {
+    menu_tree_depth_trim($tree, $config['depth']);
+  }
+
+  // Sort the active path to the top of the tree.
+  if ($config['sort']) {
+    menu_tree_sort_active_path($tree);
+  }
+
+  return $tree;
+}
+
+function openshift_menu_tree_block_output($tree, $config) {
+  // Render the tree.
+  $data = array();
+  $data['subject'] = menu_block_get_title($config['title_link'], $config);
+  $data['content'] = openshift_menu_block_tree_output($tree, $config);
+  if ($data['content']) {
+    $hooks = array();
+    $hooks[] = 'menu_block_wrapper__' . str_replace('-', '_', $config['delta']);
+    $hooks[] = 'menu_block_wrapper__' . str_replace('-', '_', $config['menu_name']);
+    $hooks[] = 'menu_block_wrapper';
+    $data['content'] = theme($hooks, $data['content'], $config, $config['delta']);
+  }
+
+  return $data;
+}
+
+
+function openshift_menu_block_tree_output(&$tree, $config = array(), $nested = 0) {
+  $output = '';
+
+  // Create context if no config was provided.
+  if (empty($config)) {
+    $config['delta'] = 0;
+    // Grab any menu item to find the menu_name for this tree.
+    $menu_item = current($tree);
+    $config['menu_name'] = $menu_item['link']['menu_name'];
+  }
+  $hook_delta = str_replace('-', '_', $config['delta']);
+  $hook_menu_name = str_replace('-', '_', $config['menu_name']);
+
+  $items = array();
+  foreach (array_keys($tree) as $key) {
+    if (!$tree[$key]['link']['hidden']) {
+      $items[$key] = array(
+        'link' => $tree[$key]['link'],
+        // To prevent copying the entire child array, we render it first.
+        'below' => !empty($tree[$key]['below']) ? openshift_menu_block_tree_output($tree[$key]['below'], $config, $nested + 1) : '',
+      );
+    }
+  }
+
+  $is_drupal_front = drupal_is_front_page();
+  $get_q = $_GET['q'];
+
+  $num_items = count($items);
+
+  $i = 1;
+  foreach (array_keys($items) as $key) {
+    // Render the link.
+    $link_class = array();
+    $item = $items[$key];
+
+    $in_active_trail = $item['link']['in_active_trail'] || $item['link']['href'] == $get_q || ($item['link']['href'] == '<front>' && $is_drupal_front);
+
+    if (!empty($item['link']['localized_options']['attributes']['class'])) {
+      $link_class[] = $item['link']['localized_options']['attributes']['class'];
+    }
+    if (!empty($link_class)) {
+      $item['link']['localized_options']['attributes']['class'] = implode(' ', $link_class);
+    }
+
+    $link = $item['link'];
+    $link = l($link['title'], $link['href'], $link['localized_options']);
+
+    // Render the menu item.
+    $extra_class = array();
+    if (!empty($item['link']['leaf_has_children'])) {
+      $extra_class[] = 'has-children';
+    }
+
+    $menu = $item['below'];
+
+    $extra_class[] = $menu ? 'in' : '';
+
+    if ($in_active_trail) { 
+      $extra_class[] = 'active';
+    }
+
+    $output .= '<li class="'.implode($extra_class, ' ').'">' . $link . $menu . '</li>';
+    $i++;
+  }
+
+  if (!$output) {  
+    return ''; 
+  }
+
+  $render_classes = ($nested > 0 ? $config['sub_menu_class'] : $config['menu_class']);
+  if ($render_classes) {
+    return '<ul class="'. $render_classes .'">' . $output . '</ul>';
+  }
+
+  $hooks = array();
+  $hooks[] = 'menu_tree__menu_block__' . $hook_delta;
+  $hooks[] = 'menu_tree__menu_block__' . $hook_menu_name;
+  $hooks[] = 'menu_tree__menu_block';
+  $hooks[] = 'menu_tree';
+  return theme($hooks, $output);
 }
