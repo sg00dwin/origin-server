@@ -20,6 +20,9 @@ module OpenShiftMigration
       directories = %w(logs virtenv)
       output << Util.move_directory_between_carts(user, 'python-2.6', 'python', directories)
 
+      Util.cp_env_var_value(user.homedir, 'OPENSHIFT_INTERNAL_IP',   'OPENSHIFT_PYTHON_IP')
+      Util.cp_env_var_value(user.homedir, 'OPENSHIFT_INTERNAL_PORT', 'OPENSHIFT_PYTHON_PORT')
+
       output
     end
   end

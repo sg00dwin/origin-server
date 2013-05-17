@@ -30,6 +30,9 @@ module OpenShiftMigration
 
 			%x(npm config set tmp #{env['OPENSHIFT_TMP_DIR']})
 
+      Util.cp_env_var_value(user.homedir, 'OPENSHIFT_INTERNAL_IP',   'OPENSHIFT_NODEJS_IP')
+      Util.cp_env_var_value(user.homedir, 'OPENSHIFT_INTERNAL_PORT', 'OPENSHIFT_NODEJS_PORT')
+
       output
     end
   end
