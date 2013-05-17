@@ -33,6 +33,9 @@ module OpenShiftMigration
       Util.add_cart_env_var(user, 'php', 'OPENSHIFT_PHP_VERSION', '5.3')
       Util.add_cart_env_var(user, 'php', 'PHPRC', "#{php_dir}/configuration/etc/php.ini")
 
+      Util.cp_env_var_value(user.homedir, 'OPENSHIFT_INTERNAL_IP',   'OPENSHIFT_PHP_IP')
+      Util.cp_env_var_value(user.homedir, 'OPENSHIFT_INTERNAL_PORT', 'OPENSHIFT_PHP_PORT')
+
       directories = %w(logs sessions phplib)
       output << Util.move_directory_between_carts(user, 'php-5.3', 'php', directories)
 

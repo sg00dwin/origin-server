@@ -13,6 +13,9 @@ module OpenShiftMigration
       directories = %w(logs sessions)
       output << Util.move_directory_between_carts(user, 'phpmyadmin-3.4', 'phpmyadmin', directories)
 
+      Util.cp_env_var_value(user.homedir, 'OPENSHIFT_INTERNAL_IP',   'OPENSHIFT_PHPMYADMIN_IP')
+      Util.cp_env_var_value(user.homedir, 'OPENSHIFT_INTERNAL_PORT', 'OPENSHIFT_PHPMYADMIN_PORT')
+
       output
     end
   end

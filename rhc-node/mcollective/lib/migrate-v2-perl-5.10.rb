@@ -13,6 +13,9 @@ module OpenShiftMigration
       output << Util.move_directory_between_carts(user, 'perl-5.10', 'perl', directories)
 
       output
+
+      Util.cp_env_var_value(user.homedir, 'OPENSHIFT_INTERNAL_IP',   'OPENSHIFT_PERL_IP')
+      Util.cp_env_var_value(user.homedir, 'OPENSHIFT_INTERNAL_PORT', 'OPENSHIFT_PERL_PORT')
     end
 
     def ln_if_missing(source, target)
