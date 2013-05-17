@@ -164,6 +164,7 @@ module OpenShiftMigration
       output << inspect_gear_state(progress, gear_home)
       output << migrate_stop_lock(progress, uuid, gear_home)
       output << stop_gear(progress, uuid)
+      output << migrate_pam_nproc_soft(progress, uuid)
       output << migrate_typeless_translated_vars(progress, uuid, gear_home)
       output << cleanup_gear_env(progress, gear_home)
       output << migrate_env_vars_to_raw(progress, gear_home)
@@ -298,6 +299,32 @@ module OpenShiftMigration
     #migrators['switchyard-0.6'] = Switchyard06Migration.new
 
     migrators
+  end
+
+  def self.migrate_pam_nproc_soft(progress, uuid)
+    output = ''
+
+    if progress.incomplete? 'pam_nproc_soft'
+      pamfile = "/etc/security/limits.d/84-#{uuid}.conf"
+      scratch = "/etc/security/limits.d/84-#{uuid}.new"
+      if File.exist?(pamfile)
+        buf = File.read(pamfile)
+        if buf.gsub!(/(?<=\s)hard(?=\s*nproc)/, 'soft')
+          File.open(scratch, 'w') do |f|
+            f.write(buf)
+          end
+          %x[chown --reference=#{pamfile} #{scratch}]
+          %x[chmod --reference=#{pamfile} #{scratch}]
+          %x[chcon --reference=#{pamfile} #{scratch}]
+
+          # If we got here, then the file was written safely.
+          %x[mv -f #{scratch} #{pamfile}]
+        end
+      end
+      output << progress.mark_complete('pam_nproc_soft')
+    end
+
+    output
   end
 
   def self.migrate_typeless_translated_vars(progress, uuid, gear_home)
