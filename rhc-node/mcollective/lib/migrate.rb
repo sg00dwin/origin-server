@@ -607,10 +607,19 @@ module OpenShiftMigration
           dns = env['OPENSHIFT_GEAR_DNS']
           uri = URI.parse("http://#{dns}")
 
-          http = Net::HTTP.new(uri.host, uri.port)
-          request = Net::HTTP::Get.new(uri.request_uri)
-
-          response = http.request(request)
+          num_tries = 1
+          while true do
+            http = Net::HTTP.new(uri.host, uri.port)
+            request = Net::HTTP::Get.new(uri.request_uri)
+            response = http.request(request)
+            # Give the app a chance to start fully
+            if response.code == '503' && num_tries < 5
+              sleep num_tries
+            else
+              break
+            end
+            num_tries += 1
+          end
 
           output << "Post-migration response code: #{response.code}\n"
         end
