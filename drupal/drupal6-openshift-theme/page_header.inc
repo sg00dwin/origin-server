@@ -26,15 +26,19 @@
     $sidebar_right = openshift_menu_block_tree_output($tree, $config) . $sidebar_right;
   }
   else {
-    $tree = openshift_menu_tree_build(array(
+    $config = array(
       'menu_name' => 'primary-links',
       'level' => '2',
       'menu_class' => 'nav nav-list',
+      'sub_menu_class' => 'nav nav-list',
       'delta' => '1',
-    ));
+    );
+    $tree = openshift_menu_tree_build($config);
     if ($tree) {
       $data = openshift_menu_tree_block_output($tree, $config);
-      $sidebar_left = '<h3>' . $data['subject'] . '</h3>' . $data['content'] . $sidebar_left;
+      if ($data['content']) {
+        $sidebar_left = '<h3>' . $data['subject'] . '</h3>' . $data['content'] . $sidebar_left;
+      }
     }
   }
 

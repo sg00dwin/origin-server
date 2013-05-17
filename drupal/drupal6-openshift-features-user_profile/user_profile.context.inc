@@ -274,6 +274,28 @@ function user_profile_context_default_contexts() {
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
+  $context->name = 'menu-active-user';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+    'path' => array(
+      'values' => array(
+        'user' => 'user',
+        'user/' => 'user/',
+        'user/*' => 'user/*',
+        '~user/login' => '~user/login',
+      ),
+    ),
+  );
+  $context->reactions = array(
+    'menu' => 'node/9515',
+  );
+  $context->condition_mode = 1;
+  $export['menu-active-user'] = $context;
+
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
   $context->name = 'menu-active-videos';
   $context->description = '';
   $context->tag = '';
@@ -546,25 +568,8 @@ function user_profile_context_default_contexts() {
   $context->name = 'viewing-hierarchy';
   $context->description = '';
   $context->tag = '';
-  $context->conditions = array(
-    'context_active' => array(
-      'values' => array(
-        'viewing-developer-center' => 'viewing-developer-center',
-      ),
-    ),
-  );
-  $context->reactions = array(
-    'block' => array(
-      'blocks' => array(
-        'menu_block-1' => array(
-          'module' => 'menu_block',
-          'delta' => 1,
-          'region' => 'sidebar_left',
-          'weight' => 0,
-        ),
-      ),
-    ),
-  );
+  $context->conditions = array();
+  $context->reactions = array();
   $context->condition_mode = 0;
   $export['viewing-hierarchy'] = $context;
 
@@ -574,41 +579,9 @@ function user_profile_context_default_contexts() {
   $context->name = 'viewing-page';
   $context->description = '';
   $context->tag = '';
-  $context->conditions = array(
-    'context_active' => array(
-      'values' => array(
-        '~viewing-hierarchy' => '~viewing-hierarchy',
-      ),
-    ),
-    'path' => array(
-      'values' => array(
-        '~admin' => '~admin',
-        '~admin/*' => '~admin/*',
-        '~<front>' => '~<front>',
-        '~_errors/*' => '~_errors/*',
-        '*' => '*',
-      ),
-    ),
-  );
-  $context->reactions = array(
-    'block' => array(
-      'blocks' => array(
-        'menu_block-2' => array(
-          'module' => 'menu_block',
-          'delta' => 2,
-          'region' => 'content_header',
-          'weight' => 0,
-        ),
-        'menu_block-3' => array(
-          'module' => 'menu_block',
-          'delta' => 3,
-          'region' => 'sidebar_right',
-          'weight' => 0,
-        ),
-      ),
-    ),
-  );
-  $context->condition_mode = 1;
+  $context->conditions = array();
+  $context->reactions = array();
+  $context->condition_mode = 0;
   $export['viewing-page'] = $context;
 
   $context = new stdClass;
