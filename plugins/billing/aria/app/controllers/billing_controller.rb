@@ -2,7 +2,7 @@ require 'ipaddr'
 
 class BillingController < BaseController
  
-  skip_before_filter :authenticate_user!
+  skip_before_filter :authenticate_user!, :set_log_tag
   before_filter :protect
 
   def protect
