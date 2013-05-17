@@ -69,11 +69,14 @@ module OpenShift
 
       each_cartridge do |cartridge|
         cart_status = do_control('status', cartridge)
-        output << cart_status
 
+        cart_status_msg = "[OK]"
         if cart_status !~ /running|enabled|Tail of JBoss/i
           problem = true
+          cart_status_msg = "[PROBLEM]"
         end
+
+        output << "Cart status for #{cartridge.name} #{cart_status_msg}: #{cart_status}\n"
       end
 
       return [problem, output]
@@ -586,8 +589,7 @@ module OpenShiftMigration
         problem, status = cart_model.gear_status
 
         if problem
-          output << "Leaving migration metadata in place due to problem detected with gear status\n"
-          output << "Status: #{status}\n"
+          output << "Leaving migration metadata in place due to problem detected with gear status:\n#{status}"
           return output
         end
       end
