@@ -520,7 +520,6 @@ service openshift-port-proxy restart
                 test_queues[0] << ["Extended Runtime Other Group 1", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended_other1 openshift-test/tests"]
                 test_queues[1] << ["Extended Runtime Other Group 2", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended_other2 openshift-test/tests"]
                 test_queues[2] << ["Extended Runtime Other Group 3", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended_other3 openshift-test/tests"]
-                test_queues[3] << ["Runtime Other Group 4", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_other4 openshift-test/tests"]
               when 'site'
                 test_queues[0] << ["Site Extended", "cd openshift-test/site; rake test:extended"]
               when 'rhc'
