@@ -872,6 +872,7 @@ function openshift_primary_link_megamenu($link, $visibleChildren) {
     foreach( $visibleChildren as $key=>$child) {
       $sublink = $child["link"];                                 
       $sublink['options']['html'] = TRUE;
+      unset($sublink['options']['attributes']['title']);
       $content .= '<li>' . l($sublink['title'], $sublink['href'], $sublink['options']) . '</li>';
     }
     return $content . '</ul></div>';
@@ -1056,22 +1057,25 @@ function openshift_menu_block_tree_output(&$tree, $config = array(), $nested = 0
     // Render the link.
     $link_class = array();
     $item = $items[$key];
+    $link = $item['link'];
 
-    $in_active_trail = $item['link']['in_active_trail'] || $item['link']['href'] == $get_q || ($item['link']['href'] == '<front>' && $is_drupal_front);
+    $in_active_trail = $link['in_active_trail'] || $link['href'] == $get_q || ($link['href'] == '<front>' && $is_drupal_front);
 
-    if (!empty($item['link']['localized_options']['attributes']['class'])) {
-      $link_class[] = $item['link']['localized_options']['attributes']['class'];
+    if (!empty($link['localized_options']['attributes']['class'])) {
+      $link_class[] = $link['localized_options']['attributes']['class'];
     }
     if (!empty($link_class)) {
-      $item['link']['localized_options']['attributes']['class'] = implode(' ', $link_class);
+      $link['localized_options']['attributes']['class'] = implode(' ', $link_class);
+    }
+    if ($config['hide_titles']) {
+      unset($link['localized_options']['attributes']['title']);
     }
 
-    $link = $item['link'];
     $link = l($link['title'], $link['href'], $link['localized_options']);
 
     // Render the menu item.
     $extra_class = array();
-    if (!empty($item['link']['leaf_has_children'])) {
+    if (!empty($link['leaf_has_children'])) {
       $extra_class[] = 'has-children';
     }
 

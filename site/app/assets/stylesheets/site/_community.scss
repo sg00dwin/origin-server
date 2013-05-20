@@ -26,6 +26,12 @@
   }
 }
 
+@media (max-width: 768px) {
+  .column-content > div > .breadcrumb {
+    margin-top: 5px;
+  }
+} 
+
 /* Drupal specific markup, we may want to wrap this with a top level selector on body.drupal or something */
 .views-field-rss { float: right; }
 .views-field-picture { float: left; margin-right: 6px; }

@@ -1,17 +1,32 @@
 <?php
 
-  $is_page = TRUE;
-  foreach (array_keys(context_active_contexts()) as $name) {
-    if ($name == 'viewing-developer-center') {
-      $is_page = FALSE;
-      break;
+  $contexts = context_active_contexts();
+  if (array_key_exists('viewing-developer-center', $contexts)) {
+    $config = array(
+      'menu_name' => 'primary-links',
+      'level' => '2',
+      'menu_class' => 'nav nav-list',
+      'hide_titles' => 1,
+      'sub_menu_class' => 'nav nav-list',
+      'delta' => '1',
+    );
+    $tree = openshift_menu_tree_build($config);
+    if ($tree) {
+      $data = openshift_menu_tree_block_output($tree, $config);
+      if ($data['content']) {
+        $sidebar_left = '<h3>' . $data['subject'] . '</h3>' . $data['content'] . $sidebar_left;
+      }
     }
   }
-  if ($is_page) {
+  // Special conditions that are difficult to represent as contexts
+  elseif (!$user->uid && $_GET['q'] == 'user') {
+  }
+  elseif (array_key_exists('viewing-page', $contexts)) {
     $config = array(
       'menu_name' => 'primary-links',
       'level' => 2,
       'depth' => 1,
+      'hide_titles' => 1,
       'menu_class' => 'nav nav-tabs nav-tabs-secondary',
     );
     $tree = openshift_menu_tree_build($config);
@@ -24,22 +39,6 @@
     $config['sub_menu_class'] = 'nav nav-list';
     $tree = openshift_menu_tree_build($config);
     $sidebar_right = openshift_menu_block_tree_output($tree, $config) . $sidebar_right;
-  }
-  else {
-    $config = array(
-      'menu_name' => 'primary-links',
-      'level' => '2',
-      'menu_class' => 'nav nav-list',
-      'sub_menu_class' => 'nav nav-list',
-      'delta' => '1',
-    );
-    $tree = openshift_menu_tree_build($config);
-    if ($tree) {
-      $data = openshift_menu_tree_block_output($tree, $config);
-      if ($data['content']) {
-        $sidebar_left = '<h3>' . $data['subject'] . '</h3>' . $data['content'] . $sidebar_left;
-      }
-    }
   }
 
   if (empty($sidebar_left)) {

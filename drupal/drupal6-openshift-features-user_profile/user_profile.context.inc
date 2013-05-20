@@ -538,7 +538,6 @@ function user_profile_context_default_contexts() {
         'node/14083' => 'node/14083',
         'node/5085' => 'node/5085',
         'node/5475' => 'node/5475',
-        'node/9435' => 'node/9435',
         'node/9445' => 'node/9445',
         'node/9525' => 'node/9525',
         'quickstarts' => 'quickstarts',
@@ -550,11 +549,6 @@ function user_profile_context_default_contexts() {
       ),
       'options' => array(
         'node_form' => '1',
-      ),
-    ),
-    'path' => array(
-      'values' => array(
-        'developers' => 'developers',
       ),
     ),
   );
@@ -579,7 +573,25 @@ function user_profile_context_default_contexts() {
   $context->name = 'viewing-page';
   $context->description = '';
   $context->tag = '';
-  $context->conditions = array();
+  $context->conditions = array(
+    'path' => array(
+      'values' => array(
+        '*' => '*',
+        '~admin' => '~admin',
+        '~admin/*' => '~admin/*',
+        '~user' => '~user',
+      ),
+    ),
+    'user_page' => array(
+      'values' => array(
+        'form' => 'form',
+        'view' => 'view',
+      ),
+      'options' => array(
+        'mode' => 'all',
+      ),
+    ),
+  );
   $context->reactions = array();
   $context->condition_mode = 0;
   $export['viewing-page'] = $context;

@@ -38,13 +38,14 @@
           <div class="column-content column-content-page lift grid-wrapper">
             <div class="span12 span-flush-right">
         <?php endif; ?>
-            <?php print $breadcrumb; ?>
 
           <?php if ($layout == 'right' || $layout == 'both') :?>
             <div class="span3 pull-right column-floating nav-collapse collapse">
               <?php print $sidebar_right; ?>
             </div>
           <?php endif; ?>
+            <?php print $breadcrumb; ?>
+          
             <?php if (!empty($heading)) {
                     if ($layout == 'left' || $layout == 'both') :?>
               <h1 class="ribbon"><?php print $heading; ?></h1>
