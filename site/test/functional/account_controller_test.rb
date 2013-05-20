@@ -154,6 +154,8 @@ class AccountControllerTest < ActionController::TestCase
   end
 
   test 'should send support contact mail' do
+    skip 'until support emails are re-enabled'
+
     with_unique_user
     email_obj = Object.new
     AccountSupportContactMailer.expects(:contact_email).once.returns(email_obj)

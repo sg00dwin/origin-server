@@ -5,16 +5,19 @@ module OpenShiftMigration
     def post_process(user, progress, env)
       output = "applying postgresql-8.4 migration post-process\n"
 
+      username = Util.get_env_var_value(user.homedir, 'OPENSHIFT_POSTGRESQL_DB_USERNAME')
+      host     = Util.get_env_var_value(user.homedir, 'OPENSHIFT_POSTGRESQL_DB_HOST')
+      port     = Util.get_env_var_value(user.homedir, 'OPENSHIFT_POSTGRESQL_DB_PORT')
+
       Util.rm_env_var(user.homedir, 'OPENSHIFT_POSTGRESQL_DB_SOCKET')
       Util.rm_env_var(user.homedir, 'OPENSHIFT_POSTGRESQL_DB_LOG_DIR')
       Util.rm_env_var(user.homedir, 'OPENSHIFT_POSTGRESQL_DB_PID')
 
       # Copy username to PGUSER env var
-      username = Util.get_env_var_value(user.homedir, 'OPENSHIFT_POSTGRESQL_DB_USERNAME')
       Util.add_cart_env_var(user, 'postgresql', 'PGUSER', username)
 
       # Move old ENV vars
-      env_vars = %w(USERNAME PASSWORD URL SOCKET URL LOG_DIR)
+      env_vars = %w(USERNAME PASSWORD URL)
       env_vars.map! { |x| "OPENSHIFT_POSTGRESQL_DB_#{x}" }
 
       output << Util.move_gear_env_var_to_cart(user, 'postgresql', env_vars)
@@ -28,7 +31,12 @@ module OpenShiftMigration
       # Apply the correct permissions to these files
       FileUtils.chmod(0700, PathUtils.join(cart_dir,'data'))
       FileUtils.chmod(0700, PathUtils.join(cart_dir,'socket'))
-      FileUtils.chmod(0600, PathUtils.join(user.homedir,'.pgpass'))
+
+      # Also ensure the .pgpass matches the v2 format
+      PathUtils.join(user.homedir,'.pgpass').tap do |target|
+        FileUtils.chmod(0600, target)
+        Util.replace_in_file(target, "^#{host}:#{port}",'*:*')
+      end
 
       conf_dir = PathUtils.join(cart_dir,'conf')
 
@@ -43,7 +51,10 @@ module OpenShiftMigration
         FileUtils.cp(src, PathUtils.join(cart_dir,'data'))
       end
 
-      FileUtils.cp(PathUtils.join(conf_dir,'psqlrc'),PathUtils.join(user.homedir,'.psqlrc'))
+      PathUtils.join(user.homedir,'.psqlrc').tap do |target|
+        FileUtils.cp(PathUtils.join(conf_dir,'psqlrc'), target )
+        Util.make_user_owned(target, user)
+      end
 
       # Make sure the file exists
       PathUtils.join(user.homedir,'.psql_history').tap do |file|

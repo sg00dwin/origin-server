@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/v2/zend
 
 Name:    openshift-origin-cartridge-zend
-Version: 0.2.2
+Version: 0.2.3
 Release: 1%{?dist}
 Summary: Zend Server cartridge
 Group:   Development/Languages
@@ -65,6 +65,9 @@ sh %{cartridgedir}/versions/5.6/rpm/zend_configure_filesystem.sh
 
 
 %changelog
+* Mon May 20 2013 Dan McPherson <dmcphers@redhat.com> 0.2.3-1
+- Bug 963494 - Zend cartridges cannot be created (jhonce@redhat.com)
+
 * Thu May 16 2013 Adam Miller <admiller@redhat.com> 0.2.2-1
 - locking fixes and adjustments (dmcphers@redhat.com)
 - Merge pull request #1367 from fotioslindiakos/locked_files

@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.9.2
+Version: 1.9.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -195,6 +195,15 @@ fi
 %{sitedir}/public
 
 %changelog
+* Mon May 20 2013 Dan McPherson <dmcphers@redhat.com> 1.9.4-1
+- 
+
+* Mon May 20 2013 Dan McPherson <dmcphers@redhat.com> 1.9.3-1
+- Disable support email form in account help. (jharris@redhat.com)
+- Merge pull request #1402 from jtharris/features/Card284
+  (dmcphers+openshiftbot@redhat.com)
+- Card online_ui_284 - OpenShift Online bugzilla url (jharris@redhat.com)
+
 * Thu May 16 2013 Adam Miller <admiller@redhat.com> 1.9.2-1
 - Rename log helper (jharris@redhat.com)
 - fix builds (dmcphers@redhat.com)

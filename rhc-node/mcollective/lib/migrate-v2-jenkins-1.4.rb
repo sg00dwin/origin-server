@@ -12,7 +12,10 @@ module OpenShiftMigration
 
       directories = %w(logs)
       output << Util.move_directory_between_carts(user, 'jenkins-1.4', 'jenkins', directories)
-      
+
+      Util.cp_env_var_value(user.homedir, 'OPENSHIFT_INTERNAL_IP',   'OPENSHIFT_JENKINS_IP')
+      Util.cp_env_var_value(user.homedir, 'OPENSHIFT_INTERNAL_PORT', 'OPENSHIFT_JENKINS_PORT')
+
       output
     end
   end
