@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.9.2
+Version: 1.9.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -240,6 +240,63 @@ fi
 
 
 %changelog
+* Mon May 20 2013 Dan McPherson <dmcphers@redhat.com> 1.9.3-1
+- Merge pull request #1417 from mrunalp/bugs/nodejs_mig
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1416 from ironcladlou/bz/963646
+  (dmcphers+openshiftbot@redhat.com)
+- Remove unnecessary steps from migration. (mrunalp@gmail.com)
+- Merge pull request #1415 from danmcp/master
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1414 from ironcladlou/bz/964093
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 963646: Better env var value handling in migrations
+  (ironcladlou@gmail.com)
+- Merge pull request #1413 from ironcladlou/bz/964270
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1411 from rmillner/online_runtime_296
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1410 from ironcladlou/v2migrations/private-endpoints
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1395 from fotioslindiakos/postgres_migration
+  (dmcphers+openshiftbot@redhat.com)
+- Adding retries around 503 errors in migration (dmcphers@redhat.com)
+- Bug 964093: Generate OPENSHIFT_*_VERSION vars during migration
+  (ironcladlou@gmail.com)
+- Bug 964270: Don't do http validations on scaled gears (ironcladlou@gmail.com)
+- online_runtime_296 - Migrate from hard to soft nproc limits.
+  (rmillner@redhat.com)
+- Migrate v1 OPENSHIFT_INTERNAL_* variables to private endpoints
+  (ironcladlou@gmail.com)
+- Merge pull request #1409 from ironcladlou/bz/962324
+  (dmcphers+openshiftbot@redhat.com)
+- call the empty cron migration (dmcphers@redhat.com)
+- Bug 962324: Fix jenkins-client migration (ironcladlou@gmail.com)
+- Merge pull request #1407 from ironcladlou/v2migration/repo-fix
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1406 from ironcladlou/v2migration/jboss-clustering
+  (dmcphers+openshiftbot@redhat.com)
+- Migrate V1 scaled bare repos to V2 names (ironcladlou@gmail.com)
+- Merge pull request #1386 from VojtechVitek/bz956962
+  (dmcphers+openshiftbot@redhat.com)
+- Jboss migration fixes related to uservars and scaling (ironcladlou@gmail.com)
+- Merge pull request #1403 from pmorie/bugs/963931
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1404 from rmillner/online_runtime_296
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1401 from mrunalp/bugs/haproxy_ssh_mig
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1398 from ironcladlou/bz/962324
+  (dmcphers+openshiftbot@redhat.com)
+- online_runtime_296 - Additional options to libra-tc for throttling or
+  enabling high bandwidth users and preserve these settings across a reboot.
+  (rmillner@redhat.com)
+- Fix bug 963931 (pmorie@gmail.com)
+- Preserve haproxy ssh keys. (mrunalp@gmail.com)
+- Bug 963637: Fix configure order during migrations (ironcladlou@gmail.com)
+- Do not attempt to move deleted ENV vars during migration (fotios@redhat.com)
+- Fix PHPRC and php.ini path in migration (vvitek@redhat.com)
+
 * Thu May 16 2013 Adam Miller <admiller@redhat.com> 1.9.2-1
 - Merge pull request #1400 from pmorie/bugs/963932
   (dmcphers+openshiftbot@redhat.com)
