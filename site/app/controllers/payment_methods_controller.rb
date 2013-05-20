@@ -6,8 +6,8 @@ class PaymentMethodsController < ConsoleController
   before_filter :user_can_upgrade_plan!
 
   def edit
-    @billing_info = aria_user.billing_info
-    @payment_method = aria_user.payment_method
+    @billing_info = current_aria_user.billing_info
+    @payment_method = current_aria_user.payment_method
 
     @previous_payment_method = @payment_method.dup
 
@@ -15,7 +15,7 @@ class PaymentMethodsController < ConsoleController
 
     @payment_method.cc_no = nil
     @payment_method.mode = Aria::DirectPost.get_or_create(post_name, url_for(:action => :direct_update))
-    @payment_method.session_id = aria_user.create_session
+    @payment_method.session_id = current_aria_user.create_session
   end
 
   def direct_update
@@ -50,7 +50,7 @@ class PaymentMethodsController < ConsoleController
         (h[key] ||= []) << v['error_key']
         h
       end
-      @user = aria_user
+      @user = current_aria_user
 
       # Always clear when returning from direct_post
       # Updating payment method can change status, mark invoices paid, process payments, etc

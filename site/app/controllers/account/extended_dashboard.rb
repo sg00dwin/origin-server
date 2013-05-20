@@ -14,7 +14,7 @@ module Account
       @identities = Identity.find current_user
       @show_email = false
 
-      user = aria_user
+      user = current_aria_user
 
       @user = current_api_user
 
