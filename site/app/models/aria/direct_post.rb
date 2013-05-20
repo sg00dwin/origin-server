@@ -8,26 +8,31 @@ module Aria
       end
 
       def get_configured(plan=nil)
-        plan = plan.to_s if Symbol === plan
         if name_prefix.present?
-          plan.nil? ? name_prefix : "#{name_prefix}_#{plan.is_a?(String) ? plan : plan.id}"
+          direct_post_name(plan)
         else
           nil
         end
       end
 
       def create(plan, url)
-        plan = plan.to_s if Symbol === plan
-        prefix = name_prefix || `uname -n`.strip
-        name = plan.nil? ? prefix : "#{prefix}_#{plan.is_a?(String) ? plan : plan.id}"
+        name = direct_post_name(plan)
         Aria.set_reg_uss_config_params("direct_post_#{name}", {
           :redirecturl => url,
-          :do_collect_or_validate => 1,
+          :do_collect_or_validate => 0,
           :min_auth_threshold => 0,
+          :do_cc_auth => 1,
+          :change_status_on_cc_auth_failure => 0,
           :change_status_on_cc_auth_success => 1,
           :status_on_cc_auth_success => 1
         })
         name
+      end
+
+      def direct_post_name(plan)
+        plan = plan.to_s if Symbol === plan
+        prefix = name_prefix || `uname -n`.strip
+        name = plan.nil? ? prefix : "#{prefix}_#{plan.is_a?(String) ? plan : plan.id}"
       end
 
       def destroy(name=get_configured)

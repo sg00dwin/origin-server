@@ -31,6 +31,11 @@ module BillingAware
       false
     end
 
+    def aria_account_is_not_terminated?
+      user = Aria::UserContext.new(current_user)
+      user.has_account? ? user.account_status != :terminated : true
+    end
+
     #
     # Is the user on the lowest plan tier?
     #
@@ -43,6 +48,13 @@ module BillingAware
     #
     def user_can_upgrade_plan!
       redirect_to account_path unless user_can_upgrade_plan?
+    end
+
+    #
+    # Users with terminated Aria accounts cannot see the account upgrade flow
+    #
+    def aria_account_is_not_terminated!
+      redirect_to account_path unless aria_account_is_not_terminated?
     end
 
     #

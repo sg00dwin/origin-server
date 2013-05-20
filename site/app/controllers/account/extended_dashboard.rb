@@ -25,6 +25,7 @@ module Account
       @plan = @user.plan
       @is_test_user = user.test_user?
       @is_downgrading = user.default_plan_pending?
+      @account_status = user.account_status
       @virtual_time = Aria::DateTime.now if Aria::DateTime.virtual_time?
 
       @bill = user.next_bill

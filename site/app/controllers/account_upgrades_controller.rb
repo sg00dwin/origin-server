@@ -4,6 +4,7 @@ class AccountUpgradesController < ConsoleController
   before_filter :authenticate_user!, :except => :show
   before_filter :authenticate_user_for_upgrade!, :only => :show
   before_filter :user_can_upgrade_plan!
+  before_filter :aria_account_is_not_terminated!
   before_filter :account_in_supported_country!, :only => [:new, :create, :edit]
 
   rescue_from Aria::Error do |e|
