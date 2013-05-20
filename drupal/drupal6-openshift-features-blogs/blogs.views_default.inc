@@ -1106,6 +1106,11 @@ function blogs_views_default_views() {
       'table' => 'node',
       'field' => 'created',
     ),
+    'phpcode' => array(
+      'id' => 'phpcode',
+      'table' => 'customfield',
+      'field' => 'phpcode',
+    ),
   ));
   $handler->override_option('sorts', array(
     'created' => array(
@@ -1570,7 +1575,7 @@ function blogs_views_default_views() {
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('title', 'OpenShift Blog');
+  $handler->override_option('title', 'Blog');
   $handler->override_option('use_pager', '1');
   $handler->override_option('path', 'blogs');
   $handler->override_option('menu', array(
@@ -2954,6 +2959,7 @@ return $value;',
     'output_lifespan' => '3600',
   ));
   $handler->override_option('title', 'More from this author');
+  $handler->override_option('header', '');
   $handler->override_option('empty', 'No other posts by this author.');
   $handler->override_option('empty_format', '1');
   $handler->override_option('items_per_page', 4);
