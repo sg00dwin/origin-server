@@ -3,13 +3,16 @@ module BillingAware
 
   included do
     include CapabilityAware
-    helper_method :user_currency_cd, :user_can_upgrade_plan?, :user_on_basic_plan?
+    helper_method :aria_user, :user_currency_cd, :user_can_upgrade_plan?, :user_on_basic_plan?
+  end
+
+  def aria_user
+    @aria_user ||= Aria::UserContext.new(current_user)
   end
 
   # Must be public for use in application_helper.rb
   def user_currency_cd
     if session[:currency_cd].blank? and user_can_upgrade_plan?
-      aria_user = Aria::UserContext.new(current_user)
       session[:currency_cd] = aria_user.has_account? ? aria_user.currency_cd : Rails.configuration.default_currency.to_s
     end
     session[:currency_cd] || Rails.configuration.default_currency.to_s
@@ -32,7 +35,7 @@ module BillingAware
     end
 
     def aria_account_is_not_terminated?
-      user = Aria::UserContext.new(current_user)
+      user = aria_user
       user.has_account? ? user.account_status != :terminated : true
     end
 

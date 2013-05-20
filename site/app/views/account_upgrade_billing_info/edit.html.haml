@@ -2,7 +2,7 @@
 = plan_upgrade_steps 1
 
 = semantic_form_for @billing_info, :url => url_for(:action => :edit), :html => { :id => 'edit_aria_billing_info', :method => 'put' } do |f|
-  = render :partial => 'billing_info/form', :locals => {:billing_info => @billing_info, :user => @aria_user, :form => f}
+  = render :partial => 'billing_info/form', :locals => {:billing_info => @billing_info, :user => aria_user, :form => f}
 
   = f.buttons do
     = link_to "Cancel", controller.previous_path, :class => 'btn'

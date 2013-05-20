@@ -40,7 +40,7 @@
           Red Hat or OpenShift contact you differently as part of this upgrade.  A Red Hat
           account is necessary for contacting Red Hat Support.
 
-  = render :partial => 'billing_info/form', :locals => {:billing_info => @billing_info, :user => @aria_user, :form => f}
+  = render :partial => 'billing_info/form', :locals => {:billing_info => @billing_info, :user => aria_user, :form => f}
 
   = f.buttons do
     = link_to "Back to plans", account_plans_path, :class => 'btn'

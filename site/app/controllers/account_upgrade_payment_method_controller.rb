@@ -1,16 +1,14 @@
 class AccountUpgradePaymentMethodController < PaymentMethodsController
   def show
-    @aria_user = Aria::UserContext.new(current_user)
-    @payment_method = @aria_user.payment_method
+    @payment_method = aria_user.payment_method
 
     redirect_to url_for(:action => :new) and return unless @payment_method.persisted?
     redirect_to next_path
   end
 
   def new
-    @aria_user = Aria::UserContext.new(current_user)
-    @billing_info = @aria_user.billing_info
-    @payment_method = @aria_user.payment_method
+    @billing_info = aria_user.billing_info
+    @payment_method = aria_user.payment_method
 
     @payment_method ||= Aria::PaymentMethod.new
 
@@ -19,7 +17,7 @@ class AccountUpgradePaymentMethodController < PaymentMethodsController
     update_errors(@payment_method.errors, (params[:payment_method] || {})[:errors] || {})
 
     @payment_method.mode = Aria::DirectPost.get_or_create(params[:plan_id], url_for(:action => :direct_create))
-    @payment_method.session_id = @aria_user.create_session
+    @payment_method.session_id = aria_user.create_session
   end
 
   def direct_create

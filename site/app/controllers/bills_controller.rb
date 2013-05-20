@@ -64,7 +64,7 @@ class BillsController < ConsoleController
     end
 
     def require_aria_account
-      @user = Aria::UserContext.new(current_user)
+      @user = aria_user
       redirect_to account_path and return false unless @user.has_account?
     end
 
