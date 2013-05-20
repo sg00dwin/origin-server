@@ -1329,3 +1329,21 @@ div.social-sharing {
   @include icon-text-shadow(rgba(255, 255, 255, 0.75));
 
 }
+
+// Breadcrumbs
+//----------------------------------------
+
+.column-content > div > .breadcrumb {
+  font-size: 10px;
+  font-weight: bold;
+  margin: -10px 0 0 0;
+  opacity: 0.5;
+  padding: 0;
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  .column-content > div > .breadcrumb {
+    margin-top: 5px;
+  }
+} 

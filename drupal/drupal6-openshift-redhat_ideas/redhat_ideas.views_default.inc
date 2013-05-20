@@ -398,7 +398,7 @@ function redhat_ideas_views_default_views() {
       'empty_zero' => 0,
       'hide_alter_empty' => 1,
       'link_to_node' => 0,
-      'exclude' => 0,
+      'exclude' => 1,
       'id' => 'title',
       'table' => 'node',
       'field' => 'title',
@@ -410,8 +410,9 @@ function redhat_ideas_views_default_views() {
     'created' => array(
       'label' => 'Post date',
       'alter' => array(
-        'alter_text' => 0,
-        'text' => 'Submitted on [created]',
+        'alter_text' => 1,
+        'text' => '<h3>[title]</h3>
+Submitted on [created]',
         'make_link' => 0,
         'path' => '',
         'absolute' => 0,
@@ -1203,7 +1204,7 @@ function redhat_ideas_views_default_views() {
       'empty_zero' => 0,
       'hide_alter_empty' => 1,
       'link_to_node' => 0,
-      'exclude' => 0,
+      'exclude' => 1,
       'id' => 'title',
       'table' => 'node',
       'field' => 'title',
@@ -1215,8 +1216,9 @@ function redhat_ideas_views_default_views() {
     'created' => array(
       'label' => 'Post date',
       'alter' => array(
-        'alter_text' => 0,
-        'text' => 'Submitted on [created]',
+        'alter_text' => 1,
+        'text' => '<h3>[title]</h3>
+Submitted on [created]',
         'make_link' => 0,
         'path' => '',
         'absolute' => 0,

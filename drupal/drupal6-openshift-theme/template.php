@@ -277,8 +277,14 @@ function _openshift_heading(&$vars) {
   }
   elseif ($item['path'] == 'node/%' && $item['page_arguments'] && $item['page_arguments'][0]) {
     $node = $item['page_arguments'][0];
-    $type = $node->type;
-    $title = $node->title;
+    if ($node->nid == 9435) { // developers page
+      $type = "developers";
+      $title = $node->title;
+    }
+    else {
+      $type = $node->type;
+      $title = $node->title;
+    }
   }
   elseif ($item['path'] == 'comment/reply/%' && $item['page_arguments'] && $item['page_arguments'][0]) {
     $node = $item['page_arguments'][0];
@@ -300,15 +306,13 @@ function _openshift_heading(&$vars) {
       $title = $item['title'];
     }
   }
-  elseif ($item['path'] == 'quickstarts') {
-    $type = 'quickstarts';
+  elseif ($item['path'] == 'developers') {
+    $type = 'developers';
   }
   elseif ($item['page_callback'] == 'taxonomy_term_page') {
     if ($term = taxonomy_get_term($item['page_arguments'][0])) {
-      #$vocab = taxonomy_vocabulary_load($term->vid);
       if ($term->vid == 4) {
         $title = "QuickStarts Tagged with '".$term->name."'";
-        #drupal_set_title($title);
         $vars['head_title'] = $title;
       } else {
         $title = "Content Tagged with ".$term->name;
@@ -318,32 +322,19 @@ function _openshift_heading(&$vars) {
     }
     $type = '';
   }
-  elseif ($item['path'] == 'community') {
-    $type = 'community';
-  }
   switch ($type) {
   case 'home': $heading = "Overview"; break;
   case 'ideas': $heading = "Vote on Features"; break;
   case 'poll':
   case 'polls': $heading = "Polls"; break;
   case 'wikis': $heading = "Open Source Wiki"; break;
-  #case 'discussion':
   case 'group':
   case 'groups': $heading = "Forum"; break;
-  #case 'documentation': $heading = "Documentation"; break; // no title for some reason
-  case 'community': $heading = "Welcome to OpenShift"; break; // override the default link title
+  case 'developers': $heading = NULL; break;
   case 'calendar':
-  #case 'knowledge_base': $heading = "Knowledge Base"; break; // no title for some reason
-  #case 'blogs': $heading = "OpenShift Blog"; break;
-  #case 'quickstarts':
-  #case 'quickstart': $heading = "QuickStarts"; break;
-  #case 'faq': $heading = "Frequently Asked Questions"; break;
-  #case 'videos': // no title for some reason
-  #case 'video': $heading = "Videos"; break;
   default:
     $heading = $title;
   }
-  //print "<!-- final heading: ".$heading."-->";
   return $heading;
 }
 
