@@ -1342,3 +1342,8 @@ div.social-sharing {
   margin-top: 10px;
   font-size: 20px;
 }
+
+// Hide google adservices frame
+iframe[name="google_conversion_frame"] {
+  display: none;
+}
