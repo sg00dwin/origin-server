@@ -1,5 +1,5 @@
 class SiteController < ApplicationController
-  include LogHelper
+  include Console::LogHelper
 
   layout 'simple'
 end

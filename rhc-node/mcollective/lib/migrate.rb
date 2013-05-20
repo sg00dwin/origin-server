@@ -11,8 +11,7 @@ require_relative "migrate-v2-diy-0.1"
 require_relative "migrate-v2-haproxy-1.4"
 require_relative "migrate-v2-jbossas-7"
 require_relative "migrate-v2-jbosseap-6.0"
-require_relative "migrate-v2-jbossews-1.0"
-require_relative "migrate-v2-jbossews-2.0"
+require_relative "migrate-v2-jbossews"
 require_relative "migrate-v2-nodejs-0.6"
 require_relative "migrate-v2-perl-5.10"
 require_relative "migrate-v2-php-5.3"
@@ -95,6 +94,11 @@ end
 
 module OpenShiftMigration
   PREMIGRATION_STATE = '.premigration_state'
+
+  # Categorize cartridges to drive the correct configure order during migration
+  FRAMEWORK_CARTS = %w(zend-5.6 diy-0.1 jbossas-7 jbosseap-6.0 jbossews-1.0 jbossews-2.0 jenkins-1.4 nodejs-0.6 perl-5.10 php-5.3 python-2.6 python-2.7 python-3.3 ruby-1.8 ruby-1.9)
+  DB_CARTS        = %w(mysql-5.1 mongodb-2.2 postgresql-8.4)
+  PLUGIN_CARTS    = %w(metrics-0.1 rockmongo-1.1 10gen-mms-agent-0.1 cron-1.4 jenkins-client-1.4 phpmyadmin-3.4 switchyard-0.6)
 
   def self.rm_exists(file)
     # We want all errors reported, except for missing file...
@@ -238,7 +242,9 @@ module OpenShiftMigration
     if progress.incomplete? 'stop_gear'
       container = OpenShift::ApplicationContainer.from_uuid(uuid)
       container.stop_gear(user_initiated: false)
-      container.force_stop
+
+      OpenShift::UnixUser.kill_procs(container.user.uid)
+
       output << progress.mark_complete('stop_gear')
     end
 
@@ -265,8 +271,8 @@ module OpenShiftMigration
     migrators['jbossas-7'] = Jbossas7Migration.new # name changed to jbossas-7.1
     migrators['jbosseap-6.0'] = Jbosseap60Migration.new
     # One migrator can handle both jbossews cartridges
-    migrators['jbossews-1.0'] = Jbossews10Migration.new
-    migrators['jbossews-2.0'] = Jbossews10Migration.new
+    migrators['jbossews-1.0'] = JbossewsMigration.new
+    migrators['jbossews-2.0'] = JbossewsMigration.new
     migrators['nodejs-0.6'] = Nodejs06Migration.new
     migrators['perl-5.10'] = Perl510Migration.new
     migrators['php-5.3'] = Php53Migration.new
@@ -275,7 +281,7 @@ module OpenShiftMigration
     migrators['python-3.3'] = Python33Migration.new
     migrators['ruby-1.8'] = Ruby18Migration.new
     migrators['ruby-1.9'] = Ruby19Migration.new
-    #migrators['zend-5.6'] = Zend56Migration.new # not in li yet
+    migrators['zend-5.6'] = Zend56Migration.new
     migrators['metrics-0.1'] = Metrics01Migration.new
     migrators['jenkins-1.4'] = Jenkins14Migration.new
     migrators['jenkins-client-1.4'] = JenkinsClient14Migration.new
@@ -294,7 +300,7 @@ module OpenShiftMigration
     output = ''
 
     if progress.incomplete? 'typeless_translated_vars'
-      blacklist = %w(OPENSHIFT_GEAR_CTL_SCRIPT OPENSHIFT_GEAR_TYPE)
+      blacklist = %w(OPENSHIFT_GEAR_CTL_SCRIPT OPENSHIFT_LOG_DIR OPENSHIFT_GEAR_TYPE)
       user = OpenShift::UnixUser.from_uuid(uuid)
       vars_file = File.join(gear_home, '.env', 'TYPELESS_TRANSLATED_VARS')
 
@@ -362,8 +368,14 @@ module OpenShiftMigration
     user = OpenShift::UnixUser.from_uuid(uuid)
     repo = OpenShift::ApplicationRepository.new(user)
 
+    v1_scaled_bare_repo = File.join(user.homedir, "git", "#{user.uuid}.git")
+    if Dir.exists?(v1_scaled_bare_repo)
+      output << "Migrating V1 scaled bare repo from #{v1_scaled_bare_repo} to #{repo.path}\n"
+      FileUtils.mv v1_scaled_bare_repo, repo.path, :force => true
+    end
+
     if repo.exists? && progress.incomplete?("reconfigure_git_repo")
-      repo.configure  
+      repo.configure
       output << progress.mark_complete("reconfigure_git_repo")
     end
 
@@ -374,10 +386,17 @@ module OpenShiftMigration
     output = ''
 
     if progress.incomplete? 'relocate_uservars'
+      blacklist = %w(PYTHON_EGG_CACHE)
+
       uservars_dir = File.join(gear_home, '.env', '.uservars')
 
       Dir.glob(File.join(uservars_dir, '*')).each do |entry|
         name = File.basename(entry)
+
+        if blacklist.include?(name)
+          FileUtils.rm_f(entry)
+          next
+        end
 
         name =~ /OPENSHIFT_([^_]+)/
         cart = $1.downcase
@@ -399,7 +418,6 @@ module OpenShiftMigration
   def self.migrate_cartridges(progress, gear_home, uuid, cartridge_migrators)
     output = ''
 
-    # TODO: establish migration order of cartridges
     carts_to_migrate = v1_cartridges(gear_home)
 
     output << "Carts to migrate: #{carts_to_migrate}\n"
@@ -416,16 +434,33 @@ module OpenShiftMigration
   end
 
   def self.v1_cartridges(gear_home)
-    v1_carts = []
+    output = ''
+
+    framework_carts = []
+    plugin_carts    = []
+    db_carts        = []
+    leftover_carts  = []
 
     Dir.glob(File.join(gear_home, '*-*')).each do |entry|
       # Account for app-root and V2 carts matching the glob which already may be installed
       next if entry.end_with?('app-root') || entry.end_with?('jenkins-client') || entry.end_with?('mms-agent') || !File.directory?(entry)
         
-      v1_carts << File.basename(entry)
+      cart_name = File.basename(entry)
+
+      if FRAMEWORK_CARTS.include?(cart_name)
+        framework_carts << cart_name
+      elsif PLUGIN_CARTS.include?(cart_name)
+        plugin_carts << cart_name
+      elsif DB_CARTS.include?(cart_name)
+        db_carts << cart_name
+      else
+        # should be haproxy...
+        leftover_carts << cart_name
+      end
     end
 
-    v1_carts
+    # Establish the correct configure order for the migrated carts
+    framework_carts + plugin_carts + db_carts + leftover_carts
   end
 
   def self.migrate_cartridge(progress, name, version, uuid, cartridge_migrators)
@@ -437,6 +472,11 @@ module OpenShiftMigration
     cartridge  = OpenShift::CartridgeRepository.instance.select(name, version)
 
     output = ''
+
+    # Special case: zend has new endpoints in V2
+    if name == 'zend'
+      output << create_v2_zend_endpoints(progress, user)
+    end
 
     OpenShift::Utils::Cgroups.with_no_cpu_limits(uuid) do
       if progress.incomplete? "#{name}_create_directory"
@@ -467,6 +507,24 @@ module OpenShiftMigration
             end
             output << progress.mark_complete("#{name}_hook")
           end
+
+          if progress.incomplete? "#{name}_ownership"
+            target = File.join(user.homedir, c.directory)
+
+            mcs_label = OpenShift::Utils::SELinux.get_mcs_label(user.uid)
+            PathUtils.oo_chown_R(user.uid, user.gid, target)
+            OpenShift::Utils::SELinux.set_mcs_label_R(mcs_label, target)
+
+            # BZ 950752
+            # Find out if we can have upstream set a context for /var/lib/openshift/*/*/bin/*.
+            # The following will break WHEN the inevitable restorecon is run in production.
+            OpenShift::Utils.oo_spawn(
+                "chcon system_u:object_r:bin_t:s0 #{File.join(target, 'bin', '*')}",
+                expected_exitstatus: 0
+            )
+
+            output << progress.mark_complete("#{name}_ownership")
+          end
         end
       end
 
@@ -479,6 +537,19 @@ module OpenShiftMigration
     FileUtils.rm_rf(File.join(user.homedir, "#{name}-#{version}"))
 
     FileUtils.ln_s(File.join(user.homedir, name), File.join(user.homedir, "#{name}-#{version}"))
+
+    output
+  end
+
+  def self.create_v2_zend_endpoints(progress, user)
+    output = ''
+
+    if progress.incomplete? 'zend_endpoints'
+      Util.add_gear_env_var(user, 'OPENSHIFT_ZEND_CONSOLE_PORT', '16081')
+      Util.add_gear_env_var(user, 'OPENSHIFT_ZEND_ZENDSERVER_PORT', '16083')
+
+      output << progress.mark_complete('zend_endpoints')
+    end
 
     output
   end

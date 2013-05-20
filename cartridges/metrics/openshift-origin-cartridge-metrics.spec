@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/openshift/cartridges/v2/metrics
 
 Name: openshift-origin-cartridge-metrics
-Version: 1.9.1
+Version: 1.9.2
 Release: 1%{?dist}
 Summary: Metrics cartridge
 
@@ -47,6 +47,17 @@ Provides metrics cartridge support
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu May 16 2013 Adam Miller <admiller@redhat.com> 1.9.2-1
+- locking fixes and adjustments (dmcphers@redhat.com)
+- Merge pull request #1367 from fotioslindiakos/locked_files
+  (dmcphers+openshiftbot@redhat.com)
+- WIP Cartridge Refactor -- Cleanup spec files (jhonce@redhat.com)
+- Added erb processing to managed_files.yml (fotios@redhat.com)
+- Card online_runtime_297 - Allow cartridges to use more resources
+  (jhonce@redhat.com)
+- Card online_runtime_297 - Allow cartridges to use more resources
+  (jhonce@redhat.com)
+
 * Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.9.1-1
 - bump_minor_versions for sprint 28 (admiller@redhat.com)
 

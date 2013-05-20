@@ -14,6 +14,7 @@ fi
 
 echo "$version" > "$OPENSHIFT_ZEND_DIR/env/OPENSHIFT_ZEND_VERSION"
 
+mkdir -p $OPENSHIFT_ZEND_DIR/template
 shopt -s dotglob
 cp -r $OPENSHIFT_ZEND_DIR/versions/$version/template/* $OPENSHIFT_ZEND_DIR/template
 

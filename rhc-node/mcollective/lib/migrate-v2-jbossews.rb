@@ -1,11 +1,20 @@
 require_relative 'migrate-util'
 
 module OpenShiftMigration
-  class Jbossews10Migration
+  class JbossewsMigration
     def post_process(user, progress, env)
-      output = "applying jbossews-1.0 migration post-process\n"
-
       cart_name = 'jbossews'
+
+      if Dir.exists?(File.join(user.homedir, 'jbossews-1.0'))
+        old_cart_name = 'jbossews-1.0'
+      elsif Dir.exists?(File.join(user.homedir, 'jbossews-2.0'))
+        old_cart_name = 'jbossews-2.0'
+      else
+        raise "Couldn't find a v1 jbossews directory in #{user.homedir}"
+      end
+
+      output = "applying #{old_cart_name} migration post-process\n"
+
       cart_dir = File.join(user.homedir, cart_name)
 
       # Prune old variables
@@ -37,7 +46,10 @@ module OpenShiftMigration
       end
 
       # Link the old nested jbossews-1.0 cart subdirectory to the gear level directory
-      FileUtils.ln_s(cart_dir, File.join(cart_dir, 'jbossews-1.0'))
+      FileUtils.ln_s(cart_dir, File.join(cart_dir, old_cart_name))
+
+      # Move old logs into the new cartridge directory
+      output << Util.move_directory_between_carts(user, old_cart_name, cart_name, ['logs'])
 
       output
     end

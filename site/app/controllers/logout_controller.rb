@@ -1,5 +1,5 @@
 class LogoutController < ApplicationController
-  include LogHelper
+  include Console::LogHelper
 
   layout 'simple'
 

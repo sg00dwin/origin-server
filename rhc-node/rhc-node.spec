@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.9.1
+Version: 1.9.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -87,6 +87,7 @@ mkdir -p %{buildroot}/%{_sysconfdir}/security/
 mkdir -p %{buildroot}%{_var}/lib/openshift
 mkdir -p %{buildroot}%{_var}/run/openshift
 mkdir -p %{buildroot}%{_var}/lib/openshift/.httpd.d
+mkdir -p %{buildroot}%{_var}/lib/openshift/.tc_user_dir
 mkdir -p %{buildroot}/%{_sysconfdir}/httpd/conf.d/
 mkdir -p %{buildroot}/lib64/security/
 mkdir -p %{buildroot}/sandbox
@@ -213,6 +214,7 @@ fi
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
 %dir %attr(0751,root,root) %{_var}/lib/openshift
 %dir %attr(0750,root,apache) %{_var}/lib/openshift/.httpd.d
+%dir %attr(0750,root,root) %{_var}/lib/openshift/.tc_user_dir
 %dir %attr(0700,root,root) %{_var}/run/openshift
 #%dir %attr(0755,root,root) %{_libexecdir}/openshift/cartridges/abstract-httpd/
 #%attr(0750,-,-) %{_libexecdir}/openshift/cartridges/abstract-httpd/info/hooks/
@@ -238,6 +240,89 @@ fi
 
 
 %changelog
+* Thu May 16 2013 Adam Miller <admiller@redhat.com> 1.9.2-1
+- Merge pull request #1400 from pmorie/bugs/963932
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1399 from VojtechVitek/zend_migration_2
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1392 from pmorie/bugs/963071
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 963932 (pmorie@gmail.com)
+- Fix /sandbox polydir in zend migration (vvitek@redhat.com)
+- Merge pull request #1394 from pmorie/bugs/962629
+  (dmcphers+openshiftbot@redhat.com)
+- zend-5.6 migration (vvitek@redhat.com)
+- Merge pull request #1397 from pmorie/bugs/963901 (dmcphers@redhat.com)
+- Fix bug 963901 (pmorie@gmail.com)
+- Fix bug 962629 (pmorie@gmail.com)
+- Merge pull request #1339 from fotioslindiakos/postgres_migration
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 963071 (pmorie@gmail.com)
+- Postgres migration (fotios@redhat.com)
+- Fix bug 962338 (pmorie@gmail.com)
+- Merge pull request #1383 from pmorie/bugs/963002
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1382 from BanzaiMan/dev/hasari/nodejs_cart_v2_migration
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 963002 (pmorie@gmail.com)
+- Node.js cartridge migration code (asari.ruby@gmail.com)
+- env var setup fixes based on comments (asari.ruby@gmail.com)
+- Ruby v2 cart migrations for 1.8 and 1.9. (asari.ruby@gmail.com)
+- Merge pull request #1381 from ironcladlou/dev/v2carts/migrations
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1369 from VojtechVitek/php_v2_migration_fix
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 962635: Migrate git repos at the gear rather than cart level
+  (ironcladlou@gmail.com)
+- Fix bug 963070 (pmorie@gmail.com)
+- Merge pull request #1376 from bdecoste/master
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1377 from danmcp/master
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1379 from mrunalp/dev/migrations
+  (dmcphers+openshiftbot@redhat.com)
+- move v2 migration into standard migration (dmcphers@redhat.com)
+- Migration fixes. (mrunalp@gmail.com)
+- Merge pull request #1375 from pmorie/bugs/962375
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 962310 (bdecoste@gmail.com)
+- Bug 962310 (bdecoste@gmail.com)
+- Merge pull request #1373 from danmcp/master
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 962375 (pmorie@gmail.com)
+- Bug 962805 (dmcphers@redhat.com)
+- Move the frontend fix scripts into rhc-node so they are installed.
+  (rmillner@redhat.com)
+- fix php v2 migration - move phplib/ dir (vvitek@redhat.com)
+- Fix migrator hash. (mrunalp@gmail.com)
+- Merge pull request #1358 from pmorie/dev/v2_migrations
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1366 from pmorie/bugs/962340
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1361 from danmcp/master
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 962340 (pmorie@gmail.com)
+- Bug 961203 (dmcphers@redhat.com)
+- WIP v2 migrations. (mrunalp@gmail.com)
+- Add cart env and progress as parameters to cartridge migrations
+  (pmorie@gmail.com)
+- Merge pull request #1346 from jwhonce/wip/rockmongo
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1345 from jwhonce/wip/perl_migration
+  (dmcphers+openshiftbot@redhat.com)
+- Card online_runtime_272 - RockMongo migration (jhonce@redhat.com)
+- Card online_runtime_272 - V2 Perl migration (jhonce@redhat.com)
+- Merge pull request #1344 from mrunalp/mig/python_other_fixes
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1343 from ironcladlou/dev/v2carts/migrations
+  (dmcphers+openshiftbot@redhat.com)
+- WIP Python migration. (mrunalp@gmail.com)
+- Migration for jbossews (ironcladlou@gmail.com)
+- as/eap migration (bdecoste@gmail.com)
+- as/eap v2 migration (bdecoste@gmail.com)
+- v2 migration WIP (dmcphers@redhat.com)
+- v2 migrations WIP (dmcphers@redhat.com)
+
 * Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.9.1-1
 - bump_minor_versions for sprint 28 (admiller@redhat.com)
 - v2 migrations WIP (dmcphers@redhat.com)

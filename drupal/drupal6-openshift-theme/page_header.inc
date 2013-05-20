@@ -1,4 +1,57 @@
-<!DOCTYPE html>
+<?php
+
+  $is_page = TRUE;
+  foreach (array_keys(context_active_contexts()) as $name) {
+    if ($name == 'viewing-developer-center') {
+      $is_page = FALSE;
+      break;
+    }
+  }
+  if ($is_page) {
+    $config = array(
+      'menu_name' => 'primary-links',
+      'level' => 2,
+      'depth' => 1,
+      'menu_class' => 'nav nav-tabs nav-tabs-secondary',
+    );
+    $tree = openshift_menu_tree_build($config);
+    $content_header = openshift_menu_block_tree_output($tree, $config) . $content_header;
+
+    $config['level'] = 3;
+    $config['depth'] = NULL;
+    $config['expanded'] = TRUE;
+    $config['menu_class'] = 'nav nav-list nav-tertiary';
+    $config['sub_menu_class'] = 'nav nav-list';
+    $tree = openshift_menu_tree_build($config);
+    $sidebar_right = openshift_menu_block_tree_output($tree, $config) . $sidebar_right;
+  }
+  else {
+    $config = array(
+      'menu_name' => 'primary-links',
+      'level' => '2',
+      'menu_class' => 'nav nav-list',
+      'sub_menu_class' => 'nav nav-list',
+      'delta' => '1',
+    );
+    $tree = openshift_menu_tree_build($config);
+    if ($tree) {
+      $data = openshift_menu_tree_block_output($tree, $config);
+      if ($data['content']) {
+        $sidebar_left = '<h3>' . $data['subject'] . '</h3>' . $data['content'] . $sidebar_left;
+      }
+    }
+  }
+
+  if (empty($sidebar_left)) {
+    if (empty($sidebar_right)) { $layout = 'none'; }
+    else { $layout = 'right'; }
+  }
+  else {
+    if (empty($sidebar_right)) { $layout = 'left'; }
+    else { $layout = 'both'; }
+  }
+
+?><!DOCTYPE html>
 <!--[if lt IE 7]> <html class="ie6 no-js" lang="en"> <![endif]-->
 <!--[if IE 7]>    <html class="ie7 no-js" lang="en"> <![endif]-->
 <!--[if IE 8]>    <html class="ie8 no-js" lang="en"> <![endif]-->
@@ -19,14 +72,6 @@
       //print_r(menu_get_active_trail());
       global $base_url;
       global $base_root;
-      if (empty($sidebar_left)) {
-        if (empty($sidebar_right)) { $layout = 'none'; }
-        else { $layout = 'right'; }
-      }
-      else {
-        if (empty($sidebar_right)) { $layout = 'left'; }
-        else { $layout = 'both'; }
-      }
     ?> 
     <link type="image/png" rel="shortcut icon" href="<?php print openshift_assets_url(); ?>/favicon-32.png"></link>
     <link type="text/css" rel="stylesheet" href="<?php print openshift_assets_url(); ?>/overpass.css"></link>
