@@ -6,6 +6,10 @@
   &:hover {
     .dropdown-menu {
       display: block;
+      &.dropdown-menu-mega {
+        opacity: 1;
+        visibility: visible;
+      }
     }
   }
 }
@@ -20,6 +24,10 @@
   width: 120px;
   min-width: 120px;
   padding: 20px;
+  opacity: .75;
+  visibility: hidden;
+  transition: all 0.1s ease-in 0s;
+  display: inline-block;
 
   .nav-list {
     padding: 0;

@@ -469,9 +469,9 @@
 @media (max-width: 1239px) {
   .navbar {
     .nav-primary {
-      margin-right: -20px;
+      margin-right: -18px;
       > li > a {
-        padding: 18px 16px;
+        padding: 18px 15px;
         font-size: 16.5px;
       }
     }
@@ -676,7 +676,7 @@ $tabPaddingSideNarrow: 18px;
       padding: $tabPaddingTop $tabPaddingSide;
       color: inherit;
       opacity: .8;
-      font-size: 16.5px;
+      font-size: 16px;
       white-space: nowrap;
       position: relative;
       border: 0;
@@ -698,6 +698,7 @@ $tabPaddingSideNarrow: 18px;
   $navUnderlineLeftRight: 18px;
   
   .nav.nav-tabs.nav-tabs-secondary {
+    padding: 0 8px;
     > li {
       &.active,
       &.active:hover {
