@@ -340,6 +340,8 @@ module OpenShiftMigration
             OpenShift::Utils::SELinux.set_mcs_label(mcs_label, env_var_file)
           end
         end
+
+        FileUtils.rm_f(vars_file)
       end
 
       progress.mark_complete('typeless_translated_vars')
