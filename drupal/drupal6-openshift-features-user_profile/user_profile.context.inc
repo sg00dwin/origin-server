@@ -518,6 +518,7 @@ function user_profile_context_default_contexts() {
     ),
     'menu' => array(
       'values' => array(
+        'documentation' => 'documentation',
         'https://access.redhat.com/knowledge/docs/en-US/OpenShift/2.0/html/User_Guide/index.html' => 'https://access.redhat.com/knowledge/docs/en-US/OpenShift/2.0/html/User_Guide/index.html',
         'node/10295' => 'node/10295',
         'node/10777' => 'node/10777',
@@ -535,13 +536,14 @@ function user_profile_context_default_contexts() {
         'node/12037' => 'node/12037',
         'node/12038' => 'node/12038',
         'node/12255' => 'node/12255',
+        'node/12420' => 'node/12420',
         'node/14083' => 'node/14083',
         'node/5085' => 'node/5085',
         'node/5475' => 'node/5475',
-        'node/9435' => 'node/9435',
         'node/9445' => 'node/9445',
         'node/9525' => 'node/9525',
         'quickstarts' => 'quickstarts',
+        'videos' => 'videos',
       ),
     ),
     'node' => array(
@@ -550,11 +552,6 @@ function user_profile_context_default_contexts() {
       ),
       'options' => array(
         'node_form' => '1',
-      ),
-    ),
-    'path' => array(
-      'values' => array(
-        'developers' => 'developers',
       ),
     ),
   );
@@ -579,7 +576,25 @@ function user_profile_context_default_contexts() {
   $context->name = 'viewing-page';
   $context->description = '';
   $context->tag = '';
-  $context->conditions = array();
+  $context->conditions = array(
+    'path' => array(
+      'values' => array(
+        '*' => '*',
+        '~admin' => '~admin',
+        '~admin/*' => '~admin/*',
+        '~user' => '~user',
+      ),
+    ),
+    'user_page' => array(
+      'values' => array(
+        'form' => 'form',
+        'view' => 'view',
+      ),
+      'options' => array(
+        'mode' => 'all',
+      ),
+    ),
+  );
   $context->reactions = array();
   $context->condition_mode = 0;
   $export['viewing-page'] = $context;

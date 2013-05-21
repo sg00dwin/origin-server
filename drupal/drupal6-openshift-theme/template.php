@@ -277,8 +277,14 @@ function _openshift_heading(&$vars) {
   }
   elseif ($item['path'] == 'node/%' && $item['page_arguments'] && $item['page_arguments'][0]) {
     $node = $item['page_arguments'][0];
-    $type = $node->type;
-    $title = $node->title;
+    if ($node->nid == 9435) { // developers page
+      $type = "developers";
+      $title = $node->title;
+    }
+    else {
+      $type = $node->type;
+      $title = $node->title;
+    }
   }
   elseif ($item['path'] == 'comment/reply/%' && $item['page_arguments'] && $item['page_arguments'][0]) {
     $node = $item['page_arguments'][0];
@@ -300,15 +306,13 @@ function _openshift_heading(&$vars) {
       $title = $item['title'];
     }
   }
-  elseif ($item['path'] == 'quickstarts') {
-    $type = 'quickstarts';
+  elseif ($item['path'] == 'developers') {
+    $type = 'developers';
   }
   elseif ($item['page_callback'] == 'taxonomy_term_page') {
     if ($term = taxonomy_get_term($item['page_arguments'][0])) {
-      #$vocab = taxonomy_vocabulary_load($term->vid);
       if ($term->vid == 4) {
         $title = "QuickStarts Tagged with '".$term->name."'";
-        #drupal_set_title($title);
         $vars['head_title'] = $title;
       } else {
         $title = "Content Tagged with ".$term->name;
@@ -318,32 +322,19 @@ function _openshift_heading(&$vars) {
     }
     $type = '';
   }
-  elseif ($item['path'] == 'community') {
-    $type = 'community';
-  }
   switch ($type) {
   case 'home': $heading = "Overview"; break;
   case 'ideas': $heading = "Vote on Features"; break;
   case 'poll':
   case 'polls': $heading = "Polls"; break;
   case 'wikis': $heading = "Open Source Wiki"; break;
-  #case 'discussion':
   case 'group':
   case 'groups': $heading = "Forum"; break;
-  #case 'documentation': $heading = "Documentation"; break; // no title for some reason
-  case 'community': $heading = "Welcome to OpenShift"; break; // override the default link title
+  case 'developers': $heading = NULL; break;
   case 'calendar':
-  #case 'knowledge_base': $heading = "Knowledge Base"; break; // no title for some reason
-  #case 'blogs': $heading = "OpenShift Blog"; break;
-  #case 'quickstarts':
-  #case 'quickstart': $heading = "QuickStarts"; break;
-  #case 'faq': $heading = "Frequently Asked Questions"; break;
-  #case 'videos': // no title for some reason
-  #case 'video': $heading = "Videos"; break;
   default:
     $heading = $title;
   }
-  //print "<!-- final heading: ".$heading."-->";
   return $heading;
 }
 
@@ -872,6 +863,7 @@ function openshift_primary_link_megamenu($link, $visibleChildren) {
     foreach( $visibleChildren as $key=>$child) {
       $sublink = $child["link"];                                 
       $sublink['options']['html'] = TRUE;
+      unset($sublink['options']['attributes']['title']);
       $content .= '<li>' . l($sublink['title'], $sublink['href'], $sublink['options']) . '</li>';
     }
     return $content . '</ul></div>';
@@ -1056,22 +1048,25 @@ function openshift_menu_block_tree_output(&$tree, $config = array(), $nested = 0
     // Render the link.
     $link_class = array();
     $item = $items[$key];
+    $link = $item['link'];
 
-    $in_active_trail = $item['link']['in_active_trail'] || $item['link']['href'] == $get_q || ($item['link']['href'] == '<front>' && $is_drupal_front);
+    $in_active_trail = $link['in_active_trail'] || $link['href'] == $get_q || ($link['href'] == '<front>' && $is_drupal_front);
 
-    if (!empty($item['link']['localized_options']['attributes']['class'])) {
-      $link_class[] = $item['link']['localized_options']['attributes']['class'];
+    if (!empty($link['localized_options']['attributes']['class'])) {
+      $link_class[] = $link['localized_options']['attributes']['class'];
     }
     if (!empty($link_class)) {
-      $item['link']['localized_options']['attributes']['class'] = implode(' ', $link_class);
+      $link['localized_options']['attributes']['class'] = implode(' ', $link_class);
+    }
+    if ($config['hide_titles']) {
+      unset($link['localized_options']['attributes']['title']);
     }
 
-    $link = $item['link'];
     $link = l($link['title'], $link['href'], $link['localized_options']);
 
     // Render the menu item.
     $extra_class = array();
-    if (!empty($item['link']['leaf_has_children'])) {
+    if (!empty($link['leaf_has_children'])) {
       $extra_class[] = 'has-children';
     }
 

@@ -10,8 +10,8 @@ module Account
     end
 
     def contact_support
-      @contact = SupportContact.new(params[:support_contact])
-      AccountSupportContactMailer.contact_email(@contact).deliver
+      #@contact = SupportContact.new(params[:support_contact])
+      #AccountSupportContactMailer.contact_email(@contact).deliver
       redirect_to( { :action => 'help' }, :flash => {:success => 'Account Support email has been sent.'} )
     end
 

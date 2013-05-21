@@ -69,11 +69,14 @@ module OpenShift
 
       each_cartridge do |cartridge|
         cart_status = do_control('status', cartridge)
-        output << cart_status
 
+        cart_status_msg = "[OK]"
         if cart_status !~ /running|enabled|Tail of JBoss/i
           problem = true
+          cart_status_msg = "[PROBLEM]"
         end
+
+        output << "Cart status for #{cartridge.name} #{cart_status_msg}: #{cart_status}\n"
       end
 
       return [problem, output]
@@ -161,6 +164,7 @@ module OpenShiftMigration
       output << inspect_gear_state(progress, gear_home)
       output << migrate_stop_lock(progress, uuid, gear_home)
       output << stop_gear(progress, uuid)
+      output << migrate_pam_nproc_soft(progress, uuid)
       output << migrate_typeless_translated_vars(progress, uuid, gear_home)
       output << cleanup_gear_env(progress, gear_home)
       output << migrate_env_vars_to_raw(progress, gear_home)
@@ -291,9 +295,36 @@ module OpenShiftMigration
     migrators['mysql-5.1'] = Mysql51Migration.new
     migrators['phpmyadmin-3.4'] = Phpmyadmin34Migration.new
     migrators['postgresql-8.4'] = Postgresql84Migration.new
+    migrators['cron-1.4'] = Cron14Migration.new
     #migrators['switchyard-0.6'] = Switchyard06Migration.new
 
     migrators
+  end
+
+  def self.migrate_pam_nproc_soft(progress, uuid)
+    output = ''
+
+    if progress.incomplete? 'pam_nproc_soft'
+      pamfile = "/etc/security/limits.d/84-#{uuid}.conf"
+      scratch = "/etc/security/limits.d/84-#{uuid}.new"
+      if File.exist?(pamfile)
+        buf = File.read(pamfile)
+        if buf.gsub!(/(?<=\s)hard(?=\s*nproc)/, 'soft')
+          File.open(scratch, 'w') do |f|
+            f.write(buf)
+          end
+          %x[chown --reference=#{pamfile} #{scratch}]
+          %x[chmod --reference=#{pamfile} #{scratch}]
+          %x[chcon --reference=#{pamfile} #{scratch}]
+
+          # If we got here, then the file was written safely.
+          %x[mv -f #{scratch} #{pamfile}]
+        end
+      end
+      output << progress.mark_complete('pam_nproc_soft')
+    end
+
+    output
   end
 
   def self.migrate_typeless_translated_vars(progress, uuid, gear_home)
@@ -350,9 +381,11 @@ module OpenShiftMigration
       Dir.glob(File.join(gear_home, '.env', '*')).each do |entry|
         content = IO.read(entry).chomp
         if content =~ /^export /
-          output << "Migrating #{File.basename(entry)} to raw value\n"
-          content.sub!(/^export [^=]+=[\'\"]?([^\'\"]*)[\'\"]?/, '\1')
-          IO.write(entry, content)
+          index          = content.index('=')
+          parsed_content = content[(index + 1)..-1]
+          parsed_content.gsub!(/\A["']|["']\Z/, '')
+          output << "Migrated #{File.basename(entry)} v1 value [#{content}] to raw value [#{parsed_content}]\n"
+          IO.write(entry, parsed_content)
         end
       end
 
@@ -562,23 +595,33 @@ module OpenShiftMigration
 
       output << "Pre-migration state: #{premigration_state.value}\n"
 
-      if premigration_state.value == 'started'
+      if premigration_state.value != 'stopped' && premigration_state.value != 'idle'
         config = OpenShift::Config.new
         state  = OpenShift::Utils::ApplicationState.new(uuid)
         user   = OpenShift::UnixUser.from_uuid(uuid)
 
         cart_model = OpenShift::V2MigrationCartridgeModel.new(config, user, state)
 
-        if cart_model.primary_cartridge
+        # only validate via http query on the head gear
+        if cart_model.primary_cartridge && (user.uuid == user.application_uuid)
           env = OpenShift::Utils::Environ.for_gear(gear_home)
 
           dns = env['OPENSHIFT_GEAR_DNS']
           uri = URI.parse("http://#{dns}")
 
-          http = Net::HTTP.new(uri.host, uri.port)
-          request = Net::HTTP::Get.new(uri.request_uri)
-
-          response = http.request(request)
+          num_tries = 1
+          while true do
+            http = Net::HTTP.new(uri.host, uri.port)
+            request = Net::HTTP::Get.new(uri.request_uri)
+            response = http.request(request)
+            # Give the app a chance to start fully
+            if response.code == '503' && num_tries < 5
+              sleep num_tries
+            else
+              break
+            end
+            num_tries += 1
+          end
 
           output << "Post-migration response code: #{response.code}\n"
         end
@@ -586,8 +629,7 @@ module OpenShiftMigration
         problem, status = cart_model.gear_status
 
         if problem
-          output << "Leaving migration metadata in place due to problem detected with gear status\n"
-          output << "Status: #{status}\n"
+          output << "Leaving migration metadata in place due to problem detected with gear status:\n#{status}"
           return output
         end
       end

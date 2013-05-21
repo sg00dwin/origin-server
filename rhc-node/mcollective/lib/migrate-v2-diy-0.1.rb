@@ -10,6 +10,9 @@ module OpenShiftMigration
       directories = %w(logs)
       output << Util.move_directory_between_carts(user, 'diy-0.1', 'diy', directories)
 
+      Util.cp_env_var_value(user.homedir, 'OPENSHIFT_INTERNAL_IP',   'OPENSHIFT_DIY_IP')
+      Util.cp_env_var_value(user.homedir, 'OPENSHIFT_INTERNAL_PORT', 'OPENSHIFT_DIY_PORT')
+
       output
     end
   end

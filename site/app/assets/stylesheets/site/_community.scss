@@ -13,19 +13,6 @@
 
 .inline { display: inline; }
  
-.column-content > div > .breadcrumb {
-  font-size: 10px;
-  font-weight: bold;
-  margin: -24px 0 0 0;
-  opacity: 0.5;
-  padding: 0;
-  text-transform: uppercase;
-
-  &:hover {
-    //opacity: inherit;
-  }
-}
-
 /* Drupal specific markup, we may want to wrap this with a top level selector on body.drupal or something */
 .views-field-rss { float: right; }
 .views-field-picture { float: left; margin-right: 6px; }

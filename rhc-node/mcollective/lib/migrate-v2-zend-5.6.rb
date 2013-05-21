@@ -77,6 +77,9 @@ module OpenShiftMigration
       directories = %w(etc tmp var gui)
       output << Util.move_directory_between_carts(user, 'zend-5.6', 'zend/usr/local/zend', directories)
 
+      Util.cp_env_var_value(user.homedir, 'OPENSHIFT_INTERNAL_IP',   'OPENSHIFT_ZEND_IP')
+      Util.cp_env_var_value(user.homedir, 'OPENSHIFT_INTERNAL_PORT', 'OPENSHIFT_ZEND_PORT')
+
       output
     end
   end

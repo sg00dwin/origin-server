@@ -28,8 +28,8 @@ function blogs_context_default_contexts() {
         'views-nodes_by_category-block_2' => array(
           'module' => 'views',
           'delta' => 'nodes_by_category-block_2',
-          'region' => 'sidebar_left',
-          'weight' => 20,
+          'region' => 'content_suffix',
+          'weight' => 0,
         ),
       ),
     ),
