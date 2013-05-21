@@ -20,6 +20,9 @@ a:focus:active {
 	h6 {
 		color:$grayLight;
 	}
+	section {
+  	margin-bottom: $baseLineHeight * 1.75;
+	}
 }
 
 input:-moz-placeholder,
