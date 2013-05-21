@@ -39,3 +39,24 @@ Feature: V2 Migrations for V1 apps
     And the TRANSLATE_GEAR_VARS file will not exist
     And the TYPELESS_TRANSLATED_VARS variables will be discrete variables
     And the migration metadata will be cleaned up
+
+  Scenario: PHP + Postgres migration then snapshot
+    Given a new client created php-5.3 application
+    Given the embedded postgresql-8.4 cartridge is added
+    Given the application is migrated to the v2 cartridge system
+
+    When I create a test database in postgres
+
+    When I create a test table in postgres
+    When I insert test data into postgres
+    Then the test data will be present in postgres
+
+    When I snapshot the application
+    And I insert additional test data into postgres
+    Then the additional test data will be present in postgres
+
+    When I restore the application
+    Then the test data will be present in postgres
+    And the additional test data will not be present in postgres
+
+    Then all databases will have the correct ownership
