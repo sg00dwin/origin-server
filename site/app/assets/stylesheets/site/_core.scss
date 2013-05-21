@@ -127,7 +127,7 @@ body.signup {
 @if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
   .section-striped .link-tile { padding: 10px $gridGutterWidthTablet; }
 } }
-@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
+@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1240px) {
   .section-striped .link-tile { padding: 15px $gridGutterWidthLarge; }
 } }
 
@@ -435,7 +435,7 @@ body.signup {
 @if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
   .action-call > div { padding: 0 $gridGutterWidthTablet; }
 } }
-@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
+@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1240px) {
   .action-call > div { padding: 0 $gridGutterWidthLarge; }
 } }
 
@@ -592,7 +592,7 @@ h1.ribbon {
 @if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
   h1.ribbon { @include ribbon_gutters($gridGutterWidthTablet); }
 } }
-@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
+@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1240px) {
   h1.ribbon { @include ribbon_gutters($gridGutterWidthLarge); }
 } }
 
@@ -609,7 +609,7 @@ h1.ribbon {
   @media (max-width: 480px) { left: -$gridGutterWidthPhone; }
   @media (min-width: 768px) and (max-width: 979px) { right: 40px; }
   @media (min-width: 980px) and (max-width: 1199px) { right: 32px; }
-  @media (min-width: 1200px) { right: $gridGutterWidthLarge; }
+  @media (min-width: 1240px) { right: $gridGutterWidthLarge; }
 
   @media (min-width: 768px) {
     float: right;
@@ -628,6 +628,63 @@ h1.ribbon {
   a:active {
     color: $linkColorBlueHover;
   }
+}
+
+// Callout 
+// ------------------
+
+.column-content .callout {
+  background: #f0f0f0;
+  padding: 25px;
+  position: relative;
+  margin: 0 -50px 30px 30px;
+  h5 { 
+    color: inherit;
+    margin-bottom: 12px;
+  }
+  @media (min-width: 768px) {
+    float: right;
+    @include box-shadow(-1px 2px 2px rgba(0,0,0,0.4));
+    &:after {
+     border-left: 10px solid $grayLight;
+     border-bottom: 9px solid transparent;
+     content: "";
+     height: 0;
+     position: absolute;
+     bottom: -9px;
+     right: 0;
+     width: 0;
+    }
+  }
+}
+@media (max-width: 1240px) {
+ .column-content .callout {
+   margin-right: -38px;
+ } 
+}
+@media (max-width: 979px) {
+ .column-content .callout {
+   margin-right: -29px;
+ } 
+}
+@media (min-width:767px) and (max-width: 777px) {
+ .column-content .callout {
+  margin-right: -19px;
+  &:after {
+    border:0;
+  }
+ }
+}
+@media (max-width: 767px) {
+  .column-content .callout {
+      float: none;
+      margin: 0;
+      margin-bottom: 30px !important;
+      @include box-shadow(none);
+      &:after {
+        border: 0;
+      }
+    }
 }
 
 .well {
@@ -887,7 +944,7 @@ h1.ribbon {
 @if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
   .nav-stacked > li > .nav-stacked { margin-left: $gridGutterWidthTablet/2; }
 } }
-@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
+@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1240px) {
   .nav-stacked > li > .nav-stacked { margin-left: $gridGutterWidthLarge/2; }
 } }
 
@@ -1329,6 +1386,7 @@ div.social-sharing {
   @include icon-text-shadow(rgba(255, 255, 255, 0.75));
 
 }
+
 
 // Breadcrumbs
 //----------------------------------------

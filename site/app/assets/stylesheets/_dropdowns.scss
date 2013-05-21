@@ -6,6 +6,10 @@
   &:hover {
     .dropdown-menu {
       display: block;
+      &.dropdown-menu-mega {
+        opacity: 1;
+        visibility: visible;
+      }
     }
   }
 }
@@ -20,6 +24,10 @@
   width: 120px;
   min-width: 120px;
   padding: 20px;
+  opacity: .75;
+  visibility: hidden;
+  transition: all 0.1s ease-in 0s;
+  display: inline-block;
 
   .nav-list {
     padding: 0;
@@ -92,15 +100,21 @@
 }
 
 @media (max-width: 767px) {
-  .dropdown-menu-mega.dropdown-menu-two-column {
-    width: 120px;
-    > ul {
-      float: none;
-      + ul {
-        margin-top: 10px;
-        border-left: none;
-        padding-left: 0;
+  .dropdown-menu-mega {
+    display: none;
+    &.dropdown-menu-two-column {
+      width: 120px;
+      > ul {
+        float: none;
+        + ul {
+          margin-top: 10px;
+          border-left: none;
+          padding-left: 0;
+        }
       }
     }
   }
+}
+@media (max-width: 479px) {
+  .dropdown-toggle:hover .dropdown-menu.dropdown-menu-mega {display: none; }
 }
