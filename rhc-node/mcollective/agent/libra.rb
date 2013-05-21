@@ -59,14 +59,16 @@ module MCollective
         uuid = request[:uuid]
         namespace = request[:namespace]
         version = request[:version]
-        output = ""
+        output = ''
         exitcode = 0
+
+        server_identify = Facter.value(:hostname)
         begin
           require "#{File.dirname(__FILE__)}/../lib/migrate"
-          output, exitcode = OpenShiftMigration::migrate(uuid, namespace, version)
+          output, exitcode = OpenShiftMigration::migrate(uuid, namespace, version, server_identify)
         rescue LoadError => e
           exitcode = 127
-          output += "Migrate not supported.\n"
+          output += "Migrate not supported. #{e.message}\n"
         rescue Exception => e
           exitcode = 1
           output += "Gear failed to migrate with exception: #{e.message}\n#{e.backtrace}\n"
