@@ -586,6 +586,7 @@ h1.ribbon {
   display: inline-block;
   padding: 5px $gridGutterWidth 5px 0; /* left margin set by ribbon */
   min-width: 30%;
+  font-size: $baseFontSize + 13.5;
   margin-bottom: 25px;
   text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.18);
   @include ribbon($ribbonFoldColor); 
