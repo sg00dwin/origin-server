@@ -100,15 +100,21 @@
 }
 
 @media (max-width: 767px) {
-  .dropdown-menu-mega.dropdown-menu-two-column {
-    width: 120px;
-    > ul {
-      float: none;
-      + ul {
-        margin-top: 10px;
-        border-left: none;
-        padding-left: 0;
+  .dropdown-menu-mega {
+    display: none;
+    &.dropdown-menu-two-column {
+      width: 120px;
+      > ul {
+        float: none;
+        + ul {
+          margin-top: 10px;
+          border-left: none;
+          padding-left: 0;
+        }
       }
     }
   }
+}
+@media (max-width: 479px) {
+  .dropdown-toggle:hover .dropdown-menu.dropdown-menu-mega {display: none; }
 }
