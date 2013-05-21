@@ -14,7 +14,7 @@ module Account
       @identities = Identity.find current_user
       @show_email = false
 
-      user = Aria::UserContext.new(current_user)
+      user = current_aria_user
 
       @user = current_api_user
 
@@ -25,6 +25,7 @@ module Account
       @plan = @user.plan
       @is_test_user = user.test_user?
       @is_downgrading = user.default_plan_pending?
+      @account_status = user.account_status
       @virtual_time = Aria::DateTime.now if Aria::DateTime.virtual_time?
 
       @bill = user.next_bill

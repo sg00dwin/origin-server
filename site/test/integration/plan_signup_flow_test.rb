@@ -210,8 +210,8 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
 
     post '/account/plans/silver/upgrade', {:plan_id => 'silver'}
     assert_response :success
-    assert_select 'h1', 'You have upgraded to the Silver plan!'
     assert_template :upgraded
+    assert_select 'h1', 'You have upgraded to the Silver plan!'
 
     assert_equal 'silver', User.find(:one, :as => user).plan_id
 
