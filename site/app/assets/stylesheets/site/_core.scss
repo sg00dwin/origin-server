@@ -630,6 +630,63 @@ h1.ribbon {
   }
 }
 
+// Callout 
+// ------------------
+
+.column-content .callout {
+  background: #f0f0f0;
+  padding: 25px;
+  position: relative;
+  margin: 0 -50px 30px 30px;
+  h5 { 
+    color: inherit;
+    margin-bottom: 12px;
+  }
+  @media (min-width: 768px) {
+    float: right;
+    @include box-shadow(-1px 2px 2px rgba(0,0,0,0.4));
+    &:after {
+     border-left: 10px solid $grayLight;
+     border-bottom: 9px solid transparent;
+     content: "";
+     height: 0;
+     position: absolute;
+     bottom: -9px;
+     right: 0;
+     width: 0;
+    }
+  }
+}
+@media (max-width: 1240px) {
+ .column-content .callout {
+   margin-right: -38px;
+ } 
+}
+@media (max-width: 979px) {
+ .column-content .callout {
+   margin-right: -29px;
+ } 
+}
+@media (min-width:767px) and (max-width: 777px) {
+ .column-content .callout {
+  margin-right: -19px;
+  &:after {
+    border:0;
+  }
+ }
+}
+@media (max-width: 767px) {
+  .column-content .callout {
+      float: none;
+      margin: 0;
+      margin-bottom: 30px !important;
+      @include box-shadow(none);
+      &:after {
+        border: 0;
+      }
+    }
+}
+
 .well {
 	background-color:$grayLighter;
   @include box-shadow(0 1px 1px rgba(0, 0, 0, 0.15) inset);
@@ -1329,3 +1386,4 @@ div.social-sharing {
   @include icon-text-shadow(rgba(255, 255, 255, 0.75));
 
 }
+
