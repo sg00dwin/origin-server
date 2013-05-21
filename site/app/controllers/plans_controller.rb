@@ -12,7 +12,11 @@ class PlansController < ConsoleController
     @user = User.find :one, :as => current_user
     @plans = Aria::MasterPlan.cached.all
     @current_plan = @user.plan
-    @smaller_plans, @bigger_plans = @plans.sort.split{ |p| p.id == @current_plan.id }
+    if current_aria_user.has_account? and current_aria_user.account_status == :terminated
+      @smaller_plans = @bigger_plans = []
+    else
+      @smaller_plans, @bigger_plans = @plans.sort.split{ |p| p.id == @current_plan.id }
+    end
   end
 
   protected

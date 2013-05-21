@@ -1,7 +1,10 @@
 module OpenShiftMigration
-  class MigrationProgress 
+  class MigrationProgress
+    attr_reader :uuid
+
     def initialize(uuid)
       @uuid = uuid
+      @buffer = []
     end
 
     def incomplete?(marker)
@@ -14,10 +17,10 @@ module OpenShiftMigration
 
     def mark_complete(marker)
       IO.write(marker_path(marker), '')
-      "Marking step #{marker} complete\n"
+      log "Marking step #{marker} complete"
     end
 
-    def clear
+    def done
       Dir.glob(File.join('/var/lib/openshift', @uuid, 'app-root', 'data', '.migration_complete*')).each do |entry|
         FileUtils.rm_rf(entry)
       end
@@ -25,6 +28,15 @@ module OpenShiftMigration
 
     def marker_path(marker)
       File.join('/var/lib/openshift', @uuid, 'app-root', 'data', ".migration_complete_#{marker}")
+    end
+
+    def log(string)
+      @buffer << string
+      string
+    end
+
+    def report
+      @buffer.join("\n")
     end
   end
 end

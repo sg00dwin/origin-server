@@ -133,11 +133,18 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
   test 'should set direct post settings' do
     set = Aria::DirectPost.create('testplan', "https://example.com")
 
-    params = Aria.get_reg_uss_config_params("direct_post_#{set}")
+    direct_post_names = []
+    direct_post_name = Aria::DirectPost.create('testplan', "https://example.com")
+    direct_post_names << direct_post_name
+
+    params = Aria.get_reg_uss_config_params("direct_post_#{direct_post_name}")
+
     assert_equal({
       'redirecturl' => 'https://example.com',
-      'do_collect_or_validate' => '1',
+      'do_collect_or_validate' => '0',
       'min_auth_threshold' => '0',
+      'do_cc_auth' => '1',
+      'change_status_on_cc_auth_failure' => '0',
       'change_status_on_cc_auth_success' => '1',
       'status_on_cc_auth_success' => '1'
     }, params)

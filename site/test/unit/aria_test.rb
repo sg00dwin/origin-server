@@ -259,6 +259,23 @@ class AriaUnitTest < ActiveSupport::TestCase
     assert user.errors[:base][0] =~ /AuthenticationError/, user.errors.inspect
   end
 
+
+  { '-3' => :terminated,
+    '-1' => :suspended,
+    '0' => :inactive,
+    '1' => :active,
+    '11' => :dunning,
+    '12' => :dunning,
+    '13' => :dunning,
+    '1000' => :unknown,
+  }.each_pair do |status_code,status_category|
+    test "should correctly map account status code #{status_code.inspect} to symbol #{status_category.inspect}" do
+      user = TestUser.new
+      user.expects(:status_cd).returns(status_code)
+      assert_equal status_category, user.account_status
+    end
+  end
+
   test 'should invoke create_acct_complete' do
     assert billing_info = Aria::BillingInfo.test
     assert contact_info = Aria::ContactInfo.from_billing_info(billing_info)
