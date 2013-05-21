@@ -32,11 +32,9 @@ function status() {
     if ps --no-headers --pid $(< $HTTPD_PID_FILE) > /dev/null
     then
       client_result 'Rockmongo is running'
-      exit 0
     fi
   fi
   client_result 'Rockmongo is either stopped or inaccessible'
-  exit 1
 }
 
 # Clean up any log files
