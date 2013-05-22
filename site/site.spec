@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.9.4
+Version: 1.9.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -195,6 +195,32 @@ fi
 %{sitedir}/public
 
 %changelog
+* Wed May 22 2013 Adam Miller <admiller@redhat.com> 1.9.5-1
+- Merge pull request #1440 from smarterclayton/rescue_delivery_failures
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1426 from jtharris/bugs/BZ961072
+  (dmcphers+openshiftbot@redhat.com)
+- Promo code delivery failures should not fail signup flow
+  (ccoleman@redhat.com)
+- Merge pull request #1429 from liggitt/extend_user_cache
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1420 from
+  smarterclayton/site_doesnt_preserve_parameters_through_login
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 961072 (jharris@redhat.com)
+- Extend user cache key timeout (jliggitt@redhat.com)
+- Merge pull request #1423 from liggitt/nhr-direct_post_improvements
+  (dmcphers+openshiftbot@redhat.com)
+- Change aria_user to current_aria_user (jliggitt@redhat.com)
+- Move @aria_user into helper method (jliggitt@redhat.com)
+- Show message when account is in dunning, suspended, or terminated. Explicitly
+  set all direct_post settings (jliggitt@redhat.com)
+- Merge pull request #1421 from smarterclayton/hide_google_frame
+  (dmcphers+openshiftbot@redhat.com)
+- Hide the google frame in ads (ccoleman@redhat.com)
+- During redirection from a protected page (via authenticate_user!) parameters
+  on the URL are lost.  They should be preserved. (ccoleman@redhat.com)
+
 * Mon May 20 2013 Dan McPherson <dmcphers@redhat.com> 1.9.4-1
 - 
 
