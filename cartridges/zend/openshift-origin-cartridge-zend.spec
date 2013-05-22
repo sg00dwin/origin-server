@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/v2/zend
 
 Name:    openshift-origin-cartridge-zend
-Version: 0.2.3
+Version: 0.2.4
 Release: 1%{?dist}
 Summary: Zend Server cartridge
 Group:   Development/Languages
@@ -65,6 +65,12 @@ sh %{cartridgedir}/versions/5.6/rpm/zend_configure_filesystem.sh
 
 
 %changelog
+* Wed May 22 2013 Adam Miller <admiller@redhat.com> 0.2.4-1
+- Bug 962662 (dmcphers@redhat.com)
+- Bug 965537 - Dynamically build PassEnv httpd configuration
+  (jhonce@redhat.com)
+- Fix but 964348 (pmorie@gmail.com)
+
 * Mon May 20 2013 Dan McPherson <dmcphers@redhat.com> 0.2.3-1
 - Bug 963494 - Zend cartridges cannot be created (jhonce@redhat.com)
 
