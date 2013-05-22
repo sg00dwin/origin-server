@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.9.5
+Version: 1.9.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -195,6 +195,11 @@ fi
 %{sitedir}/public
 
 %changelog
+* Wed May 22 2013 Adam Miller <admiller@redhat.com> 1.9.6-1
+- Merge pull request #1438 from liggitt/bug_963640_blank_state_allowed
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 963640 - don't allow blank state in IE (jliggitt@redhat.com)
+
 * Wed May 22 2013 Adam Miller <admiller@redhat.com> 1.9.5-1
 - Merge pull request #1440 from smarterclayton/rescue_delivery_failures
   (dmcphers+openshiftbot@redhat.com)
