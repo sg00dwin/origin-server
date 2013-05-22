@@ -673,6 +673,11 @@ html.js fieldset.collapsible .fieldset-wrapper {
       margin: 0 0 0 6px;
     }
   }
+
+  .terms-page {
+    margin-top: -20px;
+    margin-bottom: 20px;
+  }
 }
 
 .community .provider {
@@ -913,10 +918,6 @@ html.js fieldset.collapsible .fieldset-wrapper {
 }
 .nav-pills .active > a:hover {
   color: #ea0011;
-}
-.field-content {
-  font-size: 15px;
-  font-weight: 300; 
 }
 .slug {
   margin: 10px 0;
