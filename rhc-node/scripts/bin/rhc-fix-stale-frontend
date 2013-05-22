@@ -11,7 +11,7 @@ $errors = []
 def with_track_errors
   begin
     yield
-  rescue => e
+  rescue Exception => e
     $errors << e
   end
 end
