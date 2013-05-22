@@ -163,6 +163,17 @@ class AccountControllerTest < ActionController::TestCase
     assert_redirected_to complete_account_path
   end
 
+  test "promo code failure should log error" do
+    e = StandardError.new('Bad Email')
+    PromoCodeMailer.expects(:promo_code_email).once.raises(e)
+    AccountController.any_instance.expects(:log_error).with(e, 'Unable to send promo code')
+
+    post :create, :web_user => get_post_form.merge({:promo_code => 'test'})
+
+    assert_equal 'openshift', assigns(:product)
+    assert_redirected_to complete_account_path :promo_code => :test
+  end
+
   test "should fail register external with invalid password" do
     post(:create_external, {:json_data => '{"email_address":"tester@example.com","password":"pw"}', :captcha_secret => 'secret', :registration_referrer => 'appcelerator'})
     assert_response 400

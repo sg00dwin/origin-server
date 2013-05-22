@@ -72,8 +72,8 @@ class ApplicationController < ActionController::Base
     end
 
     def generic_error(e=nil, message=nil, alternatives=nil)
+      log_error(e)
       @reference_id = request.uuid
-      logger.error "Unhandled exception reference ##{@reference_id}: #{e.message}\n#{e.backtrace.join("\n  ")}"
       @message, @alternatives = message, alternatives
       render 'console/error', :layout => 'console'
     end
