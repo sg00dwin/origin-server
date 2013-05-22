@@ -46,7 +46,7 @@ module Aria
     validates_length_of :region, :maximum => 2, :if => :region_is_state? # From Aria.state_prov
     validates_length_of :region, :maximum => 32, :unless => :region_is_state? # From Aria.locality
 
-    validates_inclusion_of :country, :in => Rails.configuration.allowed_countries.map(&:to_s), :message => "Unsupported country #{:country}"
+    validates_inclusion_of :country, :in => Rails.configuration.allowed_countries.map(&:to_s), :message => "Unsupported country %{value}"
 
     account_prefix :from => 'billing_',
                    :to => 'bill_',
