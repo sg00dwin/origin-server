@@ -69,7 +69,7 @@
       /* reset styles */
       float: none;
       width: 100%;
-      font-size: 14px;
+      font-size: $baseFontSize;
     }
   }
 }
@@ -237,7 +237,7 @@
   // Vertically center the text given $navbarHeight
   padding: 18px 30px;
   color: $navbarLinkColor;
-  font-size: 18px;
+  font-size: 18px; // header special case
   font-weight: normal;
   text-decoration: none;
   text-transform: uppercase;
@@ -303,7 +303,7 @@
   background-image: none;
   //@include gradient-vertical($startColor: #282828, $endColor: #121212);
   display: none;
-  font-size: 12px;
+  font-size: $smallFontSize;
   text-transform: uppercase;
   font-weight:normal;
   margin: 0 0 0 -20px;
@@ -472,7 +472,7 @@
       margin-right: -18px;
       > li > a {
         padding: 18px 15px;
-        font-size: 16.5px;
+        font-size: 16.5px; // responsive special case
       }
     }
   }
@@ -499,7 +499,7 @@
       margin-right: -10px;
       > li > a {
         padding: 10px;
-        font-size: 14.75px;
+        font-size: 14.75px; // responsive special case
       }
     }
   }
@@ -533,7 +533,7 @@
           border-bottom: 2px solid transparent;
           color: white;
           text-align: center;
-          font-size: 12.5px;
+          font-size: 12.5px; // navbar special case
           letter-spacing: 1px;
           position: inherit;
         }
@@ -549,7 +549,7 @@
         width: 33%;
         > a {
           padding: 10px 0;
-          font-size: 14px;
+          font-size: 14px; // navbar special case
           margin-bottom: 0;
         }
       }
@@ -676,7 +676,7 @@ $tabPaddingSideNarrow: 18px;
       padding: $tabPaddingTop $tabPaddingSide;
       color: inherit;
       opacity: .8;
-      font-size: 16px;
+      font-size: $h4FontSize;
       white-space: nowrap;
       position: relative;
       border: 0;
@@ -750,7 +750,7 @@ $tabPaddingSideNarrow: 18px;
       }
       a {
         padding: $tabPaddingTopNarrow 14px;
-        font-size: 15px;
+        font-size: $largeFontSize;
       }
     }
   }
@@ -782,7 +782,7 @@ $tabPaddingSideNarrow: 18px;
       }
       a {
         padding: $tabPaddingTopTablet 16px;
-        font-size: 14px
+        font-size: 14px // responsive special case
       }
     }
   }

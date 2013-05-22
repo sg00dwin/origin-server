@@ -251,7 +251,7 @@ body.signup {
   margin: 30px 0 45px;
 
   .primary {
-    font-size: 42px;
+    font-size: 42px; // special case
     line-height: 1em;
     text-transform: uppercase;
     color: white;
@@ -259,7 +259,7 @@ body.signup {
   }
 
   .secondary {
-    font-size: 15px;
+    font-size: 15px; // special case
     line-height: 1.5em;
     color: white;
     max-width: 790px;
@@ -279,10 +279,10 @@ body.signup {
 @media (max-width: 979px) {
   .messaging {
     .primary {
-      font-size: 32px;
+      font-size: 32px; // responsive
     }
     .secondary {
-      font-size: 15px;
+      font-size: 15px; // responsive
     }
   }
 }
@@ -362,7 +362,7 @@ body.signup {
  
 .action-more,
 .action-more a {
-  font-size: 16px;
+  font-size: $largeFontSize;
   color: #bc000d;
   text-decoration: none;
   display: inline;
@@ -385,7 +385,7 @@ body.signup {
 #learn .action-call { 
   margin-top: -1.3em; 
   margin-bottom: 20px;
-  font-size: 20px;
+  font-size: 20px; // learn special case
   font-weight: bold;
   letter-spacing: 1px;
 }
@@ -408,7 +408,7 @@ body.signup {
 
 @media (max-width: 979px) {
   #learn .action-call {
-    font-size: 17px;
+    font-size: 17px; // responsive special case
   }
 }
 @media (max-width: 767px) {
@@ -420,7 +420,7 @@ body.signup {
 	}
   #learn .action-call { 
     width: 100%;
-    font-size: 13px;
+    font-size: 13px; // responsive special case
     letter-spacing: 0px;
   }
   #nav .action-call {
@@ -738,7 +738,7 @@ h1.ribbon {
     margin-bottom: 8px;
   }
   .nav-location {
-    font-size: 19px;
+    font-size: 19px; // must match H1, special case
     line-height: 46px;
     text-transform: uppercase;
     margin-top: 15px;
@@ -806,7 +806,7 @@ h1.ribbon {
     .nav-list {
       padding-left: 8px;
       margin: 0;
-      font-size: 12px;
+      font-size: $smallFontSize;
       line-height: 17px;
 
       > li {
@@ -877,7 +877,7 @@ h1.ribbon {
     color: #ccc;
     padding-left: 8px;
     padding-right: 27px;
-    font-size: 12px;
+    font-size: $smallFontSize;
     font-family: $headerFontFamily;
     width: 55px;
     -webkit-transition: width 0.3s ease 0s;
@@ -1378,7 +1378,7 @@ body.simple {
 
 div.social-sharing {
   margin-top: 10px;
-  font-size: 20px;
+  font-size: $leadFontSize;
 }
 
 .font-icon,
@@ -1396,7 +1396,7 @@ iframe[name="google_conversion_frame"] {
 //----------------------------------------
 
 .column-content > div > .breadcrumb {
-  font-size: 10px;
+  font-size: $extraTinyFontSize;
   font-weight: bold;
   margin: -10px 0 0 0;
   opacity: 0.5;
