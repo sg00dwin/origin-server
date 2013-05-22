@@ -1,3 +1,5 @@
+- vertical = false if vertical.nil?
+
 :css
   .block-gears { border: 1px solid gray; display: inline-block; white-space: nowrap; }
   .block-gears-empty { display: block; }
@@ -9,24 +11,26 @@
   .table-gears td { padding: 2px 10px; text-align: center; font-size: 11px; }
   .table-gears td:first-child { padding-left: 0; }
 
-%h2 Need more gears?
-%div
-  %h4 Using #{user.consumed_gears} of #{user.max_gears} gears
-  %table.table-gears
-    %tr
-      %td
-        .block-gears
-          - 3.times do |i|
-            - if (i+1) <= user.consumed_gears
-              .block-gear.gear-used> &nbsp;
-            - else
-              .block-gear> &nbsp;
-      %td
-        .block-gears.block-gears-empty
-          .block-gear
-            Up to 16 Gears
-    %tr
-      %td Free
-      %td Upgrade to Silver
-%div
-  = link_to "Upgrade Now", edit_account_plan_upgrade_path('silver'), :class => "btn btn-primary"
+%div{:class => vertical ? '' : 'row-fluid'}
+  %div{:class => vertical ? '' : 'span5'}
+    %h2= vertical ? "Need more gears?" : "Upgrade to get access to more gears"
+  %div{:class => vertical ? '' : 'span4'}
+    %h4 Using #{user.consumed_gears} of #{user.max_gears} gears
+    %table.table-gears
+      %tr
+        %td
+          .block-gears
+            - 3.times do |i|
+              - if (i+1) <= user.consumed_gears
+                .block-gear.gear-used> &nbsp;
+              - else
+                .block-gear> &nbsp;
+        %td
+          .block-gears.block-gears-empty
+            .block-gear
+              Up to 16 Gears
+      %tr
+        %td Free
+        %td Upgrade to Silver
+  %div{:class => vertical ? '' : 'span3'}
+    = link_to "Upgrade Now", edit_account_plan_upgrade_path('silver'), :class => "btn btn-primary #{vertical ? '' : 'btn-large'}"
