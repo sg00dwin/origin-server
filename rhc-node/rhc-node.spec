@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.9.3
+Version: 1.9.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -240,6 +240,18 @@ fi
 
 
 %changelog
+* Wed May 22 2013 Adam Miller <admiller@redhat.com> 1.9.4-1
+- Merge pull request #1432 from pmorie/bugs/963071
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1431 from pmorie/dev/v2_migrations
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 963071: remove TYPELESS_TRANSLATED_VARS after migrating
+  (pmorie@gmail.com)
+- Ignore failures stopping gears in V1 -> V2 migration (pmorie@gmail.com)
+- Bug 965492: Fix phpmyadmin/rockmongo IP/port vars during migration
+  (ironcladlou@gmail.com)
+- WIP Cartridge Refactor - V2 to V2 Migrations (jhonce@redhat.com)
+
 * Mon May 20 2013 Dan McPherson <dmcphers@redhat.com> 1.9.3-1
 - Merge pull request #1417 from mrunalp/bugs/nodejs_mig
   (dmcphers+openshiftbot@redhat.com)
