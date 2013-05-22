@@ -1,11 +1,10 @@
 module Aria
-  class Bill < Struct.new(:recurring_bill_from, :recurring_bill_thru, :usage_bill_from, :usage_bill_thru, :due_date, :day, :invoice_line_items, :invoice_payments, :unbilled_usage_line_items, :unbilled_usage_balance, :forwarded_balance)
+  class Bill < Struct.new(:recurring_bill_from, :recurring_bill_thru, :usage_bill_from, :usage_bill_thru, :due_date, :paid_date, :day, :invoice_line_items, :invoice_payments, :unbilled_usage_line_items, :forwarded_balance)
     def initialize(attributes = {})
       super(*members.map {|m| attributes[m.to_sym]})
       self.invoice_line_items        ||= []
       self.invoice_payments          ||= []
       self.unbilled_usage_line_items ||= []
-      self.unbilled_usage_balance    ||= 0
       self.forwarded_balance         ||= 0
     end
 
@@ -20,7 +19,7 @@ module Aria
     end
 
     def balance
-      @balance ||= (forwarded_balance + invoice_line_items.map(&:total_cost).sum + unbilled_usage_balance).round(2)
+      @balance ||= (forwarded_balance + invoice_line_items.map(&:total_cost).sum + unbilled_usage_line_items.map(&:total_cost).sum).round(2)
     end
     alias_method :estimated_balance, :balance
 
@@ -28,7 +27,7 @@ module Aria
       payments.blank? and 
       line_items.blank? and
       forwarded_balance > -0.01 and forwarded_balance < 0.01 and
-      unbilled_usage_balance < 0.01
+      unbilled_usage_line_items.blank?
     end
 
     def has_recurring?
