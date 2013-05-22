@@ -356,7 +356,7 @@ case "$1" in
     *)
 
 	pwd=$(pwd)
-	echo "Usage: $0 {start|stop|restart|status [username]|startuser <username>|stopuser <username>|restartuser <username>|throttleuser <username>|highuser <username>|normaluser <username>|deluser <username>}"
+	echo "Usage: $0 {start|stop|restart|status [username]|startuser <username>|stopuser <username>|restartuser <username>|throttleuser <username>|nothrottleuser <username>|highuser <username>|nohighuser <username>|normaluser <username>|deluser <username>}"
 	;;
 
 esac
