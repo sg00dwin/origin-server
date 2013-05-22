@@ -56,7 +56,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
   # Make sure users are sent to the login controller when requesting
   # a protected page
   test 'test being redirected to the login controller' do
-    ['/console'].each do |url|
+    ['/console', '/console/applications?test=bar'].each do |url|
       get url
       assert_redirected_to login_path(:redirectUrl => url), "Requesting #{url}"
     end

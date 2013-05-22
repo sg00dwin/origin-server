@@ -24,6 +24,7 @@ function start() {
         client_error "Failed to start Zend Server Monitor node"
 
     client_message "Starting Apache"
+    update_httpd_passenv $HTTPD_CFG_FILE
     /usr/sbin/httpd -C "Include $HTTPD_CFG_DIR/*.conf" -f $HTTPD_CFG_FILE -k start || \
         client_error "Failed to start Apache"
 
@@ -77,6 +78,7 @@ function restart() {
         client_error "Failed to restart Zend Server Monitor node"
 
     client_message "Restarting Apache"
+    update_httpd_passenv $HTTPD_CFG_FILE
     /usr/sbin/httpd -C "Include $HTTPD_CFG_DIR/*.conf" -f $HTTPD_CFG_FILE -k restart || \
         client_error "Failed to restart Apache"
 

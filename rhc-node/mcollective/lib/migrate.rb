@@ -241,9 +241,13 @@ module OpenShiftMigration
 
     if progress.incomplete? 'stop_gear'
       container = OpenShift::ApplicationContainer.from_uuid(uuid)
-      container.stop_gear(user_initiated: false)
-
-      OpenShift::UnixUser.kill_procs(container.user.uid)
+      begin
+        container.stop_gear(user_initiated: false)
+      rescue Exception => e
+        progress.log "Stop gear failed with an exception: #{e.message}"
+      ensure
+        OpenShift::UnixUser.kill_procs(container.user.uid)
+      end
 
       progress.mark_complete('stop_gear')
     end
@@ -340,6 +344,8 @@ module OpenShiftMigration
             OpenShift::Utils::SELinux.set_mcs_label(mcs_label, env_var_file)
           end
         end
+
+        FileUtils.rm_f(vars_file)
       end
 
       progress.mark_complete('typeless_translated_vars')

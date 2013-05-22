@@ -66,6 +66,8 @@ Then /^the environment variables will be migrated to raw values$/ do
     value = IO.read(entry)
     assert !value.start_with?('export'), entry
   end
+
+  assert_file_not_exists File.join($home_root, @app.uid, '.env', 'TYPELESS_TRANSLATED_VARS')
 end
 
 Then /^the application will be marked as a v2 app$/ do
