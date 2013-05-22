@@ -19,6 +19,10 @@ module Streamline
 
       call = "#{color(event.payload.delete(:method), BOLD, true)} #{event.payload.delete(:uri)}"
 
+      if event.payload.has_key?(:response) && event.payload[:response] =~ /emailAddress|phoneNumber|title|address1/
+        event.payload[:response] = '[FILTERED]'
+      end
+
       query = event.payload.map{ |k,v| "#{k}: #{color(v, BOLD, true)}" }.join(', ')
 
       debug "  #{color(name, YELLOW, true)} #{call} [ #{query} ]"
