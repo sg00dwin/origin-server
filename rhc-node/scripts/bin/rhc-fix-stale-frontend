@@ -24,6 +24,17 @@ if fqdns.empty?
    exit(0)
 end
 
+OpenShift::GearDB.open(OpenShift::GearDB::WRCREAT) do |d|
+  fqdns.map! do |fqdn|
+    begin
+      d[fqdn]["fqdn"]
+    rescue
+      fqdn
+    end
+  end
+end
+
+
 $stdout.puts("Deleting names and any associated aliases from the frontend:")
 $stdout.puts("\t#{fqdns.join("\n\t")}")
 
@@ -73,13 +84,10 @@ with_track_errors do
   end
 end
 
-# This module doesn't exist on INT/PROD yet
-if defined?(OpenShift::GearDB)
-  with_track_errors do
-    $stdout.puts("Deleting from GearDB...")
-    OpenShift::GearDB.open(OpenShift::GearDB::WRCREAT) do |d|
-      d.delete_if { |k, v| fqdns.include?(v["fqdn"]) }
-    end
+with_track_errors do
+  $stdout.puts("Deleting from GearDB...")
+  OpenShift::GearDB.open(OpenShift::GearDB::WRCREAT) do |d|
+    d.delete_if { |k, v| fqdns.include?(v["fqdn"]) }
   end
 end
 
