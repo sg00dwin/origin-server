@@ -1,5 +1,4 @@
 class ApplicationController < ActionController::Base
-  include Console::Rescue
   include Console::CommunityAware
   include Secured
   include AsyncAware
@@ -7,12 +6,14 @@ class ApplicationController < ActionController::Base
 
   protect_from_forgery
 
-  rescue_from AccessDeniedException, :with => :access_denied
-  rescue_from 'Aria::ResourceNotFound', :with => :resource_not_found
+  rescue_from Exception, :with => :generic_error
   rescue_from 'Streamline::Error',
               'Aria::Error', 'Aria::NotAvailable',
               :with => :generic_error
-  rescue_from :with => :generic_error
+  rescue_from 'Aria::ResourceNotFound', :with => :resource_not_found
+  rescue_from AccessDeniedException, :with => :access_denied
+
+  include Console::Rescue
 
   helper_method :active_tab
 
@@ -75,7 +76,7 @@ class ApplicationController < ActionController::Base
       @reference_id = request.uuid
       logger.error "Unhandled exception reference ##{@reference_id}: #{e.message}\n#{e.backtrace.join("\n  ")}"
       @message, @alternatives = message, alternatives
-      render 'console/error', :layout => 'console'
+      render 'console/error'
     end
 
     def access_denied(e)
@@ -83,6 +84,7 @@ class ApplicationController < ActionController::Base
       redirect_to logout_path :cause => e.message, :then => account_path
     end
     def console_access_denied(e)
+      logger.debug "Console access denied: #{e}"
       access_denied(e)
     end
 
