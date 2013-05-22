@@ -673,10 +673,14 @@ html.js fieldset.collapsible .fieldset-wrapper {
       margin: 0 0 0 6px;
     }
   }
+}
 
+.community {
   .terms-page {
-    margin-top: -20px;
     margin-bottom: 20px;
+  }
+  .ribbon + .terms-page {
+    margin-top: -20px;
   }
 }
 
