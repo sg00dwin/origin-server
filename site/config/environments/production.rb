@@ -82,8 +82,4 @@ RedHatCloud::Application.configure do
   end
 
   Console.configure(ENV['CONSOLE_CONFIG_FILE'] || '/etc/openshift/console.conf')
-
-  # Promo code Email notification setup
-  config.email_from = 'OpenShift <noreply@openshift.redhat.com>'
-  config.marketing_mailing_list = Console.config.env(:MARKETING_EMAIL_LIST, ['Marketing Mailing List <snathan@redhat.com>'])
 end
