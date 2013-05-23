@@ -75,6 +75,7 @@ class AccountControllerTest < ActionController::TestCase
       with_unique_user
       get :show
       assert_response :success
+      assert_template :dashboard_free
       assert assigns(:user)
 
       assert assigns(:plan).nil?, assigns(:user).inspect
@@ -93,10 +94,12 @@ class AccountControllerTest < ActionController::TestCase
         Aria::UserContext.any_instance.expects(:acct_no).at_least_once.returns(1)
         Aria::UserContext.any_instance.expects(:test_user?).at_least_once.returns(true)
         Aria::UserContext.any_instance.expects(:next_bill).at_least_once.returns(false)
+        Aria::UserContext.any_instance.expects(:last_bill).at_least_once.returns(false)
         Aria::UserContext.any_instance.expects(:default_plan_pending?).at_least_once.returns(false)
         Aria::UserContext.any_instance.expects(:has_valid_payment_method?).at_least_once.returns(true)
         get :show
         assert_response :success
+        assert_template :show
         assert_equal status, assigns(:account_status)
         assert_select (status == :terminated ? '.alert-error' : '.alert-warning'), :text => /#{message}/
       end
@@ -109,23 +112,78 @@ class AccountControllerTest < ActionController::TestCase
         Aria::UserContext.any_instance.expects(:acct_no).at_least_once.returns(1)
         Aria::UserContext.any_instance.expects(:test_user?).at_least_once.returns(true)
         Aria::UserContext.any_instance.expects(:next_bill).at_least_once.returns(false)
+        Aria::UserContext.any_instance.expects(:last_bill).at_least_once.returns(nil)
         Aria::UserContext.any_instance.expects(:default_plan_pending?).at_least_once.returns(false)
         Aria::UserContext.any_instance.expects(:has_valid_payment_method?).at_least_once.returns(true)
         get :show
         assert_response :success
-        assert_select '.btn', :text => 'Upgrade Now', :count => 0
+        assert_template :show
+        assert_equal :terminated, assigns(:account_status)
+        assert_select 'a', :text => 'Upgrade Now', :count => 0
     end
 
     test "should render dashboard with no next bill" do
       omit_if_aria_is_unavailable
       with_account_holder
       Aria::UserContext.any_instance.expects(:next_bill).returns(false)
+      Aria::UserContext.any_instance.expects(:last_bill).returns(nil)
       get :show
       assert_response :success
+      assert_template :show
       assert assigns(:user)
       assert assigns(:plan)
       assert_select 'a', 'Upgrade Now'
       assert_select 'p', /not currently subscribed/
+    end
+
+    test "should show dashboard without last bill" do
+      omit_if_aria_is_unavailable
+      with_account_holder
+      Aria::UserContext.any_instance.expects(:next_bill).returns(false)
+      Aria::UserContext.any_instance.expects(:last_bill).returns(nil)
+      get :show
+      assert_response :success
+      assert_template :show
+      assert assigns(:user)
+      assert assigns(:plan)
+      assert_select 'h2:content(?)', /previous bill/, :count => 0
+      assert_select 'a:content(?)', 'View billing history', :count => 0
+    end
+
+    test "should show dashboard with unpaid last bill" do
+      omit_if_aria_is_unavailable
+      with_account_holder
+      Aria::UserContext.any_instance.expects(:next_bill).returns(false)
+      Aria::UserContext.any_instance.expects(:last_bill).returns(Aria::Bill.new(
+        :due_date => '2010-02-01'.to_datetime,
+        :paid_date => nil,
+        :forwarded_balance => 100
+      ))
+      get :show
+      assert_response :success
+      assert_template :show
+      assert assigns(:user)
+      assert assigns(:plan)
+      assert_select 'h2:content(?)', /previous bill .* due/
+      assert_select 'a:content(?)', 'View billing history'
+    end
+
+    test "should show dashboard with paid last bill" do
+      omit_if_aria_is_unavailable
+      with_account_holder
+      Aria::UserContext.any_instance.expects(:next_bill).returns(false)
+      Aria::UserContext.any_instance.expects(:last_bill).returns(Aria::Bill.new(
+        :due_date => '2010-02-01'.to_datetime,
+        :paid_date => '2010-02-01'.to_datetime,
+        :forwarded_balance => 100
+      ))
+      get :show
+      assert_response :success
+      assert_template :show
+      assert assigns(:user)
+      assert assigns(:plan)
+      assert_select 'h2:content(?)', /previous bill .* paid/
+      assert_select 'a:content(?)', 'View billing history'
     end
 
     test "should show account dashboard" do
@@ -133,11 +191,11 @@ class AccountControllerTest < ActionController::TestCase
       with_account_holder
       get :show
       assert_response :success
+      assert_template :show
       assert assigns(:user)
       assert assigns(:plan)
 
       assert assigns(:plan), assigns(:user).inspect
-      assert_select 'a:content(?)', 'Billing history'
       assert_select 'h2:content(?)', 'Next Bill'
     end
   end

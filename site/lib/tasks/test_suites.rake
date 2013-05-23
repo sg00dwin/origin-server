@@ -30,6 +30,7 @@ namespace :test do
       'test/**/bills_controller_test.rb',
       'test/**/account_controller_test.rb',
       'test/**/account_upgrade*_test.rb',
+      'test/**/extended_dashboard_controller_test.rb',
     ]
   end
 
@@ -119,6 +120,7 @@ namespace :test do
         # Aria and some Streamline
         'test/integration/aria_test.rb',
         'test/functional/account_controller_test.rb',
+        'test/functional/extended_dashboard_controller_test.rb',
         'test/functional/bills_controller_test.rb',
         'test/integration/plan_signup_flow_test.rb',
         'test/functional/email_confirm_controller_test.rb',

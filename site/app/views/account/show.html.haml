@@ -1,96 +1,116 @@
 - content_for :page_title, 'My Account'
 
+:css
+  .compact { margin-bottom: 0; }
+  .disclaimer { font-size: .9em; color: #888 }
+
+- if not Rails.env.production? and params[:debug]
+  = render :partial => 'dashboard_debug'
+
 .row-fluid
   .span9
     %h1
       My Account
   .span3
-    .right <strong>#{@plan.name}</strong> Plan
-    .right= link_to "Plan details", account_plan_path
+    %h2.compact.right
+      %small <strong>#{@plan.name}</strong> Plan
+    .right= link_to "View details", account_plan_path
 
-- unless @has_valid_payment_method
-  .panel
-    %p
-      The payment method associated with your account is no longer valid. #{link_to "Please provide a valid credit card for this account", edit_account_payment_method_path}.
+- if @is_test_user
+  .alert.alert-warning You are accessing OpenShift with a test user.  If this is unexpected, please contact the account support team immediately.
+- if @virtual_time
+  .alert.alert-warning You are accessing an Aria test system. The virtual time is #{@virtual_time}.
 
-    - if @bill.present?
-      %p
-        - if @bill.due_date > Aria::DateTime.today
-          You owe #{number_to_user_currency(@bill.balance)}, due on #{@bill.due_date.to_s(:billing_date)}.
-        - else
-          You owe #{number_to_user_currency(@bill.balance)} which was due on #{@bill.due_date.to_s(:billing_date)}.
 - if @account_status == :suspended
-  .alert.alert-warning Your account has been flagged for suspension due to non-payment. To correct your payment settings, or if you feel that this is in error, please #{link_to "contact customer service", contact_customer_support_url, :class => 'external'}.
+  .alert.alert-warning 
+    %div
+      Your account has been flagged for suspension due to non-payment.
+      Please #{link_to "update your payment method", edit_account_payment_method_path}.
+    %div
+      If you feel that this is in error, please #{link_to "contact customer service", contact_customer_support_url, :class => 'external'}.
 - elsif @account_status == :dunning
-  .alert.alert-warning Your account is overdue on payment. To correct this, or if you feel that this is in error, please #{link_to "contact customer service", contact_customer_support_url, :class => 'external'}.
+  .alert.alert-warning 
+    %div
+      Your account is overdue on payment.
+      Please #{link_to "update your payment method", edit_account_payment_method_path}.
+    %div
+      If you feel that this is in error, please #{link_to "contact customer service", contact_customer_support_url, :class => 'external'}.
 - elsif @account_status == :terminated
-  .alert.alert-error Your account has been flagged for termination due to non-payment. To correct this, or if you feel that this is in error, please #{link_to "contact customer service", contact_customer_support_url, :class => 'external'}.
-%section.panel
-  .pull-right= link_to "Billing history", account_bills_path
-  %h2 Next Bill
+  .alert.alert-error
+    Your account has been flagged for termination. 
+    If you feel that this is in error, please #{link_to "contact customer service", contact_customer_support_url, :class => 'external'}.
+- elsif not @has_valid_payment_method
+  .alert.alert-warning 
+    The payment method associated with your account is no longer valid. #{link_to "Please provide a valid credit card for this account", edit_account_payment_method_path}.
 
-  - if @bill
-    - if @bill.day and @bill.usage_bill_from and @bill.usage_bill_thru
-      %p
-        Day #{@bill.day} of billing period #{collapse_dates(@bill.usage_bill_from, @bill.usage_bill_thru, :ordinalize => true)}
 
-    - if @bill.empty?
-      %p
-        You have no recurring charges due for the next month and no recorded usage.
+- if @is_downgrading
+  .alert.alert-info
+    You have access to OpenShift support until the end of the month.
+    You will be billed for any usage above the 2250 included small gear-hours.
 
-    - if @is_downgrading
-      .alert.alert-info
-        You have access to OpenShift support until the end of the month. You will be billed for any usage
-        above the 2250 included small gear-hours.
 
-    - else
-      - if not @plan.basic? and @usage_items.present?
-        .row-fluid
-          .span6
-            = render :partial => 'bill', :locals => {:bill => @bill}
-          .span6
-            = render :partial => 'usage_charges', :locals => {:usage_items => @usage_items, :usage_types => @usage_types}
-      - else
-        = render :partial => 'bill', :locals => {:bill => @bill, :show_details => true}
-
-    %p.disclaimer
-      - if @bill && !@bill.empty?
-        The amounts above may not accurately reflect discounts, applicable sales taxes, peaks in future usage, or recent 
-        activity.
-
-        Your first month is billed as soon as you subscribe - see your billing history for details.
-
-  - else
-
-    %p You are not currently subscribed to a plan.
-
-  %p.payment_method
-    - if @payment_method.present?
-      - if @bill && @bill.due_date
-        Your credit card (ending in <span class="card_number">#{@payment_method.cc_no}</span> and expiring <span class="card_expiration">#{@payment_method.expiration_date.to_s(:credit_card)}</span>) will be charged on #{@bill.due_date.to_s(:billing_date)}.<br>
-      - else
-        Your credit card (ending in <span class="card_number">#{@payment_method.cc_no}</span> and expiring <span class="card_expiration">#{@payment_method.expiration_date.to_s(:credit_card)}</span>) will be used for any future charges.<br>
-    #{link_to @payment_method.blank? ? "Add a card to this account" : "Change card", edit_account_payment_method_path}
-    | #{link_to "Update address", edit_account_billing_info_path}
-
-  - if @is_test_user
-    .alert.alert-warning You are accessing OpenShift with a test user.  If this is in error, please contact the account support team immediately.
-  - if @virtual_time
-    .alert.alert-warning You are accessing an Aria test system. The virtual time is #{@virtual_time}.
-
-- if @plan.basic? and @account_status != :terminated
+- if @last_bill.present?
   %section.panel
-    = render :partial => 'upgrade', :locals => {:user => @user}
+    -if @last_bill.paid_date
+      %h2.compact Your previous bill for #{number_to_user_currency(@last_bill.balance)} was paid on #{@last_bill.paid_date.to_s(:billing_date)}
+    -else
+      %h2.compact Your previous bill for #{number_to_user_currency(@last_bill.balance)} was due on #{@last_bill.due_date.to_s(:billing_date)}
+    = link_to "View billing history", account_bills_path
 
-%section.panel
-  %h3 
-    Have Questions?  See
-    = link_to "Account Help", help_account_path
-    or 
-    - if @plan.basic?
-      = link_to "Community Support", console_help_path
-    - else
-      = link_to "Technical Support", openshift_customer_portal_url
 
-%section
-  = render :partial => 'user', :locals => {:user => @user, :show_email => @show_email, :identities => @identities}
+.row-fluid
+  %div{:class => @usage_items.present? ? "span8" : "span12"}
+    %section.panel
+      %h2.compact Next Bill
+
+      - if @bill == false
+        %p You are not currently subscribed to a plan.
+      - elsif @bill.blank?
+        %p You have no recurring charges due for the next month and no recorded usage.
+      - else
+        %p Today is day #{@bill.day} of the billing period #{collapse_dates(@bill.usage_bill_from, @bill.usage_bill_thru, :ordinalize => true)}
+        = render :partial => 'bill', :locals => {:bill => @bill, :show_details => @usage_items.blank?}
+        %p.disclaimer The amounts above may not reflect discounts, applicable sales taxes, peaks in future usage, recent activity, or unbilled usage outside the current billing period.
+
+      %p.payment_method
+        - if @payment_method.present?
+          %div
+            Your credit card 
+            (ending in <span class="card_number">#{@payment_method.cc_no}</span> 
+            and expiring <span class="card_expiration">#{@payment_method.expiration_date.to_s(:credit_card)}</span>)
+            - if @bill && @bill.balance > 0
+              will be charged on #{@bill.due_date.to_s(:billing_date)}.
+            - else
+              will be used for any future charges.
+        %div
+          #{link_to @payment_method.blank? ? "Add a card to this account" : "Change card", edit_account_payment_method_path}
+          or
+          #{link_to "update billing address", edit_account_billing_info_path}
+
+  - if @usage_items.present?          
+    .span4
+      %section.panel
+        %h2.compact Compare Usage
+        = render :partial => 'usage_charges', :locals => {:usage_items => @usage_items, :usage_types => @usage_types}
+
+.row-fluid
+  %div{:class => @can_upgrade ? "span8" : "span12"}
+    %section.panel
+      %h2.compact Have Questions?
+      %p
+        See
+        = link_to "Account Help", help_account_path
+        or 
+        - if @plan.basic?
+          = link_to "Community Support", console_help_path
+        - else
+          = link_to "Technical Support", openshift_customer_portal_url
+
+    %section
+      = render :partial => 'user', :locals => {:user => @user, :show_email => @show_email, :identities => @identities}
+
+  - if @can_upgrade
+    .span4
+      %section.panel
+        = render :partial => 'upgrade', :locals => {:user => @user, :vertical => true}
