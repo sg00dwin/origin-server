@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/openshift/cartridges/v2/metrics
 
 Name: openshift-origin-cartridge-metrics
-Version: 1.9.3
+Version: 1.9.4
 Release: 1%{?dist}
 Summary: Metrics cartridge
 
@@ -47,6 +47,9 @@ Provides metrics cartridge support
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu May 23 2013 Adam Miller <admiller@redhat.com> 1.9.4-1
+- Bug 966319 - Gear needs to write to httpd configuration (jhonce@redhat.com)
+
 * Wed May 22 2013 Adam Miller <admiller@redhat.com> 1.9.3-1
 - Bug 962662 (dmcphers@redhat.com)
 - Bug 965537 - Dynamically build PassEnv httpd configuration
