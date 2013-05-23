@@ -19,7 +19,7 @@
           </a>
         </div>
 
-        <?php if ($content_header) :?><div class="column-navbar-secondary lift"><div class="nav-collapse collapse"><?php print $content_header; ?></div></div><?php endif; ?>
+        <?php if ($content_header) :?><div class="column-navbar-secondary lift grid-wrapper"><div class="nav-collapse collapse"><?php print $content_header; ?></div></div><?php endif; ?>
 
         <?php if ($layout == 'left' || $layout == 'both') :?>
         <div class="column-nav lift-less grid-wrapper">
