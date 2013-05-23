@@ -23,10 +23,36 @@ module Account
       end
 
       if not Rails.env.production? and params[:debug]
-        # Never upgraded
-        if params[:debug] == '0'
-          render :dashboard_free and return
+        render :dashboard_free and return if params[:debug] == '0'
+        parse_debug_params(params)
+      else
+        @plan = @user.plan
+        @is_test_user = aria_user.test_user?
+        @is_downgrading = aria_user.default_plan_pending?
+        @account_status = aria_user.account_status
+        @virtual_time = Aria::DateTime.now if Aria::DateTime.virtual_time?
+
+        @bill = aria_user.next_bill
+        @last_bill = aria_user.last_bill
+
+        @has_valid_payment_method = aria_user.has_valid_payment_method?
+        @payment_method = aria_user.payment_method
+      end
+
+      if @bill and @bill.unbilled_usage_line_items
+        @current_usage_items = @bill.unbilled_usage_line_items
+        @past_usage_items ||= aria_user.past_usage_line_items
+        if @current_usage_items.present? and @past_usage_items.present?
+          @usage_items = { "Current" => @current_usage_items }.merge(@past_usage_items)
         end
+        @usage_types = Aria::UsageLineItem.type_info(@usage_items.values.flatten) if @usage_items
+      end
+
+      @can_upgrade = (@is_downgrading || @plan.basic?) && @account_status != :terminated
+    end
+
+    protected
+      def parse_debug_params(params)
 
         case params[:plan]
           when 'free'
@@ -94,23 +120,23 @@ module Account
         case params[:usage]
           when 'none'
             current_usage = []
-            past_usage_items = {}
+            @past_usage_items = {}
           when 'paid'
             current_usage = [
               Aria::UsageLineItem.new({'units_label' => 'gear-hour', 'units' => 50, 'rate_per_unit' => 0.04, 'amount' => 10, 'usage_type_description' => "Gear: Small"}, 123),
               Aria::UsageLineItem.new({'units_label' => 'gear-hour', 'units' => 100, 'rate_per_unit' => 0.08, 'amount' => 30, 'usage_type_description' => "Gear: Medium"}, 123)
             ]
-            past_usage_items = {}
+            @past_usage_items = {}
           when 'free'
             current_usage = [
               Aria::UsageLineItem.new({'units_label' => 'gear-hour', 'units' => 50, 'rate_per_unit' => 0.00, 'amount' => 0, 'usage_type_description' => "Gear: Small"}, 123)
             ]
-            past_usage_items = {}
+            @past_usage_items = {}
           when 'free_historical'
             current_usage = [
               Aria::UsageLineItem.new({'units_label' => 'gear-hour', 'units' => 50, 'rate_per_unit' => 0.00, 'amount' => 0, 'usage_type_description' => "Gear: Small"}, 123),
             ]
-            past_usage_items = {
+            @past_usage_items = {
               "Feb" => [
                 OpenStruct.new({:units_label => 'gear-hour', :units => 5, :total_cost => 0, :name => "Gear: Small"}),
               ],
@@ -124,7 +150,7 @@ module Account
               Aria::UsageLineItem.new({'units_label' => 'gear-hour', 'units' => 50, 'rate_per_unit' => 0.04, 'amount' => 10, 'usage_type_description' => "Gear: Small"}, 123),
               Aria::UsageLineItem.new({'units_label' => 'gear-hour', 'units' => 100, 'rate_per_unit' => 0.08, 'amount' => 30, 'usage_type_description' => "Gear: Medium"}, 123)
             ]
-            past_usage_items = {
+            @past_usage_items = {
               "Feb" => [
                 OpenStruct.new({:units_label => 'gear-hour', :units => 5, :total_cost => 1, :name => "Gear: Small"}),
                 OpenStruct.new({:units_label => 'gear-hour', :units => 10, :total_cost => 3, :name => "Gear: Medium"})
@@ -150,33 +176,7 @@ module Account
           )
         end
 
-      else
-        # Non-debug path
-        @plan = @user.plan
-        @is_test_user = aria_user.test_user?
-        @is_downgrading = aria_user.default_plan_pending?
-        @account_status = aria_user.account_status
-        @virtual_time = Aria::DateTime.now if Aria::DateTime.virtual_time?
-
-        @bill = aria_user.next_bill
-        @last_bill = aria_user.last_bill
-
-        @has_valid_payment_method = aria_user.has_valid_payment_method?
-        @payment_method = aria_user.payment_method
       end
-
-      if @bill 
-        if @bill.unbilled_usage_line_items
-          current_usage_items = @bill.unbilled_usage_line_items
-          past_usage_items ||= aria_user.past_usage_line_items
-          if current_usage_items.present? and past_usage_items.present?
-            @usage_items = { "Current" => current_usage_items }.merge(past_usage_items)
-          end
-          @usage_types = Aria::UsageLineItem.type_info(@usage_items.values.flatten) if @usage_items
-        end
-      end
-
-      @can_upgrade = (@is_downgrading || @plan.basic?) && @account_status != :terminated
-    end
   end
+
 end

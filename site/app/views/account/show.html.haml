@@ -71,7 +71,7 @@
       - else
         %p Today is day #{@bill.day} of the billing period #{collapse_dates(@bill.usage_bill_from, @bill.usage_bill_thru, :ordinalize => true)}
         = render :partial => 'bill', :locals => {:bill => @bill, :show_details => @usage_items.blank?}
-        %p.disclaimer The amounts above may not reflect discounts, applicable sales taxes, peaks in future usage, or recent activity.
+        %p.disclaimer The amounts above may not reflect discounts, applicable sales taxes, peaks in future usage, recent activity, or unbilled usage outside the current billing period.
 
       %p.payment_method
         - if @payment_method.present?
