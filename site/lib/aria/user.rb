@@ -57,6 +57,10 @@ module Aria
       account_details.currency_cd
     end
 
+    def status_cd
+      account_details.status_cd
+    end
+
     def billing_info
       @billing_info ||= begin
         Aria::BillingInfo.from_account_details(account_details)
@@ -98,6 +102,27 @@ module Aria
 
     def test_user?
       account_details.is_test_acct == 'Y'
+    end
+
+    def account_status
+      begin
+        case status_cd.to_i
+          when 0
+            :inactive
+          when -1
+            :suspended
+          when -3
+            :terminated
+          when 1
+            :active
+          when 11, 12, 13
+            :dunning
+          else
+            :unknown
+        end
+      rescue
+        :unknown
+      end
     end
 
     def bill_dates
@@ -323,7 +348,7 @@ module Aria
     end
 
     def self.cache_key(acct_no)
-      Rails.cache.fetch([Aria::User.name, "acct_no", acct_no]) { [acct_no, Time.now.strftime("%Y-%m-%d %H:%M:%S.%N") ] }
+      Rails.cache.fetch([Aria::User.name, "acct_no", acct_no], :expires_in => 1.hour) { [acct_no, Time.now.strftime("%Y-%m-%d %H:%M:%S.%N") ] }
     end
 
     private

@@ -58,7 +58,7 @@ sh %{cartridgedir}/versions/5.6/rpm/zend_configure_filesystem.sh
 %dir %{cartridgedir}
 %attr(0755,-,-) %{cartridgedir}/bin/
 %attr(0755,-,-) %{cartridgedir}/hooks/
-%attr(0755,-,-) %{cartridgedir}
+%{cartridgedir}
 %doc %{cartridgedir}/README.md
 %doc %{cartridgedir}/COPYRIGHT
 %doc %{cartridgedir}/LICENSE

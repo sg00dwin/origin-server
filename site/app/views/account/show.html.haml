@@ -19,7 +19,12 @@
           You owe #{number_to_user_currency(@bill.balance)}, due on #{@bill.due_date.to_s(:billing_date)}.
         - else
           You owe #{number_to_user_currency(@bill.balance)} which was due on #{@bill.due_date.to_s(:billing_date)}.
-
+- if @account_status == :suspended
+  .alert.alert-warning Your account has been flagged for suspension due to non-payment. To correct your payment settings, or if you feel that this is in error, please #{link_to "contact customer service", contact_customer_support_url, :class => 'external'}.
+- elsif @account_status == :dunning
+  .alert.alert-warning Your account is overdue on payment. To correct this, or if you feel that this is in error, please #{link_to "contact customer service", contact_customer_support_url, :class => 'external'}.
+- elsif @account_status == :terminated
+  .alert.alert-error Your account has been flagged for termination due to non-payment. To correct this, or if you feel that this is in error, please #{link_to "contact customer service", contact_customer_support_url, :class => 'external'}.
 %section.panel
   .pull-right= link_to "Billing history", account_bills_path
   %h2 Next Bill
@@ -73,7 +78,7 @@
   - if @virtual_time
     .alert.alert-warning You are accessing an Aria test system. The virtual time is #{@virtual_time}.
 
-- if @plan.basic?
+- if @plan.basic? and @account_status != :terminated
   %section.panel
     = render :partial => 'upgrade', :locals => {:user => @user}
 

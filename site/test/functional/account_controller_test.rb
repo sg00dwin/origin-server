@@ -82,6 +82,40 @@ class AccountControllerTest < ActionController::TestCase
       assert_select 'h1', /Free/, response.inspect
     end
 
+    { :dunning => 'Your account is overdue on payment',
+      :suspended => 'Your account has been flagged for suspension',
+      :terminated => 'Your account has been flagged for termination',
+    }.each_pair do |status,message|
+      test "should render a warning if the Aria account is in #{status} status" do
+        omit_if_aria_is_unavailable
+        with_unique_user
+        Aria::UserContext.any_instance.expects(:account_status).at_least_once.returns(status)
+        Aria::UserContext.any_instance.expects(:acct_no).at_least_once.returns(1)
+        Aria::UserContext.any_instance.expects(:test_user?).at_least_once.returns(true)
+        Aria::UserContext.any_instance.expects(:next_bill).at_least_once.returns(false)
+        Aria::UserContext.any_instance.expects(:default_plan_pending?).at_least_once.returns(false)
+        Aria::UserContext.any_instance.expects(:has_valid_payment_method?).at_least_once.returns(true)
+        get :show
+        assert_response :success
+        assert_equal status, assigns(:account_status)
+        assert_select (status == :terminated ? '.alert-error' : '.alert-warning'), :text => /#{message}/
+      end
+    end
+
+    test "should suppress the plan upgrade button when account is in termination status" do
+        omit_if_aria_is_unavailable
+        with_unique_user
+        Aria::UserContext.any_instance.expects(:account_status).at_least_once.returns(:terminated)
+        Aria::UserContext.any_instance.expects(:acct_no).at_least_once.returns(1)
+        Aria::UserContext.any_instance.expects(:test_user?).at_least_once.returns(true)
+        Aria::UserContext.any_instance.expects(:next_bill).at_least_once.returns(false)
+        Aria::UserContext.any_instance.expects(:default_plan_pending?).at_least_once.returns(false)
+        Aria::UserContext.any_instance.expects(:has_valid_payment_method?).at_least_once.returns(true)
+        get :show
+        assert_response :success
+        assert_select '.btn', :text => 'Upgrade Now', :count => 0
+    end
+
     test "should render dashboard with no next bill" do
       omit_if_aria_is_unavailable
       with_account_holder
