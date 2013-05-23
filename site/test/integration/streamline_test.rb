@@ -23,6 +23,29 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'should authenticate' do
+    u = confirmed_user
+    assert u.authenticate!(u.login, u.password)
+  end
+
+=begin
+  test 'should slaughter the streamline auth cache' do
+    count = 0
+    t = 100.times.map do |i|
+      Thread.new do
+        u = confirmed_user
+        200.times do |j|
+          u.authenticate!(u.login, u.password) rescue nil 
+          count += 1
+          puts count if count % 500 == 0
+        end
+        puts "[#{i}] END"
+      end
+    end
+    t.each(&:join)
+  end
+=end
+
   test 'should fail when a token is reused' do
     user = new_streamline_user
     omit_on_register unless user.register('/email_confirm')
