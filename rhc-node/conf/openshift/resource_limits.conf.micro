@@ -65,9 +65,6 @@ apache_bandwidtherror="510"
 # Traffic control.  used by /etc/init.d/libra-tc
 tc_max_libra=4  # mbit/sec - Total bandwidth allowed for Libra
 tc_user_share=2     # mbit/sec - one user is allotted...
-tc_oversubscribe=10 # multiplier
-# but may borrow up to.. if available
-# tc_user_limit=$(expr $tc_user_share \* $tc_oversubscribe) # mbit/sec
 
 # Apache rotatelogs tuning
 rotatelogs_interval=86400
