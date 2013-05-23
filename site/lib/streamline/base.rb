@@ -19,7 +19,7 @@ module Streamline
       lambda { |o| scopes.include?(o.validation_context) }
     end
 
-    validates :login, 
+    validates :login,
               :presence => true,
               :if => on_scopes(:reset_password)
 
@@ -36,6 +36,14 @@ module Streamline
     validates_each :email_address, :if => on_scopes(:save) do |record, attr, value|
       if value =~ /\.(ir|cu|kp|sd|sy)$/i
         record.errors.add attr, 'We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy'
+      end
+
+      email_domain = value.split('@')[1]
+      domains = Console.config.prohibited_email_domains || []
+      domains.each do |domain|
+        if email_domain == domain || email_domain.end_with?(".#{domain}")
+          record.errors.add attr, 'We can not allow emails from certain anonymous mail services due to security concerns.'
+        end
       end
     end
 
