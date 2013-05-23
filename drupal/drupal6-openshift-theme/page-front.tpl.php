@@ -12,14 +12,14 @@
             <a href="#" class="block">
               <header>
                 <h1>Online</h1>
-                <h2>Public PAAS</h2>
+                <h2>Public PaaS</h2>
               </header>
               <p>
-                lorem ipsum dolor sit amet, consectetur adipiscing elit. in aliquet blandit ipsum sit amet vulputate.
+                a public cloud application development and hosting platform which leverages a Platform-as-a-Service (PaaS) architecture
               </p>
             </a>
             <a href="#" class="learn">Learn more</a>
-            <a href="#" class="cta">Get started <span aria-hidden="true" data-icon="&#xe007;"> </span></a>
+            <a href="#" class="cta">Sign up for free <span aria-hidden="true" data-icon="&#xe007;"> </span></a>
           </div>
         </li>
         <li class="span4 enterprise">
@@ -27,14 +27,14 @@
             <a href="#" class="block">
               <header>
                 <h1>Enterprise</h1>
-                <h2>Private PAAS</h2>
+                <h2>Private PaaS</h2>
               </header>
               <p>
-                lorem ipsum dolor sit amet, consectetur adipiscing elit. in aliquet blandit ipsum sit amet vulputate.
+                the benefits of PaaS in an on-premise software product deployable in data-centers or private clouds
               </p>
             </a>
             <a href="#" class="learn">Learn more</a>
-            <a href="#" class="cta">Get started <span aria-hidden="true" data-icon="&#xe007;"> </span></a>
+            <a href="#" class="cta">Request evaluation <span aria-hidden="true" data-icon="&#xe007;"> </span></a>
           </div>
         </li>
         <li class="span4 origin">
@@ -42,25 +42,25 @@
             <a href="#" class="block">
               <header>
                 <h1>Origin</h1>
-                <h2>Community PAAS</h2>
+                <h2>Community PaaS</h2>
               </header>
               <p>
-                lorem ipsum dolor sit amet, consectetur adipiscing elit. in aliquet blandit ipsum sit amet vulputate.
+                the community-driven upstream code base that feeds RedHat's OpenShift Online &amp; Enterprise product offerings
               </p>
             </a>
             <a href="#" class="learn">Learn more</a>
-            <a href="#" class="cta">Get started <span aria-hidden="true" data-icon="&#xe007;"> </span></a>
+            <a href="#" class="cta">Join the community <span aria-hidden="true" data-icon="&#xe007;"> </span></a>
           </div>
         </li>
       </ul>
     </section>
     <section class="redhat full-width" id="redhat">
       <header>
-        <h1>Public and private PAAS by the open source leader</h1>
+        <h1>Public and private PaaS by the open source leader</h1>
       </header>
       <img src="<?php print openshift_assets_url(); ?>/redhat.png" alt="Red Hat" />    
       <p>
-        lorem ipsum dolor sit amet, consectetur adipiscing elit. duis auctor mi ac enim scelerisque at accumsan sem consectetur. nam odio risus, eleifend at vehicula a, consectetur ac leo. curabitur ut nibh metus. nulla dolor orci, pellentesque sed hendrerit nec, sollicitudin ut ante. aliquam adipiscing dictum porttitor. proin venenatis erat nec urna ullamcorper eget lobortis sapien elementum. nunc neque diam, imperdiet id tempor nec, feugiat a felis.
+        OpenShift is available in two different consumption models: the <a href="#">OpenShift Online</a> hosted service and the <a href="#">OpenShift Enterprise</a> on-premise PaaS software product.
       </p>
     </section>
     <section>
@@ -91,7 +91,12 @@
         </li>
       </ul>
       <p>
-        lorem ipsum dolor sit amet, consectetur adipiscing elit. duis auctor mi ac enim scelerisque at accumsan sem consectetur. nam odio risus, eleifend at vehicula a, consectetur ac leo. curabitur ut nibh metus. nulla dolor orci, pellentesque sed hendrerit nec, sollicitudin ut ante. aliquam adipiscing dictum porttitor. proin venenatis erat nec urna ullamcorper eget lobortis sapien elementum. nunc neque diam, imperdiet id tempor nec, feugiat a felis.
+        OpenShift is a cloud application development and hosting platform which 
+leverages a Platform-as-a-Service (PaaS) architecture. The PaaS architecture of OpenShift automates the provisioning, 
+management and scaling of applications so that the developers can focus on writing the code of these applications for their 
+business, startup, or next big idea. A choice of programming languages and a complete set of developer tools are available within 
+OpenShift to increase developer productivity and accelerate application delivery in a no-lock-in fashion and with enterprise-class 
+security and high efficiency.
       </p>
     </section>
     <section>
@@ -146,16 +151,29 @@
         </li>
       </ul>
       <p>
-        lorem ipsum dolor sit amet, consectetur adipiscing elit. duis auctor mi ac enim scelerisque at accumsan sem consectetur. nam odio risus, eleifend at vehicula a, consectetur ac leo. curabitur ut nibh metus. nulla dolor orci, pellentesque sed hendrerit nec, sollicitudin ut ante. aliquam adipiscing dictum porttitor. proin venenatis erat nec urna ullamcorper eget lobortis sapien elementum. nunc neque diam, imperdiet id tempor nec, feugiat a felis.
+        At Red Hat OpenShift, our approach to partnering is designed with the customer in mind. Our customers demand choice and hence our goal is to work broadly with partners to make available complementary partner technologies and products along with Red Hat’s own offerings to satisfy the needs of our customers.
       </p>
     </section>
   </div>
 </div>
 <?php include 'page_footer.inc' ?>
 <script type="text/javascript">
-  var products = $('li', '#products');
-  products.on('mouseover', function() {
-    products.removeClass('active');
-    $(this).addClass('active');
+  $.fn.setAllToMaxHeight = function(){
+      return this.height( Math.max.apply(this, $.map( this , function(e){ return $(e).height() }) ) );
+    }
+  $(document).ready(function() {
+    var products = $('li', '#products');
+    products.on('mouseover', function() {
+      products.removeClass('active');
+      $(this).addClass('active');
+    });
+    var productDescriptions = $('#products li p');
+    productDescriptions.setAllToMaxHeight();
+    $(window).resize(function() {
+      //console.log('resizing');
+      productDescriptions.css('height', 'auto');
+      productDescriptions.setAllToMaxHeight();
+    });
   });
+
 </script>

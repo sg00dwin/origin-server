@@ -43,7 +43,7 @@ function user_profile_block($op = 'list', $delta = '', $edit = array()) {
       $block['content'] = 
         '<div class="messaging messaging-home"><div class="container">'.
         '<h1 class="primary headline">Build, run, &amp; scale apps fast '.
-        '<small>in an easy to use cloud environment</small></h1>'.
+        '<small>in an easy-to-use cloud environment</small></h1>'.
         '</div></div>';
       break;
     case 'developer-center-messaging':

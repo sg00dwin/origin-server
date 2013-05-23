@@ -15,7 +15,10 @@ body.home {
     0 0;
   #footer-nav { 
     background-color: #e5e5e5;
-    background-image: linear-gradient(rgba(0,0,0,.15) 0, rgba(0,0,0,0) 10px), repeating-linear-gradient(-20deg, #e6e6e6, #e6e6e6 6px, #e4e4e4 9px, #e4e4e4 15px, #e6e6e6 18px);
+    background-image: 
+      linear-gradient(rgba(0,0,0,.15) 0,
+      rgba(0,0,0,0) 10px),
+      repeating-linear-gradient(-20deg, #e6e6e6, #e6e6e6 6px, #e4e4e4 9px, #e4e4e4 15px, #e6e6e6 18px);
   }
   > header { background: none; }
   #home {
@@ -55,7 +58,7 @@ body.home {
       box-shadow: -3px 3px 0 rgba(0,0,0,.2);
       display: block;
       font-family: Overpass, sans-serif;
-      font-size: 17px;
+      font-size: 16px;
       font-weight: bold;
       text-transform: uppercase;
       text-decoration: none;
@@ -66,7 +69,7 @@ body.home {
         display: none;
         margin: 0 0 0 20%;
         position: absolute;
-        right: 10%;
+        right: 5%;
         text-shadow: none;
         top: 13px;
       }
@@ -238,15 +241,24 @@ body.home {
       font-size: 20px;
       text-transform: uppercase;
     }
-    p {
-      color: #cfcfcf;
-    }
+    a, p { color: #cfcfcf; }
+    a { text-decoration: underline; }
   }
   .redhat img { 
     float: left;
     margin: 0 30px .5em 0;
   }
   .section-nav.lift-counter { padding-bottom: 0; }
+}
+
+@media (max-width: 1199px) {
+  body.home {
+    .products {
+      .cta { 
+        span { right: 4%; }
+      }
+    }
+  }
 }
 
 @media (max-width: 979px) {
@@ -262,8 +274,11 @@ body.home {
       }
     }
     .products {
-      .cta { font-size: 15px; }
+      .cta { 
+        font-size: 15px;
+      }
       h1 { font-size: 24px; }
+      li.active .cta:hover span { display: none; }
     }
     section { margin-bottom: 40px; }
   }
@@ -276,12 +291,17 @@ body.home {
       margin-top: 20px;
       .primary { margin-bottom: 0; }
     }
-    .products li {
-      margin-bottom: 20px;
-      padding-left: 15%;
-      padding-right: 15%;
-      &.active { background-size: 60%; }
-      &:last-child { margin-bottom: 0; }
+    .products {
+      li {
+        margin-bottom: 20px;
+        padding-left: 15%;
+        padding-right: 15%;
+        &.active { 
+          background-size: 60%;
+          .cta:hover span { display: block; }
+         }
+        &:last-child { margin-bottom: 0; }
+      }
     }
   }
 }
