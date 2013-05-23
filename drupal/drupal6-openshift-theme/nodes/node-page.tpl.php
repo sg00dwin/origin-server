@@ -5,7 +5,7 @@
   <?php endif; ?>
 
   <?php if ($node->taxonomy && !empty($node->taxonomy)): ?>
-    <div class="terms terms-page"><ul class="inline"><?php foreach($node->taxonomy as $term) { ?>
+    <div class="terms terms-page">Tags:<ul class="inline"><?php foreach($node->taxonomy as $term) { ?>
       <li><a class="label" href="/tags/<?php print $term->name; ?>"><?php print $term->name; ?></a></li>
     <?php }?></ul></div>
   <?php endif;?>
