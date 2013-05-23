@@ -1,5 +1,6 @@
 require 'open4'
 require 'openshift-origin-node/utils/selinux'
+require 'openshift-origin-node/utils/shell_exec'
 require 'openshift-origin-common/utils/path_utils'
 
 module OpenShiftMigration
@@ -200,7 +201,7 @@ module OpenShiftMigration
         Dir.glob(File.join(user.homedir, old_cartridge_name, directory, '*')).each do |entry|
           output << " Moving #{entry}\n"
           target = File.join(target_directory, File.basename(entry))
-          FileUtils.mv(entry, target, force: true)
+          OpenShift::Utils.oo_spawn("/bin/mv -f #{entry} #{target}")
         end
 
         make_user_owned(target_directory, user)

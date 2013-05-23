@@ -362,7 +362,7 @@ module OpenShiftMigration
               value = env[referenced_var]
 
               if value.nil?
-                progress.log " Unable to resolve #{key}; skipping."
+                progress.log " Unable to resolve #{referenced_var}; skipping #{key}."
                 next
               end
             end
