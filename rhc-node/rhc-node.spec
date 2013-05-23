@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.9.4
+Version: 1.9.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -240,6 +240,16 @@ fi
 
 
 %changelog
+* Thu May 23 2013 Adam Miller <admiller@redhat.com> 1.9.5-1
+- Fix bug 963071 (pmorie@gmail.com)
+- Merge pull request #1441 from rmillner/BZ965373
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 965905 - Rewrite to support both v1 and v2 carts. (rmillner@redhat.com)
+- Bug 965939 - Require a valid user for all but deletion. (rmillner@redhat.com)
+- Bug 965938 - Add missing nohighuser and nothrottleuser from the help text.
+  (rmillner@redhat.com)
+- Bug 965373 - Attempt to resolve a UUID in the geardb. (rmillner@redhat.com)
+
 * Wed May 22 2013 Adam Miller <admiller@redhat.com> 1.9.4-1
 - Merge pull request #1432 from pmorie/bugs/963071
   (dmcphers+openshiftbot@redhat.com)
