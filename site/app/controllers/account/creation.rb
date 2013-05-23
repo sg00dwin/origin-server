@@ -87,7 +87,7 @@ module Account
 
       #Process promo code
       if @user.promo_code and not @user.promo_code.blank?
-        PromoCodeMailer.promo_code_email(@user).deliver
+        PromoCodeMailer.promo_code_email(@user).deliver rescue log_error($!, "Unable to send promo code")
       end
 
       # Store these in session so we can use it in the redirected method

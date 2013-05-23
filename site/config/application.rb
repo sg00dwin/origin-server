@@ -45,7 +45,7 @@ module RedHatCloud
     config.encoding = "utf-8"
 
     # Configure sensitive parameters which will be filtered from the log file.
-    config.filter_parameters += [:password]
+    config.filter_parameters += [:password, :secretKey]
 
     Console.configure do |c|
       c.include_helpers = false

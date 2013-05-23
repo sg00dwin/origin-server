@@ -1,55 +1,75 @@
-#!/bin/bash
+#!/usr/bin/env oo-ruby
 
 #
 # Fix gears with broken front-end configurations by re-asserting them.
 #
 
+require 'rubygems'
+require 'openshift-origin-node'
 
-source /etc/openshift/node.conf
 
-RC='system_u:system_r:openshift_initrc_t:s0-s0:c0.c1023'
+$errors = []
+def with_track_errors
+  begin
+    yield
+  rescue Exception => e
+    $errors << e
+  end
+end
 
-DEBUG=""
-DEBUG="echo"
+errors = []
+uuids = ARGV.map { |n| n }
 
-for uuid in "$@"
-do
-    if ! [ -d "$GEAR_BASE_DIR/$uuid" ]
-    then
-        echo "ERROR: No such gear: $uuid" >&2
-        continue
-    fi
+if uuids.empty?
+  $stdout.puts "Usage: #{$0} uuid uuid uuid ..."
+  exit(0)
+end
 
-    if ! [ -f "$GEAR_BASE_DIR/$uuid/.env/OPENSHIFT_GEAR_DNS" ]
-    then
-        echo "ERROR: No DNS information in uuid: $uuid" >&2
-        continue
-    fi
+$stdout.puts("Rebuilding the frontend for:")
+$stdout.puts("\t#{uuids.join("\n\t")}")
 
-    if ! [ -f "$GEAR_BASE_DIR/$uuid/.env/OPENSHIFT_GEAR_NAME" ]
-    then
-        echo "ERROR: No name for uuid: $uuid" >&2
-        continue
-    fi
+$stdout.puts("Hit 'y' to continue, anything else to abort.")
+resp = $stdin.gets
+if not resp.nil?
+  resp.strip!
+  if resp != 'y'
+    $stdout.puts("Aborting")
+    exit(0)
+  end
+end
 
-    for cartd in $GEAR_BASE_DIR/$uuid/*
-    do
-        cart=$(basename "$cartd")
-        hook="$CARTRIDGE_BASE_PATH/$cart/info/hooks/deploy-httpd-proxy"
 
-        if [ -f "$hook" ]
-        then
-            echo "Running deploy-httpd-proxy hook for [$uuid] cart [$cart]"
-            (
-                source "$GEAR_BASE_DIR/$uuid/.env/OPENSHIFT_GEAR_DNS"
-                source "$GEAR_BASE_DIR/$uuid/.env/OPENSHIFT_GEAR_NAME"
-                namespace=$(echo "$OPENSHIFT_GEAR_DNS" | cut -f 1 -d . | cut -f 2 -d -)
-                runcon "$RC" "$hook" "$OPENSHIFT_GEAR_NAME" "$namespace" "$uuid"
-                if [ $? -ne 0 ]
-                then
-                    echo "ERROR: hook failed for uuid: $uuid" >&2
-                fi
-            )
-        fi
-    done
-done
+uuids.each do |uuid|
+  with_track_errors do
+    $stdout.puts("Fixing gear: #{uuid} ...")
+
+    frontend = OpenShift::FrontendHttpServer.new(uuid)
+    frontend.create
+
+    gear = OpenShift::ApplicationContainer.from_uuid(uuid)
+    gear.cartridge_model.each_cartridge do |cart|
+      if gear.cartridge_model.respond_to?(:connect_frontend)
+        gear.cartridge_model.connect_frontend(cart)
+      elsif gear.cartridge_model.respond_to?(:deploy_httpd_proxy)
+        gear.cartridge_model.deploy_httpd_proxy(cart.name)
+      else
+        raise NoMethodError, "No method to recreate the frontend for gears of type: #{gear.cartridge_model.class.name}."
+      end
+    end
+
+  end
+end
+
+$stdout.puts("Done")
+
+if not $errors.empty?
+  $stderr.puts("Errors during run:")
+  $errors.each do |e|
+    $stderr.puts("------------------------------")
+    $stderr.puts("#{e}")
+    $stderr.puts("\t#{e.backtrace.join("\n\t")}")
+  end
+  exit(1)
+end
+
+exit(0)

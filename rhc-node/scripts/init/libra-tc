@@ -56,6 +56,19 @@ libra_users() {
     grep "$GEAR_GECOS" /etc/passwd | cut -d: -f1
 }
 
+# Report an error if the user is invalid
+with_valid_user() {
+    if ! id -u $1 &>/dev/null
+    then
+        echo -n "User $1 does not exist"
+        echo_failure
+        echo
+        return 1
+    fi
+    return 0
+}
+
+
 #
 #  tc uses the following units when passed as a parameter.
 #  kbps: Kilobytes per second 
@@ -304,7 +317,7 @@ case "$1" in
 	;;
 
     startuser)
-	startuser $2
+	with_valid_user $2 && startuser $2
 	;;
 
     stopuser)
@@ -312,27 +325,27 @@ case "$1" in
 	;;
 
     restartuser)
-	restartuser $2
+	with_valid_user $2 && restartuser $2
 	;;
 
     throttleuser)
-	throttleuser $2
+	with_valid_user $2 && throttleuser $2
 	;;
 
     nothrottleuser)
-	nothrottleuser $2
+	with_valid_user $2 && nothrottleuser $2
 	;;
 
     highuser)
-	highuser $2
+	with_valid_user $2 && highuser $2
 	;;
 
     nohighuser)
-	nohighuser $2
+	with_valid_user $2 && nohighuser $2
 	;;
 
     normaluser)
-	normaluser $2
+	with_valid_user $2 && normaluser $2
 	;;
 
     deluser)
@@ -356,7 +369,7 @@ case "$1" in
     *)
 
 	pwd=$(pwd)
-	echo "Usage: $0 {start|stop|restart|status [username]|startuser <username>|stopuser <username>|restartuser <username>|throttleuser <username>|highuser <username>|normaluser <username>|deluser <username>}"
+	echo "Usage: $0 {start|stop|restart|status [username]|startuser <username>|stopuser <username>|restartuser <username>|throttleuser <username>|nothrottleuser <username>|highuser <username>|nohighuser <username>|normaluser <username>|deluser <username>}"
 	;;
 
 esac
