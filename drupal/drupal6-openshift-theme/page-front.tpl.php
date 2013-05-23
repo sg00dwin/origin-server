@@ -3,7 +3,7 @@
   <?php include 'page_top.inc' ?>
   <?php include 'page_nav.inc' ?>
 </header>
-<div id="home" class="ie6 ie7 ie8">
+<div id="home" class="">
   <div class="container">
     <section class="products" id="products">
       <ul class="row-fluid">
