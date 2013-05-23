@@ -1,82 +1,161 @@
 <?php include 'page_header.inc' ?>
-
-    <header>
-      <?php include 'page_top.inc' ?>
-      <?php include 'page_nav.inc' ?>
-    </header>
-
-<div id="learn" class="section-striped lift-counter">
-<div class="container container-inset">
-<div class="row">
-  <a class="action-call span12" href="<?php print $openshift_server_url; ?>/app/account/new"><div>Get started in the cloud</div><div class="highlight">SIGN UP - IT'S FREE</div><div class="highlight-arrow">&gt;</div></a>
-  <div class="span6">
-    <ul class="learn unstyled">
-    <li class="scale">
-    <a class="link-tile" href="/paas#scale"><img src="<?php print openshift_assets_url(); ?>/scale.png">
-    <h4>Java, Ruby, Node.js, Python, PHP, or Perl</h4>
-    <p>Code in your favorite language, framework, and middleware.  Grow your applications easily with resource scaling.</p>
-    </a></li>
-    <li class="time">
-    <a class="link-tile" href="/enterprise-paas"><img src="<?php print openshift_assets_url(); ?>/time.png">
-    <h4>Private and Public Platform as a Service</h4>
-    <p>
-    OpenShift Enterprise by Red Hat brings the
-    ease-of-use, elasticity, and power of the
-    OpenShift PaaS to the enterprise.  Deployable
-    on-premise in your datacenter or in your
-    Private Cloud.  Now there is no excuse.
-    </p>
-    </a></li>
-    <li class="locked">
-    <a class="link-tile" href="/paas#open"><img src="<?php print openshift_assets_url(); ?>/lock.png">
-    <h4>No Lock-In</h4>
-    <p>Built on open technologies so you can take it with you.</p>
-    </a></li>
-    </ul>
-    <p class="gutter"><a class="action-more" href="/paas">Learn about OpenShift</a></p>
+<header>
+  <?php include 'page_top.inc' ?>
+  <?php include 'page_nav.inc' ?>
+</header>
+<div id="home" class="ie6 ie7 ie8">
+  <div class="container">
+    <section class="products" id="products">
+      <ul class="row-fluid">
+        <li class="span4 active online">
+          <div>
+            <a href="#" class="block">
+              <header>
+                <h1>Online</h1>
+                <h2>Public PAAS</h2>
+              </header>
+              <p>
+                lorem ipsum dolor sit amet, consectetur adipiscing elit. in aliquet blandit ipsum sit amet vulputate.
+              </p>
+            </a>
+            <a href="#" class="learn">Learn more</a>
+            <a href="#" class="cta">Get started <span aria-hidden="true" data-icon="&#xe007;"> </span></a>
+          </div>
+        </li>
+        <li class="span4 enterprise">
+          <div>
+            <a href="#" class="block">
+              <header>
+                <h1>Enterprise</h1>
+                <h2>Private PAAS</h2>
+              </header>
+              <p>
+                lorem ipsum dolor sit amet, consectetur adipiscing elit. in aliquet blandit ipsum sit amet vulputate.
+              </p>
+            </a>
+            <a href="#" class="learn">Learn more</a>
+            <a href="#" class="cta">Get started <span aria-hidden="true" data-icon="&#xe007;"> </span></a>
+          </div>
+        </li>
+        <li class="span4 origin">
+          <div>
+            <a href="#" class="block">
+              <header>
+                <h1>Origin</h1>
+                <h2>Community PAAS</h2>
+              </header>
+              <p>
+                lorem ipsum dolor sit amet, consectetur adipiscing elit. in aliquet blandit ipsum sit amet vulputate.
+              </p>
+            </a>
+            <a href="#" class="learn">Learn more</a>
+            <a href="#" class="cta">Get started <span aria-hidden="true" data-icon="&#xe007;"> </span></a>
+          </div>
+        </li>
+      </ul>
+    </section>
+    <section class="redhat full-width" id="redhat">
+      <header>
+        <h1>Public and private PAAS by the open source leader</h1>
+      </header>
+      <img src="<?php print openshift_assets_url(); ?>/redhat.png" alt="Red Hat" />    
+      <p>
+        lorem ipsum dolor sit amet, consectetur adipiscing elit. duis auctor mi ac enim scelerisque at accumsan sem consectetur. nam odio risus, eleifend at vehicula a, consectetur ac leo. curabitur ut nibh metus. nulla dolor orci, pellentesque sed hendrerit nec, sollicitudin ut ante. aliquam adipiscing dictum porttitor. proin venenatis erat nec urna ullamcorper eget lobortis sapien elementum. nunc neque diam, imperdiet id tempor nec, feugiat a felis.
+      </p>
+    </section>
+    <section>
+      <header>
+        <h1>Write your apps the way you want</h1>
+      </header>
+      <ul class="logos">
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+      </ul>
+      <p>
+        lorem ipsum dolor sit amet, consectetur adipiscing elit. duis auctor mi ac enim scelerisque at accumsan sem consectetur. nam odio risus, eleifend at vehicula a, consectetur ac leo. curabitur ut nibh metus. nulla dolor orci, pellentesque sed hendrerit nec, sollicitudin ut ante. aliquam adipiscing dictum porttitor. proin venenatis erat nec urna ullamcorper eget lobortis sapien elementum. nunc neque diam, imperdiet id tempor nec, feugiat a felis.
+      </p>
+    </section>
+    <section>
+      <header>
+        <h1>A rich ecosystem of trusted service providers</h1>
+      </header>
+      <ul class="logos">
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+        <li>
+          <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
+        </li>
+      </ul>
+      <p>
+        lorem ipsum dolor sit amet, consectetur adipiscing elit. duis auctor mi ac enim scelerisque at accumsan sem consectetur. nam odio risus, eleifend at vehicula a, consectetur ac leo. curabitur ut nibh metus. nulla dolor orci, pellentesque sed hendrerit nec, sollicitudin ut ante. aliquam adipiscing dictum porttitor. proin venenatis erat nec urna ullamcorper eget lobortis sapien elementum. nunc neque diam, imperdiet id tempor nec, feugiat a felis.
+      </p>
+    </section>
   </div>
-  <div class="span6">
-    <?php print views_embed_view('nodes_by_category', 'block_4'); ?>
-  </div>
 </div>
-</div>
-</div>
-
-<div id="buzz" class="section-base">
-<div class="container">
-<div class="row row-buzz lift">
-<div class="span12">
-<div class="column-buzz">
-<h2>
-Check the
-<strong>Buzz</strong>
-</h2>
-<hr>
-<div class="row-fluid">
-  <div id="buzz-tweets" class="span5"><?php print _redhat_frontpage_load_tweets(); ?></div>
-  <div class="span1">&nbsp;</div>
-  <div id="buzz-retweets" class="span6"><?php print _redhat_frontpage_load_retweets(); ?></div>
-</div>
-<div class="row-fluid buzz-actions">
-<div class="span6">
-<a class="link-with-action" href="/"><strong>Join</strong>
-our community
-</a></div>
-<div class="span6">
-<div class="align-right">
-<a class="link-with-action" href="http://www.twitter.com/#!/openshift"><strong>Follow</strong>
-OpenShift
-</a></div>
-<div class="align-right">
-<a class="link-with-action" href="http://twitter.com/#!/search/%23OpenShift"><strong>More</strong>
-#OpenShift buzz
-</a></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-
 <?php include 'page_footer.inc' ?>
+<script type="text/javascript">
+  var products = $('li', '#products');
+  products.on('mouseover', function() {
+    products.removeClass('active');
+    $(this).addClass('active');
+  });
+</script>
