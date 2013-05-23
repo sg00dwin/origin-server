@@ -314,8 +314,13 @@
   text-align:left;
   width: 100%;
   text-shadow: -1px -1px 2px rgba(0, 0, 0, 0.25);
+  @include border-radius(0);
+  &.btn:hover {
+  	@include box-shadow(none);
+  }
   
-  &:hover {
+  &:hover,
+  &:active {
   	color:#eee;
   	background-color:#4f4f4f;
   	background-image:none;
@@ -338,7 +343,7 @@
 }
 
 .column-navbar-secondary {
-  
+  width: 100%;
 }
 
 @media (max-width:767px) {
@@ -361,7 +366,7 @@
 
   .column-navbar-secondary {
     display: block;
-    margin: 0 -20px;
+    margin: 0 -20px !important;
   }
 }
 
@@ -638,6 +643,7 @@ $tabPaddingSideNarrow: 18px;
     position: absolute;
     top: 18px;
     width: 100%;
+    display: block;
   }
   > li {
     display: inline-block;
@@ -758,6 +764,8 @@ $tabPaddingSideNarrow: 18px;
 @media (max-width: 767px) {
   .nav.nav-tabs.nav-tabs-secondary {
     margin: 0;
+    padding-bottom: 2px;
+    border-bottom: 1px solid #E8E8E8;
     float: none;
 
     &:before {
