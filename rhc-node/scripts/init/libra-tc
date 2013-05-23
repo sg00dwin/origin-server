@@ -96,31 +96,20 @@ TC=/sbin/tc
 # The network interface we're planning on limiting bandwidth.
 tc_if=${tc_if:="eth0"}             # Interface
 tc_if_mtu=$( ip link show dev $tc_if | sed -n -e '/mtu / { s/.*mtu \([0-9]*\).*/\1/; p }' )
-
-
-# total bandwidth = 10240mbit
-# libra bandwidth = 80% ~= 8000mbit
-# max apps = 400
-# bandwidth/app = 200mbit
-# oversubscribe=??
-tc_max_libra=${tc_max_libra:=800}
-tc_user_share=${tc_user_share:=2}
-tc_oversubscribe=${tc_oversubscribe:=10}
-OVERSUBSCRIBE=$(expr $tc_user_share \* $tc_oversubscribe)
-tc_user_limit=${tc_user_limit:=$OVERSUBSCRIBE}
 tc_min_quantum=${tc_min_quantum:=$tc_if_mtu}
-tc_user_quantum=${tc_user_quantum:=$(expr $tc_if_mtu \* 8)}
+tc_max_quantum=${tc_max_quantum:=100000}
 
-# "Unlimited" users get a higher share and are allowed to burst up to
-# the max bandwidth.
-tc_high_user_share=${tc_high_user_share:=$(expr $tc_user_share \* 10)}
-tc_high_user_limit=${tc_high_user_limit:=$tc_max_libra}
-tc_high_user_quantum=${tc_high_quantum:=$(expr $tc_if_mtu \* 16)}
+tc_max_libra=${tc_max_libra:=800}             # 800 mbit/s
 
-# These are in kilobits/s
-tc_throttle_user_share=${tc_throttle_user_share:=$(expr $tc_user_share \* 1024 \/ 10)}
+# Normal bandwidths are in Mbit/s
+tc_user_share=${tc_user_share:=2}             #   8 mbit/s normal gear rate (*100 gears = tc_max_libra)
+tc_user_limit=${tc_user_limit:=$tc_max_libra} #     Full burst by default
+tc_user_quantum=${tc_user_quantum:=$tc_max_quantum}
+
+# Throttles are in kbit/s
+tc_throttle_user_share=${tc_throttle_user_share:=128}    # 128 kbits/s with no borrow
 tc_throttle_user_limit=${tc_throttle_user_limit:=$tc_throttle_user_share}
-tc_throttle_user_quantum=${tc_throttle_quantum:=$tc_min_quantum}
+tc_throttle_user_quantum=${tc_throttle_user_quantum:=$tc_min_quantum}
 
 # Where we keep track of throttled/high users
 tc_user_dir=${tc_user_dir:="${GEAR_BASE_DIR}/.tc_user_dir"}
@@ -179,18 +168,12 @@ startuser() {
         echo -n "throttled"
         this_user_share="${tc_throttle_user_share}kbit"
         this_user_limit="${tc_throttle_user_limit}kbit"
-        this_user_quantum="${tc_throttle_user_quantum}"
-    elif [ -e "${tc_user_dir}/${1}_high" ]
-    then
-        echo -n "high"
-        this_user_share="${tc_high_user_share}mbit"
-        this_user_limit="${tc_high_user_limit}mbit"
-        this_user_quantum="${tc_high_user_quantum}"
+        this_user_quantum=$tc_throttle_user_quantum
     else
         echo -n "normal"
         this_user_share="${tc_user_share}mbit"
         this_user_limit="${tc_user_limit}mbit"
-        this_user_quantum="${tc_user_quantum}"
+        this_user_quantum=$tc_user_quantum
     fi
 
     cat <<EOF | ${NOOP} $TC -force -batch
@@ -199,8 +182,8 @@ class add dev $tc_if parent 1:1 classid 1:$NETCLASS htb rate ${this_user_share} 
 
 # Specific constraints within the gear's limit
 qdisc add dev $tc_if parent 1:$NETCLASS handle ${NETCLASS}: htb default 0
-class add dev $tc_if parent ${NETCLASS}: classid ${NETCLASS}:2 htb rate 128kbit ceil 256kbit quantum $tc_min_quantum
-class add dev $tc_if parent ${NETCLASS}: classid ${NETCLASS}:3 htb rate  12kbit ceil  24kbit quantum $tc_min_quantum
+class add dev $tc_if parent ${NETCLASS}: classid ${NETCLASS}:2 htb rate 128kbit ceil 256kbit quantum ${tc_min_quantum}
+class add dev $tc_if parent ${NETCLASS}: classid ${NETCLASS}:3 htb rate  12kbit ceil  24kbit quantum ${tc_min_quantum}
 filter add dev $tc_if parent ${NETCLASS}: protocol ip prio 10 u32 match ip dport 587 0xffff flowid ${NETCLASS}:2
 filter add dev $tc_if parent ${NETCLASS}: protocol ip prio 10 u32 match ip dport  25 0xffff flowid ${NETCLASS}:3
 filter add dev $tc_if parent ${NETCLASS}: protocol ip prio 10 u32 match ip dport 465 0xffff flowid ${NETCLASS}:3
@@ -243,24 +226,7 @@ nothrottleuser() {
     restartuser $1
 }
 
-highuser() {
-    touch "${tc_user_dir}/${1}_high"
-    restartuser $1
-}
-
-nohighuser() {
-    rm -f "${tc_user_dir}/${1}_high"
-    restartuser $1
-}
-
-normaluser() {
-    rm -f "${tc_user_dir}/${1}_high"
-    rm -f "${tc_user_dir}/${1}_throttle"
-    restartuser $1
-}
-
 deluser() {
-    rm -f "${tc_user_dir}/${1}_high"
     rm -f "${tc_user_dir}/${1}_throttle"
     stopuser $1
 }
@@ -336,18 +302,6 @@ case "$1" in
 	with_valid_user $2 && nothrottleuser $2
 	;;
 
-    highuser)
-	with_valid_user $2 && highuser $2
-	;;
-
-    nohighuser)
-	with_valid_user $2 && nohighuser $2
-	;;
-
-    normaluser)
-	with_valid_user $2 && normaluser $2
-	;;
-
     deluser)
         deluser $2
         ;;
@@ -369,7 +323,7 @@ case "$1" in
     *)
 
 	pwd=$(pwd)
-	echo "Usage: $0 {start|stop|restart|status [username]|startuser <username>|stopuser <username>|restartuser <username>|throttleuser <username>|nothrottleuser <username>|highuser <username>|nohighuser <username>|normaluser <username>|deluser <username>}"
+	echo "Usage: $0 {start|stop|restart|status [username]|startuser <username>|stopuser <username>|restartuser <username>|throttleuser <username>|nothrottleuser <username>|deluser <username>}"
 	;;
 
 esac
