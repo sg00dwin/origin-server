@@ -167,9 +167,9 @@ module OpenShiftMigration
       migrate_stop_lock(progress, uuid, gear_home)
       stop_gear(progress, hostname, uuid)
       migrate_pam_nproc_soft(progress, uuid)
-      migrate_typeless_translated_vars(progress, uuid, gear_home)
       cleanup_gear_env(progress, gear_home)
       migrate_env_vars_to_raw(progress, gear_home)
+      migrate_typeless_translated_vars(progress, uuid, gear_home)
       relocate_uservars(progress, gear_home)
       migrate_git_repo(progress, uuid)
 
@@ -319,21 +319,55 @@ module OpenShiftMigration
     end
   end
 
+  def self.migrate_env_vars_to_raw(progress, gear_home)
+    if progress.incomplete? 'env_vars_to_raw'
+      Dir.glob(File.join(gear_home, '.env', '*')).each do |entry|
+        next if File.basename(entry) == 'TYPELESS_TRANSLATED_VARS'
+
+        content = IO.read(entry).chomp
+
+        if content =~ /^export /
+          index          = content.index('=')
+          parsed_content = content[(index + 1)..-1]
+          parsed_content.gsub!(/\A["']|["']\Z/, '')
+          progress.log "Migrated #{File.basename(entry)} v1 value [#{content}] to raw value [#{parsed_content}]"
+          IO.write(entry, parsed_content)
+        end
+      end
+
+      progress.mark_complete('env_vars_to_raw')
+    end
+  end
+
   def self.migrate_typeless_translated_vars(progress, uuid, gear_home)
     if progress.incomplete? 'typeless_translated_vars'
-      blacklist = %w(OPENSHIFT_GEAR_CTL_SCRIPT OPENSHIFT_LOG_DIR OPENSHIFT_GEAR_TYPE)
+      progress.log 'Migrating TYPELESS_TRANSLATED_VARS to discrete variables'
       user = OpenShift::UnixUser.from_uuid(uuid)
       vars_file = File.join(gear_home, '.env', 'TYPELESS_TRANSLATED_VARS')
 
       if File.exists?(vars_file)
+        env = OpenShift::Utils::Environ.for_gear(gear_home)
         content = IO.read(vars_file)
 
         content.each_line do |line|
-          if line.chomp =~ /export ([^=]+)=[\'\"]([^\'\"]+)[\'\"]/
-            key = $1
-            value = $2
+          line.chomp!
+          if line =~ /^export /
+            index = line.index('=')
+            key = line[7...index]
+            value = line[(index + 1)..-1]
+            value.gsub!(/\A["']|["']\Z/, '')
 
-            next if blacklist.include?(key)
+            if value[0] == '$'
+              referenced_var = value[1..-1]
+              value = env[referenced_var]
+
+              if value.nil?
+                progress.log " Unable to resolve #{key}; skipping."
+                next
+              end
+            end
+
+            progress.log " Creating #{key} with value: #{value}"
 
             env_var_file = File.join(gear_home, '.env', key)
 
@@ -357,23 +391,6 @@ module OpenShiftMigration
       FileUtils.rm_rf(File.join(gear_home, '.env', 'USER_VARS'))
       FileUtils.rm_rf(File.join(gear_home, '.env', 'TRANSLATE_GEAR_VARS'))
       progress.mark_complete('gear_env_cleanup')
-    end
-  end
-
-  def self.migrate_env_vars_to_raw(progress, gear_home)
-    if progress.incomplete? 'env_vars_to_raw'
-      Dir.glob(File.join(gear_home, '.env', '*')).each do |entry|
-        content = IO.read(entry).chomp
-        if content =~ /^export /
-          index          = content.index('=')
-          parsed_content = content[(index + 1)..-1]
-          parsed_content.gsub!(/\A["']|["']\Z/, '')
-          progress.log "Migrated #{File.basename(entry)} v1 value [#{content}] to raw value [#{parsed_content}]"
-          IO.write(entry, parsed_content)
-        end
-      end
-
-      progress.mark_complete('env_vars_to_raw')
     end
   end
 

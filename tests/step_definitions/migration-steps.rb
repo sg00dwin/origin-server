@@ -66,8 +66,6 @@ Then /^the environment variables will be migrated to raw values$/ do
     value = IO.read(entry)
     assert !value.start_with?('export'), entry
   end
-
-  assert_file_not_exists File.join($home_root, @app.uid, '.env', 'TYPELESS_TRANSLATED_VARS')
 end
 
 Then /^the application will be marked as a v2 app$/ do
@@ -90,8 +88,9 @@ Given /^the application has a TYPELESS_TRANSLATED_VARS env file$/ do
   typeless_vars = %Q{
 export TEST_VAR_1='foo'
 export TEST_VAR_2='bar'
-export TEST_VAR_3="baz"   
-export OPENSHIFT_LOG_DIR="$OPENSHIFT_PHP_DIR"
+export TEST_VAR_3="baz"
+export OPENSHIFT_TMP_DIR_2=$OPENSHIFT_TMP_DIR
+export OPENSHIFT_TMP_DIR_3=$DOES_NOT_EXIST
   }
 
   IO.write(File.join($home_root, @app.uid, '.env', 'TYPELESS_TRANSLATED_VARS'), typeless_vars)
@@ -101,6 +100,13 @@ Then /^the TYPELESS_TRANSLATED_VARS variables will be discrete variables$/ do
   check_var('TEST_VAR_1', 'foo')
   check_var('TEST_VAR_2', 'bar')
   check_var('TEST_VAR_3', 'baz')
+
+  tmp_dir_var = File.join($home_root, @app.uid, '.env', 'OPENSHIFT_TMP_DIR')
+  tmp_dir_var2 = File.join($home_root, @app.uid, '.env', 'OPENSHIFT_TMP_DIR_2')
+
+  assert_files_equal(tmp_dir_var, tmp_dir_var2)
+  assert_file_not_exists File.join($home_root, @app.uid, '.env', 'OPENSHIFT_TMP_DIR_3')
+  assert_file_not_exists File.join($home_root, @app.uid, '.env', 'TYPELESS_TRANSLATED_VARS')
 end
 
 Then /^the OPENSHIFT_LOG_DIR variable will not be present$/ do
@@ -111,6 +117,16 @@ def check_var(name, content)
   var = File.join($home_root, @app.uid, '.env', name)
   actual_content = IO.read(var)
   assert actual_content == content
+end
+
+def assert_files_equal(a, b)
+  assert_file_exists a
+  assert_file_exists b
+
+  a_content = IO.read(a)
+  b_content = IO.read(b)
+
+  assert_equal a_content, b_content
 end
 
 Then /^the migration metadata will be cleaned up$/ do 
