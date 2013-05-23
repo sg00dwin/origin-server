@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.9.6
+Version: 1.9.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -195,6 +195,21 @@ fi
 %{sitedir}/public
 
 %changelog
+* Thu May 23 2013 Adam Miller <admiller@redhat.com> 1.9.7-1
+- Merge pull request #1439 from liggitt/dashboard_layout
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1442 from smarterclayton/better_mail_config
+  (dmcphers+openshiftbot@redhat.com)
+- Move debug code out of show method Update disclaimer to mention unbilled
+  usage from other billing periods (jliggitt@redhat.com)
+- Allow upgrade layout to be vertical or horizontal (jliggitt@redhat.com)
+- Improve dashboard layout, add last_bill with tests (jliggitt@redhat.com)
+- Merge pull request #1444 from smarterclayton/prevent_unrescued_errors
+  (dmcphers+openshiftbot@redhat.com)
+- The site should rescue exceptions and report reference IDs as much as
+  possible (ccoleman@redhat.com)
+- Better mail config, allow SMTP to be set by ops (ccoleman@redhat.com)
+
 * Wed May 22 2013 Adam Miller <admiller@redhat.com> 1.9.6-1
 - Merge pull request #1438 from liggitt/bug_963640_blank_state_allowed
   (dmcphers+openshiftbot@redhat.com)
