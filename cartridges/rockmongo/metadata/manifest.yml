@@ -34,4 +34,3 @@ Endpoints:
     Mappings:
       - Frontend:      "/rockmongo"
         Backend:       "/rockmongo"
-Install-Build-Required: false

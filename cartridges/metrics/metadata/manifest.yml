@@ -33,4 +33,3 @@ Endpoints:
     Mappings:
       - Frontend:      "/metrics"
         Backend:       "/metrics"
-Install-Build-Required: false
