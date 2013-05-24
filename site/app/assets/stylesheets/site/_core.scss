@@ -663,6 +663,9 @@ h1.ribbon {
      width: 0;
     }
   }
+  @media (max-width: 768px) {
+    width: auto;
+  }
 }
 @media (max-width: 1240px) {
  .column-content .callout {

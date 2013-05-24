@@ -647,7 +647,10 @@ html.js fieldset.collapsible .fieldset-wrapper {
     }
   }
   h3 + .metadata {
-    margin-top: -4px;
+    margin-top: -5px;
+  }
+  p + .metadata {
+    margin-top: -10px;
   }
 
   .tile .metadata {
@@ -863,12 +866,12 @@ html.js fieldset.collapsible .fieldset-wrapper {
   font-family: $headerFontFamily;
   font-size: 20px; // events special case
   font-weight: bold;
-  height: 52px; 
+  height: 56px; 
   margin-right: 15px;
   margin-bottom: 15px;
   text-align: center;
   @include text-shadow(1px 1px 6px #EEEEEE, 0 0 0 #DDDDDD);
-  width: 52px; 
+  width: 56px; 
 
   span {
     display: block;

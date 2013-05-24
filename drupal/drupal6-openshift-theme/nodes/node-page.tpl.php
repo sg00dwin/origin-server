@@ -5,9 +5,9 @@
   <?php endif; ?>
 
   <?php if ($node->taxonomy && !empty($node->taxonomy)): ?>
-    <div class="terms terms-page">Tags:<ul class="inline"><?php foreach($node->taxonomy as $term) { ?>
-      <li><a class="label" href="/tags/<?php print $term->name; ?>"><?php print $term->name; ?></a></li>
-    <?php }?></ul></div>
+    <div class="terms terms-page">Tags: <?php foreach($node->taxonomy as $term) { ?>
+      <a href="/tags/<?php print $term->name; ?>"><?php print $term->name; ?></a> 
+    <?php }?></div>
   <?php endif;?>
 
   <?php print $content ?>
