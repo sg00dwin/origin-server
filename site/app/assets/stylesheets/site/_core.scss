@@ -18,7 +18,7 @@ a:focus:active {
 		margin-bottom: 3px;
 	}
 	h6 {
-		color:$grayLight;
+		color:#888;
 	}
 	section {
   	margin-bottom: $baseLineHeight * 1.75;
@@ -586,7 +586,7 @@ h1.ribbon {
   display: inline-block;
   padding: 5px $gridGutterWidth 5px 0; /* left margin set by ribbon */
   min-width: 30%;
-  font-size: $baseFontSize + 13.5;
+  font-size: $baseFontSize * 2;
   margin-bottom: 25px;
   text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.18);
   @include ribbon($ribbonFoldColor); 
@@ -602,26 +602,29 @@ h1.ribbon {
 
 // Information ribbon
 .info-ribbon {
-  background-color: #343434;
-  color: #DADADA;
+  background-color: #363534;
+  color: #eee;
   display: inline-block;
   padding: 25px 38px 15px 5px; /* right margin set by ribbon */
-  margin:0 -70px 0 0;
+  margin:0 -50px 0 0;
+  font-weight: 300 !important;
 
 //  min-width: 30%;
 
   @media (max-width: 480px) { left: -$gridGutterWidthPhone; }
-  @media (min-width: 768px) and (max-width: 979px) { right: 40px; }
-  @media (min-width: 980px) and (max-width: 1199px) { right: 32px; }
-  @media (min-width: 1240px) { right: $gridGutterWidthLarge; }
+  @media (min-width: 768px) and (max-width: 979px) { right: -167px; }
+  @media (min-width: 980px) and (max-width: 1239px) { right: 12px; }
 
   @media (min-width: 768px) {
     float: right;
     @include ribbon(black, $leftStrut: false, $rightStrut: true);
+    &:before {
+      @include box-shadow(none);
+    }
   }
 
   h1, h2, h3, h4 {
-    color: #DADADA;
+    color: #eee;
   }
 
   a:link,
@@ -1032,6 +1035,13 @@ h1.ribbon {
       z-index: 2;
     }
   }
+}
+.ie8 .column-content.column-content-page:before {
+  background-image: none;
+}
+.ie8 .nav.nav-tabs.nav-tabs-secondary {
+  background-color: #e8e8e8;
+  border-bottom: 6px solid #999;
 }
 
 /* Background */

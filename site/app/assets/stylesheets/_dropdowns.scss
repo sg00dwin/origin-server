@@ -26,7 +26,7 @@
   padding: 20px;
   opacity: .75;
   visibility: hidden;
-  transition: all 0.1s ease-in 0s;
+  transition: all 0.092s ease-in 0s;
   display: inline-block;
 
   .nav-list {
@@ -58,6 +58,9 @@
     color: #111111;
     padding: 0;
     margin: 0;
+    &.active {
+      text-decoration: underline;
+    }
 
     &:hover {
       color: #111111;
