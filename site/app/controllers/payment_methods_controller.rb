@@ -44,10 +44,14 @@ class PaymentMethodsController < ConsoleController
 
     def serve_direct?
       logger.debug params.inspect
+      
       @errors = (params[:error_messages] || {}).values.inject({}) do |h, v|
         key = v['error_field']
-        key = :base if key == 'server_error'
-        (h[key] ||= []) << v['error_key']
+        if key == 'server_error'
+          (h[:base] ||= []) << v['error_key'] + "," + v['error_code']
+        else
+          (h[key] ||= []) << v['error_key']
+        end
         h
       end
       @user = current_aria_user
@@ -78,7 +82,9 @@ class PaymentMethodsController < ConsoleController
       errors.each_pair do |attr,keys|
         logger.debug "Found keys #{keys.inspect} for #{attr}"
         Array(keys).each do |key|
-          model.add(attr, I18n.t(REPLACE_ERRORS[key.to_sym] || key, :scope => [:aria, :direct_post], :default => unknown_error))
+          (key,code) = key.split(",")
+          error_code_str = code.present? ? " (Error ##{code.to_i})" : ""
+          model.add(attr, I18n.t(REPLACE_ERRORS[key.to_sym] || key, :scope => [:aria, :direct_post], :default => unknown_error) + error_code_str)
         end
       end
     end
