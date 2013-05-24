@@ -850,7 +850,11 @@ h1.ribbon {
   }
 }
 
- 
+a.skip-navigation {
+  position: absolute;
+  top: -1000px;
+}
+
 // Search input 
 #search-top {
 	position: relative;
