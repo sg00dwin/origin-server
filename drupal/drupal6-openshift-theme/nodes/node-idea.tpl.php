@@ -5,7 +5,8 @@
 //echo '</pre>';
 $do = og_comment_perms_do();
 ?>
-<div id="node-<?php print $node->nid; ?>" class="thread node node-og-group-post<?php if ($sticky) { print ' sticky'; } ?><?php if (!$status) { print ' node-unpublished'; } ?>">
+<?php if (!$status) { ?><div class="node-unpublished"><?php } ?>
+
   <div class="metadata">
     <?php if ($submitted) {
       print 'Feature request from ' . theme('username', $node) . ' on ' . format_date($created, $type='custom', $format = 'F j, Y');
@@ -27,4 +28,5 @@ $do = og_comment_perms_do();
   <?php endif; ?>
 
   <?php print openshift_social_sharing($node_url); ?>      
-</div>
+
+<?php if (!$status) { ?></div><?php } ?>
