@@ -193,7 +193,7 @@ class DomainTest < ActionDispatch::IntegrationTest
     
     # create an application under the user's domain
     request_via_redirect(:delete, DOMAIN_COLLECTION_URL + "/#{ns}/applications/app1", {:nolinks => true}, @headers)
-    assert_response :no_content
+    assert_response :ok
     
         # update domain name
     request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:id => new_ns, :nolinks => true}, @headers)
@@ -227,7 +227,7 @@ class DomainTest < ActionDispatch::IntegrationTest
 
     # delete the domain
     request_via_redirect(:delete, DOMAIN_COLLECTION_URL + "/#{ns}", {}, @headers)
-    assert_response :no_content
+    assert_response :ok
 
     # query domain after deletion
     request_via_redirect(:get, DOMAIN_COLLECTION_URL + "/#{ns}", {}, @headers)
@@ -260,7 +260,7 @@ class DomainTest < ActionDispatch::IntegrationTest
 
     # delete the domain with force option
     request_via_redirect(:delete, DOMAIN_COLLECTION_URL + "/#{ns}", {:force => true}, @headers)
-    assert_response :no_content
+    assert_response :ok
 
     # query domain after deletion
     request_via_redirect(:get, DOMAIN_COLLECTION_URL + "/#{ns}", {}, @headers)

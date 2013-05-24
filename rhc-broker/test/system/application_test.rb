@@ -198,7 +198,7 @@ class ApplicationTest < ActionDispatch::IntegrationTest
 
     # delete the application
     request_via_redirect(:delete, APP_URL_FORMAT % [ns, "app1"], {}, @headers)
-    assert_response :no_content
+    assert_response :ok
 
     # query application after deletion
     request_via_redirect(:get, APP_URL_FORMAT % [ns, "app1"], {}, @headers)
