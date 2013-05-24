@@ -102,23 +102,23 @@ class WebUserTest < ActiveSupport::TestCase
   end
 
   test 'email from prohibited domain is not valid' do
-    Console.config.prohibited_email_domains = ['banneddomain.com']
+    Console.config.expects(:prohibited_email_domains).returns(['banneddomain.com'])
     user = WebUser.new(:email_address => 'someguy@banneddomain.com', :password => PWD)
 
     assert !user.valid?
-    assert user.errors.values.flatten.include? 'We can not allow emails from certain anonymous mail services due to security concerns.'
+    assert user.errors.values.flatten.include? 'OpenShift does not allow creating accounts with email addresses from anonymous mail services due to security concerns. Please use a different email address.'
   end
 
   test 'email from prohibited subdomain is not valid' do
-    Console.config.prohibited_email_domains = ['onebad.net', 'banneddomain.com']
+    Console.config.expects(:prohibited_email_domains).returns(['onebad.net', 'banneddomain.com'])
     user = WebUser.new(:email_address => 'someguy@foo.banneddomain.com', :password => PWD)
 
     assert !user.valid?
-    assert user.errors.values.flatten.include? 'We can not allow emails from certain anonymous mail services due to security concerns.'
+    assert user.errors.values.flatten.include? 'OpenShift does not allow creating accounts with email addresses from anonymous mail services due to security concerns. Please use a different email address.'
   end
 
   test 'email from domain with prohibited domain as substring is valid' do
-    Console.config.prohibited_email_domains = ['banneddomain.com']
+    Console.config.expects(:prohibited_email_domains).returns(['onebad.net', 'banneddomain.com'])
     user = WebUser.new(:email_address => 'someguy@notabanneddomain.com', :password => PWD)
 
     assert user.valid?
