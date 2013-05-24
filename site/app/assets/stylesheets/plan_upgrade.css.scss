@@ -30,7 +30,9 @@ $sprite_offset: -55px;
 .payment_form {
   ul.card-types {
     list-style: none;
-    margin-left: 230px;
+    margin: 0px;
+    display: inline-block;
+    vertical-align: middle;
 
     li.cc-card {
       display: inline;
