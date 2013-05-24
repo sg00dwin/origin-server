@@ -186,6 +186,7 @@ function _redhat_sso_external_login_register($existing_uid, $rhlogin, $module) {
   }
   if ($existing_user && isset($existing_user->uid)) {
     $user = $existing_user;
+    return $user;
   }
   else {
     // Register this new user.
