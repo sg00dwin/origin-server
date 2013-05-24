@@ -32,13 +32,19 @@ class AccountUpgradePaymentMethodControllerTest < ActionController::TestCase
     get(:direct_create, {:plan_id => :silver, :error_messages => {
       0 => {
         :error_field => 'server_error',
-        :error_key => 'serveraccountdetails'
+        :error_key => 'serveraccountdetails',
+        :error_code => '123'
       },
       1 => {
+        :error_field => 'server_error',
+        :error_key => 'servercannotupdate'
+      },
+      2 => {
         :error_field => 'cc_no',
-        :error_key => 'servercardnumnumeric'
+        :error_key => 'servercardnumnumeric',
+        :error_code => '234'
       }
     }})
-    assert_redirected_to new_account_plan_upgrade_payment_method_path({:payment_method => {:errors => {:base => ['serveraccountdetails'], :cc_no => ['servercardnumnumeric']}}})
+    assert_redirected_to new_account_plan_upgrade_payment_method_path({:payment_method => {:errors => {:base => ['serveraccountdetails,123', 'servercannotupdate,'], :cc_no => ['servercardnumnumeric']}}})
   end
 end
