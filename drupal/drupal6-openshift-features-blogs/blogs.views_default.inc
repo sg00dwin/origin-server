@@ -5396,8 +5396,8 @@ return;',
     'field_event_start_date_value' => array(
       'label' => '',
       'alter' => array(
-        'alter_text' => 1,
-        'text' => '<div class="event-date"><b>[field_event_start_date_value]</b>',
+        'alter_text' => 0,
+        'text' => '',
         'make_link' => 0,
         'path' => '',
         'absolute' => 0,
@@ -5434,7 +5434,7 @@ return;',
       'fromto' => array(
         'fromto' => 'value',
       ),
-      'exclude' => 0,
+      'exclude' => 1,
       'id' => 'field_event_start_date_value',
       'table' => 'node_data_field_event_start_date',
       'field' => 'field_event_start_date_value',
@@ -5447,7 +5447,7 @@ return;',
       'label' => '',
       'alter' => array(
         'alter_text' => 1,
-        'text' => '[field_event_start_date_value_1]</div>',
+        'text' => '<b>[field_event_start_date_value]</b>[field_event_start_date_value_1]',
         'make_link' => 0,
         'path' => '',
         'absolute' => 0,
@@ -5697,6 +5697,13 @@ return;',
       'relationship' => 'none',
     ),
   ));
+  $handler->override_option('sorts', array(
+    'field_event_start_date_value' => array(
+      'id' => 'field_event_start_date_value',
+      'table' => 'node_data_field_event_start_date',
+      'field' => 'field_event_start_date_value',
+    ),
+  ));
   $handler->override_option('filters', array(
     'type' => array(
       'operator' => 'in',
@@ -5731,29 +5738,58 @@ return;',
       'field' => 'status',
       'relationship' => 'none',
     ),
+    'field_event_start_date_value2' => array(
+      'operator' => '>',
+      'value' => array(
+        'value' => NULL,
+        'min' => NULL,
+        'max' => NULL,
+        'default_date' => '12AM today',
+        'default_to_date' => '12AM today',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'date_fields' => array(
+        'node_data_field_event_start_date.field_event_start_date_value' => 'node_data_field_event_start_date.field_event_start_date_value',
+        'node_data_field_event_start_date.field_event_start_date_value2' => 'node_data_field_event_start_date.field_event_start_date_value2',
+      ),
+      'date_method' => 'OR',
+      'granularity' => 'day',
+      'form_type' => 'date_select',
+      'default_date' => '12AM today',
+      'default_to_date' => '12AM today',
+      'year_range' => '-3:+3',
+      'id' => 'field_event_start_date_value2',
+      'table' => 'node_data_field_event_start_date',
+      'field' => 'field_event_start_date_value2',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
   ));
   $handler->override_option('title', '');
   $handler->override_option('css_class', 'event-listings');
-  $handler->override_option('header', '<h2>Events</h2>');
+  $handler->override_option('header', '<h2>Upcoming Events</h2>');
   $handler->override_option('header_format', '1');
   $handler->override_option('header_empty', 0);
   $handler->override_option('row_options', array(
     'semantic_html' => array(
-      'field_event_start_date_value' => array(
-        'element_type' => '',
-        'class' => '',
-      ),
       'field_event_start_date_value_1' => array(
-        'element_type' => '',
-        'class' => '',
+        'element_type' => 'div',
+        'class' => 'event-date pull-left',
       ),
       'title' => array(
         'element_type' => 'h3',
-        'class' => 'title',
+        'class' => '',
       ),
       'field_event_city_value' => array(
         'element_type' => 'div',
-        'class' => 'slug',
+        'class' => 'metadata',
       ),
       'body' => array(
         'element_type' => 'p',
