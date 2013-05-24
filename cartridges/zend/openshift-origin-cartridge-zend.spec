@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/v2/zend
 
 Name:    openshift-origin-cartridge-zend
-Version: 0.2.5
+Version: 0.2.6
 Release: 1%{?dist}
 Summary: Zend Server cartridge
 Group:   Development/Languages
@@ -65,6 +65,11 @@ sh %{cartridgedir}/versions/5.6/rpm/zend_configure_filesystem.sh
 
 
 %changelog
+* Fri May 24 2013 Adam Miller <admiller@redhat.com> 0.2.6-1
+- Merge pull request #1452 from VojtechVitek/zend_disable_oci_extension
+  (dmcphers+openshiftbot@redhat.com)
+- disable Zend PHP PDO-OCI extension (vvitek@redhat.com)
+
 * Thu May 23 2013 Adam Miller <admiller@redhat.com> 0.2.5-1
 - Merge pull request #1446 from ironcladlou/bz/966255
   (dmcphers+openshiftbot@redhat.com)
