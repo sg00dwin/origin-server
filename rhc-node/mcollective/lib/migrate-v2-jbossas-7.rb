@@ -9,6 +9,7 @@ module OpenShiftMigration
       Util.cp_env_var_value(user.homedir, 'OPENSHIFT_INTERNAL_PORT', 'OPENSHIFT_JBOSSAS_HTTP_PORT')
 
       Util.add_cart_env_var(user, cart_name, "OPENSHIFT_JBOSSAS_VERSION", "7")
+      Util.set_env_var_value(user.homedir, "OPENSHIFT_JBOSSAS_WEBSOCKET_PORT", "8676")
 
       cartridge_dir = File.join(user.homedir, cart_name)
 
