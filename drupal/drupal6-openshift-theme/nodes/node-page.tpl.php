@@ -4,12 +4,6 @@
     <span class="submitted"><?php print $submitted; ?></span>
   <?php endif; ?>
 
-  <?php if ($node->taxonomy && !empty($node->taxonomy)): ?>
-    <div class="terms terms-page">Tags: <?php foreach($node->taxonomy as $term) { ?>
-      <a href="/tags/<?php print $term->name; ?>"><?php print $term->name; ?></a> 
-    <?php }?></div>
-  <?php endif;?>
-
   <?php print $content ?>
 
   <!-- <?php if ($taxonomy): ?>
@@ -19,5 +13,11 @@
   <?php if ($links): ?>
     <div class="links"><?php print $links; ?></div>
   <?php endif; ?> -->
+
+  <?php if ($node->taxonomy && !empty($node->taxonomy)): ?>
+    <div class="terms terms-page">Tags: <?php foreach($node->taxonomy as $term) { ?>
+      <a href="/tags/<?php print $term->name; ?>"><?php print $term->name; ?></a> 
+    <?php }?></div>
+  <?php endif;?>
 
 <?php if (!$status) { ?></div><?php } ?>
