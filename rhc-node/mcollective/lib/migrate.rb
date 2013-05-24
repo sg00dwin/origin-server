@@ -190,6 +190,9 @@ module OpenShiftMigration
 
       total_time = (Time.now.to_f * 1000).to_i - start_time
       progress.log "***time_migrate_on_node_measured_from_node=#{total_time}***"
+    rescue OpenShift::Utils::ShellExecutionException => e
+      progress.log %Q(#{e.message} stdout => \n #{e.stdout} stderr => \n #{e.stderr})
+      exitcode = 1
     rescue Exception => e
       progress.log "Caught an exception during internal migration steps: #{e.message}"
       progress.log e.backtrace.join("\n")
