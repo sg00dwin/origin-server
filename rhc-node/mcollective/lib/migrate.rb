@@ -163,7 +163,8 @@ module OpenShiftMigration
 
     begin
       progress.log 'Beginning V1 -> V2 migration'
-      inspect_gear_state(progress, gear_home)
+      inspect_gear_state(progress, uuid, gear_home)
+
       migrate_stop_lock(progress, uuid, gear_home)
       stop_gear(progress, hostname, uuid)
       migrate_pam_nproc_soft(progress, uuid)
@@ -207,20 +208,46 @@ module OpenShiftMigration
     (OpenShift::Utils::Sdk.new_sdk_app?(gear_home) && migration_metadata.size == 0)
   end
 
-  def self.inspect_gear_state(progress, gear_home)
+  def self.inspect_gear_state(progress, uuid, gear_home)
     progress.log "Inspecting gear at #{gear_home}"
 
     if progress.incomplete? 'inspect_gear_state'
       app_state = File.join(gear_home, 'app-root', 'runtime', '.state')
       save_state = File.join(gear_home, 'app-root', 'runtime', PREMIGRATION_STATE)
+
       FileUtils.cp(app_state, save_state)
+
+      premigration_state = OpenShift::Utils::MigrationApplicationState.new(uuid, PREMIGRATION_STATE)
+      progress.log "Pre-migration state: #{premigration_state.value}"
       progress.mark_complete('inspect_gear_state')
     end
   end
 
   def self.migrate_stop_lock(progress, uuid, gear_home)
     if progress.incomplete? 'detect_v1_stop_lock'
-      stop_lock_found = !Dir.glob(File.join(gear_home, '*-*', 'run', 'stop_lock')).empty?
+      v1_carts = v1_cartridges(gear_home)
+
+      carts_to_check = v1_carts[:framework_carts]
+
+      if carts_to_check.empty?
+        carts_to_check = v1_carts[:db_carts]
+      end
+
+      stop_lock_found = false
+
+      progress.log "Checking for V1 stop lock in #{carts_to_check}"
+
+      carts_to_check.each do |cart|
+        next if File.symlink?(File.join(gear_home, cart))
+
+        stop_glob = Dir.glob(File.join(gear_home, cart, 'run', 'stop_lock'))
+        stop_lock_found = !stop_glob.empty?
+
+        if stop_lock_found
+          progress.log "Stop lock found: #{stop_glob.to_s}"
+          break
+        end
+      end
 
       if stop_lock_found
         config = OpenShift::Config.new
@@ -238,7 +265,7 @@ module OpenShiftMigration
       progress.mark_complete('migrate_stop_lock')
     end
   end
-
+  
   def self.stop_gear(progress, hostname, uuid)
     progress.log "Stopping gear with uuid '#{uuid}' on node '#{hostname}'"
 
@@ -260,7 +287,8 @@ module OpenShiftMigration
     progress.log "Starting gear with uuid '#{uuid}' on node '#{hostname}'"
 
     if progress.incomplete? 'start_gear'
-      OpenShift::ApplicationContainer.from_uuid(uuid).start_gear(user_initiated: false)
+      output = OpenShift::ApplicationContainer.from_uuid(uuid).start_gear(user_initiated: false)
+      progress.log "Start gear output: #{output}"
       progress.mark_complete('start_gear')
     end
   end
@@ -447,7 +475,7 @@ module OpenShiftMigration
 
     progress.log "Carts to migrate: #{carts_to_migrate}"
 
-    carts_to_migrate.each do |cartridge_name|
+    carts_to_migrate.values.each do |cartridge_name|
       tokens = cartridge_name.split('-')
       version = tokens.pop
       name = tokens.join('-')
@@ -457,10 +485,12 @@ module OpenShiftMigration
   end
 
   def self.v1_cartridges(gear_home)
-    framework_carts = []
-    plugin_carts    = []
-    db_carts        = []
-    leftover_carts  = []
+    carts = Hash.new { |h, k| h[k] = [] }
+
+    def carts.values
+      # Establish the correct configure order for the migrated carts
+      self[:framework_carts] + self[:plugin_carts] + self[:db_carts] + self[:leftover_carts]
+    end
 
     Dir.glob(File.join(gear_home, '*-*')).each do |entry|
       # Account for app-root and V2 carts matching the glob which already may be installed
@@ -469,19 +499,18 @@ module OpenShiftMigration
       cart_name = File.basename(entry)
 
       if FRAMEWORK_CARTS.include?(cart_name)
-        framework_carts << cart_name
+        carts[:framework_carts] << cart_name
       elsif PLUGIN_CARTS.include?(cart_name)
-        plugin_carts << cart_name
+        carts[:plugin_carts] << cart_name
       elsif DB_CARTS.include?(cart_name)
-        db_carts << cart_name
+        carts[:db_carts] << cart_name
       else
         # should be haproxy...
-        leftover_carts << cart_name
+        carts[:leftover_carts] << cart_name
       end
     end
-
-    # Establish the correct configure order for the migrated carts
-    framework_carts + plugin_carts + db_carts + leftover_carts
+    
+    carts
   end
 
   def self.migrate_cartridge(progress, name, version, uuid, cartridge_migrators)
