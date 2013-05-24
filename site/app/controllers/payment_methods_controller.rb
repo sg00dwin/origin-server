@@ -48,7 +48,7 @@ class PaymentMethodsController < ConsoleController
       @errors = (params[:error_messages] || {}).values.inject({}) do |h, v|
         key = v['error_field']
         if key == 'server_error'
-          (h[:base] ||= []) << v['error_key'] + "," + v['error_code']
+          (h[:base] ||= []) << "#{v['error_key']},#{v['error_code']}"
         else
           (h[key] ||= []) << v['error_key']
         end

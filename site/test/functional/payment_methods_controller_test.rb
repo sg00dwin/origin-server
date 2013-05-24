@@ -67,11 +67,15 @@ class PaymentMethodsControllerTest < ActionController::TestCase
         :error_code => '123'
       },
       1 => {
+        :error_field => 'server_error',
+        :error_key => 'servercannotupdate'
+      },
+      2 => {
         :error_field => 'cc_no',
         :error_key => 'servercardnumnumeric',
         :error_code => '234'
       }
     }})
-    assert_redirected_to edit_account_payment_method_path({:payment_method => {:errors => {:base => ['serveraccountdetails,123'], :cc_no => ['servercardnumnumeric']}}})
+    assert_redirected_to edit_account_payment_method_path({:payment_method => {:errors => {:base => ['serveraccountdetails,123','servercannotupdate,'], :cc_no => ['servercardnumnumeric']}}})
   end
 end
