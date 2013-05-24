@@ -1,9 +1,4 @@
 class ApplicationController < ActionController::Base
-  include Console::CommunityAware
-  include Secured
-  include AsyncAware
-  include BillingAware
-
   protect_from_forgery
 
   rescue_from Exception, :with => :generic_error
@@ -14,6 +9,10 @@ class ApplicationController < ActionController::Base
   rescue_from AccessDeniedException, :with => :access_denied
 
   include Console::Rescue
+  include Console::CommunityAware
+  include Secured
+  include AsyncAware
+  include BillingAware
 
   helper_method :active_tab
 

@@ -1,0 +1,55 @@
+%table{:style => "position:absolute; top:0; left:0; background-color: rgba(0,0,0,.75)"}
+  %tr
+    %td Reset:
+    %td
+      #{link_to "reset", {:debug => 1}}
+  %tr
+    %td Free dashboard:
+    %td
+      #{link_to "never upgraded", {:debug => 0}}
+  %tr
+    %td Plan:
+    %td
+      #{link_to "silver", params.merge({:plan => :silver})}
+      |
+      #{link_to "downgrading", params.merge({:plan => :downgrading})}
+      |
+      #{link_to "free", params.merge({:plan => :free})}
+  %tr
+    %td Status: 
+    %td
+      #{link_to ":normal", params.merge({:status => :normal})}
+      |
+      #{link_to ":dunning", params.merge({:status => :dunning})}
+      |
+      #{link_to ":suspended", params.merge({:status => :suspended})}
+      |
+      #{link_to ":terminated", params.merge({:status => :terminated})}
+  %tr
+    %td Payment:
+    %td
+      #{link_to "good", params.merge({:payment => :good})}
+      |
+      #{link_to "bad", params.merge({:payment => :bad})}
+      |
+      #{link_to "missing", params.merge({:payment => :missing})}
+  %tr
+    %td Last bill:
+    %td
+      #{link_to "paid", params.merge({:last_bill => :paid})}
+      |
+      #{link_to "unpaid", params.merge({:last_bill => :unpaid})}
+      |
+      #{link_to "none", params.merge({:last_bill => :none})}
+  %tr
+    %td Usage:
+    %td
+      #{link_to "paid+history", params.merge({:usage => :paid_historical})}
+      |
+      #{link_to "paid", params.merge({:usage => :paid})}
+      |
+      #{link_to "free+history", params.merge({:usage => :free_historical})}
+      |
+      #{link_to "free", params.merge({:usage => :free})}
+      |
+      #{link_to "none", params.merge({:usage => :none})}

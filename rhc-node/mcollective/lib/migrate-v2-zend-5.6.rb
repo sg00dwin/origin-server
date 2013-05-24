@@ -22,7 +22,7 @@ module OpenShiftMigration
       FileUtils.chmod(0o0755, sandbox_dir)
       PathUtils.oo_chown('root', user.name, zend_sandbox_dir)
       FileUtils.chmod(0o0755, zend_sandbox_dir)
-     
+
       FileUtils.rm_f(File.join(zend_sandbox_dir, 'etc'))
       FileUtils.ln_sf(File.join(zend_usr_dir, 'etc'), File.join(zend_sandbox_dir, 'etc'))
       FileUtils.rm_f(File.join(zend_sandbox_dir, 'tmp'))
@@ -37,13 +37,13 @@ module OpenShiftMigration
       FileUtils.ln_sf(File.join(zend_usr_dir, 'gui/lighttpd/logs'), File.join(zend_sandbox_dir, 'gui/lighttpd/logs'))
       FileUtils.rm_f(File.join(zend_sandbox_dir, 'gui/lighttpd/tmp'))
       FileUtils.ln_sf(File.join(zend_usr_dir, 'gui/lighttpd/tmp'), File.join(zend_sandbox_dir, 'gui/lighttpd/tmp'))
-     
+
       output << "generating new .pearrc\n"
       FileUtils.rm_f(File.join(user.homedir, '.pearrc'))
       pearrc = File.join(user.homedir, '.pearrc')
 
       spawn_ops = { chdir: user.homedir,
-                    unsetenv_others: true, 
+                    unsetenv_others: true,
                     uid: user.uid,
                     expected_exitstatus: 0
                   }
@@ -57,6 +57,10 @@ module OpenShiftMigration
       Util.add_cart_env_var(user, 'zend', 'OPENSHIFT_ZEND_CONSOLE_PORT', '16081')
       Util.add_cart_env_var(user, 'zend', 'OPENSHIFT_ZEND_ZENDSERVER_PORT', '16083')
       Util.add_cart_env_var(user, 'zend', 'OPENSHIFT_ZEND_UID', user.uid)
+
+      Util.add_cart_env_var(user, 'zend', 'ORACLE_BASE', File.join(zend_dir, 'oracle'))
+      Util.add_cart_env_var(user, 'zend', 'ORACLE_HOME', File.join(zend_dir, 'oracle'))
+      FileUtils.mkdir_p(File.join(zend_dir, 'oracle'))
 
       output << "copying zend 5.6 config files\n"
       FileUtils.mkdir_p(File.join(cartridge_dir, 'configuration/etc/conf.d'))

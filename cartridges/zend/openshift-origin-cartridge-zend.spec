@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/v2/zend
 
 Name:    openshift-origin-cartridge-zend
-Version: 0.2.4
+Version: 0.2.5
 Release: 1%{?dist}
 Summary: Zend Server cartridge
 Group:   Development/Languages
@@ -65,6 +65,12 @@ sh %{cartridgedir}/versions/5.6/rpm/zend_configure_filesystem.sh
 
 
 %changelog
+* Thu May 23 2013 Adam Miller <admiller@redhat.com> 0.2.5-1
+- Merge pull request #1446 from ironcladlou/bz/966255
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 966255: Remove OPENSHIFT_INTERNAL_* references from v2 carts
+  (ironcladlou@gmail.com)
+
 * Wed May 22 2013 Adam Miller <admiller@redhat.com> 0.2.4-1
 - Bug 962662 (dmcphers@redhat.com)
 - Bug 965537 - Dynamically build PassEnv httpd configuration

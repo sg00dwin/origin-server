@@ -137,17 +137,22 @@ module Aria
         :usage_bill_from => aria_datetime(invoice.usage_bill_from),
         :usage_bill_thru => aria_datetime(invoice.usage_bill_thru),
         :due_date => aria_datetime(invoice.bill_date),
+        :paid_date => aria_datetime(invoice.paid_date),
         :invoice_line_items => invoice.line_items,
         :invoice_payments => invoice.payments,
         :forwarded_balance => forwarded_balance(invoice)
       )
     end
 
+    def last_bill
+      bill_for(invoices_with_amounts.first)
+    end
+
     def next_bill
       if @next_bill.nil?
         default_plan = Rails.configuration.aria_default_plan_no.to_s
         @next_bill =
-          if plan_no == default_plan && next_plan_no == default_plan
+          if plan_no == default_plan && next_plan_no == default_plan && forwarded_balance == 0
             false
           else
             usage_bill_from = aria_datetime(current_period_start_date)
@@ -158,7 +163,6 @@ module Aria
               :day => (Aria::DateTime.today - usage_bill_from).to_i + 1,
               :invoice_line_items => next_plan_recurring_line_items,
               :unbilled_usage_line_items => unbilled_usage_line_items,
-              :unbilled_usage_balance => unbilled_usage_balance,
               :forwarded_balance => forwarded_balance
             )
           end
@@ -227,7 +231,7 @@ module Aria
       end
     end
 
-    def past_usage_line_items(periods=3)
+    def past_usage_line_items(periods=2)
       Hash[
         usage_invoices.slice(0, periods).inject([]) { |a, i| 
           arr = [ i.usage_period_name, i.line_items.select(&:usage?) ]

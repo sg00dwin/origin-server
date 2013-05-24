@@ -99,7 +99,7 @@ module Aria
       [
         [city].map(&:presence).compact,
         [region, zip, country].map(&:presence).compact.join(' ')
-      ].compact.join(', ')
+      ].map(&:presence).compact.join(', ')
     end
 
     def self.test(opts={})

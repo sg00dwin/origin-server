@@ -701,9 +701,8 @@ Features:
 
   def test_bill_should_be_blank
     assert Aria::Bill.new().blank?
-    assert Aria::Bill.new(:unbilled_usage_balance => 0.01).present?
-    assert Aria::Bill.new(:unbilled_usage_balance => 0.01, :forwarded_balance => 0.01).present?
-    assert Aria::Bill.new(:unbilled_usage_balance => 0.01, :forwarded_balance => -0.01).present?
+    assert Aria::Bill.new(:forwarded_balance => 0.005).blank?
+    assert Aria::Bill.new(:forwarded_balance => 0.01).present?
     assert Aria::Bill.new(:invoice_line_items => [Aria::RecurringLineItem.new({'amount' => 0.01}, 1)]).present?
     assert Aria::Bill.new(:invoice_line_items => [Aria::RecurringLineItem.new({'amount' => 0.00}, 1)]).present?
 
@@ -744,11 +743,11 @@ Features:
 
     assert Aria::Bill.new().show_payment_amounts?
     assert Aria::Bill.new(:invoice_payments => [payment1]).show_payment_amounts?, "A payment that doesn't match the balance should show the amount"
-    assert Aria::Bill.new(:invoice_payments => [payment2], :unbilled_usage_balance => 50).show_payment_amounts?, "A payment that is partially applied should show the amount"
-    assert Aria::Bill.new(:invoice_payments => [payment2], :unbilled_usage_balance => 100).show_payment_amounts?, "A payment that is partially applied should show the amount"
-    assert Aria::Bill.new(:invoice_payments => [payment1, payment2], :unbilled_usage_balance => 100).show_payment_amounts?, "When there are multiple payments, they should show their amounts"
+    assert Aria::Bill.new(:invoice_payments => [payment2], :forwarded_balance => 50).show_payment_amounts?, "A payment that is partially applied should show the amount"
+    assert Aria::Bill.new(:invoice_payments => [payment2], :forwarded_balance => 100).show_payment_amounts?, "A payment that is partially applied should show the amount"
+    assert Aria::Bill.new(:invoice_payments => [payment1, payment2], :forwarded_balance => 100).show_payment_amounts?, "When there are multiple payments, they should show their amounts"
     
-    assert !Aria::Bill.new(:invoice_payments => [payment1], :unbilled_usage_balance => 100).show_payment_amounts?, "A payment that is fully applied and matches the balance due shouldn't show its amount"
+    assert !Aria::Bill.new(:invoice_payments => [payment1], :forwarded_balance => 100).show_payment_amounts?, "A payment that is fully applied and matches the balance due shouldn't show its amount"
   end
 
   def test_line_item_prorated
@@ -870,6 +869,42 @@ Features:
     assert_equal 24.008, line_items.last.total_cost
   end
 
+  def test_user_should_not_have_last_bill
+    u = TestUser.new
+    u.expects(:invoices).at_least_once.returns([])
+    assert_equal nil, u.last_bill
+
+    u.expects(:invoices).at_least_once.returns([
+      Aria::Invoice.new(Aria::WDDX::Struct.new({'debit' => 0, 'credit' => 0}), 1)
+    ])
+    assert_equal nil, u.last_bill
+  end
+
+  def test_user_should_have_last_bill
+    u = TestUser.new
+    u.expects(:acct_no).at_least(0).returns('1')
+    u.expects(:forwarded_balance).at_least_once.returns(1)
+    u.expects(:invoices).at_least_once.returns([
+      Aria::Invoice.new(Aria::WDDX::Struct.new({
+        'recurring_bill_from' => nil,
+        'recurring_bill_thru' => nil,
+        'usage_bill_from' => nil,
+        'usage_bill_thru' => nil,
+        'bill_date' => nil,
+        'paid_date' => nil,
+        'invoice_no' => 1,
+        'master_plan_no' => 1,
+        'debit' => 1,
+        'credit' => 0
+      }), 1)
+    ])
+
+    stub_aria(:get_invoice_details,     { :acct_no => '1', :src_transaction_id => '1' }).to_return(resp(ok_wddx({ :invoice_line_items => [] })))
+    stub_aria(:get_payments_on_invoice, { :acct_no => '1', :src_transaction_id => '1' }).to_return(resp(ok_wddx({ :invoice_payments   => [] })))
+
+    assert u.last_bill
+    assert_equal 1.0, u.last_bill.balance
+  end
 
   def test_user_should_not_have_next_bill
     u = TestUser.new
@@ -877,6 +912,7 @@ Features:
     stub_acct_details(1, {
       :plan_no => Rails.configuration.aria_default_plan_no.to_s
     })
+    stub_acct_invoice_history(1, [])
     stub_queued_plans(1, [])
     assert_equal false, u.next_bill
   end
@@ -1003,7 +1039,33 @@ Features:
     u.expects(:acct_no).at_least_once.returns(1.to_s)
     stub_next_bill(
       :plan_no => '2',
-      :unbilled_usage_balance_ptd => 1.0,
+      :usage_history => [{
+        "billable_acct_no"=>1424247,
+        "incurring_acct_no"=>nil,
+        "usage_type_no"=>10014123,
+        "usage_type_description"=>"Small Gear",
+        "usage_date"=>"2013-03-07",
+        "usage_time"=>"16:32:08",
+        "units"=>1,
+        "units_description"=>"10.00 hours",
+        "invoice_transaction_id"=>nil,
+        "telco_to"=>nil,
+        "telco_from"=>nil,
+        "specific_record_charge_amount"=>0.5,
+        "is_excluded"=>"false",
+        "exclusion_comments"=>nil,
+        "comments"=>nil,
+        "pre_rated_rate"=>1.0,
+        "qualifier_1"=>nil,
+        "qualifier_2"=>nil,
+        "qualifier_3"=>nil,
+        "qualifier_4"=>nil,
+        "recorded_units"=>1,
+        "usage_rec_no"=>6010949,
+        "usage_parent_rec_no"=>nil,
+        "usage_type_code"=>nil,
+        "client_record_id"=>nil
+      }],
       :queued_plans => [{
         'new_plan_no' => Rails.configuration.aria_default_plan_no,
       }]
@@ -1058,9 +1120,6 @@ Features:
       :date_range_start => Date.today.to_s,
     }).to_return(resp(ok_wddx({
       :usage_history_records => opts[:usage_history] || [],
-    })))
-    stub_aria(:get_unbilled_usage_summary, {:acct_no => acct_no.to_s}).to_return(resp(ok_wddx({
-      :ptd_balance_amount => opts[:unbilled_usage_balance_ptd] || 0.0,
     })))
     acct_plan = 
       if opts[:acct_plan]
