@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.2" baseProfile="tiny" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-	 x="0px" y="0px" width="352px" height="384px" viewBox="64 64 352 384" xml:space="preserve">
+	 x="0px" y="0px" width="352px" height="384px" viewBox="0 0 352 384" xml:space="preserve">
 <g display="none">
 	<line display="inline" fill="none" stroke="#B35047" x1="32" y1="0" x2="32" y2="512"/>
 	<line display="inline" fill="none" stroke="#B35047" x1="64" y1="0" x2="64" y2="512"/>
@@ -36,13 +36,15 @@
 	<rect display="inline" fill="none" stroke="#B35047" width="512" height="512"/>
 </g>
 <g>
-	<path fill="#FFFFFF" d="M404.25,75.75C396.417,67.917,387,64,376,64H104c-11,0-20.417,3.917-28.25,11.75S64,93,64,104v304
-		c0,11,3.917,20.416,11.75,28.25S93,448,104,448h272c11,0,20.417-3.916,28.25-11.75S416,419,416,408V104
-		C416,93,412.083,83.583,404.25,75.75z M384,408c0,2.166-0.792,4.041-2.375,5.625S378.167,416,376,416H104
-		c-2.167,0-4.042-0.791-5.625-2.375S96,410.166,96,408V104c0-2.167,0.792-4.042,2.375-5.625S101.833,96,104,96h272
-		c2.167,0,4.042,0.792,5.625,2.375S384,101.833,384,104V408z"/>
-	<rect x="128" y="128" fill="#FFFFFF" width="224" height="64"/>
-	<rect x="128" y="224" fill="#FFFFFF" width="224" height="64"/>
-	<rect x="128" y="320" fill="#FFFFFF" width="224" height="64"/>
+	<path fill="#FFFFFF" d="M340.25,11.75C332.417,3.917,323,0,312,0H40C29,0,19.583,3.917,11.75,11.75S0,29,0,40v304
+		c0,11,3.917,20.416,11.75,28.25S29,384,40,384h272c11,0,20.417-3.916,28.25-11.75S352,355,352,344V40
+		C352,29,348.083,19.583,340.25,11.75z M320,344c0,2.166-0.792,4.041-2.375,5.625S314.167,352,312,352H40
+		c-2.167,0-4.042-0.791-5.625-2.375S32,346.166,32,344V40c0-2.167,0.792-4.042,2.375-5.625S37.833,32,40,32h272
+		c2.167,0,4.042,0.792,5.625,2.375S320,37.833,320,40V344z"/>
+	<rect x="64.333" y="74" fill="#FFFFFF" width="224" height="55"/>
+	<rect x="64.333" y="164.5" fill="#FFFFFF" width="224" height="55"/>
+	<rect x="64.333" y="255" fill="#FFFFFF" width="224" height="55"/>
+	<rect x="64" y="160" display="none" fill="#FFFFFF" width="224" height="64"/>
+	<rect x="64" y="256" display="none" fill="#FFFFFF" width="224" height="64"/>
 </g>
 </svg>

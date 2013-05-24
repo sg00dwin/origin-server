@@ -90,14 +90,6 @@
           <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
         </li>
       </ul>
-      <p>
-        OpenShift is a cloud application development and hosting platform which 
-leverages a Platform-as-a-Service (PaaS) architecture. The PaaS architecture of OpenShift automates the provisioning, 
-management and scaling of applications so that the developers can focus on writing the code of these applications for their 
-business, startup, or next big idea. A choice of programming languages and a complete set of developer tools are available within 
-OpenShift to increase developer productivity and accelerate application delivery in a no-lock-in fashion and with enterprise-class 
-security and high efficiency.
-      </p>
     </section>
     <section>
       <header>
@@ -150,17 +142,78 @@ security and high efficiency.
           <img src="<?php print openshift_assets_url(); ?>/placeholder.png" alt="" />    
         </li>
       </ul>
-      <p>
-        At Red Hat OpenShift, our approach to partnering is designed with the customer in mind. Our customers demand choice and hence our goal is to work broadly with partners to make available complementary partner technologies and products along with Red Hat’s own offerings to satisfy the needs of our customers.
-      </p>
     </section>
+    <div id="buzz" class="section-base">
+      <div class="container">
+        <div class="row row-buzz">
+          <div class="span12">
+            <div class="column-buzz">
+              <h1>
+                Check the Buzz
+              </h1>
+              <hr>
+              <div class="row-fluid">
+                <div id="buzz-tweets" class="span5">
+                  <div class="tweet">
+                    <p>
+                      Openshift has also a great community site in which you will learn new ways of doing what you have in mind with amazing articles put together by subject matter experts. Openshift is based on a gears-cartdriges architecture that you will love from the minute one of use.
+                    </p>
+                    <small>Germán Sánchez</small>
+                  </div>
+                  <div class="tweet">
+                    <p>
+                      With OpenShift, I can have a developer deploy her first line of business logic in less time than a meeting with an IT organization.
+                    </p>
+                    <small>Gregori Faroux</small>
+                  </div>
+                  <div class="tweet">
+                    <p>
+                      The best thing about OpenShift is the Community support that has been built up around it.
+                    </p>
+                    <small>Corey Daley</small>
+                  </div>
+                  <div class="tweet">
+                    <p>
+                      Our vision was to reduce operational costs associated with maintaining configuration and updates with IaaS, while still allowing us much of the configuration flexibility. The Openshift service seemed to hit the sweet spot for us.
+                    </p>
+                    <small>Andy Lim</small>
+                  </div>
+                </div>
+                <div class="span1">&nbsp;</div>
+                <div id="buzz-retweets" class="span6">
+                  <?php print _redhat_frontpage_load_retweets(); ?></div>
+              </div>
+              <div class="row-fluid buzz-actions">
+                <div class="span6">
+                  <a class="link-with-action" href="#">
+                    <strong>More</strong> buzz
+                  </a>
+                </div>
+                <div class="span6">
+                  <div class="align-right">
+                    <a class="link-with-action" href="http://www.twitter.com/#!/openshift">
+                      <strong>Follow</strong> OpenShift
+                    </a>
+                  </div>
+                  <div class="align-right">
+                    <a class="link-with-action" href="http://twitter.com/#!/search/%23OpenShift">
+                      <strong>More</strong> #OpenShift buzz
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 <?php include 'page_footer.inc' ?>
 <script type="text/javascript">
   $.fn.setAllToMaxHeight = function(){
-      return this.height( Math.max.apply(this, $.map( this , function(e){ return $(e).height() }) ) );
-    }
+    return this.height( Math.max.apply(this, $.map( this , function(e){ return $(e).height() }) ) );
+  }
   $(document).ready(function() {
     var products = $('li', '#products');
     products.on('mouseover', function() {
@@ -170,10 +223,8 @@ security and high efficiency.
     var productDescriptions = $('#products li p');
     productDescriptions.setAllToMaxHeight();
     $(window).resize(function() {
-      //console.log('resizing');
       productDescriptions.css('height', 'auto');
       productDescriptions.setAllToMaxHeight();
     });
   });
-
 </script>
