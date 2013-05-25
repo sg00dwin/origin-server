@@ -40,7 +40,8 @@ Feature: V2 Migrations for V1 apps
     Given the embedded mysql-5.1 cartridge is added
     Then I can select from mysql
 
-    When I insert test data into mysql
+    When I create a test table in mysql
+    And I insert test data into mysql
     Then the test data will be present in mysql
 
     When the application is migrated to the v2 cartridge system
