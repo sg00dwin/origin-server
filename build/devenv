@@ -905,7 +905,8 @@ yum -y install rubygem-commander rubygem-highline rubygem-httpclient rubygem-net
       end
 
       def restart_services()
-        run("service mcollective restart; service rhc-broker restart; service rhc-site restart", :verbose => options.verbose?)
+        run("service mcollective restart; service rhc-broker restart; service rhc-site restart; service libra-watchman restart",
+            :verbose => options.verbose?)
       end
 
       def sync_impl(name, options)

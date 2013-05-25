@@ -7,6 +7,7 @@
 require 'pathname'
 require 'date'
 require 'syslog'
+require 'openshift-origin-node/utils/environ'
 
 ##
 # Monitor syslog files for messages from cgroups killing off applications 
@@ -163,27 +164,7 @@ class Watchman
 
   # Load environment variables into a hash
   def read_env(path)
-    env = {}
-    if File.exist? File.join(path, '.env', 'CARTRIDGE_VERSION_2')
-      Dir[File.join(path, '.env', '*')].each do |file|
-        contents = IO.read(file).chomp
-        next if contents.empty?
-        env[File.basename(file).intern] = contents
-      end
-    else
-      Dir["#{path}/.env/*"].each { |f|
-        contents = nil
-        File.open(f) { |input|
-          contents = input.read.chomp
-          index    = contents.index('=')
-          contents = contents[(index + 1)..-1]
-          contents = contents[/'(.*)'/, 1] if contents.start_with?("'")
-          contents = contents[/"(.*)"/, 1] if contents.start_with?('"')
-        }
-        env[File.basename(f).intern] = contents
-      }
-    end
-    env
+    Hash[OpenShift::Utils::Environ.for_gear(path).map{ |k, v| [k.to_sym, v]}]
   end
 
   # Make current process a daemon
