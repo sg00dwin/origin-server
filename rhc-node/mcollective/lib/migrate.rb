@@ -374,6 +374,7 @@ module OpenShiftMigration
     if progress.incomplete? 'typeless_translated_vars'
       progress.log 'Migrating TYPELESS_TRANSLATED_VARS to discrete variables'
       user = OpenShift::UnixUser.from_uuid(uuid)
+      blacklist = %w(OPENSHIFT_GEAR_CTL_SCRIPT)
       vars_file = File.join(gear_home, '.env', 'TYPELESS_TRANSLATED_VARS')
 
       if File.exists?(vars_file)
@@ -388,12 +389,17 @@ module OpenShiftMigration
             value = line[(index + 1)..-1]
             value.gsub!(/\A["']|["']\Z/, '')
 
+            if blacklist.include?(key)
+              progress.log " Skipping #{key} because it is in the blacklist"
+              next
+            end
+
             if value[0] == '$'
               referenced_var = value[1..-1]
               value = env[referenced_var]
 
               if value.nil?
-                progress.log " Unable to resolve #{referenced_var}; skipping #{key}."
+                progress.log " Unable to resolve $#{referenced_var}; skipping #{key}."
                 next
               end
             end

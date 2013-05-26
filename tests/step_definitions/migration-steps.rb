@@ -89,6 +89,7 @@ Given /^the application has a TYPELESS_TRANSLATED_VARS env file$/ do
 export TEST_VAR_1='foo'
 export TEST_VAR_2='bar'
 export TEST_VAR_3="baz"
+export OPENSHIFT_GEAR_CTL_SCRIPT='test'
 export OPENSHIFT_TMP_DIR_2=$OPENSHIFT_TMP_DIR
 export OPENSHIFT_TMP_DIR_3=$DOES_NOT_EXIST
   }
@@ -106,6 +107,7 @@ Then /^the TYPELESS_TRANSLATED_VARS variables will be discrete variables$/ do
 
   assert_files_equal(tmp_dir_var, tmp_dir_var2)
   assert_file_not_exists File.join($home_root, @app.uid, '.env', 'OPENSHIFT_TMP_DIR_3')
+  assert_file_not_exists File.join($home_root, @app.uid, '.env', 'OPENSHIFT_GEAR_CTL_SCRIPT')
   assert_file_not_exists File.join($home_root, @app.uid, '.env', 'TYPELESS_TRANSLATED_VARS')
 end
 
