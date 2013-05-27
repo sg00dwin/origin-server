@@ -375,16 +375,6 @@ function blogs_views_default_views() {
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('sorts', array(
-    'timestamp' => array(
-      'order' => 'DESC',
-      'granularity' => 'minute',
-      'id' => 'timestamp',
-      'table' => 'node_revisions',
-      'field' => 'timestamp',
-      'relationship' => 'none',
-    ),
-  ));
   $handler->override_option('filters', array(
     'status' => array(
       'operator' => '=',
@@ -545,6 +535,19 @@ function blogs_views_default_views() {
       'override' => array(
         'button' => 'Use default',
       ),
+    ),
+  ));
+  $handler->override_option('sorts', array(
+    'created' => array(
+      'order' => 'DESC',
+      'granularity' => 'second',
+      'id' => 'created',
+      'table' => 'node',
+      'field' => 'created',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
     ),
   ));
   $handler->override_option('filters', array(
@@ -921,6 +924,13 @@ function blogs_views_default_views() {
         'button' => 'Use default',
       ),
       'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('sorts', array(
+    'field_event_start_date_value' => array(
+      'id' => 'field_event_start_date_value',
+      'table' => 'node_data_field_event_start_date',
+      'field' => 'field_event_start_date_value',
     ),
   ));
   $handler->override_option('filters', array(
