@@ -64,7 +64,7 @@
     
             <?php print $content_prefix; ?>
             <?php print $content; ?>
-            <?php print $content_suffix; ?>
+            <?php openshift_wrap_region($content_suffix); ?>
 
             <?php if ($tabs) :?><?php print $tabs; ?><?php endif; ?>
          </div>

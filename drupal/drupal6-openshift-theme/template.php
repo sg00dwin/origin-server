@@ -166,6 +166,17 @@ function openshift_social_sharing($url, $title = NULL) {
     '</p';
 }
 
+function openshift_wrap_region($s) {
+  $is_row = strpos($s, "<!--row-fluid-->"); 
+  if ($is_row) { 
+    print "<div class=\"row-fluid\">"; 
+  } 
+  print $s; 
+  if ($is_row) { 
+    print "</div>"; 
+  } 
+}
+
 function openshift_pager($tags = array(), $limit = 10, $element = 0, $parameters = array(), $quantity = 9) {
   global $pager_page_array, $pager_total;
 

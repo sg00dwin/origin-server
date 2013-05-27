@@ -37,6 +37,41 @@ function user_profile_context_default_contexts() {
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
+  $context->name = 'get-involved-blocks';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+    'path' => array(
+      'values' => array(
+        'get-involved' => 'get-involved',
+        'developers/get-involved' => 'developers/get-involved',
+      ),
+    ),
+  );
+  $context->reactions = array(
+    'block' => array(
+      'blocks' => array(
+        'views-content_list-block_1' => array(
+          'module' => 'views',
+          'delta' => 'content_list-block_1',
+          'region' => 'content_suffix',
+          'weight' => 0,
+        ),
+        'views-content_list-block_2' => array(
+          'module' => 'views',
+          'delta' => 'content_list-block_2',
+          'region' => 'content_suffix',
+          'weight' => 1,
+        ),
+      ),
+    ),
+  );
+  $context->condition_mode = 0;
+  $export['get-involved-blocks'] = $context;
+
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
   $context->name = 'menu-active-blogs';
   $context->description = '';
   $context->tag = '';
