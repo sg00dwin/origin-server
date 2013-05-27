@@ -27,11 +27,11 @@
     </div>
     <div>
       <div class="text">
-        <a href="/blogs">Blog</a>
-        |
+        <a href="/blogs">Latest News</a>
+        <!--/
         <a href="http://twitter.com/openshift"><span aria-hidden="true" data-icon="&#xee04;" title="Follow us on Twitter"> </span></a>
         <a href="http://facebook.com/openshift"><span aria-hidden="true" data-icon="&#xee05;" title="Like us on Facebook"> </span></a>
-        <a href="http://plus.google.com/openshift"><span aria-hidden="true" data-icon="&#xee06;" title="Visit us on Google+"> </span></a>
+        <a href="http://plus.google.com/openshift"><span aria-hidden="true" data-icon="&#xee06;" title="Visit us on Google+"> </span></a>-->
       </div>
     </div>
   </div>
