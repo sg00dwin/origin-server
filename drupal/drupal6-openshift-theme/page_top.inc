@@ -1,4 +1,10 @@
 <div id="top" class="section-top">
+  <?php 
+    $mission = variable_get('site_mission', '');
+    if (!empty($mission)) {
+      print $mission;
+    }
+  ?>
   <div class="container">
     <a title="Track open issues on the OpenShift status page" style="display:none;" id="outage" class="btn btn-small btn-warning" href="<?php print $openshift_server_url; ?>/app/status">Status</a>
     <div class="pull-right login">
