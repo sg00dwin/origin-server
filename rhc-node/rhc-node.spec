@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.9.5
+Version: 1.9.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -240,6 +240,23 @@ fi
 
 
 %changelog
+* Fri May 24 2013 Adam Miller <admiller@redhat.com> 1.9.6-1
+- WIP Cartridge Refactor - Print stdout/stderr on ShellExecutionException
+  (jhonce@redhat.com)
+- Merge pull request #1456 from pmorie/dev/mongo_migration
+  (dmcphers+openshiftbot@redhat.com)
+- Fix log migration for mongodb V1 -> V2 (pmorie@gmail.com)
+- Merge pull request #1449 from pmorie/bugs/966224
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1454 from rmillner/online_runtime_296
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1452 from VojtechVitek/zend_disable_oci_extension
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 966224 (pmorie@gmail.com)
+- online_runtime_296 - Keep fair allocation but allow gears to borrow up to the
+  full allowed bandwidth. (rmillner@redhat.com)
+- disable Zend PHP PDO-OCI extension (vvitek@redhat.com)
+
 * Thu May 23 2013 Adam Miller <admiller@redhat.com> 1.9.5-1
 - Fix bug 963071 (pmorie@gmail.com)
 - Merge pull request #1441 from rmillner/BZ965373

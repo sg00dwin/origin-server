@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.9.7
+Version: 1.9.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -195,6 +195,19 @@ fi
 %{sitedir}/public
 
 %changelog
+* Fri May 24 2013 Adam Miller <admiller@redhat.com> 1.9.8-1
+- Fix site extended test, tolerate missing error codes from Aria
+  (jliggitt@redhat.com)
+- Improve payment page errors (jliggitt@redhat.com)
+- Merge pull request #1453 from
+  smarterclayton/bug_966499_properly_rescue_auth_denied
+  (dmcphers+openshiftbot@redhat.com)
+- Merge branch 'master' of github.com:openshift/li (admiller@redhat.com)
+- Merge pull request #1450 from spurtell/spurtell/analytics
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 966499 - Properly handle REST API access revocation (ccoleman@redhat.com)
+- Added source tracking to new account form (spurtell@redhat.com)
+
 * Thu May 23 2013 Adam Miller <admiller@redhat.com> 1.9.7-1
 - Merge pull request #1439 from liggitt/dashboard_layout
   (dmcphers+openshiftbot@redhat.com)

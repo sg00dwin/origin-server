@@ -24,14 +24,13 @@
                 .payment_method
                   Card on file: #### #### #### #{previous_payment_method.cc_no}, expires #{previous_payment_method.cc_exp_mm} / #{previous_payment_method.cc_exp_yyyy}
           = f.inputs :inline => true, :required => true, :name => 'Credit Card Number' do
-            .clearfix
-              = f.input :cc_no, :input_html => { :name => 'cc_no', :type => 'text', :class => 'pull-left input-large', :placeholder => "Card Number"}
-              %ul.card-types
-                -# Do not try to change the order here, the sprites will not look right
-                -# See config/credit_cards.yml for instructions
-                - accepted_credit_cards.each do |id,name|
-                  %li{ :class => "cc-card #{id}", :title => name }
-                    %span= name
+            = f.input :cc_no, :input_html => { :name => 'cc_no', :type => 'text', :class => 'input-large', :placeholder => "Card Number"}
+            %ul.card-types
+              -# Do not try to change the order here, the sprites will not look right
+              -# See config/credit_cards.yml for instructions
+              - accepted_credit_cards.each do |id,name|
+                %li{ :class => "cc-card #{id}", :title => name }
+                  %span= name
           = f.inputs :inline => true, :required => true, :name => 'Expiration Date' do
             :ruby
               @payment_method.cc_exp_mm ||= Date.today.month
