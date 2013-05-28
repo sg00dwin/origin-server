@@ -105,7 +105,7 @@
         - if @plan.basic?
           = link_to "Community Support", console_help_path
         - else
-          = link_to "Technical Support", openshift_customer_portal_url
+          = link_to "Technical Support", openshift_customer_portal_url, :class => 'external', :target => '_blank'
 
     %section
       = render :partial => 'user', :locals => {:user => @user, :show_email => @show_email, :identities => @identities}

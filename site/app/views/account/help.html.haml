@@ -15,17 +15,17 @@
 
           %h4 For Technical Support
           %p
-            Visit the #{link_to "Red Hat Customer Portal", openshift_customer_portal_url, :class => 'external'}. 
+            Visit the #{link_to "Red Hat Customer Portal", openshift_customer_portal_url, :class => 'external', :target => '_blank'}. 
             You can also ask application questions in the community:
           %ul
             %li= link_to "OpenShift Forum", forums_url
-            %li= link_to "IRC on Freenode (#openshift)", irc_web_url
+            %li= link_to "IRC on Freenode (#openshift)", irc_web_url, :class => 'external', :target => '_blank'
 
         - else
           %h4 Community Support
           %ul
             %li= link_to "OpenShift Forum", forums_url
-            %li= link_to "IRC on Freenode (#openshift)", irc_web_url
+            %li= link_to "IRC on Freenode (#openshift)", irc_web_url, :class => 'external', :target => '_blank'
             %li Send us an email to #{link_to_account_mailto}
 
       -if @user_on_basic_plan
