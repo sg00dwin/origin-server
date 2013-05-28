@@ -83,12 +83,12 @@ class AccountControllerTest < ActionController::TestCase
       assert_select 'h1', /Free/, response.inspect
     end
 
-    { :dunning => 'Your account is overdue on payment',
-      :suspended => 'Your account has been flagged for suspension',
-      :terminated => 'Your account has been flagged for termination',
-      :cancelled => 'Per user request, this account has been cancelled',
-      :cancellation_pending => 'Per user request, this account has been flagged for cancellation',
-    }.each_pair do |status,message|
+    { :dunning => { :message => 'Your account is overdue on payment', :status_cd => '11' },
+      :cancellation_pending => { :message => 'Per user request, this account has been flagged for cancellation', :status_cd => '2' },
+      :suspended => { :message => 'Your account has been flagged for suspension', :status_cd => '-1' },
+      :cancelled => { :message => 'Per user request, this account has been cancelled', :status_cd => '-2' },
+      :terminated => { :message => 'Your account has been flagged for termination', :status_cd => '-3' },
+    }.each_pair do |status,config|
       test "should render a warning if the Aria account is in #{status} status" do
         omit_if_aria_is_unavailable
         with_unique_user
@@ -99,11 +99,12 @@ class AccountControllerTest < ActionController::TestCase
         Aria::UserContext.any_instance.expects(:last_bill).at_least_once.returns(false)
         Aria::UserContext.any_instance.expects(:default_plan_pending?).at_least_once.returns(false)
         Aria::UserContext.any_instance.expects(:has_valid_payment_method?).at_least_once.returns(true)
+        Aria::UserContext.any_instance.expects(:status_cd).at_least_once.returns(config[:status_cd])
         get :show
         assert_response :success
         assert_template :show
         assert_equal status, assigns(:account_status)
-        assert_select ([:terminated,:cancelled].include?(status) ? '.alert-error' : '.alert-warning'), :text => /#{message}/
+        assert_select ([:terminated,:cancelled].include?(status) ? '.alert-error' : '.alert-warning'), :text => /#{config[:message]}/
       end
     end
 
