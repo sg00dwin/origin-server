@@ -113,6 +113,7 @@ echo "/usr/bin/oo-trap-user" >> /etc/shells
 /sbin/chkconfig --add openshift-gears || :
 /sbin/chkconfig --add libra-data || :
 /sbin/chkconfig --add libra-tc || :
+/sbin/chkconfig --add libra-avc-cache-threshold || :
 /sbin/chkconfig --add libra-watchman || :
 /sbin/chkconfig --add openshift-cgroups || :
 
@@ -122,6 +123,7 @@ echo "/usr/bin/oo-trap-user" >> /etc/shells
 /sbin/restorecon -r /sandbox
 /sbin/restorecon /etc/init.d/mcollective || :
 
+/sbin/service libra-avc-cache-threshold restart
 
 # Only bounce cgroups if not already initialized
 # CAVEAT: if the policy is changed, must run these by hand (release ticket)
@@ -173,6 +175,7 @@ if [ "$1" -eq "0" ]; then
     /sbin/service libra-tc stop > /dev/null 2>&1 || :
     /sbin/service openshift-cgroups stop > /dev/null 2>&1 || :
     /sbin/service libra-watchman stop > /dev/null 2>&1 || :
+    /sbin/chkconfig --del libra-avc-cache-threshold || :
     /sbin/chkconfig --del libra-tc || :
     /sbin/chkconfig --del libra-data || :
     /sbin/chkconfig --del openshift-cgroups || :
@@ -200,6 +203,7 @@ fi
 %attr(0640,-,-) %{mco_root}lib/*
 %attr(0750,-,-) %{_initddir}/libra-data
 %attr(0750,-,-) %{_initddir}/libra-tc
+%attr(0750,-,-) %{_initddir}/libra-avc-cache-threshold
 %attr(0750,-,-) %{_initddir}/libra-watchman
 %attr(0750,-,-) %{_bindir}/rhc-ip-prep
 %attr(0750,-,-) %{_bindir}/rhc-iptables.sh
