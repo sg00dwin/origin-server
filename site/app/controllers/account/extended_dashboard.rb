@@ -48,7 +48,7 @@ module Account
         @usage_types = Aria::UsageLineItem.type_info(@usage_items.values.flatten) if @usage_items
       end
 
-      @can_upgrade = @plan.basic? && aria_user.can_initiate_upgrade?
+      @can_upgrade = @plan.basic? && !aria_user.has_disabled_status?
     end
 
     protected

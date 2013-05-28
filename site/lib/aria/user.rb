@@ -47,8 +47,8 @@ module Aria
       false
     end
 
-    def can_initiate_upgrade?
-      return has_account? && status_cd.to_i >= 0
+    def has_disabled_status?
+      return has_account? && status_cd.to_i < 0
     end
 
     def account_details
