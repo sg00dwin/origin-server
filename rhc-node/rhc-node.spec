@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.9.6
+Version: 1.9.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -240,6 +240,20 @@ fi
 
 
 %changelog
+* Tue May 28 2013 Adam Miller <admiller@redhat.com> 1.9.7-1
+- Fix bug 963071: re-add blacklist for TYPELESS_TRANSLATED_VARS
+  (pmorie@gmail.com)
+- remove old env vars on migrate (dmcphers@redhat.com)
+- Merge pull request #1466 from jwhonce/bug/966803
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1465 from pmorie/bugs/965476
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 965476 (pmorie@gmail.com)
+- Bug 966913: Add OPENSHIFT_JBOSSAS_WEBSOCKET_PORT to migration
+  (ironcladlou@gmail.com)
+- Bug 966803 - Watchman support for namespaced directories in .env
+  (jhonce@redhat.com)
+
 * Fri May 24 2013 Adam Miller <admiller@redhat.com> 1.9.6-1
 - WIP Cartridge Refactor - Print stdout/stderr on ShellExecutionException
   (jhonce@redhat.com)
