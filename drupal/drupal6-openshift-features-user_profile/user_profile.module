@@ -42,8 +42,8 @@ function user_profile_block($op = 'list', $delta = '', $edit = array()) {
     case 'home-messaging':
       $block['content'] = 
         '<div class="messaging messaging-home"><div class="container">'.
-        '<h1 class="primary headline">Develop and Scale <strong id="technology-rotate">Apps</strong> in the Cloud</h1>'.
-        '<h2 class="secondary">OpenShift is Red Hat\'s free, auto-scaling Platform as a Service (PaaS) for applications.  As an application platform in the cloud, OpenShift manages the stack so you can focus on your code.</h2>'.
+        '<h1 class="primary headline">Build, run, &amp; scale apps fast '.
+        '<small>in an easy-to-use cloud environment</small></h1>'.
         '</div></div>';
       break;
     case 'developer-center-messaging':

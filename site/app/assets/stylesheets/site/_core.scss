@@ -14,15 +14,15 @@ a:focus:active {
 
 // type customizations by section
 .column-content {
-	h4, h5, h6 {
-		margin-bottom: 3px;
-	}
-	h6 {
-		color:#888;
-	}
-	section {
-  	margin-bottom: $baseLineHeight * 1.75;
-	}
+  h4, h5, h6 {
+    margin-bottom: 3px;
+  }
+  h6 {
+    color: $grayLight;
+  }
+  section {
+    margin-bottom: $baseLineHeight * 1.75;
+  }
 }
 
 input:-moz-placeholder,
@@ -104,7 +104,7 @@ body.signup {
   }
   .section-nav.lift-counter {
     padding-bottom: 15px;
-	}
+  }
 }
 .simple .section-nav { padding-bottom: 0; }
 
@@ -214,13 +214,13 @@ body.signup {
 }
 
 @media (max-width: 767px) {
-	.section-top {
-		#outage {
-			margin: 0 -20px;
-			display: block;
-			float: none;
-		}
-	}
+  .section-top {
+    #outage {
+      margin: 0 -20px;
+      display: block;
+      float: none;
+    }
+  }
 }
 
 @media (max-width: 480px) {
@@ -239,7 +239,7 @@ body.signup {
         display: table-cell;
         border:0;
         padding: 8px;
-        background-color: #000;	
+        background-color: #000; 
         float:none;
       }
     }
@@ -362,7 +362,15 @@ body.signup {
     }
   }
 }
- 
+
+#learn .action-call { 
+  margin-top: -1.3em; 
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
 .action-more,
 .action-more a {
   font-size: $largeFontSize;
@@ -419,8 +427,8 @@ body.signup {
     padding: 0 $gridGutterWidthPhone;
   }
   #nav .messaging + .action-call {
-  	margin: 20px auto 5px;
-	}
+    margin: 20px auto 5px;
+  }
   #learn .action-call { 
     width: 100%;
     font-size: 13px; // responsive special case
@@ -431,7 +439,7 @@ body.signup {
   }
   .action-call > div {
     padding: 11px 20px;
-	}
+  }
 }
 
 
@@ -478,8 +486,8 @@ body.signup {
       vertical-align:-.4em;
     }
     p {
-    	margin: -23px 0 0 28px;
-    	font-weight: 300;
+      margin: -23px 0 0 28px;
+      font-weight: 300;
     }
     small {
       margin-left: 36px;
@@ -543,11 +551,11 @@ body.signup {
 
     > div {
       color: #666666;
-   		margin-right: 70px;
+      margin-right: 70px;
       position: static;
       
       &:first-child {
-      	margin-top: 75px;
+        margin-top: 75px;
       }    
     }
   }
@@ -698,9 +706,9 @@ h1.ribbon {
 }
 
 .well {
-	background-color:$grayLighter;
+  background-color:$grayLighter;
   @include box-shadow(0 1px 1px rgba(0, 0, 0, 0.15) inset);
-	}
+  }
 .info-ribbon .well {
   color: black;
   
@@ -754,10 +762,10 @@ h1.ribbon {
     margin-top: 15px;
   }
 
-	.gutter-right {
-		padding-right: 15px;
-		margin-bottom: 30px;
-	}
+  .gutter-right {
+    padding-right: 15px;
+    margin-bottom: 30px;
+  }
 
   .nav-list {
     padding: 0;
@@ -862,7 +870,7 @@ h1.ribbon {
     }
 
     .nav-header {
-  	  text-shadow: none;
+      text-shadow: none;
     }
 
     .nav-list {
@@ -893,7 +901,7 @@ h1.ribbon {
 }
 
 @media (max-width: 768px) {
-	.column-nav .nav-list > li > a {
+  .column-nav .nav-list > li > a {
     margin-left: 0;
   }
   .column-floating {
@@ -918,8 +926,8 @@ a.skip-navigation {
 
 // Search input 
 #search-top {
-	position: relative;
-	text-align: right;
+  position: relative;
+  text-align: right;
   margin: 0;
   float: left;
   
@@ -951,45 +959,45 @@ a.skip-navigation {
     transition: width 0.3s ease 0s;
     
     &:focus {
-	    width: 200px;
-	    //background: image-url("sprite-vert.png") right -293px no-repeat #aaa;
-	    background-color: #aaabac;
-	    color: #000;
-	    //font-size: inherit; 
-	    
-	    + button.search {
-		    background: transparent image-url("sprite-vert.png") 2px -293px no-repeat;
-			}
-  	}
+      width: 200px;
+      //background: image-url("sprite-vert.png") right -293px no-repeat #aaa;
+      background-color: #aaabac;
+      color: #000;
+      //font-size: inherit; 
+      
+      + button.search {
+        background: transparent image-url("sprite-vert.png") 2px -293px no-repeat;
+      }
+    }
   }
 } 
  
 @media (max-width: 767px) {
-	#search-top .search-query {
-  	margin-left: 0;
+  #search-top .search-query {
+    margin-left: 0;
   }
 }
 
 @media (max-width: 480px) {
-	
-	#search-top {
-		margin: 3px 0 0 20px;
-	}
-	#search-top input[type="text"] {
-		background-color: transparent;
-	}
-	#search-top input[type="text"]:focus {
-		width: 125px;
-	}
-	#search-top button.search {
-		background-color: #000;
-	}
+  
+  #search-top {
+    margin: 3px 0 0 20px;
+  }
+  #search-top input[type="text"] {
+    background-color: transparent;
+  }
+  #search-top input[type="text"]:focus {
+    width: 125px;
+  }
+  #search-top button.search {
+    background-color: #000;
+  }
 }
 
 @media (max-width: 360px) {
-	#search-top input[type="text"]:focus {
-		width: 75px;
-	}
+  #search-top input[type="text"]:focus {
+    width: 75px;
+  }
 }
 
 @media (max-width: 767px) {
@@ -999,7 +1007,7 @@ a.skip-navigation {
     @include expand_for_phone();
   }
   .nav-location { 
-  	display: none;
+    display: none;
   }
 }
 
@@ -1067,22 +1075,22 @@ body > header {
 .ie9 body.home > header,
 .ie8 body.home > header,
 .ie7 body.home > header {
-	background: #191919 $noiseImage;
+  background: #191919 $noiseImage;
   background-image:
     image-url('diagonals-top.png'),
-	  image-url('mts.png'), 
-	  image-url('stars.png'),
-	  $noiseImage;
+    image-url('mts.png'), 
+    image-url('stars.png'),
+    $noiseImage;
   background-repeat:
-  	no-repeat,
-  	no-repeat,
+    no-repeat,
+    no-repeat,
     repeat,
     repeat;
   background-position:
-  	right bottom,
-	  center bottom,
-	  center bottom, 
-	  center bottom;
+    right bottom,
+    center bottom,
+    center bottom, 
+    center bottom;
 }
 
 
@@ -1102,69 +1110,69 @@ body.community > header {
 /* home-specific styles */
 body.home {
 
-		> header {
-	  background-color: #191919; 
-	  background-image:
-	    image-url('diagonals-top.png'),
-	    image-url('mts.png'), 
-	    image-url('stars.png'),
-	    $noiseImage,
-	    -moz-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
-	  background-image:
-	    image-url('diagonals-top.png'),
-	    image-url('mts.png'), 
-	    image-url('stars.png'),
-	    $noiseImage,
-	    -webkit-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #171717 10px, #171717 20px);
-	  background-image:
-	    image-url('diagonals-top.png'),
-	    image-url('mts.png'), 
-	    image-url('stars.png'),
-	    $noiseImage,
-	    -ms-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
-	  background-image:
-	    image-url('diagonals-top.png'),
-	    image-url('mts.png'), 
-	    image-url('stars.png'),
-	    $noiseImage,
-	    repeating-linear-gradient(160deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
-	  background-repeat:
-	    no-repeat,
-	    no-repeat,
-	    repeat,
-	    repeat, 
-	    repeat;
-	  background-position:
-	    right bottom,
-	    center bottom,
-	    center bottom,
-	    center bottom, 
-	    center bottom;
-		}
+    > header {
+    background-color: #191919; 
+    background-image:
+      image-url('diagonals-top.png'),
+      image-url('mts.png'), 
+      image-url('stars.png'),
+      $noiseImage,
+      -moz-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
+    background-image:
+      image-url('diagonals-top.png'),
+      image-url('mts.png'), 
+      image-url('stars.png'),
+      $noiseImage,
+      -webkit-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #171717 10px, #171717 20px);
+    background-image:
+      image-url('diagonals-top.png'),
+      image-url('mts.png'), 
+      image-url('stars.png'),
+      $noiseImage,
+      -ms-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
+    background-image:
+      image-url('diagonals-top.png'),
+      image-url('mts.png'), 
+      image-url('stars.png'),
+      $noiseImage,
+      repeating-linear-gradient(160deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
+    background-repeat:
+      no-repeat,
+      no-repeat,
+      repeat,
+      repeat, 
+      repeat;
+    background-position:
+      right bottom,
+      center bottom,
+      center bottom,
+      center bottom, 
+      center bottom;
+    }
 }
 
 .home {
-	.messaging {
- 		margin: 55px 0;
- 	}
+  .messaging {
+    margin: 55px 0;
+  }
   .section-nav.lift-counter { padding-bottom: 50px; }
- 	.learn { 
-	 	li { 
-	 		img {
-		 		float:left;
-		 	}
-		 	h4 {
-			 	margin-left: 100px;
-			}
-			p {
-				margin-left: 100px;
-			}
-		}
- 	}
- 	.news h4,
+  .learn { 
+    li { 
+      img {
+        float:left;
+      }
+      h4 {
+        margin-left: 100px;
+      }
+      p {
+        margin-left: 100px;
+      }
+    }
+  }
+  .news h4,
   .learn h4 {
-		margin-bottom: 5px;
-	}
+    margin-bottom: 5px;
+  }
 }
 
 .home #buzz {
@@ -1186,20 +1194,20 @@ body.home {
 }
 
 @media (min-width: 768px) {
-	.nav-collapse.collapse {
+  .nav-collapse.collapse {
     height: auto !important;
     overflow: visible !important;
   }
 }
 
 .ie8 .nav-collapse, ie8 .collapse, .ie7 .nav-collapse, ie7 .collapse {
-	overflow: visible !important; /* display column-nav */ 
+  overflow: visible !important; /* display column-nav */ 
 }
 
 @media (min-width: 768px) and (max-width: 980px) {
-	.home #buzz .column-buzz {
-  	margin-left:22px;
-  	margin-right:22px;
+  .home #buzz .column-buzz {
+    margin-left:22px;
+    margin-right:22px;
   }
 }
 
@@ -1208,12 +1216,12 @@ body.home {
   body.home  > header {
     background-color: #191919;
     background-image: 
-    	image-url("diagonals-top.png"),
-    	$noiseImage; 
+      image-url("diagonals-top.png"),
+      $noiseImage; 
     background-repeat: 
-    	no-repeat,
-    	repeat;
-  //	background-position: right 150px,center bottom; /* without banner */
+      no-repeat,
+      repeat;
+  //  background-position: right 150px,center bottom; /* without banner */
       background-position: right 300px, center bottom; /* with banner */
   }
 
@@ -1251,13 +1259,13 @@ body.home {
   body.home > header {
     background-color: #191919;
     background-image: 
-    	image-url("diagonals-top.png"),
-    	$noiseImage; 
+      image-url("diagonals-top.png"),
+      $noiseImage; 
     background-repeat: 
-    	no-repeat,
-    	repeat;
-  	// background-position: right 200px,center bottom;
-  	background-position: right 350px, center bottom; /* with banner */
+      no-repeat,
+      repeat;
+    // background-position: right 200px,center bottom;
+    background-position: right 350px, center bottom; /* with banner */
   }
   .home .messaging {
     margin: 10px 0 15px 0;
@@ -1406,9 +1414,9 @@ body.simple {
   }
 }
 @media (max-width: 480px) {
-	.overview #intro img {
-		margin: 0;
-	}
+  .overview #intro img {
+    margin: 0;
+  }
 }
 
 

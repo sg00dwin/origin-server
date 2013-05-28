@@ -110,7 +110,7 @@ function openshift_preprocess_page(&$vars) {
   // FIXME replace with better integration with drupal site nav and taxonomies
   $vars['heading'] = _openshift_heading($vars);
   if ($vars['is_front']) {
-    $vars['body_classes'] .= ' home';
+    $vars['body_classes'] .= ' home2';
   }
 
   _openshift_whitelist_css($vars);

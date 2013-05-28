@@ -408,3 +408,13 @@
   color: #ea0011;
 }
 
+@media (min-width: 768px) {
+  .nav-collapse.collapse {
+    height: auto !important;
+    overflow: visible !important;
+  }
+}
+
+.ie8 .nav-collapse, ie8 .collapse, .ie7 .nav-collapse, ie7 .collapse {
+  overflow: visible !important; /* display column-nav */ 
+}
