@@ -227,8 +227,10 @@ module Aria
         return statement.balance_forward_amount if statement
         return 0
       else
-        unpaid_invoices.inject(0) {|balance, i| balance + i.debit - i.credit}
+        (account_details.balance || 0).to_f
       end
+    rescue AccountDoesNotExist
+      0
     end
 
     def past_usage_line_items(periods=2)

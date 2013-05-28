@@ -910,9 +910,9 @@ Features:
     u = TestUser.new
     u.expects(:acct_no).at_least_once.returns('1')
     stub_acct_details(1, {
-      :plan_no => Rails.configuration.aria_default_plan_no.to_s
+      :plan_no => Rails.configuration.aria_default_plan_no.to_s,
+      :balance => nil
     })
-    stub_acct_invoice_history(1, [])
     stub_queued_plans(1, [])
     assert_equal false, u.next_bill
   end
@@ -1112,9 +1112,8 @@ Features:
     }).to_return(resp(ok_wddx({
       :current_offset_hours => 0,
     })))
-    stub_acct_details(acct_no, {:plan_no => plan_no}.merge(opts.slice(:next_bill_date, :last_arrears_bill_thru_date, :created)))
+    stub_acct_details(acct_no, {:plan_no => plan_no, :balance => '0'}.merge(opts.slice(:next_bill_date, :last_arrears_bill_thru_date, :created, :balance)))
     stub_queued_plans(acct_no, opts[:queued_plans] || [])
-    stub_acct_invoice_history(acct_no, opts[:invoice_history] || [])
     stub_aria(:get_usage_history, {
       :acct_no => acct_no.to_s,
       :date_range_start => Date.today.to_s,
