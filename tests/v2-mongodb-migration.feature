@@ -1,5 +1,18 @@
 @runtime_migration
 Feature: V2 Migrations for V1 apps
+  Scenario: Unscaled PHP + mongodb + rockmongo
+    Given a new client created php-5.3 application
+    When the embedded mongodb-2.2 cartridge is added
+    And the embedded rockmongo-1.1 cartridge is added
+    And the application should be accessible
+
+    When the application is migrated to the v2 cartridge system
+    Then the environment variables will be migrated to raw values
+    And the application will be marked as a v2 app
+    And the application should be accessible
+    And the migration metadata will be cleaned up
+
+
   Scenario: Scalable PHP + mongodb app migration
     Given a new client created scalable php-5.3 application
     When the embedded mongodb-2.2 cartridge is added
