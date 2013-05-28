@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.9.8
+Version: 1.9.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -195,6 +195,16 @@ fi
 %{sitedir}/public
 
 %changelog
+* Tue May 28 2013 Adam Miller <admiller@redhat.com> 1.9.9-1
+- Merge pull request #1461 from liggitt/bug_966714_skip_content_link
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1462 from
+  liggitt/bug_966335_credit_card_images_at_narrow_width
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 966335 - credit card images at narrow width (jliggitt@redhat.com)
+- Fix bug 966714 - add style to hide 'skip to navigation' link in site pages
+  (jliggitt@redhat.com)
+
 * Fri May 24 2013 Adam Miller <admiller@redhat.com> 1.9.8-1
 - Fix site extended test, tolerate missing error codes from Aria
   (jliggitt@redhat.com)
