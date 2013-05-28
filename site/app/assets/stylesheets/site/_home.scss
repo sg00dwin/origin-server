@@ -1,5 +1,5 @@
 /* home-specific styles */
-body.home {
+body.home2 {
   background-color: #191919;
   background-image:
     image-url('planets.png'),
@@ -15,6 +15,7 @@ body.home {
     0 0;
   #buzz {
     background-color: transparent;
+    background-image: none;
     min-height: 0;
     .column-buzz {
       background: #111;
@@ -324,7 +325,7 @@ body.home {
 }
 
 @media (min-width: 1200px) {
-  body.home {
+  body.home2 {
     .products {
       .cta {
         font-size: 17px;
@@ -335,7 +336,7 @@ body.home {
 }
 
 @media (max-width: 1199px) {
-  body.home {
+  body.home2 {
     .products {
       .cta { 
         span { right: 4%; }
@@ -345,7 +346,7 @@ body.home {
 }
 
 @media (max-width: 979px) {
-  body.home {
+  body.home2 {
     #buzz .column-buzz { margin-bottom: 70px; }
     .messaging {
       margin-bottom: 30px;
@@ -380,7 +381,7 @@ body.home {
 }
 
 @media (max-width: 767px) {
-  body.home {
+  body.home2 {
     #buzz {
       .column-buzz {
         padding: 30px $gridGutterWidthTablet 40px;
@@ -414,7 +415,7 @@ body.home {
 }
 
 @media (max-width: 480px) {
-  body.home {
+  body.home2 {
     #buzz {
       .buzz-actions {
         text-align: center;
@@ -438,7 +439,7 @@ body.home {
 }
 
 @media (max-width: 320px) {
-  body.home {
+  body.home2 {
     .messaging {
       .primary {
         font-size: 18px; 
