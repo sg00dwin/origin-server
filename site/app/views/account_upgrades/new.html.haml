@@ -15,7 +15,11 @@
 %section
   %p.larger= "The following plan changes will take effect when you switch from #{@current_plan.name}  to #{@plan.name}."
   = render :partial => 'plans/plan_comparison', :locals => { :current_plan => @current_plan, :new_plan => @plan } 
-
+%section
+  %p.larger
+    The Services are subject to the
+    %a{ :href => legal_site_terms_path, :target => '_blank' } OpenShift Legal Terms and Conditions.
+    By clicking 'Confirm your plan changes' you acknowledge that you agree to these terms.
 = semantic_form_for @user, :simple => true, :url => account_plan_upgrade_path, :method => :post do |f|
   = hidden_field_tag :plan_id, @plan.id
   = f.semantic_errors
