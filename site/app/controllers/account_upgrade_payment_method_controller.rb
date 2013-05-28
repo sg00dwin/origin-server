@@ -9,6 +9,7 @@ class AccountUpgradePaymentMethodController < PaymentMethodsController
   def new
     @billing_info = current_aria_user.billing_info
     @payment_method = current_aria_user.payment_method
+    @balance = current_aria_user.forwarded_balance
 
     @payment_method ||= Aria::PaymentMethod.new
 
