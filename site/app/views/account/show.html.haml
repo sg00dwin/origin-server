@@ -39,6 +39,14 @@
   .alert.alert-error
     Your account has been flagged for termination. 
     If you feel that this is in error, please #{link_to "contact customer service", contact_customer_support_url, :class => 'external'}.
+- elsif @account_status == :cancelled
+  .alert.alert-error
+    Per user request, this account has been cancelled.
+    If you feel that this is in error, please #{link_to "contact customer service", contact_customer_support_url, :class => 'external'}.
+- elsif @account_status == :cancellation_pending
+  .alert.alert-warning
+    Per user request, this account has been flagged for cancellation. A final invoice for any outstanding usage charges will be generated at the beginning of the next billing cycle.
+    If you feel that this is in error, please #{link_to "contact customer service", contact_customer_support_url, :class => 'external'}.
 - elsif not @has_valid_payment_method
   .alert.alert-warning 
     The payment method associated with your account is no longer valid. #{link_to "Please provide a valid credit card for this account", edit_account_payment_method_path}.

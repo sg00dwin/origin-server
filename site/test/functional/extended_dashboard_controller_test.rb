@@ -21,7 +21,7 @@ class ExtendedDashboardControllerTest < ActionController::TestCase
   if Rails.configuration.aria_enabled
 
     [:silver, :downgrading, :free].each do |plan|
-      [:normal, :terminated, :suspended, :dunning].each do |status|
+      [:normal, :terminated, :suspended, :dunning, :cancelled, :cancellation_pending].each do |status|
         [:good, :bad, :missing].each do |payment|
           [:paid, :unpaid, :none].each do |last_bill|
             [:none, :paid, :free, :'paid_historical', :'free_historical'].each do |usage|

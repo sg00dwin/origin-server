@@ -261,9 +261,11 @@ class AriaUnitTest < ActiveSupport::TestCase
 
 
   { '-3' => :terminated,
+    '-2' => :cancelled,
     '-1' => :suspended,
     '0' => :inactive,
     '1' => :active,
+    '2' => :cancellation_pending,
     '11' => :dunning,
     '12' => :dunning,
     '13' => :dunning,

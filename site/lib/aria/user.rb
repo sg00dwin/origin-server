@@ -111,10 +111,14 @@ module Aria
             :inactive
           when -1
             :suspended
+          when -2
+            :cancelled
           when -3
             :terminated
           when 1
             :active
+          when 2
+            :cancellation_pending
           when 11, 12, 13
             :dunning
           else
