@@ -1090,7 +1090,7 @@ function openshift_menu_block_tree_output(&$tree, $config = array(), $nested = 0
 
     if ($collapsible) {
       $extra_class[] = 'collapsible';
-      $link = '<a href="#m'. $item['link']['mlid'] .'" data-toggle="collapse" class="'. ($in_active_trail ? 'in' : '') .'">Toggle</a>' . $link;
+      $link = '<a data-target="#m'. $item['link']['mlid'] .'" data-toggle="collapse" class="'. ($in_active_trail ? 'in' : '') .'">Toggle</a>' . $link;
     }
 
     $output .= '<li class="'. implode(' ', $extra_class).'">' . $link . $item['below'] . '</li>';
