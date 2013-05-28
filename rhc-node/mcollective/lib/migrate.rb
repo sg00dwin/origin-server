@@ -564,7 +564,7 @@ module OpenShiftMigration
 
           if progress.incomplete? "#{name}_ownership"
             target = File.join(user.homedir, c.directory)
-            cart_model.secure_cartridge(user.uid, user.gid, target)
+            cart_model.secure_cartridge(cartridge.short_name, user.uid, user.gid, target)
             progress.mark_complete("#{name}_ownership")
           end
         end
@@ -674,7 +674,7 @@ module OpenShiftMigration
 
     begin
       progress.log "Beginning #{version} migration for #{uuid}"
-      inspect_gear_state(progress, gear_home)
+      inspect_gear_state(progress, uuid, gear_home)
 
       migrate_cartridges_v2v2(progress, gear_home, gear_env, uuid, hostname)
 
@@ -769,7 +769,7 @@ module OpenShiftMigration
     progress.mark_complete("#{name}_remove_erb")
 
     cart_model.unlock_gear(next_manifest) do |m|
-      cart_model.secure_cartridge(user.uid, user.gid, target)
+      cart_model.secure_cartridge(next_manifest.short_name, user.uid, user.gid, target)
     end
   end
 
