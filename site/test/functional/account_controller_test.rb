@@ -83,10 +83,12 @@ class AccountControllerTest < ActionController::TestCase
       assert_select 'h1', /Free/, response.inspect
     end
 
-    { :dunning => 'Your account is overdue on payment',
-      :suspended => 'Your account has been flagged for suspension',
-      :terminated => 'Your account has been flagged for termination',
-    }.each_pair do |status,message|
+    { :dunning => { :message => 'Your account is overdue on payment', :status_cd => '11' },
+      :cancellation_pending => { :message => 'Per user request, this account has been flagged for cancellation', :status_cd => '2' },
+      :suspended => { :message => 'Your account has been flagged for suspension', :status_cd => '-1' },
+      :cancelled => { :message => 'Per user request, this account has been cancelled', :status_cd => '-2' },
+      :terminated => { :message => 'Your account has been flagged for termination', :status_cd => '-3' },
+    }.each_pair do |status,config|
       test "should render a warning if the Aria account is in #{status} status" do
         omit_if_aria_is_unavailable
         with_unique_user
@@ -97,29 +99,36 @@ class AccountControllerTest < ActionController::TestCase
         Aria::UserContext.any_instance.expects(:last_bill).at_least_once.returns(false)
         Aria::UserContext.any_instance.expects(:default_plan_pending?).at_least_once.returns(false)
         Aria::UserContext.any_instance.expects(:has_valid_payment_method?).at_least_once.returns(true)
+        Aria::UserContext.any_instance.expects(:status_cd).at_least_once.returns(config[:status_cd])
         get :show
         assert_response :success
         assert_template :show
         assert_equal status, assigns(:account_status)
-        assert_select (status == :terminated ? '.alert-error' : '.alert-warning'), :text => /#{message}/
+        assert_select ([:terminated,:cancelled].include?(status) ? '.alert-error' : '.alert-warning'), :text => /#{config[:message]}/
       end
     end
 
-    test "should suppress the plan upgrade button when account is in termination status" do
+    { :terminated => '-3',
+      :cancelled => '-2'
+    }.each_pair do |status, status_cd|
+      test "should suppress the plan upgrade button when account is in #{status} status" do
         omit_if_aria_is_unavailable
         with_unique_user
-        Aria::UserContext.any_instance.expects(:account_status).at_least_once.returns(:terminated)
+        Aria::UserContext.any_instance.expects(:account_status).at_least_once.returns(status)
+        Aria::UserContext.any_instance.expects(:status_cd).at_least_once.returns(status_cd)
         Aria::UserContext.any_instance.expects(:acct_no).at_least_once.returns(1)
         Aria::UserContext.any_instance.expects(:test_user?).at_least_once.returns(true)
         Aria::UserContext.any_instance.expects(:next_bill).at_least_once.returns(false)
         Aria::UserContext.any_instance.expects(:last_bill).at_least_once.returns(nil)
         Aria::UserContext.any_instance.expects(:default_plan_pending?).at_least_once.returns(false)
         Aria::UserContext.any_instance.expects(:has_valid_payment_method?).at_least_once.returns(true)
+        Aria::UserContext.any_instance.expects(:has_account?).at_least_once.returns(true)
         get :show
         assert_response :success
         assert_template :show
-        assert_equal :terminated, assigns(:account_status)
+        assert_equal status, assigns(:account_status)
         assert_select 'a', :text => 'Upgrade Now', :count => 0
+      end
     end
 
     test "should render dashboard with no next bill" do

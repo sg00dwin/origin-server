@@ -21,13 +21,16 @@ class ExtendedDashboardControllerTest < ActionController::TestCase
   if Rails.configuration.aria_enabled
 
     [:silver, :downgrading, :free].each do |plan|
-      [:normal, :terminated, :suspended, :dunning].each do |status|
+      { :normal => '1',
+        :terminated => '-3',
+        :cancelled => '-2',
+      }.each_pair do |status,status_cd|
         [:good, :bad, :missing].each do |payment|
           [:paid, :unpaid, :none].each do |last_bill|
             [:none, :paid, :free, :'paid_historical', :'free_historical'].each do |usage|
 
               test "should render dashboard with #{plan} plan #{status} status #{payment} payment #{last_bill} last bill #{usage} usage" do
-                
+                Aria::UserContext.any_instance.expects(:status_cd).at_least(0).returns(status_cd)
                 with_account_holder
 
                 params = {

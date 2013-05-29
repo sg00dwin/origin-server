@@ -25,6 +25,10 @@
       #{link_to ":suspended", params.merge({:status => :suspended})}
       |
       #{link_to ":terminated", params.merge({:status => :terminated})}
+      |
+      #{link_to ":cancellation_pending", params.merge({:status => :cancellation_pending})}
+      |
+      #{link_to ":cancelled", params.merge({:status => :cancelled})}
   %tr
     %td Payment:
     %td
