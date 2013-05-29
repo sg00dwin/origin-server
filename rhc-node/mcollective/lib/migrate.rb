@@ -287,8 +287,16 @@ module OpenShiftMigration
     progress.log "Starting gear with uuid '#{uuid}' on node '#{hostname}'"
 
     if progress.incomplete? 'start_gear'
-      output = OpenShift::ApplicationContainer.from_uuid(uuid).start_gear(user_initiated: false)
-      progress.log "Start gear output: #{output}"
+      container = OpenShift::ApplicationContainer.from_uuid(uuid)
+
+      begin
+        output = container.start_gear(user_initiated: false)  
+        progress.log "Start gear output: #{output}"
+      rescue Exception => e
+        progress.log "Start gear failed with an exception: #{e.message}"
+        raise
+      end
+
       progress.mark_complete('start_gear')
     end
   end
@@ -564,7 +572,7 @@ module OpenShiftMigration
 
           if progress.incomplete? "#{name}_ownership"
             target = File.join(user.homedir, c.directory)
-            cart_model.secure_cartridge(cartridge.short_name, user.uid, user.gid, target)
+            cart_model.secure_cartridge(c.short_name, user.uid, user.gid, target)
             progress.mark_complete("#{name}_ownership")
           end
         end
