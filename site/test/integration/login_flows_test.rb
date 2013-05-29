@@ -218,4 +218,25 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
       assert_select 'h1', "You're in the queue!"
     end
   end
+
+  test 'prohibited email address is rejected' do
+    with_integrated do
+      Console.config.expects(:prohibited_email_domains).returns(['prohibitedemail.net'])
+      get new_account_path
+      assert_response :success
+      assert_select 'form#new_user_form', {}, @response.inspect
+
+      post account_path, {
+        :captcha_secret => Rails.application.config.captcha_secret,
+        :then => '/account',
+        :web_user => {
+          :email_address => 'bob@prohibitedemail.net',
+          :password => 'password',
+          :password_confirmation => 'password',
+        }
+      }
+
+      assert_select 'p.help-inline', 'OpenShift does not allow creating accounts with email addresses from anonymous mail services due to security concerns. Please use a different email address.'
+    end
+  end
 end
