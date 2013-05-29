@@ -14,10 +14,16 @@ class FaqItem < CommunityApi::Base
   class << self
     def topten
       clean(find(:all, :from => "#{self.prefix}/topten.json"))
+    rescue Exception => e
+      logger.error "Exception fetching FAQ items: #{e}\n#{e.backtrace.join("\n  ")}"
+      []
     end
 
     def all
       clean(find(:all, :from => "#{self.prefix}.json"))
+    rescue Exception => e
+      logger.error "Exception fetching FAQ items: #{e}\n#{e.backtrace.join("\n  ")}"
+      []
     end
 
     private
