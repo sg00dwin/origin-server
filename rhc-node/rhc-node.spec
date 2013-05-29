@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.9.7
+Version: 1.9.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -244,6 +244,14 @@ fi
 
 
 %changelog
+* Wed May 29 2013 Adam Miller <admiller@redhat.com> 1.9.8-1
+- Merge pull request #1477 from rmillner/avc_cache_threshold
+  (dmcphers+openshiftbot@redhat.com)
+- Excellent work was done benchmarking that showed setting
+  /selinux/avc/cache_threshold higher has a performance improvement starting
+  gears on OpenShift. (rmillner@redhat.com)
+- Bug 967118 - Support immutable cartridge files (jhonce@redhat.com)
+
 * Tue May 28 2013 Adam Miller <admiller@redhat.com> 1.9.7-1
 - Fix bug 963071: re-add blacklist for TYPELESS_TRANSLATED_VARS
   (pmorie@gmail.com)
