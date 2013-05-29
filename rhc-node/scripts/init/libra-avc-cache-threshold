@@ -2,7 +2,7 @@
 #
 # rhc-avc-cache-threshold        Set the AVC cache threshold to a proper value for OpenShift
 #
-# chkconfig: - 1 99
+# chkconfig: 345 1 99
 # description: RHC AVC cache_threshold
 #
 
