@@ -466,29 +466,33 @@ body.signup {
   }
 
   blockquote {
-    quotes: "\201C""\201D""\2018""\2019";
     border-left: 0;
-    padding: 0;
+    color: #e0e0e0;
     margin-bottom: 38px;
+    padding: 0;
+    quotes: "\201C""\201D";
 
     &:after {
       content: "";
     }
     &:before {
+      color: #999;
       content: open-quote;
-      color: #aaa;
-      font-size:4em;
-      line-height:.1em;
-      margin-right:.25em;
-      vertical-align:-.4em;
+      font-size: 4em;
+      line-height: .1em;
+      margin-right: .25em;
+      vertical-align: -.4em;
     }
     p {
+      line-height: 20px;
       margin: -23px 0 0 28px;
+      font-size: 15px;
       font-weight: 300;
     }
     small {
       margin-left: 36px;
-      color: $subtleTextDarkBackground;
+      margin-top: 6px;
+      color: #999;
     }
   }
 
