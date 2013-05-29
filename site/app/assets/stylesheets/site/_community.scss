@@ -1008,3 +1008,44 @@ html.js fieldset.collapsible .fieldset-wrapper {
     margin-top: 130px !important;
   }
 }
+
+.partner-blocklist .partner {
+  height: 150px;
+  margin: 0 30px 30px 0;
+  position: relative;
+  padding: 4px 2px 10px;
+
+  a, a:hover, a:active {
+    color: $textColor;
+  }
+
+  img {
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    max-height: 130px;
+    max-width: 190px;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  .partner-summary {
+    background: none repeat scroll 0 0 $grayLighter;
+    display: none;
+    padding: 15px;
+    position: absolute;
+    top: 100%;
+    z-index: 1;
+    outline: 2px solid $grayLighter;
+  }
+
+  &:hover {
+    padding: 2px 0 8px;
+    border: 2px solid $grayLighter;
+
+    .partner-summary {
+      display: block;
+    }
+  }
+}
