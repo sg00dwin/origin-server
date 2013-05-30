@@ -1049,3 +1049,15 @@ html.js fieldset.collapsible .fieldset-wrapper {
     }
   }
 }
+
+.version-list > table {
+  font-size: 12px;
+
+  td, th {
+    line-height: 6px;
+    font-weight: normal;
+    background-color: #F5F5F5;
+    border: 1px solid #DDDDDD;
+    padding: 6px;
+  }
+}
