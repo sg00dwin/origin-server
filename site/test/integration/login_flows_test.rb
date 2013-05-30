@@ -134,6 +134,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
         }
       }
       assert user = assigns(:user)
+      assert user.valid?, user.errors.inspect
       omit_on_register unless user.token
       assert_redirected_to complete_account_path
 
@@ -221,7 +222,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
 
   test 'prohibited email address is rejected' do
     with_integrated do
-      Console.config.expects(:prohibited_email_domains).returns(['prohibitedemail.net'])
+      Rails.application.config.expects(:prohibited_email_domains).returns(['prohibitedemail.net'])
       get new_account_path
       assert_response :success
       assert_select 'form#new_user_form', {}, @response.inspect

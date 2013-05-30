@@ -35,7 +35,7 @@ module Streamline
 
     validates_each :email_address, :if => on_scopes(:save) do |record, attr, value|
       email_domain = value.split('@').last.downcase rescue nil
-      domains = Array(Console.config.prohibited_email_domains)
+      domains = Rails.application.config.prohibited_email_domains
       domains.each do |domain|
         if email_domain == domain || email_domain.end_with?(".#{domain}")
           record.errors.add attr, 'OpenShift does not allow creating accounts with email addresses from anonymous mail services due to security concerns. Please use a different email address.'

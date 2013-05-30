@@ -40,6 +40,7 @@ class AccountControllerTest < ActionController::TestCase
   end
 
   test "should get invalid email address domain" do
+    Rails.application.config.expects(:prohibited_email_domains).returns(['example.ir'])
     form = get_post_form
     form[:email_address]='test@example.ir'
     post(:create, {:web_user => form})

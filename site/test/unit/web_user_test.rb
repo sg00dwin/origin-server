@@ -102,7 +102,7 @@ class WebUserTest < ActiveSupport::TestCase
   end
 
   test 'email from prohibited domain is not valid' do
-    Console.config.expects(:prohibited_email_domains).returns(['banneddomain.com'])
+    Rails.application.config.expects(:prohibited_email_domains).returns(['banneddomain.com'])
     user = WebUser.new(:email_address => 'someguy@banneddomain.com', :password => PWD)
 
     assert !user.valid?
@@ -110,7 +110,7 @@ class WebUserTest < ActiveSupport::TestCase
   end
 
   test 'email from prohibited subdomain is not valid' do
-    Console.config.expects(:prohibited_email_domains).returns(['onebad.net', 'banneddomain.com'])
+    Rails.application.config.expects(:prohibited_email_domains).returns(['onebad.net', 'banneddomain.com'])
     user = WebUser.new(:email_address => 'someguy@foo.banneddomain.com', :password => PWD)
 
     assert !user.valid?
@@ -118,7 +118,7 @@ class WebUserTest < ActiveSupport::TestCase
   end
 
   test 'email from domain with prohibited domain as substring is valid' do
-    Console.config.expects(:prohibited_email_domains).returns(['onebad.net', 'banneddomain.com'])
+    Rails.application.config.expects(:prohibited_email_domains).returns(['onebad.net', 'banneddomain.com'])
     user = WebUser.new(:email_address => 'someguy@notabanneddomain.com', :password => PWD)
 
     assert user.valid?
