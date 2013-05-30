@@ -134,6 +134,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
         }
       }
       assert user = assigns(:user)
+      assert user.valid?, user.errors.inspect
       omit_on_register unless user.token
       assert_redirected_to complete_account_path
 
