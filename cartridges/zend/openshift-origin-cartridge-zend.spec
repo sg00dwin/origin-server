@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/v2/zend
 
 Name:    openshift-origin-cartridge-zend
-Version: 0.3.0
+Version: 0.3.1
 Release: 1%{?dist}
 Summary: Zend Server cartridge
 Group:   Development/Languages
@@ -65,6 +65,9 @@ sh %{cartridgedir}/versions/5.6/rpm/zend_configure_filesystem.sh
 
 
 %changelog
+* Thu May 30 2013 Adam Miller <admiller@redhat.com> 0.3.1-1
+- bump_minor_versions for sprint 29 (admiller@redhat.com)
+
 * Thu May 30 2013 Adam Miller <admiller@redhat.com> 0.2.7-1
 - add zend php binary to env PATH variable (vvitek@redhat.com)
 
