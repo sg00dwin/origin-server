@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.9.8
+Version: 1.9.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -244,6 +244,22 @@ fi
 
 
 %changelog
+* Thu May 30 2013 Adam Miller <admiller@redhat.com> 1.9.9-1
+- Merge pull request #1490 from jwhonce/wip/v2v2_migration
+  (dmcphers+openshiftbot@redhat.com)
+- WIP Cartridge Refactor - Fix secure_cartridge signature (jhonce@redhat.com)
+- Bug 965490: Fix V1 -> V2 migrations for switchyard (pmorie@gmail.com)
+- Add special casing for switchyard to V1 -> V2 migration (pmorie@gmail.com)
+- Merge pull request #1480 from VojtechVitek/zend_php_bin_path
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1484 from rmillner/avc_cache_threshold
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1483 from pmorie/dev/v2_migrations
+  (dmcphers+openshiftbot@redhat.com)
+- Enable the cahce-threshold increase. (rmillner@redhat.com)
+- Add error handling for gear start to migration (pmorie@gmail.com)
+- add zend php binary to env PATH variable (vvitek@redhat.com)
+
 * Wed May 29 2013 Adam Miller <admiller@redhat.com> 1.9.8-1
 - Merge pull request #1477 from rmillner/avc_cache_threshold
   (dmcphers+openshiftbot@redhat.com)
