@@ -6,9 +6,8 @@ class PaymentMethodsController < ConsoleController
   before_filter :user_can_upgrade_plan!
 
   def edit
-    @aria_user = Aria::UserContext.new(current_user)
-    @billing_info = @aria_user.billing_info
-    @payment_method = @aria_user.payment_method
+    @billing_info = current_aria_user.billing_info
+    @payment_method = current_aria_user.payment_method
 
     @previous_payment_method = @payment_method.dup
 
@@ -16,7 +15,7 @@ class PaymentMethodsController < ConsoleController
 
     @payment_method.cc_no = nil
     @payment_method.mode = Aria::DirectPost.get_or_create(post_name, url_for(:action => :direct_update))
-    @payment_method.session_id = @aria_user.create_session
+    @payment_method.session_id = current_aria_user.create_session
   end
 
   def direct_update
@@ -45,13 +44,17 @@ class PaymentMethodsController < ConsoleController
 
     def serve_direct?
       logger.debug params.inspect
+      
       @errors = (params[:error_messages] || {}).values.inject({}) do |h, v|
         key = v['error_field']
-        key = :base if key == 'server_error'
-        (h[key] ||= []) << v['error_key']
+        if key == 'server_error'
+          (h[:base] ||= []) << "#{v['error_key']},#{v['error_code']}"
+        else
+          (h[key] ||= []) << v['error_key']
+        end
         h
       end
-      @user = Aria::UserContext.new(current_user)
+      @user = current_aria_user
 
       # Always clear when returning from direct_post
       # Updating payment method can change status, mark invoices paid, process payments, etc
@@ -79,7 +82,9 @@ class PaymentMethodsController < ConsoleController
       errors.each_pair do |attr,keys|
         logger.debug "Found keys #{keys.inspect} for #{attr}"
         Array(keys).each do |key|
-          model.add(attr, I18n.t(REPLACE_ERRORS[key.to_sym] || key, :scope => [:aria, :direct_post], :default => unknown_error))
+          (key,code) = key.split(",")
+          error_code_str = code.present? ? " (Error ##{code.to_i})" : ""
+          model.add(attr, I18n.t(REPLACE_ERRORS[key.to_sym] || key, :scope => [:aria, :direct_post], :default => unknown_error) + error_code_str)
         end
       end
     end

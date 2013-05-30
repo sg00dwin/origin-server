@@ -37,6 +37,41 @@ function user_profile_context_default_contexts() {
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
+  $context->name = 'get-involved-blocks';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+    'path' => array(
+      'values' => array(
+        'get-involved' => 'get-involved',
+        'developers/get-involved' => 'developers/get-involved',
+      ),
+    ),
+  );
+  $context->reactions = array(
+    'block' => array(
+      'blocks' => array(
+        'views-content_list-block_1' => array(
+          'module' => 'views',
+          'delta' => 'content_list-block_1',
+          'region' => 'content_suffix',
+          'weight' => 0,
+        ),
+        'views-content_list-block_2' => array(
+          'module' => 'views',
+          'delta' => 'content_list-block_2',
+          'region' => 'content_suffix',
+          'weight' => 1,
+        ),
+      ),
+    ),
+  );
+  $context->condition_mode = 0;
+  $export['get-involved-blocks'] = $context;
+
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
   $context->name = 'menu-active-blogs';
   $context->description = '';
   $context->tag = '';
@@ -518,6 +553,7 @@ function user_profile_context_default_contexts() {
     ),
     'menu' => array(
       'values' => array(
+        'documentation' => 'documentation',
         'https://access.redhat.com/knowledge/docs/en-US/OpenShift/2.0/html/User_Guide/index.html' => 'https://access.redhat.com/knowledge/docs/en-US/OpenShift/2.0/html/User_Guide/index.html',
         'node/10295' => 'node/10295',
         'node/10777' => 'node/10777',
@@ -535,13 +571,14 @@ function user_profile_context_default_contexts() {
         'node/12037' => 'node/12037',
         'node/12038' => 'node/12038',
         'node/12255' => 'node/12255',
+        'node/12420' => 'node/12420',
         'node/14083' => 'node/14083',
         'node/5085' => 'node/5085',
         'node/5475' => 'node/5475',
-        'node/9435' => 'node/9435',
         'node/9445' => 'node/9445',
         'node/9525' => 'node/9525',
         'quickstarts' => 'quickstarts',
+        'videos' => 'videos',
       ),
     ),
     'node' => array(
@@ -550,11 +587,6 @@ function user_profile_context_default_contexts() {
       ),
       'options' => array(
         'node_form' => '1',
-      ),
-    ),
-    'path' => array(
-      'values' => array(
-        'developers' => 'developers',
       ),
     ),
   );
@@ -579,7 +611,25 @@ function user_profile_context_default_contexts() {
   $context->name = 'viewing-page';
   $context->description = '';
   $context->tag = '';
-  $context->conditions = array();
+  $context->conditions = array(
+    'path' => array(
+      'values' => array(
+        '*' => '*',
+        '~admin' => '~admin',
+        '~admin/*' => '~admin/*',
+        '~user' => '~user',
+      ),
+    ),
+    'user_page' => array(
+      'values' => array(
+        'form' => 'form',
+        'view' => 'view',
+      ),
+      'options' => array(
+        'mode' => 'all',
+      ),
+    ),
+  );
   $context->reactions = array();
   $context->condition_mode = 0;
   $export['viewing-page'] = $context;

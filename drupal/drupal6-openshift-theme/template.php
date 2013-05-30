@@ -159,11 +159,22 @@ function openshift_social_sharing($url, $title = NULL) {
   }
   $share_url = urlencode($share_url);
   $tweet_text = urlencode($tweet_text);
-  return '<div class="social-sharing">'.
+  return '<p class="social-sharing">'.
       '<a target="_blank" href="http://twitter.com/intent/tweet?text='. $tweet_text .' '. $share_url .'" aria-hidden="true" data-icon="&#xee04;" title="Post to Twitter"> </a>'.
       '<a target="_blank" href="http://www.facebook.com/sharer.php?u='. $share_url .'&t='. urlencode($title) .'" aria-hidden="true" data-icon="&#xee05;" title="Post to Facebook"> </a>'.
       '<a target="_blank" href="https://plus.google.com/share?url='. $share_url .'" aria-hidden="true" data-icon="&#xee06;" title="Post to Google+"> </a>'.
-    '</div>';
+    '</p';
+}
+
+function openshift_wrap_region($s) {
+  $is_row = strpos($s, "<!--row-fluid-->"); 
+  if ($is_row) { 
+    print "<div class=\"row-fluid\">"; 
+  } 
+  print $s; 
+  if ($is_row) { 
+    print "</div>"; 
+  } 
 }
 
 function openshift_pager($tags = array(), $limit = 10, $element = 0, $parameters = array(), $quantity = 9) {
@@ -277,8 +288,14 @@ function _openshift_heading(&$vars) {
   }
   elseif ($item['path'] == 'node/%' && $item['page_arguments'] && $item['page_arguments'][0]) {
     $node = $item['page_arguments'][0];
-    $type = $node->type;
-    $title = $node->title;
+    if ($node->nid == 9435) { // developers page
+      $type = "developers";
+      $title = $node->title;
+    }
+    else {
+      $type = $node->type;
+      $title = $node->title;
+    }
   }
   elseif ($item['path'] == 'comment/reply/%' && $item['page_arguments'] && $item['page_arguments'][0]) {
     $node = $item['page_arguments'][0];
@@ -300,15 +317,13 @@ function _openshift_heading(&$vars) {
       $title = $item['title'];
     }
   }
-  elseif ($item['path'] == 'quickstarts') {
-    $type = 'quickstarts';
+  elseif ($item['path'] == 'developers') {
+    $type = 'developers';
   }
   elseif ($item['page_callback'] == 'taxonomy_term_page') {
     if ($term = taxonomy_get_term($item['page_arguments'][0])) {
-      #$vocab = taxonomy_vocabulary_load($term->vid);
       if ($term->vid == 4) {
         $title = "QuickStarts Tagged with '".$term->name."'";
-        #drupal_set_title($title);
         $vars['head_title'] = $title;
       } else {
         $title = "Content Tagged with ".$term->name;
@@ -318,32 +333,19 @@ function _openshift_heading(&$vars) {
     }
     $type = '';
   }
-  elseif ($item['path'] == 'community') {
-    $type = 'community';
-  }
   switch ($type) {
   case 'home': $heading = "Overview"; break;
   case 'ideas': $heading = "Vote on Features"; break;
   case 'poll':
   case 'polls': $heading = "Polls"; break;
   case 'wikis': $heading = "Open Source Wiki"; break;
-  #case 'discussion':
   case 'group':
   case 'groups': $heading = "Forum"; break;
-  #case 'documentation': $heading = "Documentation"; break; // no title for some reason
-  case 'community': $heading = "Welcome to OpenShift"; break; // override the default link title
+  case 'developers': $heading = NULL; break;
   case 'calendar':
-  #case 'knowledge_base': $heading = "Knowledge Base"; break; // no title for some reason
-  #case 'blogs': $heading = "OpenShift Blog"; break;
-  #case 'quickstarts':
-  #case 'quickstart': $heading = "QuickStarts"; break;
-  #case 'faq': $heading = "Frequently Asked Questions"; break;
-  #case 'videos': // no title for some reason
-  #case 'video': $heading = "Videos"; break;
   default:
     $heading = $title;
   }
-  //print "<!-- final heading: ".$heading."-->";
   return $heading;
 }
 
@@ -872,6 +874,7 @@ function openshift_primary_link_megamenu($link, $visibleChildren) {
     foreach( $visibleChildren as $key=>$child) {
       $sublink = $child["link"];                                 
       $sublink['options']['html'] = TRUE;
+      unset($sublink['options']['attributes']['title']);
       $content .= '<li>' . l($sublink['title'], $sublink['href'], $sublink['options']) . '</li>';
     }
     return $content . '</ul></div>';
@@ -1022,7 +1025,7 @@ function openshift_menu_tree_block_output($tree, $config) {
 }
 
 
-function openshift_menu_block_tree_output(&$tree, $config = array(), $nested = 0) {
+function openshift_menu_block_tree_output(&$tree, $config = array(), $nested = 0, $parent = NULL) {
   $output = '';
 
   // Create context if no config was provided.
@@ -1032,16 +1035,17 @@ function openshift_menu_block_tree_output(&$tree, $config = array(), $nested = 0
     $menu_item = current($tree);
     $config['menu_name'] = $menu_item['link']['menu_name'];
   }
+
   $hook_delta = str_replace('-', '_', $config['delta']);
   $hook_menu_name = str_replace('-', '_', $config['menu_name']);
 
   $items = array();
   foreach (array_keys($tree) as $key) {
-    if (!$tree[$key]['link']['hidden']) {
+    $item = $tree[$key];
+    if (!$item['link']['hidden']) {
       $items[$key] = array(
-        'link' => $tree[$key]['link'],
-        // To prevent copying the entire child array, we render it first.
-        'below' => !empty($tree[$key]['below']) ? openshift_menu_block_tree_output($tree[$key]['below'], $config, $nested + 1) : '',
+        'link' => $item['link'],
+        'below' => !empty($item['below']) ? openshift_menu_block_tree_output($item['below'], $config, $nested + 1, $item) : '',
       );
     }
   }
@@ -1056,34 +1060,41 @@ function openshift_menu_block_tree_output(&$tree, $config = array(), $nested = 0
     // Render the link.
     $link_class = array();
     $item = $items[$key];
+    $link = $item['link'];
 
-    $in_active_trail = $item['link']['in_active_trail'] || $item['link']['href'] == $get_q || ($item['link']['href'] == '<front>' && $is_drupal_front);
+    $active = $link['href'] == $get_q || ($link['href'] == '<front>' && $is_drupal_front);
+    $in_active_trail = $link['in_active_trail'] || $active;
+    $collapsible = $item['below'] && $config['collapsible']['from_depth'] && $link['depth'] >= ($config['collapsible']['from_depth'] + 1);
 
-    if (!empty($item['link']['localized_options']['attributes']['class'])) {
-      $link_class[] = $item['link']['localized_options']['attributes']['class'];
+    if (!empty($link['localized_options']['attributes']['class'])) {
+      $link_class[] = $link['localized_options']['attributes']['class'];
     }
     if (!empty($link_class)) {
-      $item['link']['localized_options']['attributes']['class'] = implode(' ', $link_class);
+      $link['localized_options']['attributes']['class'] = implode(' ', $link_class);
+    }
+    if ($config['hide_titles']) {
+      unset($link['localized_options']['attributes']['title']);
     }
 
-    $link = $item['link'];
     $link = l($link['title'], $link['href'], $link['localized_options']);
 
     // Render the menu item.
     $extra_class = array();
-    if (!empty($item['link']['leaf_has_children'])) {
+    if (!empty($link['leaf_has_children'])) {
       $extra_class[] = 'has-children';
     }
 
-    $menu = $item['below'];
-
-    $extra_class[] = $menu ? 'in' : '';
-
-    if ($in_active_trail) { 
+    if ($active) { 
       $extra_class[] = 'active';
     }
 
-    $output .= '<li class="'.implode($extra_class, ' ').'">' . $link . $menu . '</li>';
+    if ($collapsible) {
+      $extra_class[] = 'collapsible';
+      $link = '<a data-target="#m'. $item['link']['mlid'] .'" data-toggle="collapse" class="'. ($in_active_trail ? 'in' : '') .'">Toggle</a>' . $link;
+    }
+
+    $output .= '<li class="'. implode(' ', $extra_class).'">' . $link . $item['below'] . '</li>';
+
     $i++;
   }
 
@@ -1093,7 +1104,14 @@ function openshift_menu_block_tree_output(&$tree, $config = array(), $nested = 0
 
   $render_classes = ($nested > 0 ? $config['sub_menu_class'] : $config['menu_class']);
   if ($render_classes) {
-    return '<ul class="'. $render_classes .'">' . $output . '</ul>';
+    $in_active_trail = $parent['link']['in_active_trail'];
+    $collapsible = $parent['link']['mlid'] && $nested >= $config['collapsible']['from_depth'];
+    if ($collapsible && $in_active_trail) {
+      $render_classes = $config['collapsible']['expanded_menu_class'];
+    } elseif ($collapsible) {
+      $render_classes = $config['collapsible']['collapse_menu_class'];
+    }
+    return '<ul ' . ($collapsible ? 'id="m'. $parent['link']['mlid'] .'" ' : '') . 'class="'. $render_classes .'">' . $output . '</ul>';
   }
 
   $hooks = array();

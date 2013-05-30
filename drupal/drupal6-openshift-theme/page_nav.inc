@@ -12,6 +12,7 @@
                 $link = $item["link"];
                 if (!$link['hidden']) {
                   $link['options']['html'] = TRUE;
+                  unset($link['options']['attributes']['title']);
 
                   $visibleChildren = array();
                   if ($item['below']) {

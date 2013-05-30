@@ -3,14 +3,8 @@
 -ie_html :class => 'no-js', :lang => 'en' do
   %head
     = render "layouts/head" 
-
-    -# CSS: implied media="all"
-    = stylesheet_link_tag 'common.css', :media => 'all'
-    = stylesheet_link_tag 'overpass.css', :media => 'all'
-    -# moved into core scss = stylesheet_link_tag 'custom.css', :media => 'all'
-    -# Append your own using content_for :stylesheets
+    = render "layouts/site/stylesheets"
     = yield :stylesheets
-    -# No longer support :stylesheet_partial
 
   %body{ :class => "#{controller.controller_name} #{controller.action_name}" }
 
@@ -34,5 +28,5 @@
     - scripts.each do |script|
       = javascript_include_tag script
 
-    -#  Append your own using content_for :javascripts
+    = render 'layouts/site/javascripts'
     = yield :javascripts

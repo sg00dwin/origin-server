@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.9.2
+Version: 1.9.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -195,6 +195,74 @@ fi
 %{sitedir}/public
 
 %changelog
+* Fri May 24 2013 Adam Miller <admiller@redhat.com> 1.9.8-1
+- Fix site extended test, tolerate missing error codes from Aria
+  (jliggitt@redhat.com)
+- Improve payment page errors (jliggitt@redhat.com)
+- Merge pull request #1453 from
+  smarterclayton/bug_966499_properly_rescue_auth_denied
+  (dmcphers+openshiftbot@redhat.com)
+- Merge branch 'master' of github.com:openshift/li (admiller@redhat.com)
+- Merge pull request #1450 from spurtell/spurtell/analytics
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 966499 - Properly handle REST API access revocation (ccoleman@redhat.com)
+- Added source tracking to new account form (spurtell@redhat.com)
+
+* Thu May 23 2013 Adam Miller <admiller@redhat.com> 1.9.7-1
+- Merge pull request #1439 from liggitt/dashboard_layout
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1442 from smarterclayton/better_mail_config
+  (dmcphers+openshiftbot@redhat.com)
+- Move debug code out of show method Update disclaimer to mention unbilled
+  usage from other billing periods (jliggitt@redhat.com)
+- Allow upgrade layout to be vertical or horizontal (jliggitt@redhat.com)
+- Improve dashboard layout, add last_bill with tests (jliggitt@redhat.com)
+- Merge pull request #1444 from smarterclayton/prevent_unrescued_errors
+  (dmcphers+openshiftbot@redhat.com)
+- The site should rescue exceptions and report reference IDs as much as
+  possible (ccoleman@redhat.com)
+- Better mail config, allow SMTP to be set by ops (ccoleman@redhat.com)
+
+* Wed May 22 2013 Adam Miller <admiller@redhat.com> 1.9.6-1
+- Merge pull request #1438 from liggitt/bug_963640_blank_state_allowed
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 963640 - don't allow blank state in IE (jliggitt@redhat.com)
+
+* Wed May 22 2013 Adam Miller <admiller@redhat.com> 1.9.5-1
+- Merge pull request #1440 from smarterclayton/rescue_delivery_failures
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1426 from jtharris/bugs/BZ961072
+  (dmcphers+openshiftbot@redhat.com)
+- Promo code delivery failures should not fail signup flow
+  (ccoleman@redhat.com)
+- Merge pull request #1429 from liggitt/extend_user_cache
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1420 from
+  smarterclayton/site_doesnt_preserve_parameters_through_login
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 961072 (jharris@redhat.com)
+- Extend user cache key timeout (jliggitt@redhat.com)
+- Merge pull request #1423 from liggitt/nhr-direct_post_improvements
+  (dmcphers+openshiftbot@redhat.com)
+- Change aria_user to current_aria_user (jliggitt@redhat.com)
+- Move @aria_user into helper method (jliggitt@redhat.com)
+- Show message when account is in dunning, suspended, or terminated. Explicitly
+  set all direct_post settings (jliggitt@redhat.com)
+- Merge pull request #1421 from smarterclayton/hide_google_frame
+  (dmcphers+openshiftbot@redhat.com)
+- Hide the google frame in ads (ccoleman@redhat.com)
+- During redirection from a protected page (via authenticate_user!) parameters
+  on the URL are lost.  They should be preserved. (ccoleman@redhat.com)
+
+* Mon May 20 2013 Dan McPherson <dmcphers@redhat.com> 1.9.4-1
+- 
+
+* Mon May 20 2013 Dan McPherson <dmcphers@redhat.com> 1.9.3-1
+- Disable support email form in account help. (jharris@redhat.com)
+- Merge pull request #1402 from jtharris/features/Card284
+  (dmcphers+openshiftbot@redhat.com)
+- Card online_ui_284 - OpenShift Online bugzilla url (jharris@redhat.com)
+
 * Thu May 16 2013 Adam Miller <admiller@redhat.com> 1.9.2-1
 - Rename log helper (jharris@redhat.com)
 - fix builds (dmcphers@redhat.com)

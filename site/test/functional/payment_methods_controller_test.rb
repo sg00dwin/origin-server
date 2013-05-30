@@ -11,12 +11,36 @@ class PaymentMethodsControllerTest < ActionController::TestCase
     assert_select "#aria_payment_method_cvv_input.error .help-inline", 0
   end
 
-  test "should display payment method errors" do
+  test "should display payment method errors without error code" do
     with_account_holder
     get :edit, :plan_id => :silver, :payment_method => {:errors => {:base => 'foo', :cvv => 'servercvvmustbenumeric'}}
     assert_response :success
     assert_select ".alert.alert-error", /payment information could not be processed/
     assert_select "#aria_payment_method_cvv_input.error .help-inline", /security code is a three or four digit/
+  end
+
+  test "should display payment method errors with error code" do
+    with_account_holder
+    get :edit, :plan_id => :silver, :payment_method => {:errors => {:base => 'foo,123', :cvv => 'servercvvmustbenumeric'}}
+    assert_response :success
+    assert_select ".alert.alert-error", /payment information could not be processed.*#123/
+    assert_select "#aria_payment_method_cvv_input.error .help-inline", /security code is a three or four digit/
+  end
+
+  test "should display warning for missing billing info" do
+    with_account_holder
+    Aria::UserContext.any_instance.expects(:billing_info).returns(nil)
+    get :edit, :plan_id => :silver
+    assert_response :success
+    assert_select ".alert.alert-warning", /does not have a billing address/
+  end
+
+  test "should display warning for invalid billing info" do
+    with_account_holder
+    Aria::UserContext.any_instance.expects(:billing_info).returns(Aria::BillingInfo.new)
+    get :edit, :plan_id => :silver
+    assert_response :success
+    assert_select ".alert.alert-warning", /billing address may be invalid/
   end
 
   test "should display correctly for an existing payment method" do
@@ -39,13 +63,19 @@ class PaymentMethodsControllerTest < ActionController::TestCase
     get(:direct_update, {:plan_id => :silver, :error_messages => {
       0 => {
         :error_field => 'server_error',
-        :error_key => 'serveraccountdetails'
+        :error_key => 'serveraccountdetails',
+        :error_code => '123'
       },
       1 => {
+        :error_field => 'server_error',
+        :error_key => 'servercannotupdate'
+      },
+      2 => {
         :error_field => 'cc_no',
-        :error_key => 'servercardnumnumeric'
+        :error_key => 'servercardnumnumeric',
+        :error_code => '234'
       }
     }})
-    assert_redirected_to edit_account_payment_method_path({:payment_method => {:errors => {:base => ['serveraccountdetails'], :cc_no => ['servercardnumnumeric']}}})
+    assert_redirected_to edit_account_payment_method_path({:payment_method => {:errors => {:base => ['serveraccountdetails,123','servercannotupdate,'], :cc_no => ['servercardnumnumeric']}}})
   end
 end

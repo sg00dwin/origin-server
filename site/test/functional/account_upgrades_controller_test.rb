@@ -95,6 +95,18 @@ class AccountUpgradesControllerTest < ActionController::TestCase
     assert_redirected_to account_path
   end
 
+  test "should redirect users with terminated aria accounts" do
+    user = with_user(full)
+    Aria::UserContext.any_instance.expects(:has_account?).at_least_once.returns(true)
+    Aria::UserContext.any_instance.expects(:account_status).at_least_once.returns(:terminated)
+    get :new, :plan_id => 'free'
+    assert_redirected_to account_path
+    get :show, plan
+    assert_redirected_to account_path
+    get :edit
+    assert_redirected_to account_path
+  end
+
   test "should raise on invalid user" do
     user = with_user(full)
     Aria::UserContext.any_instance.expects(:has_complete_account?).raises(Aria::UserIdCollision.new(1))

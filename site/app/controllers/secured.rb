@@ -201,14 +201,7 @@ module Secured
     # override to return values that are specific to their method
     #
     def after_login_redirect
-      begin
-        url_for :controller => self.controller_name,
-          :action => self.action_name,
-          :only_path => true
-      rescue ActionController::RoutingError
-        logger.debug "No route matches, using default console route"
-        default_after_login_redirect
-      end
+      request.fullpath || default_after_login_redirect
     end
 
     ##

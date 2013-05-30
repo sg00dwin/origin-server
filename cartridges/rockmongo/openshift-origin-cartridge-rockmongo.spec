@@ -2,7 +2,7 @@
 
 Summary:   Embedded RockMongo support
 Name:      openshift-origin-cartridge-rockmongo
-Version: 0.2.2
+Version: 0.2.4
 Release:   1%{?dist}
 Group:     Applications/Internet
 License:   ASL 2.0 and NBSD
@@ -38,12 +38,22 @@ Provides RockMongo V2 cartridge support
 %defattr(-,root,root,-)
 %dir %{cartridgedir}
 %attr(0755,-,-) %{cartridgedir}/bin/
-%attr(0755,-,-) %{cartridgedir}
+%{cartridgedir}
 %doc %{cartridgedir}/COPYRIGHT
 %doc %{cartridgedir}/LICENSE
 %doc %{cartridgedir}/README.md
 
 %changelog
+* Fri May 24 2013 Adam Miller <admiller@redhat.com> 0.2.4-1
+- remove install build required for non buildable carts (dmcphers@redhat.com)
+
+* Wed May 22 2013 Adam Miller <admiller@redhat.com> 0.2.3-1
+- Bug 962662 (dmcphers@redhat.com)
+- Bug 965537 - Dynamically build PassEnv httpd configuration
+  (jhonce@redhat.com)
+- Bug 965476 - control#status returned non-zero if httpd was down
+  (jhonce@redhat.com)
+
 * Thu May 16 2013 Adam Miller <admiller@redhat.com> 0.2.2-1
 - locking fixes and adjustments (dmcphers@redhat.com)
 - Merge pull request #1367 from fotioslindiakos/locked_files

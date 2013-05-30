@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/openshift/cartridges/v2/metrics
 
 Name: openshift-origin-cartridge-metrics
-Version: 1.9.2
+Version: 1.9.5
 Release: 1%{?dist}
 Summary: Metrics cartridge
 
@@ -41,12 +41,23 @@ Provides metrics cartridge support
 %defattr(-,root,root,-)
 %dir %{cartridgedir}
 %attr(0755,-,-) %{cartridgedir}/bin/
-%attr(0755,-,-) %{cartridgedir}
+%{cartridgedir}
 %doc %{cartridgedir}/README.md
 %doc %{cartridgedir}/COPYRIGHT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri May 24 2013 Adam Miller <admiller@redhat.com> 1.9.5-1
+- remove install build required for non buildable carts (dmcphers@redhat.com)
+
+* Thu May 23 2013 Adam Miller <admiller@redhat.com> 1.9.4-1
+- Bug 966319 - Gear needs to write to httpd configuration (jhonce@redhat.com)
+
+* Wed May 22 2013 Adam Miller <admiller@redhat.com> 1.9.3-1
+- Bug 962662 (dmcphers@redhat.com)
+- Bug 965537 - Dynamically build PassEnv httpd configuration
+  (jhonce@redhat.com)
+
 * Thu May 16 2013 Adam Miller <admiller@redhat.com> 1.9.2-1
 - locking fixes and adjustments (dmcphers@redhat.com)
 - Merge pull request #1367 from fotioslindiakos/locked_files

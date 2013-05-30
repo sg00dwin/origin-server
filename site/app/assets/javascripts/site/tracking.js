@@ -8,18 +8,84 @@ var _gaq = _gaq || [];
 		var regexS = "[\\?&]" + name + "=([^&#]*)";
 		var regex = new RegExp(regexS);
 		var results = regex.exec(window.location.search);
-		if(results == null) {
+		if(results === null) {
 			return "";
 		} else {
 			return decodeURIComponent(results[1].replace(/\+/g, " "));
 		}
-	}
+	};
 
 	var getInputByName = function(name) {
-		var inputName = "input[name="+name+"]"
+		var inputName = "input[name="+name+"]";
 		return $(inputName).val();
-	}
+	};
 	
+	var setMongoRef = function() {
+		function getCookie(c_name) {
+			var c_value = document.cookie;
+			var c_start = c_value.indexOf(" " + c_name + "=");
+			if (c_start === -1) {
+				c_start = c_value.indexOf(c_name + "=");
+			}
+			if (c_start === -1) {
+				c_value = null;
+			} else {
+				c_start = c_value.indexOf("=", c_start) + 1;
+				var c_end = c_value.indexOf(";", c_start);
+				if (c_end === -1) {
+					c_end = c_value.length;
+				}
+				c_value = unescape(c_value.substring(c_start, c_end));
+			}
+			return c_value;
+		}
+
+		function getFormattedDate(timestamp) {
+			var b = new Date(timestamp);
+			var d = b.getFullYear().toString();
+			var c = (b.getMonth() + 1).toString();
+			var a = b.getDate().toString();
+			return d + '-' + (c.charAt(1) ? c : "0" + c.charAt(0)) + '-' + (a.charAt(1) ? a : "0" + a.charAt(0));
+		}
+
+		var first_visit = getFormattedDate((new Date()).getTime());
+		var source = 'direct';
+		var medium = 'none';
+		var term = 'not set';
+		var utma = getCookie('__utma');
+		var utmz = getCookie('__utmz');
+
+		if(utma) {
+			utma = utma.split('.');
+			first_visit = getFormattedDate(utma[2]*1000);
+		}
+
+		if(utmz) {
+			utmz = utmz.match(/[0-9.]+(.*)/i)[1];
+			utmgclid = utmz.match(/utmgclid=(.*?)(?:$|\|)/i);
+			if(utmgclid) {
+				source = 'google';
+				medium = 'cpc';
+			} else {
+				utmcsr = utmz.match(/utmcsr=(.*?)(?:$|\|)/i);
+				source = utmcsr[1].replace(/\(|\)/g, "").substring(0,128);
+
+				utmcmd = utmz.match(/utmcmd=(.*?)(?:$|\|)/i);
+				medium = utmcmd[1].replace(/\(|\)/g, "").substring(0,128);
+			}
+			utmctr = utmz.match(/utmctr=(.*?)(?:$|\|)/i);
+			if(utmctr) {
+    			term = utmctr[1].replace(/\(|\)/g, "").substring(0,128);
+			}		
+		}
+
+		var hiddenInput = document.createElement("input");
+		hiddenInput.name = 'source';
+		hiddenInput.type = 'hidden';
+		hiddenInput.value = 'first_visit='+first_visit +'|'+ 'source='+source +'|'+ 'medium='+medium +'|'+ 'term='+term;
+		$('#new_user_form').append(hiddenInput);
+	};
+
 	var promoCode = getParameterByName("promo_code");
 	var firstLogin = getParameterByName("confirm_signup");
 	var omniCode = getParameterByName("sc_cid");
@@ -117,6 +183,9 @@ var _gaq = _gaq || [];
 		_gaq.push(['_trackPageview', newurl]);
 	} else {
 		_gaq.push(['_trackPageview']);
+	}
+	if (/\/app\/account\/new/.test(location.href)) {
+		_gaq.push(setMongoRef);
 	}
 })();
 

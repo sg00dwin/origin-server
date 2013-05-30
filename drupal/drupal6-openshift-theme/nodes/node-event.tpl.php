@@ -9,7 +9,7 @@ $do = og_comment_perms_do();
 <section id="node-<?php print $node->nid; ?>" class="<?php if ($sticky) { print ' sticky'; } ?><?php if (!$status) { print ' node-unpublished'; } ?>">
 
 <div class="events-post node node-events">
-  <div class="event-metadata">
+  <div class="metadata">
     <?php if (strlen($node->field_event_logo[0]["view"]) > 0): ?>
         <figure class="pull-right related-block">
             <div class="related-logo">
@@ -18,7 +18,7 @@ $do = og_comment_perms_do();
         </figure>
     <?php endif; ?> 
 
-    <p class="event-date">
+    <p class="event-dates">
       <?php print $node->field_event_start_date[0]["view"] ?>
         <?php if (strlen($node->field_event_timezone[0]["view"]) > 0): ?>
             (<?php print $node->field_event_timezone[0]["view"] ?>)

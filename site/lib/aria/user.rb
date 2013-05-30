@@ -57,6 +57,10 @@ module Aria
       account_details.currency_cd
     end
 
+    def status_cd
+      account_details.status_cd
+    end
+
     def billing_info
       @billing_info ||= begin
         Aria::BillingInfo.from_account_details(account_details)
@@ -100,6 +104,27 @@ module Aria
       account_details.is_test_acct == 'Y'
     end
 
+    def account_status
+      begin
+        case status_cd.to_i
+          when 0
+            :inactive
+          when -1
+            :suspended
+          when -3
+            :terminated
+          when 1
+            :active
+          when 11, 12, 13
+            :dunning
+          else
+            :unknown
+        end
+      rescue
+        :unknown
+      end
+    end
+
     def bill_dates
       invoices_with_amounts.map(&:bill_date).uniq.sort.reverse!
     end
@@ -112,17 +137,22 @@ module Aria
         :usage_bill_from => aria_datetime(invoice.usage_bill_from),
         :usage_bill_thru => aria_datetime(invoice.usage_bill_thru),
         :due_date => aria_datetime(invoice.bill_date),
+        :paid_date => aria_datetime(invoice.paid_date),
         :invoice_line_items => invoice.line_items,
         :invoice_payments => invoice.payments,
         :forwarded_balance => forwarded_balance(invoice)
       )
     end
 
+    def last_bill
+      bill_for(invoices_with_amounts.first)
+    end
+
     def next_bill
       if @next_bill.nil?
         default_plan = Rails.configuration.aria_default_plan_no.to_s
         @next_bill =
-          if plan_no == default_plan && next_plan_no == default_plan
+          if plan_no == default_plan && next_plan_no == default_plan && forwarded_balance == 0
             false
           else
             usage_bill_from = aria_datetime(current_period_start_date)
@@ -133,7 +163,6 @@ module Aria
               :day => (Aria::DateTime.today - usage_bill_from).to_i + 1,
               :invoice_line_items => next_plan_recurring_line_items,
               :unbilled_usage_line_items => unbilled_usage_line_items,
-              :unbilled_usage_balance => unbilled_usage_balance,
               :forwarded_balance => forwarded_balance
             )
           end
@@ -202,7 +231,7 @@ module Aria
       end
     end
 
-    def past_usage_line_items(periods=3)
+    def past_usage_line_items(periods=2)
       Hash[
         usage_invoices.slice(0, periods).inject([]) { |a, i| 
           arr = [ i.usage_period_name, i.line_items.select(&:usage?) ]
@@ -323,7 +352,7 @@ module Aria
     end
 
     def self.cache_key(acct_no)
-      Rails.cache.fetch([Aria::User.name, "acct_no", acct_no]) { [acct_no, Time.now.strftime("%Y-%m-%d %H:%M:%S.%N") ] }
+      Rails.cache.fetch([Aria::User.name, "acct_no", acct_no], :expires_in => 1.hour) { [acct_no, Time.now.strftime("%Y-%m-%d %H:%M:%S.%N") ] }
     end
 
     private

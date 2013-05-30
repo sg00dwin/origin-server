@@ -13,7 +13,7 @@ module OpenShiftMigration
       cart_env = File.join(cart_dir, 'env')
       Util.make_user_owned(cart_env, user)
       
-      directories = %w(logs data)
+      directories = %w(log data)
       output << Util.move_directory_between_carts(user, 'mongodb-2.2', 'mongodb', directories)
 
       output

@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/v2/zend
 
 Name:    openshift-origin-cartridge-zend
-Version: 0.2.2
+Version: 0.2.6
 Release: 1%{?dist}
 Summary: Zend Server cartridge
 Group:   Development/Languages
@@ -58,13 +58,33 @@ sh %{cartridgedir}/versions/5.6/rpm/zend_configure_filesystem.sh
 %dir %{cartridgedir}
 %attr(0755,-,-) %{cartridgedir}/bin/
 %attr(0755,-,-) %{cartridgedir}/hooks/
-%attr(0755,-,-) %{cartridgedir}
+%{cartridgedir}
 %doc %{cartridgedir}/README.md
 %doc %{cartridgedir}/COPYRIGHT
 %doc %{cartridgedir}/LICENSE
 
 
 %changelog
+* Fri May 24 2013 Adam Miller <admiller@redhat.com> 0.2.6-1
+- Merge pull request #1452 from VojtechVitek/zend_disable_oci_extension
+  (dmcphers+openshiftbot@redhat.com)
+- disable Zend PHP PDO-OCI extension (vvitek@redhat.com)
+
+* Thu May 23 2013 Adam Miller <admiller@redhat.com> 0.2.5-1
+- Merge pull request #1446 from ironcladlou/bz/966255
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 966255: Remove OPENSHIFT_INTERNAL_* references from v2 carts
+  (ironcladlou@gmail.com)
+
+* Wed May 22 2013 Adam Miller <admiller@redhat.com> 0.2.4-1
+- Bug 962662 (dmcphers@redhat.com)
+- Bug 965537 - Dynamically build PassEnv httpd configuration
+  (jhonce@redhat.com)
+- Fix but 964348 (pmorie@gmail.com)
+
+* Mon May 20 2013 Dan McPherson <dmcphers@redhat.com> 0.2.3-1
+- Bug 963494 - Zend cartridges cannot be created (jhonce@redhat.com)
+
 * Thu May 16 2013 Adam Miller <admiller@redhat.com> 0.2.2-1
 - locking fixes and adjustments (dmcphers@redhat.com)
 - Merge pull request #1367 from fotioslindiakos/locked_files

@@ -3,6 +3,14 @@
     .span8
       %div{ 'aria-live' => 'assertive' }
         = tag :meta, :name => 'accepted_card_types', :content => accepted_credit_cards.keys.join(':')
+
+        - if @billing_info.blank? 
+          .alert.alert-warning
+            Your account does not have a billing address. Before adding a payment method, please #{link_to("add a billing address to this account", billing_link)}.
+        - elsif not @billing_info.valid?
+          .alert.alert-warning
+            Your account's billing address may be invalid. Before adding a payment method, please #{link_to("ensure your billing address is correct", billing_link)}.
+
         = f.semantic_errors :except => [:cc_no, :cvv, :cc_exp_mm]
         = f.hidden_field :form_of_payment, :name => :formOfPayment
         = f.hidden_field :session_id, :name => :inSessionID
@@ -16,14 +24,13 @@
                 .payment_method
                   Card on file: #### #### #### #{previous_payment_method.cc_no}, expires #{previous_payment_method.cc_exp_mm} / #{previous_payment_method.cc_exp_yyyy}
           = f.inputs :inline => true, :required => true, :name => 'Credit Card Number' do
-            .clearfix
-              = f.input :cc_no, :input_html => { :name => 'cc_no', :type => 'text', :class => 'pull-left input-large', :placeholder => "Card Number"}
-              %ul.card-types
-                -# Do not try to change the order here, the sprites will not look right
-                -# See config/credit_cards.yml for instructions
-                - accepted_credit_cards.each do |id,name|
-                  %li{ :class => "cc-card #{id}", :title => name }
-                    %span= name
+            = f.input :cc_no, :input_html => { :name => 'cc_no', :type => 'text', :class => 'input-large', :placeholder => "Card Number"}
+            %ul.card-types
+              -# Do not try to change the order here, the sprites will not look right
+              -# See config/credit_cards.yml for instructions
+              - accepted_credit_cards.each do |id,name|
+                %li{ :class => "cc-card #{id}", :title => name }
+                  %span= name
           = f.inputs :inline => true, :required => true, :name => 'Expiration Date' do
             :ruby
               @payment_method.cc_exp_mm ||= Date.today.month
@@ -38,8 +45,6 @@
           = f.commit_button "Save Payment"
           = f.loading
 
-        -#TODO: needs error handling display on page
-        -#%iframe#payment_frame.hidden{:name => :payment_frame, :data => {'frame-url' => aria_direct_post_url(:params => 'serve_direct')}, :src => javascript_path('blank.html')}
     %aside.span4
       %h5
         .font-icon-block
@@ -51,7 +56,8 @@
       %h5 Current Billing Information
       %p
         If you are having problems submitting your payment information, please ensure that the following billing information is correct.
-        = render :partial => 'billing_info/summary', :locals => {:billing_info => @billing_info}
+        - if @billing_info.present?
+          = render :partial => 'billing_info/summary', :locals => {:billing_info => @billing_info}
         %p= link_to @billing_info.blank? ? "Add a billing address to this account" : "Change billing address", billing_link
 
 - content_for :stylesheets do

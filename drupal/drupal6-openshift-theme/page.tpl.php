@@ -19,7 +19,7 @@
           </a>
         </div>
 
-        <?php if ($content_header) :?><div class="column-navbar-secondary lift"><div class="nav-collapse collapse"><?php print $content_header; ?></div></div><?php endif; ?>
+        <?php if ($content_header) :?><div class="column-navbar-secondary lift grid-wrapper"><div class="nav-collapse collapse"><?php print $content_header; ?></div></div><?php endif; ?>
 
         <?php if ($layout == 'left' || $layout == 'both') :?>
         <div class="column-nav lift-less grid-wrapper">
@@ -38,13 +38,14 @@
           <div class="column-content column-content-page lift grid-wrapper">
             <div class="span12 span-flush-right">
         <?php endif; ?>
-            <?php print $breadcrumb; ?>
 
           <?php if ($layout == 'right' || $layout == 'both') :?>
             <div class="span3 pull-right column-floating nav-collapse collapse">
               <?php print $sidebar_right; ?>
             </div>
           <?php endif; ?>
+            <?php print $breadcrumb; ?>
+          
             <?php if (!empty($heading)) {
                     if ($layout == 'left' || $layout == 'both') :?>
               <h1 class="ribbon"><?php print $heading; ?></h1>
@@ -63,7 +64,7 @@
     
             <?php print $content_prefix; ?>
             <?php print $content; ?>
-            <?php print $content_suffix; ?>
+            <?php openshift_wrap_region($content_suffix); ?>
 
             <?php if ($tabs) :?><?php print $tabs; ?><?php endif; ?>
          </div>

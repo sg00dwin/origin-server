@@ -12,6 +12,11 @@ RedHatCloud::Application.configure do
   # Specifies the header that your server uses for sending files
   config.action_dispatch.x_sendfile_header = "X-Sendfile"
 
+  # Don't care if the mailer can't send
+  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.delivery_method = :test
+  config.action_mailer.perform_deliveries = false
+
   # For nginx:
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
 
@@ -30,9 +35,6 @@ RedHatCloud::Application.configure do
 
   # Enable serving of images, stylesheets, and javascripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
-
-  # Disable delivery errors, bad email addresses will be ignored
-  # config.action_mailer.raise_delivery_errors = false
 
   # Enable threaded mode
   config.threadsafe!
@@ -54,8 +56,4 @@ RedHatCloud::Application.configure do
   config.assets.initialize_on_precompile = false
 
   Console.configure('/etc/openshift/console-devenv.conf')
-
-  # Promo code Email notification setup
-  config.email_from = 'OpenShift <noreply@openshift.redhat.com>'
-  config.marketing_mailing_list = Console.config.env(:MARKETING_EMAIL_LIST, ['Marketing Mailing List <snathan@redhat.com>'])  
 end

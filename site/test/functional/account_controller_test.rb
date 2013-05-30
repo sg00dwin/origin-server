@@ -75,6 +75,7 @@ class AccountControllerTest < ActionController::TestCase
       with_unique_user
       get :show
       assert_response :success
+      assert_template :dashboard_free
       assert assigns(:user)
 
       assert assigns(:plan).nil?, assigns(:user).inspect
@@ -82,16 +83,107 @@ class AccountControllerTest < ActionController::TestCase
       assert_select 'h1', /Free/, response.inspect
     end
 
+    { :dunning => 'Your account is overdue on payment',
+      :suspended => 'Your account has been flagged for suspension',
+      :terminated => 'Your account has been flagged for termination',
+    }.each_pair do |status,message|
+      test "should render a warning if the Aria account is in #{status} status" do
+        omit_if_aria_is_unavailable
+        with_unique_user
+        Aria::UserContext.any_instance.expects(:account_status).at_least_once.returns(status)
+        Aria::UserContext.any_instance.expects(:acct_no).at_least_once.returns(1)
+        Aria::UserContext.any_instance.expects(:test_user?).at_least_once.returns(true)
+        Aria::UserContext.any_instance.expects(:next_bill).at_least_once.returns(false)
+        Aria::UserContext.any_instance.expects(:last_bill).at_least_once.returns(false)
+        Aria::UserContext.any_instance.expects(:default_plan_pending?).at_least_once.returns(false)
+        Aria::UserContext.any_instance.expects(:has_valid_payment_method?).at_least_once.returns(true)
+        get :show
+        assert_response :success
+        assert_template :show
+        assert_equal status, assigns(:account_status)
+        assert_select (status == :terminated ? '.alert-error' : '.alert-warning'), :text => /#{message}/
+      end
+    end
+
+    test "should suppress the plan upgrade button when account is in termination status" do
+        omit_if_aria_is_unavailable
+        with_unique_user
+        Aria::UserContext.any_instance.expects(:account_status).at_least_once.returns(:terminated)
+        Aria::UserContext.any_instance.expects(:acct_no).at_least_once.returns(1)
+        Aria::UserContext.any_instance.expects(:test_user?).at_least_once.returns(true)
+        Aria::UserContext.any_instance.expects(:next_bill).at_least_once.returns(false)
+        Aria::UserContext.any_instance.expects(:last_bill).at_least_once.returns(nil)
+        Aria::UserContext.any_instance.expects(:default_plan_pending?).at_least_once.returns(false)
+        Aria::UserContext.any_instance.expects(:has_valid_payment_method?).at_least_once.returns(true)
+        get :show
+        assert_response :success
+        assert_template :show
+        assert_equal :terminated, assigns(:account_status)
+        assert_select 'a', :text => 'Upgrade Now', :count => 0
+    end
+
     test "should render dashboard with no next bill" do
       omit_if_aria_is_unavailable
       with_account_holder
       Aria::UserContext.any_instance.expects(:next_bill).returns(false)
+      Aria::UserContext.any_instance.expects(:last_bill).returns(nil)
       get :show
       assert_response :success
+      assert_template :show
       assert assigns(:user)
       assert assigns(:plan)
       assert_select 'a', 'Upgrade Now'
       assert_select 'p', /not currently subscribed/
+    end
+
+    test "should show dashboard without last bill" do
+      omit_if_aria_is_unavailable
+      with_account_holder
+      Aria::UserContext.any_instance.expects(:next_bill).returns(false)
+      Aria::UserContext.any_instance.expects(:last_bill).returns(nil)
+      get :show
+      assert_response :success
+      assert_template :show
+      assert assigns(:user)
+      assert assigns(:plan)
+      assert_select 'h2:content(?)', /previous bill/, :count => 0
+      assert_select 'a:content(?)', 'View billing history', :count => 0
+    end
+
+    test "should show dashboard with unpaid last bill" do
+      omit_if_aria_is_unavailable
+      with_account_holder
+      Aria::UserContext.any_instance.expects(:next_bill).returns(false)
+      Aria::UserContext.any_instance.expects(:last_bill).returns(Aria::Bill.new(
+        :due_date => '2010-02-01'.to_datetime,
+        :paid_date => nil,
+        :forwarded_balance => 100
+      ))
+      get :show
+      assert_response :success
+      assert_template :show
+      assert assigns(:user)
+      assert assigns(:plan)
+      assert_select 'h2:content(?)', /previous bill .* due/
+      assert_select 'a:content(?)', 'View billing history'
+    end
+
+    test "should show dashboard with paid last bill" do
+      omit_if_aria_is_unavailable
+      with_account_holder
+      Aria::UserContext.any_instance.expects(:next_bill).returns(false)
+      Aria::UserContext.any_instance.expects(:last_bill).returns(Aria::Bill.new(
+        :due_date => '2010-02-01'.to_datetime,
+        :paid_date => '2010-02-01'.to_datetime,
+        :forwarded_balance => 100
+      ))
+      get :show
+      assert_response :success
+      assert_template :show
+      assert assigns(:user)
+      assert assigns(:plan)
+      assert_select 'h2:content(?)', /previous bill .* paid/
+      assert_select 'a:content(?)', 'View billing history'
     end
 
     test "should show account dashboard" do
@@ -99,11 +191,11 @@ class AccountControllerTest < ActionController::TestCase
       with_account_holder
       get :show
       assert_response :success
+      assert_template :show
       assert assigns(:user)
       assert assigns(:plan)
 
       assert assigns(:plan), assigns(:user).inspect
-      assert_select 'a:content(?)', 'Billing history'
       assert_select 'h2:content(?)', 'Next Bill'
     end
   end
@@ -127,6 +219,17 @@ class AccountControllerTest < ActionController::TestCase
 
     assert_equal 'openshift', assigns(:product)
     assert_redirected_to complete_account_path
+  end
+
+  test "promo code failure should log error" do
+    e = StandardError.new('Bad Email')
+    PromoCodeMailer.expects(:promo_code_email).once.raises(e)
+    AccountController.any_instance.expects(:log_error).with(e, 'Unable to send promo code')
+
+    post :create, :web_user => get_post_form.merge({:promo_code => 'test'})
+
+    assert_equal 'openshift', assigns(:product)
+    assert_redirected_to complete_account_path :promo_code => :test
   end
 
   test "should fail register external with invalid password" do
@@ -154,6 +257,8 @@ class AccountControllerTest < ActionController::TestCase
   end
 
   test 'should send support contact mail' do
+    skip 'until support emails are re-enabled'
+
     with_unique_user
     email_obj = Object.new
     AccountSupportContactMailer.expects(:contact_email).once.returns(email_obj)

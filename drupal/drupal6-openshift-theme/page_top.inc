@@ -1,4 +1,10 @@
 <div id="top" class="section-top">
+  <?php 
+    $mission = variable_get('site_mission', '');
+    if (!empty($mission)) {
+      print $mission;
+    }
+  ?>
   <div class="container">
     <a title="Track open issues on the OpenShift status page" style="display:none;" id="outage" class="btn btn-small btn-warning" href="<?php print $openshift_server_url; ?>/app/status">Status</a>
     <div class="pull-right login">
@@ -21,11 +27,11 @@
     </div>
     <div>
       <div class="text">
-        <a href="/blogs">Blog</a>
-        |
+        <a href="/blogs">Latest News</a>
+        <!--/
         <a href="http://twitter.com/openshift"><span aria-hidden="true" data-icon="&#xee04;" title="Follow us on Twitter"> </span></a>
         <a href="http://facebook.com/openshift"><span aria-hidden="true" data-icon="&#xee05;" title="Like us on Facebook"> </span></a>
-        <a href="http://plus.google.com/openshift"><span aria-hidden="true" data-icon="&#xee06;" title="Visit us on Google+"> </span></a>
+        <a href="http://plus.google.com/openshift"><span aria-hidden="true" data-icon="&#xee06;" title="Visit us on Google+"> </span></a>-->
       </div>
     </div>
   </div>

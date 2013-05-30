@@ -2,7 +2,6 @@
 // Navbars (Redux)
 // --------------------------------------------------
 
-
 // COMMON STYLES
 // -------------
 
@@ -70,7 +69,7 @@
       /* reset styles */
       float: none;
       width: 100%;
-      font-size: 14px;
+      font-size: $baseFontSize;
     }
   }
 }
@@ -222,7 +221,7 @@
   left: 0;
   display: block;
   float: right;
-  margin: 0 -25px 0 0;
+  margin: 0 -30px 0 0;
 }
 .navbar .nav.pull-right {
   float: right; // redeclare due to specificity
@@ -236,9 +235,9 @@
 .navbar .nav-primary > li > a {
   float: none;
   // Vertically center the text given $navbarHeight
-  padding: 18px 25px;
+  padding: 18px 30px;
   color: $navbarLinkColor;
-  font-size: 16.5px;
+  font-size: 18px; // header special case
   font-weight: normal;
   text-decoration: none;
   text-transform: uppercase;
@@ -304,7 +303,7 @@
   background-image: none;
   //@include gradient-vertical($startColor: #282828, $endColor: #121212);
   display: none;
-  font-size: 12px;
+  font-size: $smallFontSize;
   text-transform: uppercase;
   font-weight:normal;
   margin: 0 0 0 -20px;
@@ -315,8 +314,13 @@
   text-align:left;
   width: 100%;
   text-shadow: -1px -1px 2px rgba(0, 0, 0, 0.25);
+  @include border-radius(0);
+  &.btn:hover {
+  	@include box-shadow(none);
+  }
   
-  &:hover {
+  &:hover,
+  &:active {
   	color:#eee;
   	background-color:#4f4f4f;
   	background-image:none;
@@ -339,7 +343,7 @@
 }
 
 .column-navbar-secondary {
-  
+  width: 100%;
 }
 
 @media (max-width:767px) {
@@ -362,7 +366,7 @@
 
   .column-navbar-secondary {
     display: block;
-    margin: 0 -20px;
+    margin: 0 -20px !important;
   }
 }
 
@@ -467,11 +471,13 @@
 // Responsive styles
 // --------------------------
 
-@media (max-width: 1199px) {
+@media (max-width: 1239px) {
   .navbar {
     .nav-primary {
+      margin-right: -18px;
       > li > a {
-        padding: 18px 24px;
+        padding: 18px 15px;
+        font-size: 16.5px; // responsive special case
       }
     }
   }
@@ -495,10 +501,10 @@
       }
     }
     .nav-primary {
-      margin-right: 0;
+      margin-right: -10px;
       > li > a {
         padding: 10px;
-        font-size: 14.25px;
+        font-size: 14.75px; // responsive special case
       }
     }
   }
@@ -532,10 +538,9 @@
           border-bottom: 2px solid transparent;
           color: white;
           text-align: center;
-          font-size: 12.5px;
+          font-size: 12.5px; // navbar special case
           letter-spacing: 1px;
           position: inherit;
-          
         }
       }
     }
@@ -549,7 +554,7 @@
         width: 33%;
         > a {
           padding: 10px 0;
-          font-size: 13.5px;
+          font-size: 14px; // navbar special case
           margin-bottom: 0;
         }
       }
@@ -617,6 +622,7 @@ $tabPaddingTop: 18px;
 $tabPaddingTopNarrow: 14px;
 $tabPaddingTopTablet: 10px;
 $tabPaddingSide: 24px;
+$tabPaddingSideNarrow: 18px;
 
 .nav.nav-tabs.nav-tabs-secondary {
   background-color: #f0f0f0;
@@ -624,7 +630,7 @@ $tabPaddingSide: 24px;
   display: block;
   float: right;
   margin-top: -$tabPaddingTop;
-  padding: 0 6px;
+  padding: 0 14px;
   position: relative;
   z-index: 2;
 
@@ -632,48 +638,43 @@ $tabPaddingSide: 24px;
     border-bottom: 6px solid rgba(0, 0, 0, 0.35);
     border-left: 6px solid rgba(0, 0, 0, 0.35);
     content: "";
-    height: 44px;
+    height: 32px;
     left: -6px;
     position: absolute;
-    top: 6px;
+    top: 18px;
     width: 100%;
+    display: block;
   }
-  &:first-child li:before {
-    border-bottom: 6px solid rgba(0, 0, 0, 0.075);
-    border-left: 6px solid transparent;
-    content: "";
-    left: -6px;
-    position: absolute;
-  }
-
   > li {
     display: inline-block;
     text-align: center;
     margin: 0;
+    $navUnderlineLeftRight: 25px;
+    $navUnderlineBottom: 13px;
     &.active,
     &.active:hover {
       opacity: 1;
       color: #000;
       a:after {
         background-color: $openshiftBrightRed;
-        bottom: 16px;
+        bottom: $navUnderlineBottom;
         content: "";
         display: block;
         height: 2px;
-        left: 35px;
-        right: 35px;
+        left: $navUnderlineLeftRight;
+        right: $navUnderlineLeftRight;
         position: absolute;
       }
     }
     &:hover {
       a:after {
         background-color: $grayLight;
-        bottom: 16px;
+        bottom: $navUnderlineBottom;
         content: "";
         display: block;
         height: 2px;
-        left: 35px;
-        right: 35px;
+        left: $navUnderlineLeftRight;
+        right: $navUnderlineLeftRight;
         position: absolute;
       }
     }
@@ -681,7 +682,7 @@ $tabPaddingSide: 24px;
       padding: $tabPaddingTop $tabPaddingSide;
       color: inherit;
       opacity: .8;
-      font-size: 15px;
+      font-size: $h4FontSize;
       white-space: nowrap;
       position: relative;
       border: 0;
@@ -699,33 +700,63 @@ $tabPaddingSide: 24px;
 // Responsive styles
 // --------------------------
 
-@media (max-width: 1199px) {
-}
-@media (max-width: 979px) {
+@media (max-width: 1239px) {
+  $navUnderlineLeftRight: 18px;
+  
   .nav.nav-tabs.nav-tabs-secondary {
-    margin-top: -$tabPaddingTopNarrow;
-    &:before {
-      height: 36px
-    }
+    padding: 0 8px;
     > li {
       &.active,
       &.active:hover {
         a:after {
-          bottom: 10px;
-          left: 22px;
-          right: 22px;
+          left: $navUnderlineLeftRight;
+          right: $navUnderlineLeftRight;
         }
       }
       &:hover {
         a:after {
-          bottom: 10px;
-          left: 22px;
-          right: 22px;
+          left: $navUnderlineLeftRight;
+          right: $navUnderlineLeftRight;
+        }
+      }
+      a {
+        padding: $tabPaddingTop $tabPaddingSideNarrow;
+      }
+    }
+  }
+}
+
+
+@media (max-width: 979px) {
+  .nav.nav-tabs.nav-tabs-secondary {
+    margin-top: -$tabPaddingTopNarrow;
+    margin-right: 1px;
+    padding: 0 6px;
+    &:before {
+      height: 28px;
+      top: 14px;
+    }
+    > li {
+      $navUnderlineLeftRight: 15px;
+      $navUnderlineBottom: 10px;
+      &.active,
+      &.active:hover {
+        a:after {
+          bottom: $navUnderlineBottom;
+          left: $navUnderlineLeftRight;
+          right: $navUnderlineLeftRight;
+        }
+      }
+      &:hover {
+        a:after {
+          bottom: $navUnderlineBottom;
+          left: $navUnderlineLeftRight;
+          right: $navUnderlineLeftRight;
         }
       }
       a {
         padding: $tabPaddingTopNarrow 14px;
-        font-size: 14px;
+        font-size: $baseFontSize;
       }
     }
   }
@@ -733,6 +764,8 @@ $tabPaddingSide: 24px;
 @media (max-width: 767px) {
   .nav.nav-tabs.nav-tabs-secondary {
     margin: 0;
+    padding-bottom: 2px;
+    border-bottom: 1px solid #E8E8E8;
     float: none;
 
     &:before {
@@ -757,7 +790,7 @@ $tabPaddingSide: 24px;
       }
       a {
         padding: $tabPaddingTopTablet 16px;
-        font-size: 13.5px
+        font-size: 14px // responsive special case
       }
     }
   }

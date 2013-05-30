@@ -341,7 +341,12 @@ module OpenShift
 
     def update_master_plan(acct_no, plan_name, is_upgrade=false, num_plan_units=1)
       begin
-        get_response(@ah.update_master_plan(acct_no, plan_name, is_upgrade, num_plan_units), __method__)
+        result = get_response(@ah.update_master_plan(acct_no, plan_name, is_upgrade, num_plan_units), __method__)
+        if result.data["collection_error_code"] > 0
+          Rails.logger.error "update_master_plan() failed for acct:#{acct_no}, plan:#{plan_name} with collection_error_message: "\
+                             "#{result.data["collection_error_msg"]}, proc_merch_comments: #{result.data["proc_merch_comments"]}"
+          raise OpenShift::AriaException.new "ERROR: Plan change failed: #{result.data["proc_merch_comments"]}"
+        end
         if is_upgrade
           cancel_queued_service_plan(acct_no)
         end
