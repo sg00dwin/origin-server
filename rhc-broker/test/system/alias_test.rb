@@ -34,7 +34,7 @@ class AliasTest < ActionDispatch::IntegrationTest
     
     @ns = "ns#{@random}"
     @app = "app#{@random}"
-    @as = "as#{@random}"
+    @as = "as.#{@random}"
     
     #create domain
     request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => @ns}, @headers)
