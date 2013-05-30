@@ -15,7 +15,7 @@
                 <h2>Public PaaS</h2>
               </header>
               <p>
-                a public cloud application development and hosting platform which leverages a Platform-as-a-Service (PaaS) architecture
+                OpenShift Online is a public cloud application development and hosting platform which leverages a Platform-as-a-Service (PaaS) architecture.
               </p>
             </a>
             <a href="#" class="learn">Learn more</a>
@@ -30,7 +30,7 @@
                 <h2>Private PaaS</h2>
               </header>
               <p>
-                the benefits of PaaS in an on-premise software product deployable in data-centers or private clouds
+                OpenShift Enterprise offers the benefits of PaaS in an on-premise software product deployable in data-centers or private clouds.
               </p>
             </a>
             <a href="#" class="learn">Learn more</a>
@@ -45,7 +45,7 @@
                 <h2>Community PaaS</h2>
               </header>
               <p>
-                the community-driven upstream code base that feeds RedHat's OpenShift Online &amp; Enterprise product offerings
+                OpenShift Origin is the community-driven upstream code base that feeds RedHat's OpenShift Online &amp; Enterprise product offerings.
               </p>
             </a>
             <a href="#" class="learn">Learn more</a>
