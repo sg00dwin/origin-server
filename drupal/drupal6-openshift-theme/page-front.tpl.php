@@ -15,7 +15,7 @@
                 <h2>Public PaaS</h2>
               </header>
               <p>
-                a public cloud application development and hosting platform which leverages a Platform-as-a-Service (PaaS) architecture
+                OpenShift Online is a public cloud application development and hosting platform which leverages a Platform-as-a-Service (PaaS) architecture.
               </p>
             </a>
             <a href="#" class="learn">Learn more</a>
@@ -30,7 +30,7 @@
                 <h2>Private PaaS</h2>
               </header>
               <p>
-                the benefits of PaaS in an on-premise software product deployable in data-centers or private clouds
+                OpenShift Enterprise offers the benefits of PaaS in an on-premise software product deployable in data-centers or private clouds.
               </p>
             </a>
             <a href="#" class="learn">Learn more</a>
@@ -45,7 +45,7 @@
                 <h2>Community PaaS</h2>
               </header>
               <p>
-                the community-driven upstream code base that feeds RedHat's OpenShift Online &amp; Enterprise product offerings
+                OpenShift Origin is the community-driven upstream code base that feeds RedHat's OpenShift Online &amp; Enterprise product offerings.
               </p>
             </a>
             <a href="#" class="learn">Learn more</a>
@@ -149,56 +149,45 @@
           <div class="span12">
             <div class="column-buzz">
               <h1>
-                Check the Buzz
+                What others are saying
               </h1>
               <hr>
               <div class="row-fluid">
-                <div id="buzz-tweets" class="span5">
-                  <div class="tweet">
-                    <p>
-                      Openshift has also a great community site in which you will learn new ways of doing what you have in mind with amazing articles put together by subject matter experts. Openshift is based on a gears-cartdriges architecture that you will love from the minute one of use.
-                    </p>
-                    <small>Germán Sánchez</small>
+                <div id="buzz-testimonials" class="span5">
+                  <div class="testimonial">
+                    <blockquote>
+                      <p>
+                        With OpenShift, I can have a developer deploy her first line of business logic in less time than a meeting with an IT organization.
+                      </p>
+                      <small>Gregori Faroux</small>
+                    </blockquote>
                   </div>
-                  <div class="tweet">
-                    <p>
-                      With OpenShift, I can have a developer deploy her first line of business logic in less time than a meeting with an IT organization.
-                    </p>
-                    <small>Gregori Faroux</small>
-                  </div>
-                  <div class="tweet">
-                    <p>
-                      The best thing about OpenShift is the Community support that has been built up around it.
-                    </p>
-                    <small>Corey Daley</small>
-                  </div>
-                  <div class="tweet">
-                    <p>
-                      Our vision was to reduce operational costs associated with maintaining configuration and updates with IaaS, while still allowing us much of the configuration flexibility. The Openshift service seemed to hit the sweet spot for us.
-                    </p>
-                    <small>Andy Lim</small>
+                  <div class="testimonial">
+                    <blockquote>
+                      <p>
+                        Openshift has also a great community site in which you will learn new ways of doing what you have in mind with amazing articles put together by subject matter experts. Openshift is based on a gears-cartdriges architecture that you will love from the minute one of use.
+                      </p>
+                      <small>Germán Sánchez</small>
+                    </blockquote>
                   </div>
                 </div>
                 <div class="span1">&nbsp;</div>
-                <div id="buzz-retweets" class="span6">
-                  <?php print _redhat_frontpage_load_retweets(); ?></div>
-              </div>
-              <div class="row-fluid buzz-actions">
-                <div class="span6">
-                  <a class="link-with-action" href="#">
-                    <strong>More</strong> buzz
-                  </a>
-                </div>
-                <div class="span6">
-                  <div class="align-right">
-                    <a class="link-with-action" href="http://www.twitter.com/#!/openshift">
-                      <strong>Follow</strong> OpenShift
-                    </a>
+                <div id="buzz-testimonials2" class="span6">
+                  <div class="testimonial">
+                    <blockquote>
+                      <p>
+                        The best thing about OpenShift is the Community support that has been built up around it.
+                      </p>
+                      <small>Corey Daley</small>
+                    </blockquote>
                   </div>
-                  <div class="align-right">
-                    <a class="link-with-action" href="http://twitter.com/#!/search/%23OpenShift">
-                      <strong>More</strong> #OpenShift buzz
-                    </a>
+                  <div class="testimonial">
+                    <blockquote>
+                      <p>
+                        Our vision was to reduce operational costs associated with maintaining configuration and updates with IaaS, while still allowing us much of the configuration flexibility. The Openshift service seemed to hit the sweet spot for us.
+                      </p>
+                      <small>Andy Lim</small>
+                    </blockquote>
                   </div>
                 </div>
               </div>
