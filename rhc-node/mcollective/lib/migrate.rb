@@ -354,7 +354,7 @@ module OpenShiftMigration
     migrators['phpmyadmin-3.4']      = Phpmyadmin34Migration.new
     migrators['postgresql-8.4']      = Postgresql84Migration.new
     migrators['cron-1.4']            = Cron14Migration.new
-    #migrators['switchyard-0.6'] = Switchyard06Migration.new
+    migrators['switchyard-0.6']      = Switchyard06Migration.new
 
     migrators
   end
