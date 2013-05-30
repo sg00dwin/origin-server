@@ -164,6 +164,7 @@ module OpenShiftMigration
     begin
       progress.log 'Beginning V1 -> V2 migration'
       inspect_gear_state(progress, uuid, gear_home)
+      detect_switchyard(progress, uuid, gear_home)
 
       migrate_stop_lock(progress, uuid, gear_home)
       stop_gear(progress, hostname, uuid)
@@ -220,6 +221,28 @@ module OpenShiftMigration
       premigration_state = OpenShift::Utils::MigrationApplicationState.new(uuid, PREMIGRATION_STATE)
       progress.log "Pre-migration state: #{premigration_state.value}"
       progress.mark_complete('inspect_gear_state')
+    end
+  end
+
+  def self.detect_switchyard(progress, uuid, gear_home)
+    if progress.incomplete? 'detect_switchyard'
+      module_path_vars = %w(EAP AS).map { |x| "OPENSHIFT_JBOSS#{x}_MODULE_PATH" }
+
+      module_path_vars.each do |var|
+        var_path = File.join(gear_home, '.env', var)
+        if File.exists?(var_path)
+          var_content = IO.read(var_path).chomp
+        end
+
+        if var_content =~ /switchyard/
+          progress.log "Detected switchyard in #{var}"
+          # XXX: total hack to avoid inventing a special marker for
+          # switchyard at the eleventh hour.
+          progress.mark_complete('switchyard_present')
+        end
+      end
+      
+      progress.mark_complete('detect_switchyard')
     end
   end
 
@@ -485,7 +508,7 @@ module OpenShiftMigration
   end
 
   def self.migrate_cartridges(progress, gear_home, uuid, cartridge_migrators)
-    carts_to_migrate = v1_cartridges(gear_home)
+    carts_to_migrate = v1_cartridges(gear_home, progress)
 
     progress.log "Carts to migrate: #{carts_to_migrate}"
 
@@ -498,7 +521,7 @@ module OpenShiftMigration
     end
   end
 
-  def self.v1_cartridges(gear_home)
+  def self.v1_cartridges(gear_home, progress = nil)
     carts = Hash.new { |h, k| h[k] = [] }
 
     def carts.values
@@ -522,6 +545,10 @@ module OpenShiftMigration
         # should be haproxy...
         carts[:leftover_carts] << cart_name
       end
+    end
+
+    if progress && progress.complete?('switchyard_present')
+      carts[:plugin_carts] << 'switchyard-0.6'
     end
     
     carts
