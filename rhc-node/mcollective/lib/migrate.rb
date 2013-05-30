@@ -810,7 +810,7 @@ module OpenShiftMigration
 
   def self.incompatible_migration(progress, cart_model, next_manifest, version, target, user)
     OpenShift::CartridgeRepository.overlay_cartridge(next_manifest, target)
-    cart_model.secure_cartridge(user.uid, user.gid, target)
+    cart_model.secure_cartridge(next_manifest.short_name, user.uid, user.gid, target)
 
     cart_model.unlock_gear(next_manifest) do |m|
       if progress.incomplete? "#{name}_setup"
