@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.9.10
+Version: 1.9.11
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -195,6 +195,16 @@ fi
 %{sitedir}/public
 
 %changelog
+* Thu May 30 2013 Adam Miller <admiller@redhat.com> 1.9.11-1
+- Test signup flow more carefully (jliggitt@redhat.com)
+- Fix bug 967746 - tolerate missing PROHIBITED_EMAIL_DOMAINS config value
+  (jliggitt@redhat.com)
+- Merge pull request #1455 from jtharris/email_blacklist
+  (dmcphers+openshiftbot@redhat.com)
+- Fix failing captcha test. (jharris@redhat.com)
+- Code review suggestions. (jharris@redhat.com)
+- Validation to reject prohibited email domains. (jharris@redhat.com)
+
 * Wed May 29 2013 Adam Miller <admiller@redhat.com> 1.9.10-1
 - Fix bug 966746 - remove unused legal controller and view content
   (jliggitt@redhat.com)
