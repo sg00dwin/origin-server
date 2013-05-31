@@ -801,7 +801,7 @@ module OpenShiftMigration
     OpenShift::CartridgeRepository.overlay_cartridge(next_manifest, target)
 
     # No ERB's are rendered for fast migrations
-    FileUtils.rm_f cart_model.processed_templates(next_manifest)
+    cart_model.processed_templates(next_manifest).each {|f| rm_exists(f)}
     progress.mark_complete("#{name}_remove_erb")
 
     cart_model.unlock_gear(next_manifest) do |m|
@@ -810,6 +810,8 @@ module OpenShiftMigration
   end
 
   def self.incompatible_migration(progress, cart_model, next_manifest, version, target, user)
+    cart_model.setup_rewritten.each {|f| rm_exists(f)}
+
     OpenShift::CartridgeRepository.overlay_cartridge(next_manifest, target)
     cart_model.secure_cartridge(next_manifest.short_name, user.uid, user.gid, target)
 
