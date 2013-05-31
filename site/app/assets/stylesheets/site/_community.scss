@@ -1055,10 +1055,10 @@ table.version-list {
   font-size: $smallFontSize;
 
   td, th {
-    line-height: 6px;
     font-weight: normal;
-    background-color: #F5F5F5;
-    border: 1px solid #DDDDDD;
-    padding: 6px;
+    background-color: #F9F9F9;
+    border: 1px solid #EDEDED;
+    padding: 0 6px;
+    text-align: center;
   }
 }
