@@ -384,26 +384,9 @@ function user_profile_context_default_contexts() {
   $context->name = 'messaging-home';
   $context->description = '';
   $context->tag = '';
-  $context->conditions = array(
-    'path' => array(
-      'values' => array(
-        '<front>' => '<front>',
-      ),
-    ),
-  );
-  $context->reactions = array(
-    'block' => array(
-      'blocks' => array(
-        'user_profile-home-messaging' => array(
-          'module' => 'user_profile',
-          'delta' => 'home-messaging',
-          'region' => 'messaging',
-          'weight' => 0,
-        ),
-      ),
-    ),
-  );
-  $context->condition_mode = 1;
+  $context->conditions = array();
+  $context->reactions = array();
+  $context->condition_mode = 0;
   $export['messaging-home'] = $context;
 
   $context = new stdClass;
@@ -556,10 +539,8 @@ function user_profile_context_default_contexts() {
         'documentation' => 'documentation',
         'https://access.redhat.com/knowledge/docs/en-US/OpenShift/2.0/html/User_Guide/index.html' => 'https://access.redhat.com/knowledge/docs/en-US/OpenShift/2.0/html/User_Guide/index.html',
         'node/10295' => 'node/10295',
-        'node/10777' => 'node/10777',
         'node/10863' => 'node/10863',
         'node/10866' => 'node/10866',
-        'node/10999' => 'node/10999',
         'node/11066' => 'node/11066',
         'node/11129' => 'node/11129',
         'node/11158' => 'node/11158',
@@ -587,6 +568,12 @@ function user_profile_context_default_contexts() {
       ),
       'options' => array(
         'node_form' => '1',
+      ),
+    ),
+    'path' => array(
+      'values' => array(
+        'developers/extend' => 'developers/extend',
+        'developers/cartridge-authors-guide' => 'developers/cartridge-authors-guide',
       ),
     ),
   );
