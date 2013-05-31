@@ -19,7 +19,7 @@ module Streamline
       lambda { |o| scopes.include?(o.validation_context) }
     end
 
-    validates :login, 
+    validates :login,
               :presence => true,
               :if => on_scopes(:reset_password)
 
@@ -34,9 +34,14 @@ module Streamline
     #                    :message => 'We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy'
 
     validates_each :email_address, :if => on_scopes(:save) do |record, attr, value|
-      if value =~ /\.(ir|cu|kp|sd|sy)$/i
-        record.errors.add attr, 'We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy'
-      end
+      email_domain = value.split('@').last.downcase rescue nil
+      domains = Rails.application.config.prohibited_email_domains
+      domains.each do |domain|
+        if email_domain == domain || email_domain.end_with?(".#{domain}")
+          record.errors.add attr, 'OpenShift does not allow creating accounts with email addresses from anonymous mail services due to security concerns. Please use a different email address.'
+          break
+        end
+      end unless email_domain.nil?
     end
 
     validates_length_of :password,

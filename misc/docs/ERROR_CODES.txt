@@ -37,9 +37,9 @@ User errors:
 132: Insufficient Access Rights
 133: Could not delete user
 134: Invalid gear profile
-135: Cartridge/Component/Feature not found in the application
-136: Cartridge/Component/Feature already embedded in the application
-137: Cartridge/Component/Feature can not be added/removed from the application.
+135: Cartridge not found in the application
+136: Cartridge already embedded in the application
+137: Cartridge can not be added/removed from the application.
 138: User deletion not permitted for normal/non-subaccount user.
 139: Could not delete user, user has valid domain or applications.
 140: Alias already in use.

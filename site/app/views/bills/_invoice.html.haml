@@ -63,7 +63,7 @@
       - if @plan.basic?
         %h3= link_to "Community Support", console_help_path
       - else
-        %h3= link_to "Technical Support", openshift_customer_portal_url
+        %h3= link_to "Technical Support", openshift_customer_portal_url, :class => 'external', :target => '_blank'
 
     - if @bill.line_items.detect(&:tax?)
       %section.panel

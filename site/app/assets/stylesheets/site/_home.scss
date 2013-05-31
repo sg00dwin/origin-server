@@ -19,15 +19,15 @@ body.home2 {
     min-height: 0;
     .column-buzz {
       background: #111;
-      background: rgba(0, 0, 0, 0.35);
+      background: rgba(0, 0, 0, 0.2);
       font-weight: 300;
       margin: 0 0 220px;
-      padding: 40px 40px 70px;
+      padding: 40px 40px 12px;
       position:relative;
-      a { color: #fff; }
+      //a { color: #fff; }
       > h1 { 
         color: #fff;
-        font-size: 32px;
+        font-size: 28px;
         letter-spacing: -1px;
         line-height: 44px;
         text-align: center; 
@@ -38,16 +38,13 @@ body.home2 {
         border-top: 4px solid $ribbonColor;
         margin: 10px 43% 30px;
       }
-      .link-with-action {
-        > strong, &:hover > strong, &:active > strong, &:hover, &:active { color: $openshiftBrightRed; }
-      }
       .tweet {
         @include clearfix();
         color: #e5e5e5;
         margin-bottom: 15px;
         position: relative;
         > img {
-          border: 6px solid white;
+          border: 6px solid rgba(0, 0, 0, 0.2);
           float: left;
           height: 58px;
           width: 58px;
@@ -317,6 +314,9 @@ body.home2 {
       font-weight: 300; 
     }
   }
+  footer > section {
+    margin-bottom: 0;
+  }
   .redhat img { 
     float: left;
     margin: 0 30px .5em 0;
@@ -416,14 +416,6 @@ body.home2 {
 
 @media (max-width: 480px) {
   body.home2 {
-    #buzz {
-      .buzz-actions {
-        text-align: center;
-        .align-right {
-          text-align: center;
-        }
-      }
-    }
     .messaging {
       .primary {
         font-size: 22px; 

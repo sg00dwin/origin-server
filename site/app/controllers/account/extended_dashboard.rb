@@ -48,7 +48,7 @@ module Account
         @usage_types = Aria::UsageLineItem.type_info(@usage_items.values.flatten) if @usage_items
       end
 
-      @can_upgrade = (@is_downgrading || @plan.basic?) && @account_status != :terminated
+      @can_upgrade = @plan.basic? && !aria_user.has_disabled_status?
     end
 
     protected
@@ -69,6 +69,10 @@ module Account
         case params[:status]
           when 'terminated'
             @account_status = :terminated
+          when 'cancelled'
+            @account_status = :cancelled
+          when 'cancellation_pending'
+            @account_status = :cancellation_pending
           when 'suspended'
             @account_status = :suspended
           when 'dunning'

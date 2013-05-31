@@ -145,3 +145,13 @@ Then /^the (mysql|mongodb|postgresql) uservars entries will be migrated to a nam
     assert_file_exists File.join(cart_namespaced_dir, var)
   end
 end
+
+Then /^the switchyard env variables will be cleaned up$/ do
+  %w(EAP AS).map { |x| "OPENSHIFT_JBOSS#{x}_MODULE_PATH" }.each do |var|
+    assert_file_not_exists File.join($home_root, @app.uid, '.env', var)
+  end
+end
+
+Then /^the ([^ ]+) cartridge directory will exist$/ do |name|
+  assert_directory_exists File.join($home_root, @app.uid, name)
+end

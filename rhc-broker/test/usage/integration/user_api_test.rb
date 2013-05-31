@@ -161,7 +161,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     request_via_redirect(:post, "/rest/domains/#{domain_id}/applications", {:name => "app", :cartridge => "php-5.3"}, @headers)
     assert_response :created
     ssl_certificate_data
-    request_via_redirect(:post, "/rest/domains/#{domain_id}/applications/app/aliases", {:id => @login[0..15], :ssl_certificate => @ssl_certificate, :private_key => @private_key, :pass_phrase => @pass_phrase}, @headers)
+    request_via_redirect(:post, "/rest/domains/#{domain_id}/applications/app/aliases", {:id => "as.#{@login[0..15]}", :ssl_certificate => @ssl_certificate, :private_key => @private_key, :pass_phrase => @pass_phrase}, @headers)
     assert_response :created
  
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :free}, @headers)

@@ -32,6 +32,10 @@ function user_profile_filter($op, $delta=0, $format=-1, $text='', $cache_id=0) {
   }
 }
 
+/**
+ * DEPRECATED - these are no longer used
+ *
+ */
 function user_profile_block($op = 'list', $delta = '', $edit = array()) {
   global $user;
   switch ($op) {

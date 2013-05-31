@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.9.6
+Version: 1.10.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -113,6 +113,7 @@ echo "/usr/bin/oo-trap-user" >> /etc/shells
 /sbin/chkconfig --add openshift-gears || :
 /sbin/chkconfig --add libra-data || :
 /sbin/chkconfig --add libra-tc || :
+/sbin/chkconfig --add libra-avc-cache-threshold || :
 /sbin/chkconfig --add libra-watchman || :
 /sbin/chkconfig --add openshift-cgroups || :
 
@@ -122,6 +123,7 @@ echo "/usr/bin/oo-trap-user" >> /etc/shells
 /sbin/restorecon -r /sandbox
 /sbin/restorecon /etc/init.d/mcollective || :
 
+/sbin/service libra-avc-cache-threshold restart
 
 # Only bounce cgroups if not already initialized
 # CAVEAT: if the policy is changed, must run these by hand (release ticket)
@@ -173,6 +175,7 @@ if [ "$1" -eq "0" ]; then
     /sbin/service libra-tc stop > /dev/null 2>&1 || :
     /sbin/service openshift-cgroups stop > /dev/null 2>&1 || :
     /sbin/service libra-watchman stop > /dev/null 2>&1 || :
+    /sbin/chkconfig --del libra-avc-cache-threshold || :
     /sbin/chkconfig --del libra-tc || :
     /sbin/chkconfig --del libra-data || :
     /sbin/chkconfig --del openshift-cgroups || :
@@ -200,6 +203,7 @@ fi
 %attr(0640,-,-) %{mco_root}lib/*
 %attr(0750,-,-) %{_initddir}/libra-data
 %attr(0750,-,-) %{_initddir}/libra-tc
+%attr(0750,-,-) %{_initddir}/libra-avc-cache-threshold
 %attr(0750,-,-) %{_initddir}/libra-watchman
 %attr(0750,-,-) %{_bindir}/rhc-ip-prep
 %attr(0750,-,-) %{_bindir}/rhc-iptables.sh
@@ -240,6 +244,47 @@ fi
 
 
 %changelog
+* Thu May 30 2013 Adam Miller <admiller@redhat.com> 1.10.1-1
+- bump_minor_versions for sprint 29 (admiller@redhat.com)
+
+* Thu May 30 2013 Adam Miller <admiller@redhat.com> 1.9.9-1
+- Merge pull request #1490 from jwhonce/wip/v2v2_migration
+  (dmcphers+openshiftbot@redhat.com)
+- WIP Cartridge Refactor - Fix secure_cartridge signature (jhonce@redhat.com)
+- Bug 965490: Fix V1 -> V2 migrations for switchyard (pmorie@gmail.com)
+- Add special casing for switchyard to V1 -> V2 migration (pmorie@gmail.com)
+- Merge pull request #1480 from VojtechVitek/zend_php_bin_path
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1484 from rmillner/avc_cache_threshold
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1483 from pmorie/dev/v2_migrations
+  (dmcphers+openshiftbot@redhat.com)
+- Enable the cahce-threshold increase. (rmillner@redhat.com)
+- Add error handling for gear start to migration (pmorie@gmail.com)
+- add zend php binary to env PATH variable (vvitek@redhat.com)
+
+* Wed May 29 2013 Adam Miller <admiller@redhat.com> 1.9.8-1
+- Merge pull request #1477 from rmillner/avc_cache_threshold
+  (dmcphers+openshiftbot@redhat.com)
+- Excellent work was done benchmarking that showed setting
+  /selinux/avc/cache_threshold higher has a performance improvement starting
+  gears on OpenShift. (rmillner@redhat.com)
+- Bug 967118 - Support immutable cartridge files (jhonce@redhat.com)
+
+* Tue May 28 2013 Adam Miller <admiller@redhat.com> 1.9.7-1
+- Fix bug 963071: re-add blacklist for TYPELESS_TRANSLATED_VARS
+  (pmorie@gmail.com)
+- remove old env vars on migrate (dmcphers@redhat.com)
+- Merge pull request #1466 from jwhonce/bug/966803
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1465 from pmorie/bugs/965476
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 965476 (pmorie@gmail.com)
+- Bug 966913: Add OPENSHIFT_JBOSSAS_WEBSOCKET_PORT to migration
+  (ironcladlou@gmail.com)
+- Bug 966803 - Watchman support for namespaced directories in .env
+  (jhonce@redhat.com)
+
 * Fri May 24 2013 Adam Miller <admiller@redhat.com> 1.9.6-1
 - WIP Cartridge Refactor - Print stdout/stderr on ShellExecutionException
   (jhonce@redhat.com)
