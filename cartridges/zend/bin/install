@@ -13,6 +13,7 @@ then
 fi
 
 echo "$version" > "$OPENSHIFT_ZEND_DIR/env/OPENSHIFT_ZEND_VERSION"
+echo "/usr/local/zend/bin" > "$OPENSHIFT_ZEND_DIR/env/OPENSHIFT_ZEND_PATH_ELEMENT"
 echo "$OPENSHIFT_ZEND_DIR/oracle" > "$OPENSHIFT_ZEND_DIR/env/ORACLE_BASE"
 echo "$OPENSHIFT_ZEND_DIR/oracle" > "$OPENSHIFT_ZEND_DIR/env/ORACLE_HOME"
 mkdir -p $OPENSHIFT_ZEND_DIR/oracle

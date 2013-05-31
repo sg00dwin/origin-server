@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.9.8
+Version: 1.10.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -195,6 +195,53 @@ fi
 %{sitedir}/public
 
 %changelog
+* Thu May 30 2013 Adam Miller <admiller@redhat.com> 1.10.1-1
+- bump_minor_versions for sprint 29 (admiller@redhat.com)
+
+* Thu May 30 2013 Adam Miller <admiller@redhat.com> 1.9.11-1
+- Test signup flow more carefully (jliggitt@redhat.com)
+- Fix bug 967746 - tolerate missing PROHIBITED_EMAIL_DOMAINS config value
+  (jliggitt@redhat.com)
+- Merge pull request #1455 from jtharris/email_blacklist
+  (dmcphers+openshiftbot@redhat.com)
+- Fix failing captcha test. (jharris@redhat.com)
+- Code review suggestions. (jharris@redhat.com)
+- Validation to reject prohibited email domains. (jharris@redhat.com)
+
+* Wed May 29 2013 Adam Miller <admiller@redhat.com> 1.9.10-1
+- Fix bug 966746 - remove unused legal controller and view content
+  (jliggitt@redhat.com)
+- Merge pull request #1474 from nhr/cancelled_status_handling
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1476 from liggitt/help_page_beta_feedback
+  (dmcphers+openshiftbot@redhat.com)
+- Correct tests that now rely on #status_cd (hripps@redhat.com)
+- Open support links in a new page, tolerate FAQ fetch failures
+  (jliggitt@redhat.com)
+- Merge pull request #1472 from liggitt/payment_collected_message
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1471 from jtharris/analytics_logging
+  (dmcphers+openshiftbot@redhat.com)
+- Flip logic on account status check for readability (hripps@redhat.com)
+- Revise tests for better coverage (hripps@redhat.com)
+- Add My Account status messages for cancelled and pending cancelled accounts
+  (hripps@redhat.com)
+- Merge pull request #1470 from nhr/legal_statement_on_upgrade
+  (dmcphers+openshiftbot@redhat.com)
+- Show a message when payment will be collected (jliggitt@redhat.com)
+- Log source entry from js analytics. (jharris@redhat.com)
+- Added legal notice to upgrade confirmation page (hripps@redhat.com)
+
+* Tue May 28 2013 Adam Miller <admiller@redhat.com> 1.9.9-1
+- Merge pull request #1461 from liggitt/bug_966714_skip_content_link
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1462 from
+  liggitt/bug_966335_credit_card_images_at_narrow_width
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 966335 - credit card images at narrow width (jliggitt@redhat.com)
+- Fix bug 966714 - add style to hide 'skip to navigation' link in site pages
+  (jliggitt@redhat.com)
+
 * Fri May 24 2013 Adam Miller <admiller@redhat.com> 1.9.8-1
 - Fix site extended test, tolerate missing error codes from Aria
   (jliggitt@redhat.com)

@@ -1,0 +1,75 @@
+#!/bin/bash
+#
+# rhc-avc-cache-threshold        Set the AVC cache threshold to a proper value for OpenShift
+#
+# chkconfig: 345 1 99
+# description: RHC AVC cache_threshold
+#
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+if [ -f /etc/sysconfig/libra-avc-cache-threshold ]
+then 
+        . /etc/sysconfig/libra-avc-cache-threshold
+fi
+
+
+# Default the cache to 1MB for OpenShift
+: ${AVC_CACHE_THRESHOLD:=65536}
+: ${AVC_CACHE_FILE:="/selinux/avc/cache_threshold"}
+
+
+RETVAL=0
+
+function start() {
+  if [ -e "$AVC_CACHE_FILE" ]
+  then
+      echo -n 'Setting AVC Cache Threshold...'
+      echo "$AVC_CACHE_THRESHOLD" > "$AVC_CACHE_FILE"
+      RETVAL=$?
+      if [ $RETVAL -eq 0 ]
+      then
+          echo_success
+      else
+          echo_failure
+      fi
+      echo
+  fi
+}
+
+function status() {
+    if [ -e "$AVC_CACHE_FILE" ]
+    then
+        curval=$(cat $AVC_CACHE_FILE)
+        echo -n "AVC Cache Threshold Value: $curval"
+        [ "$curval" -eq "$AVC_CACHE_THRESHOLD"  ]
+        RETVAL=$?
+        if [ $RETVAL -eq 0 ]
+        then
+            echo_success
+        else
+            echo_failure
+        fi
+        echo
+    fi
+}
+
+case "$1" in
+
+    start)
+        start
+        ;;
+    status)
+        status
+        ;;
+    restart|condrestart)
+        start
+        ;;
+    stop)
+        true
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|status|restart|condrestart}"
+        ;;
+esac

@@ -10,7 +10,7 @@
     %div.control-group-important
       %input{:type => "hidden", :name => "then", :value => @redirect }
       %input{:type => "hidden", :name => "captcha_secret", :value => @captcha_secret }
-      = form.semantic_errors :except => [:captcha]
+      = form.semantic_errors :except => [:captcha, :email_address]
       = form.inputs do
         = form.input :email_address, :input_html => { :type => 'email', :class => 'max', :placeholder => 'Valid email address', :autofocus => true }
         = form.input :password, :input_html => { :class => 'max', :autocomplete => 'off', :placeholder => 'At least 6 characters', :maxlength => '50' }

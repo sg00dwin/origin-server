@@ -164,6 +164,7 @@ module OpenShiftMigration
     begin
       progress.log 'Beginning V1 -> V2 migration'
       inspect_gear_state(progress, uuid, gear_home)
+      detect_switchyard(progress, uuid, gear_home)
 
       migrate_stop_lock(progress, uuid, gear_home)
       stop_gear(progress, hostname, uuid)
@@ -220,6 +221,28 @@ module OpenShiftMigration
       premigration_state = OpenShift::Utils::MigrationApplicationState.new(uuid, PREMIGRATION_STATE)
       progress.log "Pre-migration state: #{premigration_state.value}"
       progress.mark_complete('inspect_gear_state')
+    end
+  end
+
+  def self.detect_switchyard(progress, uuid, gear_home)
+    if progress.incomplete? 'detect_switchyard'
+      module_path_vars = %w(EAP AS).map { |x| "OPENSHIFT_JBOSS#{x}_MODULE_PATH" }
+
+      module_path_vars.each do |var|
+        var_path = File.join(gear_home, '.env', var)
+        if File.exists?(var_path)
+          var_content = IO.read(var_path).chomp
+        end
+
+        if var_content =~ /switchyard/
+          progress.log "Detected switchyard in #{var}"
+          # XXX: total hack to avoid inventing a special marker for
+          # switchyard at the eleventh hour.
+          progress.mark_complete('switchyard_present')
+        end
+      end
+      
+      progress.mark_complete('detect_switchyard')
     end
   end
 
@@ -287,8 +310,16 @@ module OpenShiftMigration
     progress.log "Starting gear with uuid '#{uuid}' on node '#{hostname}'"
 
     if progress.incomplete? 'start_gear'
-      output = OpenShift::ApplicationContainer.from_uuid(uuid).start_gear(user_initiated: false)
-      progress.log "Start gear output: #{output}"
+      container = OpenShift::ApplicationContainer.from_uuid(uuid)
+
+      begin
+        output = container.start_gear(user_initiated: false)  
+        progress.log "Start gear output: #{output}"
+      rescue Exception => e
+        progress.log "Start gear failed with an exception: #{e.message}"
+        raise
+      end
+
       progress.mark_complete('start_gear')
     end
   end
@@ -323,7 +354,7 @@ module OpenShiftMigration
     migrators['phpmyadmin-3.4']      = Phpmyadmin34Migration.new
     migrators['postgresql-8.4']      = Postgresql84Migration.new
     migrators['cron-1.4']            = Cron14Migration.new
-    #migrators['switchyard-0.6'] = Switchyard06Migration.new
+    migrators['switchyard-0.6']      = Switchyard06Migration.new
 
     migrators
   end
@@ -477,7 +508,7 @@ module OpenShiftMigration
   end
 
   def self.migrate_cartridges(progress, gear_home, uuid, cartridge_migrators)
-    carts_to_migrate = v1_cartridges(gear_home)
+    carts_to_migrate = v1_cartridges(gear_home, progress)
 
     progress.log "Carts to migrate: #{carts_to_migrate}"
 
@@ -490,7 +521,7 @@ module OpenShiftMigration
     end
   end
 
-  def self.v1_cartridges(gear_home)
+  def self.v1_cartridges(gear_home, progress = nil)
     carts = Hash.new { |h, k| h[k] = [] }
 
     def carts.values
@@ -514,6 +545,10 @@ module OpenShiftMigration
         # should be haproxy...
         carts[:leftover_carts] << cart_name
       end
+    end
+
+    if progress && progress.complete?('switchyard_present')
+      carts[:plugin_carts] << 'switchyard-0.6'
     end
     
     carts
@@ -564,7 +599,7 @@ module OpenShiftMigration
 
           if progress.incomplete? "#{name}_ownership"
             target = File.join(user.homedir, c.directory)
-            cart_model.secure_cartridge(user.uid, user.gid, target)
+            cart_model.secure_cartridge(c.short_name, user.uid, user.gid, target)
             progress.mark_complete("#{name}_ownership")
           end
         end
@@ -674,7 +709,7 @@ module OpenShiftMigration
 
     begin
       progress.log "Beginning #{version} migration for #{uuid}"
-      inspect_gear_state(progress, gear_home)
+      inspect_gear_state(progress, uuid, gear_home)
 
       migrate_cartridges_v2v2(progress, gear_home, gear_env, uuid, hostname)
 
@@ -769,13 +804,13 @@ module OpenShiftMigration
     progress.mark_complete("#{name}_remove_erb")
 
     cart_model.unlock_gear(next_manifest) do |m|
-      cart_model.secure_cartridge(user.uid, user.gid, target)
+      cart_model.secure_cartridge(next_manifest.short_name, user.uid, user.gid, target)
     end
   end
 
   def self.incompatible_migration(progress, cart_model, next_manifest, version, target, user)
     OpenShift::CartridgeRepository.overlay_cartridge(next_manifest, target)
-    cart_model.secure_cartridge(user.uid, user.gid, target)
+    cart_model.secure_cartridge(next_manifest.short_name, user.uid, user.gid, target)
 
     cart_model.unlock_gear(next_manifest) do |m|
       if progress.incomplete? "#{name}_setup"

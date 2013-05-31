@@ -47,6 +47,10 @@ module Aria
       false
     end
 
+    def has_disabled_status?
+      return has_account? && status_cd.to_i < 0
+    end
+
     def account_details
       @account_details ||= begin
         Aria.cached.get_acct_details_all(acct_no)
@@ -111,10 +115,14 @@ module Aria
             :inactive
           when -1
             :suspended
+          when -2
+            :cancelled
           when -3
             :terminated
           when 1
             :active
+          when 2
+            :cancellation_pending
           when 11, 12, 13
             :dunning
           else
@@ -227,8 +235,10 @@ module Aria
         return statement.balance_forward_amount if statement
         return 0
       else
-        unpaid_invoices.inject(0) {|balance, i| balance + i.debit - i.credit}
+        (account_details.balance || 0).to_f
       end
+    rescue AccountDoesNotExist
+      0
     end
 
     def past_usage_line_items(periods=2)

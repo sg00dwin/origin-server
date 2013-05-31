@@ -41,6 +41,9 @@
           = f.input :cvv, :required => true, :label => 'Security Code', :input_html => { :class => 'input-mini', :name => :cvv }
 
         = f.buttons do
+          - if @balance.present? and @balance > 0
+            %p Your outstanding balance of #{number_to_user_currency(@balance)} will be collected.
+
           = link_to *previous_link
           = f.commit_button "Save Payment"
           = f.loading
