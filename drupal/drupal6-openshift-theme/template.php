@@ -1107,9 +1107,9 @@ function openshift_menu_block_tree_output(&$tree, $config = array(), $nested = 0
     $in_active_trail = $parent['link']['in_active_trail'];
     $collapsible = $parent['link']['mlid'] && $nested >= $config['collapsible']['from_depth'];
     if ($collapsible && $in_active_trail) {
-      $render_classes = $config['collapsible']['expanded_menu_class'];
+      $render_classes = $render_classes . " " . $config['collapsible']['expanded_menu_class'];
     } elseif ($collapsible) {
-      $render_classes = $config['collapsible']['collapse_menu_class'];
+      $render_classes = $render_classes . " " . $config['collapsible']['collapse_menu_class'];
     }
     return '<ul ' . ($collapsible ? 'id="m'. $parent['link']['mlid'] .'" ' : '') . 'class="'. $render_classes .'">' . $output . '</ul>';
   }
