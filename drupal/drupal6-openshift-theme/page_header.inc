@@ -33,6 +33,7 @@
       'depth' => 1,
       'hide_titles' => 1,
       'menu_class' => 'nav nav-tabs nav-tabs-secondary',
+      'highlight_active_trail' => TRUE,
     );
     $tree = openshift_menu_tree_build($config);
     $content_header = openshift_menu_block_tree_output($tree, $config) . $content_header;
@@ -42,6 +43,7 @@
     $config['expanded'] = TRUE;
     $config['menu_class'] = 'nav nav-list nav-tertiary';
     $config['sub_menu_class'] = 'nav nav-list';
+    $config['highlight_active_trail'] = FALSE;
     $tree = openshift_menu_tree_build($config);
     $sidebar_right = openshift_menu_block_tree_output($tree, $config) . $sidebar_right;
   }

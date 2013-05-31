@@ -1084,7 +1084,7 @@ function openshift_menu_block_tree_output(&$tree, $config = array(), $nested = 0
       $extra_class[] = 'has-children';
     }
 
-    if ($active) { 
+    if ($active || $in_active_trail && $config['highlight_active_trail']) { 
       $extra_class[] = 'active';
     }
 
