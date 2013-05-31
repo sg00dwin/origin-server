@@ -96,5 +96,40 @@ function blogs_context_default_contexts() {
   $context->condition_mode = 0;
   $export['related-content'] = $context;
 
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
+  $context->name = 'related-news';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+    'path' => array(
+      'values' => array(
+        'page/openshift-origin-0' => 'page/openshift-origin-0',
+        'products/origin' => 'products/origin',
+      ),
+    ),
+  );
+  $context->reactions = array(
+    'block' => array(
+      'blocks' => array(
+        'views-content_list-block_3' => array(
+          'module' => 'views',
+          'delta' => 'content_list-block_3',
+          'region' => 'content_suffix',
+          'weight' => 0,
+        ),
+        'views-content_list-block_4' => array(
+          'module' => 'views',
+          'delta' => 'content_list-block_4',
+          'region' => 'content_suffix',
+          'weight' => 1,
+        ),
+      ),
+    ),
+  );
+  $context->condition_mode = 0;
+  $export['related-news'] = $context;
+
   return $export;
 }
