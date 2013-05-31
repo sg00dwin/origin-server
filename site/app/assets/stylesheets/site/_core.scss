@@ -742,6 +742,7 @@ h1.ribbon {
 // Column navigation
 .column-nav { 
   background-color: $navColumnBackgroundColor;
+  background-image: $noiseImage;
   color: #7a7b7c;
 
   label {
