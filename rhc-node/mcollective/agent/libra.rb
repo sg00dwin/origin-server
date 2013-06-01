@@ -30,6 +30,7 @@ require 'open4'
 require 'pp'
 require 'json'
 require 'openshift-origin-node'
+require 'openshift-origin-node/utils/shell_exec'
 require 'shellwords'
 require 'facter'
 
@@ -59,16 +60,20 @@ module MCollective
         uuid = request[:uuid]
         namespace = request[:namespace]
         version = request[:version]
+        ignore_cartridge_version = request[:ignore_cartridge_version] == 'true' ? true : false
         output = ''
         exitcode = 0
 
         server_identify = Facter.value(:hostname)
         begin
           require "#{File.dirname(__FILE__)}/../lib/migrate"
-          output, exitcode = OpenShiftMigration::migrate(uuid, namespace, version, server_identify)
+          output, exitcode = OpenShiftMigration::migrate(uuid, namespace, version, server_identify, ignore_cartridge_version)
         rescue LoadError => e
           exitcode = 127
           output += "Migrate not supported. #{e.message}\n"
+        rescue OpenShift::Utils::ShellExecutionException => e
+          exitcode = 1
+          output += "Gear failed to migrate: #{e.message}\n#{e.stdout}\n#{e.stderr}"
         rescue Exception => e
           exitcode = 1
           output += "Gear failed to migrate with exception: #{e.message}\n#{e.backtrace}\n"

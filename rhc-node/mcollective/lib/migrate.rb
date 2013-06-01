@@ -122,11 +122,11 @@ module OpenShiftMigration
   # be called multiple times on the same gears.  Each time having failed
   # at any point and continue to pick up where it left off or make
   # harmless changes the 2-n times around.
-  def self.migrate(uuid, namespace, version, hostname)
+  def self.migrate(uuid, namespace, version, hostname, ignore_cartridge_version)
     case version
       when '2.0.28'
       when '2.0.28a'
-        return migrate_v2v2(uuid, namespace, version, hostname)
+        return migrate_v2v2(uuid, namespace, version, hostname, ignore_cartridge_version)
       else
         return "Invalid version: #{version}", 255
     end
@@ -687,7 +687,7 @@ module OpenShiftMigration
 
   ## These will replace their un-versioned counterparts in version 2.0.29
   #######################################################################
-  def self.migrate_v2v2(uuid, namespace, version, hostname)
+  def self.migrate_v2v2(uuid, namespace, version, hostname, ignore_cartridge_version)
     #unless version == 'future version here'
     #  return "Invalid version: #{version}\n", 255
     #end
@@ -712,7 +712,7 @@ module OpenShiftMigration
       progress.log "Beginning #{version} migration for #{uuid}"
       inspect_gear_state(progress, uuid, gear_home)
 
-      migrate_cartridges_v2v2(progress, gear_home, gear_env, uuid, hostname)
+      migrate_cartridges_v2v2(progress, ignore_cartridge_version, gear_home, gear_env, uuid, hostname)
 
       validate_gear(progress, uuid, gear_home)
       cleanup(progress, gear_home)
@@ -728,7 +728,7 @@ module OpenShiftMigration
     [progress.report, exitcode]
   end
 
-  def self.migrate_cartridges_v2v2(progress, gear_home, gear_env, uuid, hostname)
+  def self.migrate_cartridges_v2v2(progress, ignore_cartridge_version, gear_home, gear_env, uuid, hostname)
     progress.log "Migrating gear at #{gear_home}"
 
     config               = OpenShift::Config.new
@@ -753,7 +753,7 @@ module OpenShiftMigration
 
           next_manifest = cartridge_repository.select(name, version)
           unless next_manifest
-            progress.log "No migration available for cartridge #{ident}, found in repository."
+            progress.log "No migration available for cartridge #{ident}, cartridge not found in repository."
             next
           end
 
@@ -763,18 +763,22 @@ module OpenShiftMigration
           end
 
           if next_manifest.cartridge_version == cartridge_version
-            progress.log "No migration required for cartridge #{ident}, already at latest version #{cartridge_version}."
-            next
+            if ignore_cartridge_version
+              progress.log "Refreshing cartridge #{ident}, ignoring cartridge version."
+            else
+              progress.log "No migration required for cartridge #{ident}, already at latest version #{cartridge_version}."
+              next
+            end
           end
 
           if next_manifest.compatible_versions.include?(cartridge_version)
-            progress.log "Compatible migration of cartridge #{ident}"
+            progress.log "Fast migration of cartridge #{ident}"
             compatible_migration(progress, cartridge_model, next_manifest, version, cartridge_path, user)
           else
             stop_gear(progress, hostname, uuid) unless restart_required
             restart_required = true
 
-            progress.log "Incompatible migration of cartridge #{ident}"
+            progress.log "Slow migration of cartridge #{ident}"
             incompatible_migration(progress, cartridge_model, next_manifest, version, cartridge_path, user)
           end
 
@@ -810,7 +814,7 @@ module OpenShiftMigration
   end
 
   def self.incompatible_migration(progress, cart_model, next_manifest, version, target, user)
-    cart_model.setup_rewritten.each {|f| rm_exists(f)}
+    cart_model.setup_rewritten(next_manifest).each {|f| rm_exists(f)}
 
     OpenShift::CartridgeRepository.overlay_cartridge(next_manifest, target)
     cart_model.secure_cartridge(next_manifest.short_name, user.uid, user.gid, target)
