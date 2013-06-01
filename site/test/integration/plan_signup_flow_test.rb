@@ -111,7 +111,7 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     # If we have sane recurring billing dates that resulted in a prorated charge, make sure the invoice is unpaid
     # On the last day of the month on an Aria system with virtual time, the system tries to prorate negative time and gets a $0.00 charge
     if invoice.recurring_bill_from <= invoice.recurring_bill_thru
-      assert_equal 1, aria_user.unpaid_invoices
+      assert_equal 1, aria_user.unpaid_invoices.count
     end
 
     # Place into dunning
