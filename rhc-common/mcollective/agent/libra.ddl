@@ -34,6 +34,13 @@ action "migrate", :description => "migrate a gear" do
         :optional       => false,
         :maxlength      => 64
 
+    input :ignore_cartridge_version,
+        :prompt         => "Ignore Cartridge Version",
+        :description    => "Do not skip migration if Cartridge Versions match",
+        :type           => :list,
+        :optional       => false,
+        :list           => ["true", "false"]
+
     output  :time,
             :description => "The time as a message",
             :display_as => "Time"

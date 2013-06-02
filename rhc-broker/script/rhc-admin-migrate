@@ -30,9 +30,9 @@ STDOUT.sync, STDERR.sync = true
 #
 #  Migrate the specified gear
 #
-def migrate_gear(login, app_name, gear_uuid, version)
+def migrate_gear(login, app_name, gear_uuid, version, ignore_cartridge_version=false)
   total_migrate_gear_start_time = (Time.now.to_f * 1000).to_i
-  migrate_cmd = "#{__FILE__} --login '#{login}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}'"
+  migrate_cmd = "#{__FILE__} --login '#{login}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}' --ignore_cartridge_version '#{ignore_cartridge_version}'"
   out = StringIO.new
   out << "Migrating gear on node with: #{migrate_cmd}\n"
   begin
@@ -66,7 +66,8 @@ def migrate_gear(login, app_name, gear_uuid, version)
                 OpenShift::MCollectiveApplicationContainerProxy.rpc_exec('libra', server_identity) do |client|
                   client.migrate(:uuid => gear_uuid,
                                  :namespace => app.domain.namespace,
-                                 :version => version) do |response|
+                                 :version => version,
+                                 :ignore_cartridge_version => ignore_cartridge_version.to_s) do |response|
                     exit_code = response[:body][:data][:exitcode]
                     output = response[:body][:data][:output]
                   end
@@ -244,7 +245,7 @@ def add_to(stuffs, more_stuffs)
   end
 end
 
-def migrate(version, continue=false, target_server_identity=nil, migrate_position=1, num_migrators=1)
+def migrate(version, continue=false, ignore_cartridge_version=false, target_server_identity=nil, migrate_position=1, num_migrators=1)
   start_time = (Time.now.to_f * 1000).to_i
   logins_cnt = 0
   gear_cnt = 0
@@ -363,12 +364,12 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
       end
 
       unless active_gears.empty?
-        write_node_to_file(server_identity + ACTIVE_SUFFIX, active_gears, version) unless continue
+        write_node_to_file(server_identity + ACTIVE_SUFFIX, active_gears, version, ignore_cartridge_version) unless continue
         active_node_queue << {:server_identity => server_identity + ACTIVE_SUFFIX, :gears_length => active_gears.length}
       end
 
       unless inactive_gears.empty?
-        write_node_to_file(server_identity, inactive_gears, version) unless continue
+        write_node_to_file(server_identity, inactive_gears, version, ignore_cartridge_version) unless continue
         inactive_node_queue << {:server_identity => server_identity, :gears_length => inactive_gears.length}
       end
     end
@@ -480,14 +481,14 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   puts "#####################################################"
 end
 
-def write_node_to_file(server_identity, gears, version)
+def write_node_to_file(server_identity, gears, version, ignore_cartridge_version)
   f = migrate_file_path(server_identity)
   puts "Writing #{gears.length} gears for node #{server_identity} to file #{f}"
   FileUtils.mkdir_p WORK_DIR
   FileUtils.rm_f f
   FileUtils.touch f
   gears.each_with_index do |gear, index|
-    migrate_on_node_args = "#{gear[:server_identity]},#{gear[:uuid]},#{gear[:name]},#{gear[:app_name]},#{gear[:login]},#{version}"
+    migrate_on_node_args = "#{gear[:server_identity]},#{gear[:uuid]},#{gear[:name]},#{gear[:app_name]},#{gear[:login]},#{version},#{ignore_cartridge_version.to_s}"
     append_to_file(f, migrate_on_node_args)
   end
 end
@@ -555,7 +556,8 @@ def migrate_from_file(file)
       app_name = params[3]
       login = params[4]
       version = params[5]
-      migrate_on_node_cmd = "#{__FILE__} --login '#{login}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}'"
+      ignore_cartridge_version = params[6] ? params[6] : 'false'
+      migrate_on_node_cmd = "#{__FILE__} --login '#{login}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}' --ignore-cartridge-version '#{ignore_cartridge_version}'"
       base_path = server_identity
       if File.basename(file) == File.basename(migrate_file_path(server_identity) + ACTIVE_SUFFIX)
         base_path += ACTIVE_SUFFIX
@@ -566,7 +568,7 @@ def migrate_from_file(file)
       num_tries = 2
       (1..num_tries).each do |i|
         begin
-          output = migrate_gear(login, app_name, gear_uuid, version)
+          output = migrate_gear(login, app_name, gear_uuid, version, ignore_cartridge_version)
           append_to_file(log_file, output)
           break
         rescue Exception => e
@@ -658,6 +660,7 @@ Usage: #{$0}
                                        ./rhc-admin-migrate --version <version> --position 2 --num-migrators 2
   --migrate-position position          Postion of this migrator (1 based) amongst the num of migrators (--num_migrators)
   --max-threads num                    Indicates the number of processing queues
+  --ignore-cartridge-version           Force cartridge upgrade even if cartridge versions match
   --continue                           Flag indicating to continue a previous migration
 
 USAGE
@@ -675,6 +678,7 @@ begin
     ["--num-migrators", GetoptLong::REQUIRED_ARGUMENT],
     ["--migrate-position", GetoptLong::REQUIRED_ARGUMENT],
     ["--max-threads", GetoptLong::REQUIRED_ARGUMENT],
+    ["--ignore-cartridge-version", GetoptLong::NO_ARGUMENT],
     ["--continue", GetoptLong::NO_ARGUMENT],
     ["--help", "-h", GetoptLong::NO_ARGUMENT]
   )
@@ -689,6 +693,9 @@ end
 if opt['help']
   p_usage
 end
+
+opt['ignore-cartridge-version'] = opt['ignore-cartridge-version'] ? true : false
+
 
 $:.unshift('/var/www/openshift/broker')
 require 'config/environment'
@@ -710,7 +717,7 @@ if opt['migrate-file']
   migrate_from_file(opt['migrate-file'])
 elsif opt['migrate-gear']
   if opt['login'] && opt['app-name'] && opt['version']
-    puts migrate_gear(opt['login'], opt['app-name'], opt['migrate-gear'], opt['version'])
+    puts migrate_gear(opt['login'], opt['app-name'], opt['migrate-gear'], opt['version'], opt['ignore-cartridge-version'])
   else
     puts "--login, --app-name, and --version is required with --migrate-gear"
     exit 255
@@ -725,11 +732,11 @@ elsif opt['migrate-node']
 !!!!!!!!!!!!!!!!!!!! EXISTING MIGRATION DATA FOUND !!!!!!!!!!!!!!!!!!!!
 Data from a previous migration exists at #{migrate_file}.  You must 
 either move/remove (Ex: rm #{migrate_file}) that data or pick up
-where it left off with '#{__FILE__} --migrate-node #{opt['migrate-node']} --version '#{opt['version']}' --continue'.
+where it left off with '#{__FILE__} --migrate-node #{opt['migrate-node']} --version '#{opt['version']}' --ignore-cartridge-version #{opt['ignore-cartridge-version']} --continue'.
 WARNING
         exit 1
     else
-      migrate(opt['version'], false, opt['migrate-node'])
+      migrate(opt['version'], false, opt['ignore-cartridge-version'], opt['migrate-node'])
     end
   else
     puts "--version is required with --migrate-node"
@@ -755,7 +762,7 @@ else
         exit 255
       end
       unless num_migrators > 0
-        puts "num_migrators must be > 0"
+        puts "num-migrators must be > 0"
         exit 255
       end
     else
@@ -763,7 +770,7 @@ else
       migrate_position = 1
     end
     if opt['continue']
-      migrate(opt['version'], true, nil, migrate_position, num_migrators)
+      migrate(opt['version'], true, opt['ignore-cartridge-version'], nil, migrate_position, num_migrators)
     elsif File.exists?("/tmp/rhc/migration")
       puts <<-WARNING
 !!!!!!!!!!!!!!!!!!!! EXISTING MIGRATION DATA FOUND !!!!!!!!!!!!!!!!!!!!
@@ -773,7 +780,7 @@ where it left off with '#{__FILE__} --continue'.
 WARNING
       exit 1
     else
-      migrate(opt['version'], false, nil, migrate_position, num_migrators)
+      migrate(opt['version'], false, opt['ignore-cartridge-version'], nil, migrate_position, num_migrators)
     end
   else
     puts "--version is required"
