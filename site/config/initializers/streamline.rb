@@ -1,4 +1,5 @@
 Rails.application.config.tap do |config|
+  config.prohibited_email_domains = Console.config.env(:PROHIBITED_EMAIL_DOMAINS, "").split(",").map(&:strip).map(&:downcase).map(&:presence).compact
   config.integrated = Rails.env.test? ? false : Console.config.env(:STREAMLINE_ENABLED, false)
   config.streamline = {
     :host => Console.config.env(:STREAMLINE_HOST, 'https://streamline-proxy1.ops.rhcloud.com'),

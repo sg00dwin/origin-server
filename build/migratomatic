@@ -80,6 +80,7 @@ def create_config(mig_config, devenv)
   config = <<EOF
 libra_server=#{devenv}
 default_rhlogin=#{account}
+insecure=true
 EOF
 
   config_file = "#{mig_config['tmp']}/migratomatic-#{token}.conf"
@@ -232,13 +233,12 @@ def update_devenv(mig_config, devenv, new_version)
   command("scp -i ~/.ssh/libra.pem -r #{mig_config['tmp']}/#{new_version}/devenv-local root@#{devenv}:/root/")
   command("scp -i ~/.ssh/libra.pem #{mig_config['tmp']}/#{new_version}/local.repo root@#{devenv}:/etc/yum.repos.d/")
 
-  # FIXME: Remove this after 2.0.19 migration
-  command("ssh root@#{devenv} '[ -f /etc/yum.repos.d/li.repo ] && mv /etc/yum.repos.d/li.repo /etc/yum.repos.d/devenv.repo 2>&1'")
-
   command("ssh root@#{devenv} sed -i -e \"s/stage/candidate/g\" /etc/yum.repos.d/devenv.repo 2>&1")
   command("ssh root@#{devenv} \"yum -y update --enablerepo devenv-local 2>&1 > /root/update.#{new_version}.log\"")
 
-  #reboot_devenv(devenv)
+  command("scp -i !/.ssh/libra.pem misc/maintenance/bin/{quarantine-all,migrate-mongo-#{new_version}} root@devenv:/root/")
+  puts "Running quarantine-all and migrate-mongo-#{new_version}"
+  command("ssh root@#{devenv} '/root/quarantine-all; [ -f /root/migrate-mongo-#{new_version} ] && /root/migrate-mongo-#{new_version}'")
 end
 
 def reboot_devenv(devenv) 
@@ -380,7 +380,7 @@ USAGE
 end
 
 def app_descriptions
-  [ { type: 'php-5.3', 
+  [ { type: 'jbossas-7', 
       embedded: %w(postgresql-8.4) },
     { type: 'php-5.3', 
       embedded: %w(postgresql-8.4),

@@ -57,6 +57,7 @@ module OpenShiftMigration
       Util.add_cart_env_var(user, 'zend', 'OPENSHIFT_ZEND_CONSOLE_PORT', '16081')
       Util.add_cart_env_var(user, 'zend', 'OPENSHIFT_ZEND_ZENDSERVER_PORT', '16083')
       Util.add_cart_env_var(user, 'zend', 'OPENSHIFT_ZEND_UID', user.uid)
+      Util.add_cart_env_var(user, 'zend', 'OPENSHIFT_ZEND_PATH_ELEMENT', '/usr/local/zend/bin')
 
       Util.add_cart_env_var(user, 'zend', 'ORACLE_BASE', File.join(zend_dir, 'oracle'))
       Util.add_cart_env_var(user, 'zend', 'ORACLE_HOME', File.join(zend_dir, 'oracle'))

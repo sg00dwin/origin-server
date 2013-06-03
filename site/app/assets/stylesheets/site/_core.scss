@@ -742,6 +742,7 @@ h1.ribbon {
 // Column navigation
 .column-nav { 
   background-color: $navColumnBackgroundColor;
+  background-image: $noiseImage;
   color: #7a7b7c;
 
   label {
@@ -905,9 +906,6 @@ h1.ribbon {
 }
 
 @media (max-width: 768px) {
-  .column-nav .nav-list > li > a {
-    margin-left: 0;
-  }
   .column-floating {
     margin: 0;
     margin-left: 0;

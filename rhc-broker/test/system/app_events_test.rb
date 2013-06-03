@@ -203,7 +203,7 @@ class AppEventsTest < ActionDispatch::IntegrationTest
     assert_equal(body["messages"][0]["exit_code"], 105)
 
     # add-alias application
-    request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "add-alias", :alias => "alias#{@random}"}, @headers)
+    request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "add-alias", :alias => "alias.#{@random}"}, @headers)
     assert_response :ok
 
     # query application after adding alias
@@ -213,14 +213,14 @@ class AppEventsTest < ActionDispatch::IntegrationTest
     assert_equal(body["data"]["name"], "app1")
     assert_equal(body["data"]["framework"], "php-5.3")
     assert_equal(body["data"]["aliases"].length, 1)
-    assert_equal(body["data"]["aliases"][0], "alias#{@random}")
+    assert_equal(body["data"]["aliases"][0], "alias.#{@random}")
 
     # add-alias application - specify same alias again
-    request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "add-alias", :alias => "alias#{@random}"}, @headers)
+    request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "add-alias", :alias => "alias.#{@random}"}, @headers)
     assert_response :unprocessable_entity
 
     # remove-alias application
-    request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "remove-alias", :alias => "alias#{@random}"}, @headers)
+    request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "remove-alias", :alias => "alias.#{@random}"}, @headers)
     assert_response :ok
 
     # query application after removing alias

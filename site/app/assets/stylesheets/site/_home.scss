@@ -24,7 +24,7 @@ body.home2 {
       margin: 0 0 220px;
       padding: 40px 40px 12px;
       position:relative;
-      a { color: #fff; }
+      //a { color: #fff; }
       > h1 { 
         color: #fff;
         font-size: 28px;
@@ -44,7 +44,7 @@ body.home2 {
         margin-bottom: 15px;
         position: relative;
         > img {
-          border: 6px solid white;
+          border: 6px solid rgba(0, 0, 0, 0.2);
           float: left;
           height: 58px;
           width: 58px;
@@ -313,6 +313,9 @@ body.home2 {
       color: #ddd;
       font-weight: 300; 
     }
+  }
+  footer > section {
+    margin-bottom: 0;
   }
   .redhat img { 
     float: left;

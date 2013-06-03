@@ -98,7 +98,7 @@ function _redhat_sso_page_register() {
 function _redhat_sso_page_user() {
   global $user;
   if ($user->uid) {
-    drupal_goto('users/' . $user->name);
+    drupal_goto('user/' . $user->uid);
   }
   else if ($_GET['q'] == 'user/login') {
     drupal_goto('user');

@@ -95,7 +95,7 @@ module Account
       session[:captcha_type]   = @captcha_type
 
       # Log the successful user creation
-      user_action :create_user, true, :email => @user.email_address, :confirmation_code => @user.token, :promo_code => @user.promo_code.presence
+      user_action :create_user, true, :email => @user.email_address, :confirmation_code => @user.token, :promo_code => @user.promo_code.presence, :source => params[:source].presence
 
       redirect_to complete_account_path(:promo_code => @user.promo_code.presence)
     end
