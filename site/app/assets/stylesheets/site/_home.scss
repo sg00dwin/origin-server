@@ -16,7 +16,7 @@ body.home2 {
   #buzz {
     background-color: transparent;
     background-image: none;
-    min-height: 0;
+    min-height: 0; 
     .column-buzz {
       background: #111;
       background: rgba(0, 0, 0, 0.2);
@@ -284,30 +284,38 @@ body.home2 {
       padding: 0;
     }
   }
+  .technologies {
+    margin: 0;
+    padding: 0;
+    color: #ddd;
+    li {
+      display: inline-block;
+      list-style-type: none;
+      margin-right: 36px;
+      padding: 0 0 15px;
+    }
+  }
   .logos {
     overflow: hidden;
     clear: both;
     padding: 0;
-    margin: 0 0 4px;
-    + *  {
-      clear: both;
-    }
-    img {
-      width: 30px;
-    }
+    margin: 0;
     li {
       display: inline-block;
       list-style-type: none;
-      padding: 0 10px 10px 0;
+      width: 16%;
+      padding: 0 0 15px;
     }
   }
   section {
     margin-bottom: 90px;
+    text-align: center;
     a { color: $openshiftRed; }
     h1 {
       color: #fff;
       font-size: 22px;
       text-transform: uppercase;
+      margin-bottom: 6px;
     }
     p { 
       color: #ddd;
@@ -316,10 +324,10 @@ body.home2 {
   }
   footer > section {
     margin-bottom: 0;
+    text-align: inherit;
   }
   .redhat img { 
-    float: left;
-    margin: 0 30px .5em 0;
+    width: 90px;
   }
   .section-nav.lift-counter { padding-bottom: 0; }
 }
@@ -370,6 +378,11 @@ body.home2 {
       margin-bottom: 50px;
       h1 { font-size: 20px; }
     }
+    .technologies {
+      li {
+        margin-right: 20px;
+      }
+    }
   }
 }
 
@@ -377,6 +390,9 @@ body.home2 {
   #buzz .column-buzz {
     margin-left:22px;
     margin-right:22px;
+  }
+  .logos li {
+    width: 25%;
   }
 }
 
@@ -411,6 +427,9 @@ body.home2 {
         &:last-child { margin-bottom: 0; }
       }
     }
+    .logos li {
+      width: 33%;
+    }
   }
 }
 
@@ -426,6 +445,9 @@ body.home2 {
       padding-left: 0;
       padding-right: 0;
       &.active { background-size: 90%; }
+    }
+    .logos li {
+      width: 50%;
     }
   }
 }
