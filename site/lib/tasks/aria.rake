@@ -48,7 +48,7 @@ namespace :aria do
       puts "Cannot be run in production environments"
     else
       dry_run = args[:commit] != 'true'
-      puts "Run generate_test_users[commit=true] to commit changes"
+      puts "Run generate_test_users[true] to commit changes" if dry_run
       generate_test_users(dry_run)
     end
   end
