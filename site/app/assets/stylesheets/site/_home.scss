@@ -215,6 +215,12 @@ body.home2 {
         transition:
           background-color .2s,
           color .2s;
+        &.enterprise {
+          background-image: image-url('enterprise-bg.png');
+        }
+        &.origin {
+          background-image: image-url('origin-bg.png');
+        }
         a, h1 { color: #fff; }
         h2 { color: #ccc; }
         .cta {
