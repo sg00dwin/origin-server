@@ -119,6 +119,11 @@
       width: 120px;
       > ul {
         float: none;
+
+        &:first-child { 
+          border-right: none;
+        }        
+
         + ul {
           margin-top: 10px;
           border-left: none;

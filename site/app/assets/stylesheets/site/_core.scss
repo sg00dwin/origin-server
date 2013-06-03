@@ -809,11 +809,9 @@ h1.ribbon {
   > li.collapsible > a {
     display: inline-block;
     width: 100%;
-    margin-left: 10px;
     &[data-toggle='collapse'] {
       width: 10px;
       text-indent: -9999px;
-      margin-left: -15px;
       outline: 0;
       cursor: pointer;
     }
@@ -830,6 +828,14 @@ h1.ribbon {
       display: block;
     }
     .collapsible > a[data-toggle='collapse'] {
+      position: absolute;
+      padding: 0 !important;
+      margin: 0 !important;
+      top: 0px;
+      left: -15px; // matches the -15px left-margin on the menu item
+      width: 22px; // fills 22px left-padding below
+      height: 27px; // 17px line-height + 5px + 5px padding
+
       &:after {
         border: 4px solid transparent;
         border-color: transparent transparent transparent red;
@@ -839,7 +845,7 @@ h1.ribbon {
         position: absolute;
         width: 0;
         border-left-color: #ddd;
-        left: -3px;
+        left: 10px;
         top: 9px;
       }
       &:hover:after {
@@ -851,7 +857,7 @@ h1.ribbon {
           border-left-color: transparent;
           border-right-width: 4px;
           border-top-color: #ddd;
-          left: -7px;
+          left: 8px;
           top: 11px;
         }
         &:hover:after {
@@ -868,9 +874,6 @@ h1.ribbon {
         font-family: $baseFontFamily;
         font-size: $smallFontSize;
         padding-left: 22px;
-      }
-      &.collapsible > a {
-        padding-left: 5px;
       }
     }
 
