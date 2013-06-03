@@ -55,6 +55,12 @@ function redhat_frontpage_form_menu_configure_alter(&$form, &$form_state) {
   );
 }
 
+function redhat_frontpage_form_search_form_alter(&$form, &$form_state) {
+  # we don't need CSRF checking for the search form, remove it to allow for cached views
+  # with embedded search forms
+  unset($form['#token']);
+}
+
 /**
  * Implementation of hook_context_page_condition().
  */
