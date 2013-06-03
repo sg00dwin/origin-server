@@ -6,7 +6,7 @@
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
 Version: 1.16.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Openshift Red Hat Custom Blog Feature for Drupal6
 Group:   Applications/Publishing
 License: GPLv2+
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Mon Jun 03 2013 Adam Miller 1.16.1-2
+- Bump spec for mass drupal rebuild
+
 * Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.16.1-1
 - bump_minor_versions for sprint 28 (admiller@redhat.com)
 
