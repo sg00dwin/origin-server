@@ -200,10 +200,10 @@ body.home2 {
       &.active {
         background-color: #111;
         background-color: rgba(0,0,0,.45);
-        background-image: image-url('diagonals-top.png');
+        background-image: image-url('online-bg.png');
         background-position: right bottom;
         background-repeat: no-repeat;
-        background-size: 100%;
+        background-size: 100% auto;
         color: white;
         box-shadow: none;
         -moz-transition:
