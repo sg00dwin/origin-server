@@ -1005,12 +1005,12 @@ print $data->node_comment_statistics_last_comment_uid;
       'order' => 'DESC',
       'relationship' => 'none',
     ),
-    'created' => array(
-      'id' => 'created',
-      'table' => 'node',
-      'field' => 'created',
+    'last_comment_timestamp' => array(
       'order' => 'DESC',
       'granularity' => 'second',
+      'id' => 'last_comment_timestamp',
+      'table' => 'node_comment_statistics',
+      'field' => 'last_comment_timestamp',
       'relationship' => 'none',
     ),
   ));
