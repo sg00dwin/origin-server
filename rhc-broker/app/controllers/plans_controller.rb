@@ -5,7 +5,7 @@ class PlansController < BaseController
   def index
     plans = []
     OpenShift::BillingService.instance.get_plans.each do |key, value|
-      plan = RestPlan.new(key, value[:name], value[:plan_no], value[:capabilities], value[:usage_rates])
+      plan = RestPlan.new(key, value[:name], value[:plan_no], value[:capabilities], value[:usage_rates], get_url, nolinks)
       plans.push(plan)
     end
     render_success(:ok, "plans", plans)
@@ -15,7 +15,7 @@ class PlansController < BaseController
     id = params[:id]
     OpenShift::BillingService.instance.get_plans.each do |key, value|
       return render_success(:ok, "plan",
-                            RestPlan.new(key, value[:name], value[:plan_no], value[:capabilities], value[:usage_rates])) if key == id.to_sym
+                            RestPlan.new(key, value[:name], value[:plan_no], value[:capabilities], value[:usage_rates], get_url, nolinks)) if key == id.to_sym
     end
     render_error(:not_found, "Plan not found.", 150)
   end
@@ -23,9 +23,4 @@ class PlansController < BaseController
   def set_log_tag
     @log_tag = get_log_tag_prepend + "PLAN"
   end
-
-  protected
-    def get_url
-      URI::join(request.url, "/broker/billing/rest").to_s
-    end
 end
