@@ -88,6 +88,12 @@ body.home2 {
   #home {
     background: image-url('comets.png') no-repeat 65% 50%;
     position: relative;
+    -moz-transition:
+      background-position 0;
+    -webkit-transition:
+      background-position 0;
+    transition:
+      background-position 0;
     &:before { 
       background: image-url('mts-bottom-transparent.png') repeat-x center bottom;
       content: '';

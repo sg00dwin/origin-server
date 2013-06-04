@@ -59,6 +59,11 @@
       productDescriptions.css('height', 'auto');
       productDescriptions.setAllToMaxHeight();
     });
+    $(window).scroll(function() {
+      var x = $(this).scrollTop();
+      //console.log(65 - parseInt(x / 75) + '% ' + (55 + parseInt(x / 50)) + '%');
+      $('body.home2 #home').css('background-position', (65 - parseInt(x / 50)) + '% ' + (50 + parseInt(x / 50)) + '%');
+    });
   });
 </script>
 <?php include 'page_footer.inc' ?>
