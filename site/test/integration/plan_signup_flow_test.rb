@@ -106,7 +106,13 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     User.find(:one, :as => user).tap{ |a| a.plan_id = :silver; assert a.save }
     aria_user.clear_cache!
     assert_equal "Silver", aria_user.account_details.plan_name
-    assert_equal 1, aria_user.unpaid_invoices.count
+    # Make sure we have an invoice
+    assert invoice = aria_user.invoices.first
+    # If we have sane recurring billing dates that resulted in a prorated charge, make sure the invoice is unpaid
+    # On the last day of the month on an Aria system with virtual time, the system tries to prorate negative time and gets a $0.00 charge
+    if invoice.recurring_bill_from <= invoice.recurring_bill_thru
+      assert_equal 1, aria_user.unpaid_invoices.count
+    end
 
     # Place into dunning
     aria_user.update_account :status_cd => 11
