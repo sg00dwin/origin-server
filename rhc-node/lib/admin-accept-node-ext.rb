@@ -25,7 +25,7 @@ def check_selinux_additional()
     combined_check=false
   end
 
-  if not ( min_mcs_label =~ /^s0\:c\d+\,c\d+$/ and min_mcs_label =~ /^s0\:c\d+\,c\d+$/ )
+  if not ( min_mcs_label =~ /^s0\:c\d+\,c\d+$/ and max_mcs_label =~ /^s0\:c\d+\,c\d+$/ )
     do_fail("Was not able to get MCS labels for the min or max uids")
     combined_check=false
   end
