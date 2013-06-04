@@ -4382,7 +4382,7 @@ return $value;',
     'output_lifespan' => '3600',
   ));
   $handler->override_option('title', 'More from this author');
-  $handler->override_option('header', '');
+  $handler->override_option('header', '<h3>More from this author</h3>');
   $handler->override_option('empty', 'No other posts by this author.');
   $handler->override_option('empty_format', '1');
   $handler->override_option('items_per_page', 4);
