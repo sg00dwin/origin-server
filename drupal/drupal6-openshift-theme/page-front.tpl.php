@@ -48,14 +48,25 @@
     return this.height( Math.max.apply(this, $.map( this , function(e){ return $(e).height() }) ) );
   }
   $(document).ready(function() {
+    var wide = $(window).width() > 767;
     var products = $('li', '#products');
     products.on('mouseover', function() {
+      if (!wide) { return; }
       products.removeClass('active');
       $(this).addClass('active');
     });
+    if (!wide) {
+      products.addClass('active');
+    }
+
     var productDescriptions = $('#products li p');
     productDescriptions.setAllToMaxHeight();
     $(window).resize(function() {
+      if (wide = $(window).width() > 767) {
+        products.removeClass('active');
+      } else {
+        products.addClass('active');
+      }
       productDescriptions.css('height', 'auto');
       productDescriptions.setAllToMaxHeight();
     });
