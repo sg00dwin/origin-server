@@ -24,7 +24,6 @@ body.home2 {
       margin: 0 0 220px;
       padding: 40px 40px 12px;
       position:relative;
-      //a { color: #fff; }
       > h1 { 
         color: #fff;
         font-size: 28px;
@@ -200,10 +199,10 @@ body.home2 {
       &.active {
         background-color: #111;
         background-color: rgba(0,0,0,.45);
-        background-image: image-url('diagonals-top.png');
+        background-image: image-url('online-bg.png');
         background-position: right bottom;
         background-repeat: no-repeat;
-        background-size: 100%;
+        background-size: 100% auto;
         color: white;
         box-shadow: none;
         -moz-transition:
@@ -215,6 +214,17 @@ body.home2 {
         transition:
           background-color .2s,
           color .2s;
+        &.enterprise {
+          background-image: image-url('enterprise-bg.png');
+          background-size: 90% auto;
+        }
+        &.online {
+          background-position: 7px 102%;
+        }
+        &.origin {
+          background-image: image-url('origin-bg.png');
+          background-size: 95% auto;
+        }
         a, h1 { color: #fff; }
         h2 { color: #ccc; }
         .cta {
@@ -316,7 +326,6 @@ body.home2 {
   }
   section {
     margin-bottom: 90px;
-    a { color: $openshiftRed; }
     h1 {
       color: #fff;
       font-size: 22px;
@@ -324,7 +333,16 @@ body.home2 {
     }
     p { 
       color: #ddd;
-      font-weight: 300; 
+      font-weight: 300;
+      a {
+        border-bottom: 1px solid $openshiftRed;
+        color: #ddd;
+        &:hover {
+          border-bottom: none;
+          color: $openshiftRed;
+          text-decoration: none;
+        }
+      }
     }
   }
   footer > section {
@@ -342,6 +360,17 @@ body.home2 {
     .products {
       .cta {
         font-size: 17px;
+      }
+      li.active {
+        &.enterprise {
+          background-size: 80% auto;
+        }
+        &.online {
+          background-position: 12px 105%;
+        }
+        &.origin {
+          background-size: 85% auto;
+        }
       }
     }
     section h1 { font-size: 24px; }
@@ -417,7 +446,7 @@ body.home2 {
       .container { padding: 0; }
     }
     .messaging {
-      margin-bottom: 0;
+      margin-bottom: 30px;
       margin-top: 20px;
       .primary { margin-bottom: 0; }
     }
@@ -425,10 +454,19 @@ body.home2 {
       .cta { letter-spacing: 1px; }
       li {
         margin-bottom: 20px;
-        padding-left: 15%;
-        padding-right: 15%;
+        margin-left: 15% !important;
+        margin-right: 15%;
         &.active { 
-          background-size: 60%;
+          &.enterprise {
+            background-size: 70% auto;
+          }
+          &.online {
+            background-position: 103% 102%;
+            background-size: 60% auto;
+          }
+          &.origin {
+            background-size: 70% auto;
+          }
           .cta:hover span { display: block; }
          }
         &:last-child { margin-bottom: 0; }
@@ -436,6 +474,47 @@ body.home2 {
     }
     .logos li {
       width: 33%;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  body.home2 {
+    .products {
+      .cta { 
+        padding: 5px 0;
+        span { top: 5px; }
+      }
+      h1 {
+        font-size: 21px;
+        padding-top: 65px;
+        &:after { background-size: auto 76%; }
+      }
+      header { margin-bottom: 15px; }
+      li { 
+        font-size: 13.5px;
+        > div { padding: 20px; }
+        &.active.online { background-position: 106% 105%;}
+      }
+      p { 
+        font-size: 13.5px; 
+        margin-bottom: 14px;
+      }
+    }
+  }
+}
+
+
+@media (max-width: 530px) {
+  body.home2 {
+    .products {
+      li {
+        margin-left: 0 !important;
+        margin-right: 0;
+        &.active.origin {
+          background-size: 80% auto;
+        }
+      }
     }
   }
 }
@@ -448,10 +527,10 @@ body.home2 {
         small { font-size: 16px; }
       }
     }
-    .products li {
-      padding-left: 0;
-      padding-right: 0;
-      &.active { background-size: 90%; }
+    .products li.active { 
+      &.enterprise, &.origin {
+        background-size: 60% auto;
+      }
     }
     .logos li {
       width: 50%;
@@ -461,12 +540,26 @@ body.home2 {
 
 @media (max-width: 320px) {
   body.home2 {
+    #buzz .column-buzz > h1 { font-size: 20px; }
     .messaging {
       .primary {
         font-size: 18px; 
         small { font-size: 13px; }
       }
     }
-    .products li > div { padding: 20px; }
+    .products li {
+      &.active {
+        &.enterprise  {
+          background-size: 70% auto;
+        }
+        &.online {
+          background-position: 113% 102%;
+          background-size: 80% auto;
+        }
+        &.origin {
+          background-size: 80% auto;
+        }
+      }
+    }
   }
 }
