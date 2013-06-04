@@ -478,6 +478,33 @@ body.home2 {
   }
 }
 
+@media (max-width: 600px) {
+  body.home2 {
+    .products {
+      .cta { 
+        padding: 5px 0;
+        span { top: 5px; }
+      }
+      h1 {
+        font-size: 21px;
+        padding-top: 65px;
+        &:after { background-size: auto 76%; }
+      }
+      header { margin-bottom: 15px; }
+      li { 
+        font-size: 13.5px;
+        > div { padding: 20px; }
+        &.active.online { background-position: 106% 105%;}
+      }
+      p { 
+        font-size: 13.5px; 
+        margin-bottom: 14px;
+      }
+    }
+  }
+}
+
+
 @media (max-width: 530px) {
   body.home2 {
     .products {
@@ -513,6 +540,7 @@ body.home2 {
 
 @media (max-width: 320px) {
   body.home2 {
+    #buzz .column-buzz > h1 { font-size: 20px; }
     .messaging {
       .primary {
         font-size: 18px; 
@@ -531,7 +559,6 @@ body.home2 {
         &.origin {
           background-size: 80% auto;
         }
-      > div { padding: 20px; }
       }
     }
   }
