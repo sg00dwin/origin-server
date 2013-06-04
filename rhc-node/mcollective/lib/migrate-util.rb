@@ -5,6 +5,11 @@ require 'openshift-origin-common/utils/path_utils'
 
 module OpenShiftMigration
   module Util
+    def self.rm_exists(file)
+      # We want all errors reported, except for missing file...
+      FileUtils.rm(file) if File.exists?(file)
+    end
+
     def self.append_to_file(f, value)
       file = File.open(f, 'a')
       begin

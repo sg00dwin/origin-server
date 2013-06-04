@@ -483,8 +483,7 @@ service openshift-port-proxy restart
           broker_profiler(hostname) if options.profile_broker?
 
           test_queues = [[], [], [], []]
-          secondary_test_queues = [[], [], [], []]
-
+          
           extended_tests = nil
           if options.include_extended
             extended_tests = []
@@ -612,9 +611,6 @@ service openshift-port-proxy restart
               (1..4).each do |i|
                 test_queues[i-1] << ["Runtime Group #{i.to_s}", "cucumber #{CUCUMBER_OPTIONS} -t @runtime#{i.to_s} openshift-test/tests"]
               end
-              (1..3).each do |i|
-                secondary_test_queues[i-1] << ["Runtime Other Group #{i.to_s}", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_other#{i.to_s} openshift-test/tests"]
-              end 
             end
 
             unless options.exclude_site?
@@ -657,15 +653,6 @@ service openshift-port-proxy restart
               end
             end
             
-            ssh(hostname, "mkdir -p /var/lib/openshift/.settings; touch /var/lib/openshift/.settings/v1_cartridge_format; echo 'Rails.cache.clear' | /var/www/openshift/broker/script/rails console development && service rhc-broker restart")
-            begin
-              puts "Running secondary tests..." 
-              run_tests(secondary_test_queues, hostname)
-              puts "Done"
-            ensure
-              ssh(hostname, "mkdir -p /var/lib/openshift/.settings; rm -rf /var/lib/openshift/.settings/v1_cartridge_format; echo 'Rails.cache.clear' | /var/www/openshift/broker/script/rails console development && service rhc-broker restart")
-            end
-
             validate_instance(hostname, 4)
           ensure
             if options.include_web?
