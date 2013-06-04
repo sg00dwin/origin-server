@@ -313,7 +313,6 @@ body.home2 {
   }
   section {
     margin-bottom: 90px;
-    a { color: $openshiftRed; }
     h1 {
       color: #fff;
       font-size: 22px;
@@ -321,7 +320,16 @@ body.home2 {
     }
     p { 
       color: #ddd;
-      font-weight: 300; 
+      font-weight: 300;
+      a {
+        border-bottom: 1px solid $openshiftRed;
+        color: #ddd;
+        &:hover {
+          border-bottom: none;
+          color: $openshiftRed;
+          text-decoration: none;
+        }
+      }
     }
   }
   footer > section {
