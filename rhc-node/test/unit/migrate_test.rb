@@ -1,13 +1,9 @@
 require_relative '../test_helper'
-
-require 'fileutils'
-require 'yaml'
-
 require_relative '../../mcollective/lib/migrate'
 
 module OpenShiftMigration
   class MigrationTest < OpenShift::NodeTestCase
-    attr_reader :progress, :cart_model, :next_manifest, :version, :target, :user
+    attr_reader :progress, :cart_model, :current_manifest, :next_manifest, :version, :target, :user
 
     def setup
       @progress = mock()
@@ -20,13 +16,42 @@ module OpenShiftMigration
       @next_manifest.stubs(:short_name).returns('mock')
       @next_manifest.stubs(:name).returns('mock')
 
+      @current_manifest = mock()
+      @current_manifest.stubs(:short_name).returns('mock')
+      @current_manifest.stubs(:name).returns('mock')
+      @current_manifest.stubs(:directory).returns('current/shouldnotexist')
+
       @version = '1.1'
       @target = mock()
 
       @user = mock()
       @user.stubs(:uid).returns('123')
       @user.stubs(:gid).returns('456')
+      @user.stubs(:homedir).returns('user/shouldnotexist')
     end
+
+    # def test_cartridges_non_redhat
+    #   uuid = '123'
+
+    #   config = mock()
+    #   OpenShift::Config.expects(:new).returns(config)
+
+    #   state = mock()
+    #   OpenShift::Util::ApplicationState.expects(:new).with(uuid).returns(state)
+
+    #   OpenShift::UnixUser.expects(:from_uuid).with(uuid).returns(user)
+
+    #   model = mock()
+    #   OpenShift::V2MigrationCartridgeModel.expects(:new).with(config, user, state).returns(model)
+
+    #   cartridge_repo = mock()
+    #   OpenShift::CartridgeRepository.expects(:instance).returns(cartridge_repo)
+
+    #   OpenShift::Utils::Cgroups.expects(:with_no_cpu_limits).yields
+    #   Dir.expects(:chdir).with(user.homedir).yields
+    #   model.expects(:each_cartridge).yields(current_manifest)
+      
+    # end
 
     def test_compatible_success
       OpenShift::CartridgeRepository.expects(:overlay_cartridge).with(next_manifest, target)
