@@ -565,6 +565,7 @@ function user_profile_context_default_contexts() {
     'node' => array(
       'values' => array(
         'quickstart' => 'quickstart',
+        'video' => 'video',
       ),
       'options' => array(
         'node_form' => '1',
