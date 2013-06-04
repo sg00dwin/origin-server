@@ -960,7 +960,7 @@ rm -rf #{working_dirs}
 
         cmds = ["cd openshift-test/rhc-broker; rake test:sanity",
           "cd openshift-test/broker; rake test:sanity",
-          "cd openshift-test/node; rake test"]
+          "cd openshift-test/node; rake unit_test"]
         add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
         add_ssh_cmd_to_threads(hostname, threads, failures, "Cucumber Sanity", "cucumber #{CUCUMBER_OPTIONS} -t @sanity openshift-test/tests/")
 
