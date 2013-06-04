@@ -135,7 +135,7 @@ function user_profile_views_default_views() {
   $handler->override_option('header', '<section>
 <div class="row">
 <div class="span7">
-<p class="larger">An OpenShift Partner has proven their expertise in building and integrating into the OpenShift platform.  These solutions are tested and validated by Red Hat to ensure seamless integration.</p>
+<p class="lead">An OpenShift by Red Hat Partner has proven their expertise in building and integrating into the OpenShift platform.  These solutions are tested and validated by Red Hat to ensure seamless integration.</p>
 </div>
 <div class="span5">
 <div>VIDEO GOES HERE</div>
@@ -145,13 +145,13 @@ function user_profile_views_default_views() {
 <p class="larger">
 Two OpenShift Partner tiers demonstrate the partner\'s integration with OpenShift.  With OpenShift Ready Partner QuickStarts and OpenShift Advanced Partner cartridges.
 </p>
-<a class="action-call"><div>Become a partner</div><div class="highlight-arrow"></div></a>
+<a class="action-call" href="mailto:openshift-partners@redhat.com?subject=Become a Partner"><div>Become a partner</div><div class="highlight-arrow"></div></a>
 </section>
 <h2>Find a Partner</h2>');
   $handler->override_option('header_format', '46');
   $handler->override_option('header_empty', 1);
   $handler->override_option('footer', '<section>
-<a href="/page/become-a-partner" class="action-more">Learn more about the OpenShift Partner Program</a>
+<a href="/partners/become-a-partner" class="action-more">Learn more about the OpenShift Partner Program</a>
 </section>');
   $handler->override_option('footer_format', '46');
   $handler->override_option('footer_empty', 1);
@@ -278,7 +278,7 @@ Two OpenShift Partner tiers demonstrate the partner\'s integration with OpenShif
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('title', 'Partners');
+  $handler->override_option('title', 'Find a Partner');
   $handler->override_option('items_per_page', 50);
   $handler->override_option('use_pager', '1');
   $handler->override_option('style_plugin', 'semanticviews_default');
