@@ -13,6 +13,11 @@ body.home2 {
     center -130px,
     center 420px,
     0 0;
+
+  .messaging {
+    margin: 40px 0 45px;
+  }
+
   #buzz {
     background-color: transparent;
     background-image: none;
@@ -24,7 +29,7 @@ body.home2 {
       margin: 0 0 220px;
       padding: 40px 40px 12px;
       position:relative;
-      > h1 { 
+      > h2 { 
         color: #fff;
         font-size: 28px;
         letter-spacing: -1px;
@@ -99,22 +104,7 @@ body.home2 {
       z-index: -1;
     }
   } 
-  .messaging {
-    text-align: center;
-    margin: 60px 0 70px;
-    .primary {
-      color: #fff;
-      font-size: 40px;
-      line-height: 1em;
-      text-transform: uppercase;
-      small {
-        color: #fff;
-        display: block;
-        font-size: 26px;
-        margin: 5px 0 0;
-      }
-    }
-  }
+
   .products {
     .cta {
       background-color: #222;
@@ -144,12 +134,12 @@ body.home2 {
       margin: 0 10px 20px;
       text-align: center;
     }
-    h1, h2 { 
+    h2, h3 { 
       color: #999;
       line-height: 120%;
       margin: 0;
     }
-    h1 {
+    h2 {
       font-size: 26px;
       margin-bottom: 6px;
       padding-top: 85px;
@@ -173,21 +163,21 @@ body.home2 {
       }
       
     }
-    .enterprise h1:after { 
+    .enterprise h2:after { 
       background-image: image-url('enterprise.svg');
       .ie6 &, .ie7 &, .ie8 & {
         background-image: image-url('enterprise-online-origin.png');
         background-position: center -65px;
       }
      }
-    .origin h1:after { 
+    .origin h2:after { 
       background-image: image-url('origin.svg');
       .ie6 &, .ie7 &, .ie8 & {
         background-image: image-url('enterprise-online-origin.png');
         background-position: center -130px;
       }
     }
-    h2 {
+    h3 {
       font-size: 14px;
       font-weight: normal;
     }
@@ -225,8 +215,8 @@ body.home2 {
           background-image: image-url('origin-bg.png');
           background-size: 95% auto;
         }
-        a, h1 { color: #fff; }
-        h2 { color: #ccc; }
+        a, h2 { color: #fff; }
+        h3 { color: #ccc; }
         .cta {
           background-color: $openshiftRed;
           box-shadow: -3px 3px 0 rgba(99,1,8,.9);
@@ -256,7 +246,7 @@ body.home2 {
             display: block;
           }
         }
-        h1:after { 
+        h2:after { 
           opacity: 1;
           filter: alpha(opacity=100);
         }
@@ -326,7 +316,7 @@ body.home2 {
   }
   section {
     margin-bottom: 90px;
-    h1 {
+    h2 {
       color: #fff;
       font-size: 22px;
       text-transform: uppercase;
@@ -373,7 +363,7 @@ body.home2 {
         }
       }
     }
-    section h1 { font-size: 24px; }
+    section h2 { font-size: 24px; }
   }
 }
 
@@ -405,12 +395,12 @@ body.home2 {
         font-size: 15px;
         letter-spacing: inherit;
       }
-      h1 { font-size: 24px; }
+      h2 { font-size: 24px; }
       li.active .cta:hover span { display: none; }
     }
     section { 
       margin-bottom: 50px;
-      h1 { font-size: 20px; }
+      h2 { font-size: 20px; }
     }
     .technologies {
       li {
@@ -437,7 +427,7 @@ body.home2 {
     #buzz {
       .column-buzz {
         padding: 30px $gridGutterWidthTablet 40px;
-        > h1 {
+        > h2 {
           font-size: 26px;
           line-height: 28px;
           letter-spacing: -2px;
@@ -448,7 +438,6 @@ body.home2 {
     .messaging {
       margin-bottom: 30px;
       margin-top: 20px;
-      .primary { margin-bottom: 0; }
     }
     .products {
       .cta { letter-spacing: 1px; }
@@ -485,7 +474,7 @@ body.home2 {
         padding: 5px 0;
         span { top: 5px; }
       }
-      h1 {
+      h2 {
         font-size: 21px;
         padding-top: 65px;
         &:after { background-size: auto 76%; }
@@ -540,7 +529,7 @@ body.home2 {
 
 @media (max-width: 320px) {
   body.home2 {
-    #buzz .column-buzz > h1 { font-size: 20px; }
+    #buzz .column-buzz > h2 { font-size: 20px; }
     .messaging {
       .primary {
         font-size: 18px; 
