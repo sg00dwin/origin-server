@@ -52,4 +52,36 @@ class CommunityFlowsTest < ActionDispatch::IntegrationTest
     menu_link.click
     assert_equal href, URI(page.current_url).path
   end
+
+  test 'Products navigation' do
+    visit community_url
+
+    click_link 'Products'
+
+    assert has_link? 'Online'
+    assert has_link? 'Enterprise'
+    assert has_link? 'Origin'
+    assert has_link? 'Pricing'
+  end
+
+  test 'Get Involved navigation' do
+    visit community_url
+
+    click_link 'Get Involved'
+
+    assert has_link? 'Blog'
+    assert has_link? 'Events'
+    assert has_link? 'Vote on Features'
+    assert has_link? 'Application Gallery'
+  end
+
+  test 'Dev Center navigation' do
+    visit community_url
+
+    click_link 'Dev Center'
+
+    assert has_link? 'QuickStarts'
+    assert has_link? 'Technologies'
+    assert has_link? 'Documentation'
+  end
 end
