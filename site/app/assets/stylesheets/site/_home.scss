@@ -223,7 +223,7 @@ body.home2 {
         }
         &.origin {
           background-image: image-url('origin-bg.png');
-          background-size: 90% auto;
+          background-size: 95% auto;
         }
         a, h1 { color: #fff; }
         h2 { color: #ccc; }
@@ -431,7 +431,7 @@ body.home2 {
           }
           &.online {
             background-position: 103% 102%;
-            background-size: 60%;
+            background-size: 60% auto;
           }
           &.origin {
             background-size: 70% auto;
@@ -450,16 +450,8 @@ body.home2 {
       li {
         margin-left: 0 !important;
         margin-right: 0;
-        &.active {
-          &.enterprise {
-            background-size: 70% auto;
-          }
-          &.online {
-            background-position: 103% 102%;
-          }
-          &.origin {
-            background-size: 80% auto;
-          }
+        &.active.origin {
+          background-size: 80% auto;
         }
       }
     }
@@ -474,10 +466,10 @@ body.home2 {
         small { font-size: 16px; }
       }
     }
-    .products li {
-      padding-left: 0;
-      padding-right: 0;
-      &.active { background-size: 90%; }
+    .products li.active { 
+      &.enterprise, &.origin {
+        background-size: 60% auto;
+      }
     }
   }
 }
@@ -490,6 +482,20 @@ body.home2 {
         small { font-size: 13px; }
       }
     }
-    .products li > div { padding: 20px; }
+    .products li {
+      &.active {
+        &.enterprise  {
+          background-size: 70% auto;
+        }
+        &.online {
+          background-position: 113% 102%;
+          background-size: 80% auto;
+        }
+        &.origin {
+          background-size: 80% auto;
+        }
+      > div { padding: 20px; }
+      }
+    }
   }
 }
