@@ -307,6 +307,9 @@ body.home2 {
         font-weight: 300;
         font-size: 18px;
       }
+      a {
+        color: #ddd;
+      }
     }
   }
   .logos {
@@ -314,6 +317,7 @@ body.home2 {
     clear: both;
     padding: 0;
     margin: 0;
+    margin-bottom: 5px;
     li {
       display: inline-block;
       list-style-type: none;
