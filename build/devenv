@@ -435,36 +435,32 @@ service openshift-port-proxy restart
         end
         puts "Done"
       end
-      
-      def run_tests(test_queues, hostname)
-        threads = []
-        failures = []
 
-        test_queues.each do |test_queue|
-          titles = []
-          cmds = []
-          retry_individually = []
-          timeouts = []
-          test_queue.each do |test|
-            titles << test[0]
-            cmds << test[1]
-            opts = test[2] || {}
-            retry_individually << opts[:retry_individually] ? true : false
-            timeouts << opts[:timeout] ? opts[:timeout] : @@SSH_TIMEOUT
+      def build_cucumber_command(title="", tags=[], env = {}, old_rerun_file=nil, test_dir="/data/openshift-test/tests", feature_file="*.feature")
+        rerun_file = "/tmp/rerun_#{SecureRandom.hex}.txt"
+        opts = []
+        opts << "--strict"
+        opts << "-f progress"
+        opts << "-f rerun --out #{rerun_file}"
+        tags += ["~@fedora-18-only", "~@fedora-19-only", "~@not-rhel"]
+        opts += tags.map{ |t| "-t #{t}"}
+        opts << "-r #{test_dir}"
+        if old_rerun_file.nil?
+          opts << "#{test_dir}/#{feature_file}"
+        else
+          opts << "@#{old_rerun_file}"
+        end
+        {:command => wrap_test_command("cucumber #{opts.join(' ')}", env), :options => {:cucumber_rerun_file => rerun_file, :timeout => @@SSH_TIMEOUT, :test_dir => test_dir, :env => env}, :title => title}
+      end
+
+      def wrap_test_command(command, env={})
+        env_str = ""
+        unless env.nil?
+          env.each do |k,v|
+            env_str += "export #{k}=#{v}; "
           end
-          add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, retry_individually, timeouts)
         end
-
-        threads.each do |t|
-          t[0].join
-        end
-        
-        failures.uniq!
-        
-        if failures.length > 0
-          idle_all_gears(hostname)
-          retry_test_failures(hostname, failures, 2)
-        end
+        "#{env_str} #{command}"
       end
 
       def test_impl(tag, hostname, instance, conn, options, image_id=nil)
@@ -496,29 +492,29 @@ service openshift-port-proxy restart
             extended_tests.each do |extended_test|
               case extended_test
               when 'broker'
-                test_queues[0] << ["REST API Group 1", "cucumber #{CUCUMBER_OPTIONS} -t @broker_api1 openshift-test/tests", {:retry_individually => true}]
-                test_queues[1] << ["REST API Group 2", "cucumber #{CUCUMBER_OPTIONS} -t @broker_api2 openshift-test/tests", {:retry_individually => true}]
-                test_queues[2] << ["REST API Group 3", "cucumber #{CUCUMBER_OPTIONS} -t @broker_api3 openshift-test/tests", {:retry_individually => true}]
-                test_queues[3] << ["REST API Group 4", "cucumber #{CUCUMBER_OPTIONS} -t @broker_api4 openshift-test/tests", {:retry_individually => true}]
-                test_queues[0] << ["Broker Domain System", "cd openshift-test/rhc-broker; rake test:domain_system_test", {:retry_individually => true}]
-                test_queues[2] << ["OpenShift Broker Functionals Ext", "cd openshift-test/broker; rake test:functionals_ext", {:retry_individually => true}]
-                test_queues[3] << ["Broker Usage", "cd openshift-test/rhc-broker; rake test:usage"]
-                test_queues[0] << ["Broker Application System", "cd openshift-test/rhc-broker; rake test:application_system_test", {:retry_individually => true}]
-                test_queues[2] << ["Broker Cartridge System", "cd openshift-test/rhc-broker; rake test:cartridge_system_test", {:retry_individually => true}]
+                test_queues[0] << build_cucumber_command("REST API Group 1", ['@broker_api1'],nil,nil, 'openshift-test/tests')
+                test_queues[1] << build_cucumber_command("REST API Group 2", ['@broker_api2'],nil,nil, 'openshift-test/tests')
+                test_queues[2] << build_cucumber_command("REST API Group 3", ['@broker_api3'],nil,nil, 'openshift-test/tests')
+                test_queues[3] << build_cucumber_command("REST API Group 4", ['@broker_api4'],nil,nil, 'openshift-test/tests')
+                test_queues[0] << {:title => "Broker Domain System",              :command => "cd openshift-test/rhc-broker; rake test:domain_system_test", :options => {:retry_individually => true}}
+                test_queues[2] << {:title => "OpenShift Broker Functionals Ext" , :command => "cd openshift-test/broker; rake test:functionals_ext",        :options => {:retry_individually => true}}
+                test_queues[3] << {:title => "Broker Usage",                      :command => "cd openshift-test/rhc-broker; rake test:usage", :options => {}}
+                test_queues[0] << {:title => "Broker Application System",         :command => "cd openshift-test/rhc-broker; rake test:application_system_test", :options => {:retry_individually => true}}
+                test_queues[2] << {:title => "Broker Cartridge System",           :command => "cd openshift-test/rhc-broker; rake test:cartridge_system_test",   :options => {:retry_individually => true}}
               when 'runtime'
-                test_queues[0] << ["Extended Runtime Group 1", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended1 openshift-test/tests"]
-                test_queues[1] << ["Extended Runtime Group 2", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended2 openshift-test/tests"]
-                test_queues[2] << ["Extended Runtime Group 3", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended3 openshift-test/tests"]
+                test_queues[0] << build_cucumber_command("Extended Runtime Group 1", ['@runtime_extended1'], nil, nil, 'openshift-test/tests')
+                test_queues[1] << build_cucumber_command("Extended Runtime Group 2", ['@runtime_extended2'], nil, nil, 'openshift-test/tests')
+                test_queues[2] << build_cucumber_command("Extended Runtime Group 3", ['@runtime_extended3'], nil, nil, 'openshift-test/tests')
               when 'runtime_other'
                 ssh(hostname, "mkdir -p /var/lib/openshift/.settings; touch /var/lib/openshift/.settings/v1_cartridge_format; echo 'Rails.cache.clear' | /var/www/openshift/broker/script/rails console development && service rhc-broker restart")
-                test_queues[0] << ["Extended Runtime Other Group 1", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended_other1 openshift-test/tests"]
-                test_queues[1] << ["Extended Runtime Other Group 2", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended_other2 openshift-test/tests"]
-                test_queues[2] << ["Extended Runtime Other Group 3", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended_other3 openshift-test/tests"]
+                test_queues[0] << build_cucumber_command("Extended Runtime Other Group 1", ['@runtime_extended_other1'], nil, nil, 'openshift-test/tests')
+                test_queues[1] << build_cucumber_command("Extended Runtime Other Group 2", ['@runtime_extended_other2'], nil, nil, 'openshift-test/tests')
+                test_queues[2] << build_cucumber_command("Extended Runtime Other Group 3", ['@runtime_extended_other3'], nil, nil, 'openshift-test/tests')
               when 'site'
-                test_queues[0] << ["Site Extended", "cd openshift-test/site; rake test:extended"]
+                test_queues[0] << {:title => "Site Extended", :command => "cd openshift-test/site; rake test:extended", :options => {}}
               when 'rhc'
-                test_queues[0] << ["RHC Extended", "cucumber #{CUCUMBER_OPTIONS} -t @rhc_extended openshift-test/tests", {:retry_individually => true}]
-                test_queues[1] << ["RHC Integration", "cd openshift-test/rhc; bundle install --path=gems; RHC_SERVER=localhost QUIET=1 bundle exec \"cucumber #{CUCUMBER_OPTIONS} features\"", {:retry_individually => true}]
+                test_queues[0] << build_cucumber_command("RHC Extended", ['@rhc_extended'], nil, nil, 'openshift-test/tests')
+                test_queues[1] << build_cucumber_command("RHC Integration", [], {'RHC_SERVER'=>'localhost', 'QUIET'=>'1'},nil, 'openshift-test/rhc')
               else
                 puts "Not supported for extended: #{extended_test}"
                 exit 1
@@ -527,7 +523,7 @@ service openshift-port-proxy restart
           elsif options.include_cucumber
             timeout = @@SSH_TIMEOUT
             timeout = @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber] if not @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber].nil?
-            test_queues[0] << [options.include_cucumber, "cucumber #{CUCUMBER_OPTIONS} -t @#{options.include_cucumber} openshift-test/tests", {:timeout => timeout}]
+            test_queues[0] << build_cucumber_command(options.include_cucumber, ["@#{options.include_cucumber}"], nil, nil, "openshift-test/tests")
           elsif options.include_web?
 
             # check sauce quotas first
@@ -585,7 +581,7 @@ service openshift-port-proxy restart
               Dir.foreach('selenium/testcases') do |filename|
                 if filename =~ /^tc_(.*)\.rb$/
                   test = $1
-                  test_queues[pos] << ["Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version}) (#{test})", "cd openshift-test/selenium; #{env_string} ruby ts_web #{test}"]
+                  test_queues[pos] << {:title =>"Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version}) (#{test})", :command => "cd openshift-test/selenium; #{env_string} ruby ts_web #{test}", :options => {}}
                   if pos == test_queues.length - 1
                     pos = 0
                   else
@@ -597,62 +593,62 @@ service openshift-port-proxy restart
           else
 
             unless options.exclude_broker?
-              test_queues[0] << ["Broker Unit", "cd openshift-test/rhc-broker; rake test:units"]
-              test_queues[2] << ["Broker Functional", "cd openshift-test/rhc-broker; rake test:functionals"]
-              test_queues[0] << ["Broker Integration", "cd openshift-test/rhc-broker; rake test:integration"]
-              test_queues[3] << ["OpenShift Broker Units", "cd openshift-test/broker; rake test:units"]
-              test_queues[0] << ["OpenShift Broker Integration", "cd openshift-test/broker; rake test:integration"]
-              test_queues[2] << ["OpenShift Broker Functional", "cd openshift-test/broker; rake test:functionals"]
-              test_queues[3] << ["Broker Cucumber", "cucumber --strict -f html --out /tmp/rhc/broker_cucumber.html -f progress -t @broker -t ~@fedora-only openshift-test/tests"]
+              test_queues[0] << {:title => "Broker Unit",                  :command => "cd openshift-test/rhc-broker; rake test:units", :options => {}}
+              test_queues[2] << {:title => "Broker Functional",            :command => "cd openshift-test/rhc-broker; rake test:functionals", :options => {}}
+              test_queues[0] << {:title => "Broker Integration",           :command => "cd openshift-test/rhc-broker; rake test:integration", :options => {}}
+              test_queues[3] << {:title => "OpenShift Broker Units",       :command => "cd openshift-test/broker; rake test:units", :options => {}}
+              test_queues[0] << {:title => "OpenShift Broker Integration", :command => "cd openshift-test/broker; rake test:integration", :options => {}}
+              test_queues[2] << {:title => "OpenShift Broker Functional",  :command => "cd openshift-test/broker; rake test:functionals", :options => {}}
+              test_queues[3] << build_cucumber_command("Broker Cucumber", ["@broker"], nil, nil, 'openshift-test/tests')
             end
 
             unless options.exclude_runtime?
-              test_queues[0] << ["Runtime Functional", "cd openshift-test/node; rake test"]
+              test_queues[0] << {:title => "Runtime Functional", :command => "cd openshift-test/node; rake test", :options => {}}
               (1..4).each do |i|
-                test_queues[i-1] << ["Runtime Group #{i.to_s}", "cucumber #{CUCUMBER_OPTIONS} -t @runtime#{i.to_s} openshift-test/tests"]
+                test_queues[i-1] << build_cucumber_command("Runtime Group #{i.to_s}", ["@runtime#{i.to_s}"], nil, nil, 'openshift-test/tests')
               end
             end
 
             unless options.exclude_site?
-              test_queues[0].unshift ["Site Check Applications",         'cd openshift-test/site; bundle exec rake test:check:applications']
-              test_queues[1].unshift ["Site Check Base",            'cd openshift-test/site; bundle exec rake test:check:base']
-              test_queues[1] << ["Site Check Cartridges",           'cd openshift-test/site; bundle exec rake test:check:cartridges']
-              test_queues[2] << ["Site Check Miscellaneous 1",      'cd openshift-test/site; bundle exec rake test:check:misc1']
-              test_queues[3] << ["Site Check REST API Integration", 'cd openshift-test/site; bundle exec rake test:check:restapi_integration']
-              test_queues[0] << ["Site Check Javascripts", 'cd openshift-test/site; bundle exec rake test:check:js']
-              test_queues[1] << ["Site Check Web Integration", 'cd openshift-test/site; COMMUNITY_URL=https://localhost:8118/ TEST_SCREENSHOT_DIR=/tmp/rhc/screenshots/ CAPYBARA_HOST=https://localhost RAILS_RELATIVE_URL_ROOT=/app CAPYBARA_DEBUG=/tmp/rhc/capybara_web_integration.log bundle exec rake test:check:web_integration']
+              test_queues[0].unshift({:title => "Site Check Applications", :command => 'cd openshift-test/site; bundle exec rake test:check:applications', :options => {}})
+              test_queues[1].unshift({:title => "Site Check Base",         :command => 'cd openshift-test/site; bundle exec rake test:check:base', :options => {}})
+              test_queues[1] << {:title => "Site Check Cartridges",           :command => 'cd openshift-test/site; bundle exec rake test:check:cartridges', :options => {}}
+              test_queues[2] << {:title => "Site Check Miscellaneous 1",      :command => 'cd openshift-test/site; bundle exec rake test:check:misc1', :options => {}}
+              test_queues[3] << {:title => "Site Check REST API Integration", :command => 'cd openshift-test/site; bundle exec rake test:check:restapi_integration', :options => {}}
+              test_queues[0] << {:title => "Site Check Javascripts",          :command => 'cd openshift-test/site; bundle exec rake test:check:js', :options => {}}
+              test_queues[1] << {:title => "Site Check Web Integration",      :command => 'cd openshift-test/site; COMMUNITY_URL=https://localhost:8118/ TEST_SCREENSHOT_DIR=/tmp/rhc/screenshots/ CAPYBARA_HOST=https://localhost RAILS_RELATIVE_URL_ROOT=/app CAPYBARA_DEBUG=/tmp/rhc/capybara_web_integration.log bundle exec rake test:check:web_integration', :options => {}}
             end
 
             unless options.exclude_rhc?
-              test_queues[0].unshift(["RHC Spec", 'cd openshift-test/rhc; bundle install --path=/tmp/rhc_bundle && bundle exec rake spec'])
+              test_queues[0].unshift({:title => "RHC Spec", :command => 'cd openshift-test/rhc; bundle install --path=/tmp/rhc_bundle && bundle exec rake spec', :options => {}})
             end
           end
 
-          
+          require 'pry'
+          binding.pry
 
           begin
-            run_tests(test_queues, hostname)
+            run_tests_with_retry(test_queues, hostname)
 
-            # These are special tests that cannot be written to work concurrently
+            #These are special tests that cannot be written to work concurrently
+            singleton_queue = []
             if options.include_extended
               extended_tests.each do |extended_test|
                 case extended_test
-                when 'broker'
-                when 'runtime'
-                  idle_all_gears(hostname)
-                  singleton_queue = ['Singletons', "cucumber #{CUCUMBER_OPTIONS} -t @singleton openshift-test/tests"]
-                  output, exit_code = run_ssh(hostname, singleton_queue[0], singleton_queue[1])
-                  retry_test_failures(hostname, [singleton_queue], 2) if 0 != exit_code
-                when 'site'
-                when 'rhc'
-                when 'runtime_other'
-                else
-                  puts "Not supported for extended: #{extended_test}"
-                  exit 1
+                  when 'broker'
+                  when 'runtime'
+                    idle_all_gears(hostname)
+                    singleton_queue << build_cucumber_command("Runtime singletons", ["@singleton"], nil, nil, 'openshift-test/tests')
+                  when 'site'
+                  when 'rhc'
+                  when 'runtime_other'
+                  else
+                    puts "Not supported for extended: #{extended_test}"
+                    exit 1
                 end
               end
             end
-            
+            run_tests_with_retry([singleton_queue], hostname)
             validate_instance(hostname, 4)
           ensure
             if options.include_web?
@@ -701,7 +697,7 @@ service openshift-port-proxy restart
           begin
             if options.install_required_packages?
               puts "Updating all packages on the system..."
-              output = ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc*' 2>&1", 1800)
+              output = ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc*,node*' 2>&1", 1800)
               puts "Done"
               print_highlighted_output('Update Output', output)
               
@@ -733,7 +729,7 @@ service openshift-port-proxy restart
             ssh(hostname, "/bin/bash ~/setup-devenv-repos.sh #{options.yum_repo} #{BASE_RELEASE_BRANCH};", 1800)
             
             puts "Updating all packages on the system..."
-            output = ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc*' 2>&1", 1800)
+            output = ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc*,node*' 2>&1", 1800)
             puts "Done"
             print_highlighted_output('Update Output', output)
 
