@@ -201,10 +201,50 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     assert usage = Aria.get_unbilled_usage_summary(u.acct_no)
     assert usage.ptd_balance_amount > 0
     assert_equal 'usd', usage.currency_cd
-
     assert u.unbilled_usage_line_items.present?
-    assert_equal usage.ptd_balance_amount, u.unbilled_usage_balance
-    assert_equal u.unbilled_usage_balance.round(2), u.unbilled_usage_line_items.map(&:total_cost).sum.round(2)
+
+    assert p = Aria::MasterPlan.find('silver')
+    assert m = Aria.get_client_plan_services(p.plan_no).find{ |s| s.client_coa_code == 'usage_gear_medium' }
+    assert unit_record = create_usage_record(u, m.usage_type, 1, {:comments => "Test medium gear hours usage"})
+    assert usage_after = Aria.get_unbilled_usage_summary(u.acct_no)
+
+    charge = unit_record.specific_record_charge_amount.round(2)
+    diff = (usage_after.ptd_balance_amount - usage.ptd_balance_amount).round(2)
+    assert_equal charge, diff
+  end
+
+  test 'should auto rate usage' do
+    u = with_account_holder
+    assert p = Aria::MasterPlan.find('silver')
+    assert m = Aria.get_client_plan_services(p.plan_no).find{ |s| s.client_coa_code == 'usage_gear_medium' }
+    assert unit_record = create_usage_record(u, m.usage_type, 1, {:comments => "Test medium gear hours usage"})
+    
+    unit_rate = record.pre_rated_rate
+    if unit_rate.blank? or unit_rate == 0
+      puts "\nAuto-rating is not enabled!"
+      skip
+    end
+
+    hasErrors = false
+    records = []
+    records << unit_record
+    records << create_usage_record(u, m.usage_type, 10)
+    records << create_usage_record(u, m.usage_type, 6)
+    records << create_usage_record(u, m.usage_type, 6.03)
+    records << create_usage_record(u, m.usage_type, 5.97)
+    records << create_usage_record(u, m.usage_type, 0.26)
+    records << create_usage_record(u, m.usage_type, 0.06)
+    records.each do |r|
+      if r.pre_rated_rate.blank?
+        hasErrors = true
+        puts "\nNo pre_rated_rate for #{r.inspect}" and next unless record_rate
+      elsif unit_rate.round(2) != r.pre_rated_rate.round(2)
+        hasErrors = true
+        puts "\nExpected <#{unit_rate.round(2)}> but got <#{r.pre_rated_rate.round(2)}> for #{r.units} units: #{r.inspect}"
+      end
+    end
+
+    skip if hasErrors
   end
 
   #
