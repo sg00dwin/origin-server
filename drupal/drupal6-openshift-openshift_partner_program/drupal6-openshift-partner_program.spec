@@ -6,7 +6,7 @@
 
 Name: drupal%{drupal_release}-openshift-%{modname}
 Version: 0.0.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: OpenShift Partner Program Drupal Content
 Group: Applications/Publishing
 License: GPLv2+
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Jun 05 2013 Adam Miller 0.0.3-2
+- Bump spec for mass drupal rebuild
+
 * Tue Jun 04 2013 Adam Miller <admiller@redhat.com> 0.0.3-1
 - new package built with tito
 
