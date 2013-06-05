@@ -157,7 +157,7 @@ class AliasTest < ActionDispatch::IntegrationTest
     
     #delete alias
     request_via_redirect(:delete, APP_ALIAS_URL_FORMAT % [@ns, @app, @as], {}, @headers)
-    assert_response :no_content 
+    assert_response :ok 
   
     #create alias with certificate
     request_via_redirect(:post, APP_ALIAS_COLLECTION_URL_FORMAT % [@ns, @app], {:id => @as, :ssl_certificate => @ssl_certificate, :private_key => @private_key, :pass_phrase => @pass_phrase}, @headers)
@@ -196,7 +196,7 @@ class AliasTest < ActionDispatch::IntegrationTest
     
     #delete alias
     request_via_redirect(:delete, APP_ALIAS_URL_FORMAT % [@ns, @app, @as], {}, @headers)
-    assert_response :no_content 
+    assert_response :ok 
     
     #try to update a non-existent alias
     request_via_redirect(:put, APP_ALIAS_URL_FORMAT % [@ns, @app, @as], {:ssl_certificate => @ssl_certificate, :private_key => @private_key, :pass_phrase => @pass_phrase}, @headers)

@@ -180,7 +180,7 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
 
     # delete the second non-scalable application to free up a gear
     request_via_redirect(:delete, APP_URL_FORMAT % [ns, "appnoscale2"], {}, @headers)
-    assert_response :no_content
+    assert_response :ok
 
     # check the user's consumed gears count
     request_via_redirect(:get, USER_URL, {}, @headers)
@@ -241,7 +241,7 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
 
     # delete the embedded mysql cartridge
     request_via_redirect(:delete, APP_CARTRIDGE_URL_FORMAT % [ns, "app1", "mysql-5.1"], {}, @headers)
-    assert_response :no_content
+    assert_response :ok
   end
   
   private 
