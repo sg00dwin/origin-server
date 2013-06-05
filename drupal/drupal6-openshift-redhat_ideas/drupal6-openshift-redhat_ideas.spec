@@ -6,7 +6,7 @@
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
 Version: 1.6.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Openshift Red Hat Ideas Custom Module for Drupal6
 Group:   Applications/Publishing
 License: GPLv2+
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Jun 05 2013 Adam Miller 1.6.1-3
+- Bump spec for mass drupal rebuild
+
 * Mon Jun 03 2013 Adam Miller 1.6.1-2
 - Bump spec for mass drupal rebuild
 
