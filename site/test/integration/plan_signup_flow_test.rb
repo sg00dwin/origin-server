@@ -110,8 +110,8 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     assert invoice = aria_user.invoices.first
     # If we have sane recurring billing dates that resulted in a prorated charge, make sure the invoice is unpaid
     # On the last day of the month on an Aria system with virtual time, the system tries to prorate negative time and gets a $0.00 charge
-    if invoice.recurring_bill_from <= invoice.recurring_bill_thru
-      assert_equal 1, aria_user.unpaid_invoices.count
+    if invoice.debit > 0
+      assert aria_user.account_details.balance.to_f > 0, "Expected non-zero balance, but was #{aria_user.account_details.balance}"
     end
 
     # Place into dunning
@@ -128,6 +128,8 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
 
     aria_user.clear_cache!
     assert_equal [], aria_user.unpaid_invoices
+    assert_equal [], aria_user.invoices.select {|i| i.credit != i.debit }
+    assert_equal 0, aria_user.account_details.balance.to_f
     assert_equal '1', aria_user.account_details.status_cd
     assert aria_user.has_valid_payment_method?
     assert payment_method = aria_user.payment_method
