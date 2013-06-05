@@ -10,9 +10,9 @@
   <div class='portal-upload'><?php print (l(t('UPLOAD: Company Information'), 'partner/portal/company-info')); ?></div>
   <div class='portal-download'>
     <?php if ($partner_level['partner_level'] == 'Ready Partner'): ?>
-      <?php print (l(t('DOWNLOAD: Red Hat OpenShift Partner Logo'), file_directory_path() . '/openshift_partner_logos_ready.zip')); ?>
+      <?php print (l(t('Download: OpenShift by Red Hat Partner Logo'), file_directory_path() . '/openshift_partner_logos_ready.zip')); ?>
     <?php else: ?>
-      <?php print (l(t('DOWNLOAD: Red Hat OpenShift Partner Logo'), file_directory_path() . '/openshift_partner_logos_advanced.zip')); ?>
+      <?php print (l(t('Download: OpenShift by Red Hat Partner Logo'), file_directory_path() . '/openshift_partner_logos_advanced.zip')); ?>
     <?php endif; ?>
   </div>
 </div>

@@ -73,6 +73,7 @@ function _openshift_partner_program_tc_submit($form, &$form_state) {
   if ($params['customer_name'] == ' ') {
     $params['customer_name'] = $user->name;
   }
+  watchdog('openshift_partner_program', '@user has accepted the partner agreement', array('@user' => $user->name), WATCHDOG_NOTICE);
   drupal_mail('openshift_partner_program', 'openshift_partner_program_tc', 'openshift-partners@redhat.com', 0, $params);
   drupal_goto('partner/portal');
 }
@@ -391,7 +392,7 @@ function _openshift_partner_program_portal_company_info_submit($form, &$form_sta
   $expertise_tags = $form_state['values']['expertise_tags'];
   $expertise_tags = implode(',', $expertise_tags);
 
-  $result = openshift_partner_program_partner_info_upsert($uid, $company, $company_description, $logo, $expertise_tags);
+  $result = openshift_partner_program_partner_info_upsert_node($uid, $company, $company_description, $logo, $expertise_tags);
 
   if ($result) {
     drupal_set_message(t('Company info has been saved.'));
@@ -410,49 +411,13 @@ function _openshift_partner_program_portal_company_info_submit($form, &$form_sta
  *   The expertise tags.
  */
 function _openshift_partner_program_get_expertise_tags() {
-  $result['APM'] = t('APM');
-  $result['app_engine'] = t('app_engine');
-  $result['Application Performance'] = t('Application Performance');
-  $result['Application Performance Monitoring'] = t('Application Performance Monitoring');
-  $result['Analytics'] = t('Analytics');
-  $result['Big Data'] = t('Big Data');
-  $result['blog'] = t('blog');
-  $result['CI'] = t('CI');
-  $result['Continuous Integration'] = t('Continuous Integration');
-  $result['cms'] = t('cms');
-  $result['css3'] = t('css3');
-  $result['Datastore'] = t('Datastore');
-  $result['drupal'] = t('drupal');
-  $result['Email'] = t('Email');
-  $result['framework'] = t('framework');
-  $result['google'] = t('google');
-  $result['Hosted Datastore'] = t('Hosted Datastore');
-  $result['html5'] = t('html5');
-  $result['IDE'] = t('IDE');
-  $result['instant_app'] = t('instant_app');
-  $result['java'] = t('java');
-  $result['javascript'] = t('javascript');
-  $result['java_ee'] = t('java_ee');
-  $result['jboss'] = t('jboss');
-  $result['jee'] = t('jee');
-  $result['Load Testing'] = t('Load Testing');
-  $result['Log Management'] = t('Log Management');
-  $result['messaging'] = t('messaging');
-  $result['Middleware'] = t('Middleware');
-  $result['Mobile'] = t('Mobile');
-  $result['Node.js'] = t('Node.js');
-  $result['NoSQL'] = t('NoSQL');
-  $result['not_scalable'] = t('not_scalable');
-  $result['partner'] = t('partner');
-  $result['php'] = t('php');
-  $result['presentations'] = t('presentations');
-  $result['python'] = t('python');
-  $result['rails'] = t('rails');
-  $result['ruby'] = t('ruby');
-  $result['saas'] = t('saas');
-  $result['test'] = t('test');
-  $result['wordpress'] = t('wordpress');
-  return $result;
+  $vocab = reset(taxonomy_get_vocabularies('Partner'));
+  $result = db_query("SELECT name FROM {term_data} where vid = %d order by name ASC", $vocab->vid);
+  $tags = array();
+  while ($row = db_fetch_array($result)) {
+    $tags[$row['name']] = t($row['name']);
+  }
+  return $tags;
 }
 
 /**
@@ -463,8 +428,10 @@ function _openshift_partner_program_get_expertise_tags() {
  */
 function _openshift_partner_program_get_selected_expertise_tags() {
   global $user;
-  $info = openshift_partner_program_partner_info();
-  $tags = $info['expertise_tags'];
-  $result_keys = explode(',', $tags);
-  return $result_keys;
+  $node = node_load(array('uid' => $user->uid, 'type' => 'partner'));
+  $tags = array();
+  foreach ($node->taxonomy as $tag) {
+    $tags[] = $tag->name;
+  }
+  return $tags;
 }
