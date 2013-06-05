@@ -329,7 +329,7 @@ body.home2 {
       color: #ddd;
       font-weight: 300;
       a {
-        border-bottom: 1px solid $openshiftRed;
+        border-bottom: 1px dotted $openshiftRed;
         color: #ddd;
         &:hover {
           border-bottom: none;
@@ -389,6 +389,7 @@ body.home2 {
       margin-top: 30px;
       .primary {
         font-size: 28px;
+        line-height: 36px;
         small {
           font-size: 19px;
         }
@@ -518,7 +519,7 @@ body.home2 {
     }
     .technologies {
       li {
-        margin-right: 5px;
+        margin-right: 25px;
         padding-bottom: 10px;
       }
     }
@@ -549,7 +550,7 @@ body.home2 {
     .messaging {
       .primary {
         font-size: 22px; 
-        small { font-size: 16px; }
+        line-height: 28px;
       }
     }
     .products li.active { 
@@ -569,7 +570,7 @@ body.home2 {
     .messaging {
       .primary {
         font-size: 18px; 
-        small { font-size: 13px; }
+        line-height: 24px;
       }
     }
     .products li {
