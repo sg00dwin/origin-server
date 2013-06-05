@@ -131,6 +131,15 @@ body.home2 {
       text-align: center;
       text-decoration: none;
       text-transform: uppercase;
+      -moz-transition:
+        right .1s ease-in-out,
+        top .1s ease-in-out;
+      -webkit-transition:
+        right .1s,
+        top .1s;
+      transition:
+        right .1s,
+        top .1s;
       span {
         display: none;
         margin: 0 0 0 20%;
@@ -194,30 +203,30 @@ body.home2 {
     li {
       background-color: #222;
       background-color: rgba(0,0,0,0.15);
-      background-position-y: 150%; 
+      background-position: 100% 150%; 
       box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
       color: #999;
+      -moz-transition:
+        background-color .2s,
+        background-position .2s,
+        color 3s ease-in-out;
+      -webkit-transition:
+        background-color .2s,
+        background-position .2s,
+        color .2s;
+      transition:
+        background-color .2s,
+        background-position .2s,
+        color .2s;
       &.active {
         background-color: #111;
         background-color: rgba(0,0,0,.45);
         background-image: image-url('online-bg.png');
-        background-position: right bottom;
+        background-position: 100% 100%;
         background-repeat: no-repeat;
         background-size: 100% auto;
         color: white;
         box-shadow: none;
-        -moz-transition:
-          background-color .2s,
-          background-position-y .2s,
-          color .2s;
-        -webkit-transition:
-          background-color .2s,
-          background-position-y .2s,
-          color .2s;
-        transition:
-          background-color .2s,
-          background-position-y .2s,
-          color .2s;
         &.enterprise {
           background-image: image-url('enterprise-bg.png');
           background-size: 90% auto;
@@ -237,15 +246,6 @@ body.home2 {
           position: relative;
           right: -3px;
           top: -3px;
-          -moz-transition:
-            right .1s,
-            top .1s;
-          -webkit-transition:
-            right .1s,
-            top .1s;
-          transition:
-            right .1s,
-            top .1s;
           &:active {
             box-shadow: none;
             outline: none;
