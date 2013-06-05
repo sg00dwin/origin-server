@@ -10,7 +10,6 @@ require 'yaml'
 require 'dev_tools_constants'
 require File.join('lib', '..', '..', '..', "#{DEV_TOOLS_REPO}", 'build', 'lib', 'openshift')
 require File.join('lib', '..', '..', '..', "#{DEV_TOOLS_REPO}", 'build', 'builder')
-require 'lib/openshift/sauce_labs'
 require 'lib/openshift/brew'
 
 include FileUtils
@@ -18,7 +17,6 @@ include FileUtils
 module Online
   class BuilderPlugin < OpenShift::Builder
     include OpenShift::BuilderHelper
-    include OpenShift::SauceLabs
 
     desc "write_sync_history", "Write out the sync history so updates won't happen for already installed changes"
     def write_sync_history()
@@ -183,16 +181,6 @@ module Online
     method_option :include_unmodified, :type => :boolean, :desc => "Include packages which have no modifications since their last tag"
     def print_ignore_packages
       puts get_ignore_packages(options.include_unmodified)
-    end
-
-    desc "sauce_usage", "Prints out usage information for sauce tests"
-    method_option :sauce_username, :required => false, :desc => "Sauce Labs username (default '#{SAUCE_USER}')"
-    method_option :sauce_access_key, :required => false, :desc => "Sauce Labs access key (default '#{SAUCE_SECRET}')"
-
-    def sauce_usage
-      usage = super options
-      puts "Sauce Labs Usage: #{usage[:percentage]}% (#{usage[:used]} minutes of #{usage[:quota]})"
-      return usage
     end
 
     desc "setup_multi_node_broker", "Sets up verifier as a multi-node broker"
@@ -525,71 +513,7 @@ service openshift-port-proxy restart
             timeout = @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber] if not @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber].nil?
             test_queues[0] << build_cucumber_command(options.include_cucumber, ["@#{options.include_cucumber}"], nil, nil, "openshift-test/tests")
           elsif options.include_web?
-
-            # check sauce quotas first
-            usage = sauce_usage
-
-            if usage[:percentage] > 95 && !options[:sauce_overage]
-              puts "Refusing to run Sauce Labs tests due to quota overage considerations.  Run with --sauce_overage to override."
-              return
-            end
-
-            # TODO: respect sauce username and access key settings
-            cmd = "service sauce-connect start"
-            run_ssh(hostname, "Start sauce connect tunnel", cmd, timeout)
-
-            if options.sauce_os && options.sauce_browser && options.sauce_browser_version
-              browsers = [[options.sauce_os, options.sauce_browser, options.sauce_browser_version]]
-            else
-              browsers = [['Windows 2003', 'firefox', ''],
-                ['Windows 2008', 'chrome', ''],
-                ['Windows 2008', 'iexplore', '9'],
-                ['Windows 2003', 'safari', '']]
-              # not working very well
-              browsers.delete_at(2)
-              browsers.delete_at(2)
-            end
-
-            browsers.each do |browser|
-              sauce_os = browser[0]
-              sauce_browser = browser[1]
-              sauce_browser_version = browser[2]
-              sauce_opts = {
-                "SAUCE_USERNAME" => (options.sauce_username || 'openshift_ci'),
-                "SAUCE_ACCESS_KEY" => (options.sauce_access_key || '3d67e770-ce7d-482a-8c7f-07aec039d564'),
-                "SAUCE_OS" => sauce_os,
-                "SAUCE_BROWSER" => sauce_browser,
-                "SAUCE_BROWSER_VERSION" => sauce_browser_version,
-                "SAUCE_SELENIUM_VERSION" => '2.7.0',
-                "SAUCE_BROWSER_URL" => "https://#{hostname}/app",
-                "JENKINS_BUILD" => 'unofficial'
-              }
-              # If we passed a jenkins build like name, use that for the build number
-              if tag.start_with?('libra_') || tag.start_with?('devenv_') || tag.start_with?('devenv-')
-                sauce_opts['JENKINS_BUILD'] = tag
-              else
-                sauce_opts['SAUCE_USERNAME'] = options.sauce_username
-                sauce_opts['SAUCE_ACCESS_KEY'] = options.sauce_access_key
-              end
-
-              env_string = sauce_opts.keys.map{|k| %Q(#{k}="#{sauce_opts[k]}")}.join(' ')
-
-              puts "Running Sauce tests with the following options:"
-              puts sauce_opts.to_yaml
-
-              pos = 0
-              Dir.foreach('selenium/testcases') do |filename|
-                if filename =~ /^tc_(.*)\.rb$/
-                  test = $1
-                  test_queues[pos] << {:title =>"Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version}) (#{test})", :command => "cd openshift-test/selenium; #{env_string} ruby ts_web #{test}", :options => {}}
-                  if pos == test_queues.length - 1
-                    pos = 0
-                  else
-                    pos += 1
-                  end
-                end
-              end
-            end
+            #removed sauce labs integration
           else
 
             unless options.exclude_broker?
@@ -624,38 +548,28 @@ service openshift-port-proxy restart
             end
           end
 
-          require 'pry'
-          binding.pry
+          run_tests_with_retry(test_queues, hostname)
 
-          begin
-            run_tests_with_retry(test_queues, hostname)
-
-            #These are special tests that cannot be written to work concurrently
-            singleton_queue = []
-            if options.include_extended
-              extended_tests.each do |extended_test|
-                case extended_test
-                  when 'broker'
-                  when 'runtime'
-                    idle_all_gears(hostname)
-                    singleton_queue << build_cucumber_command("Runtime singletons", ["@singleton"], nil, nil, 'openshift-test/tests')
-                  when 'site'
-                  when 'rhc'
-                  when 'runtime_other'
-                  else
-                    puts "Not supported for extended: #{extended_test}"
-                    exit 1
-                end
+          #These are special tests that cannot be written to work concurrently
+          singleton_queue = []
+          if options.include_extended
+            extended_tests.each do |extended_test|
+              case extended_test
+                when 'broker'
+                when 'runtime'
+                  idle_all_gears(hostname)
+                  singleton_queue << build_cucumber_command("Runtime singletons", ["@singleton"], nil, nil, 'openshift-test/tests')
+                when 'site'
+                when 'rhc'
+                when 'runtime_other'
+                else
+                  puts "Not supported for extended: #{extended_test}"
+                  exit 1
               end
             end
             run_tests_with_retry([singleton_queue], hostname)
-            validate_instance(hostname, 4)
-          ensure
-            if options.include_web?
-              cmd = "service sauce-connect stop"
-              run_ssh(hostname, "Stop sauce connect tunnel", cmd, timeout)
-            end
           end
+          validate_instance(hostname, 4)
 
           if options.official?
             image_id = image_id ? image_id : instance.image_id
