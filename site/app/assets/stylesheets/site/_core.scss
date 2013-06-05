@@ -158,8 +158,19 @@ body.signup {
 
       > .text {
         padding: 5px 0;
+
         @media (max-width: 480px) {
           display: none;
+        }
+
+        a:first-child {
+          margin-right: 5px;
+        }
+
+        > .icon-social {
+          display: inline-block;
+          min-width: 20px;
+          text-align: center;
         }
       }
     }
