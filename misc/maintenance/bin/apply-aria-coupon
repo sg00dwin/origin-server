@@ -1,0 +1,32 @@
+#!/usr/bin/env oo-ruby
+require 'rubygems'
+$:.unshift('/var/www/openshift/site')
+require 'config/environment'
+
+coupon = ARGV.shift
+
+if coupon.blank?
+  puts "Usage: apply-aria-coupon COUPON_CODE < accounts.txt"
+else
+  puts "Applying #{coupon} coupon to account numbers in STDIN (Ctrl+D to exit)..."
+  puts
+
+  ARGF.each_line do |line|
+    acct_no = line.strip.to_i
+    if acct_no > 0
+      begin
+        print "#{acct_no} ... "
+        Aria.apply_coupon_to_acct(:acct_no => acct_no, :coupon_code => coupon)
+        puts "done"
+      rescue
+        puts "ERROR (#{$!})"
+      end
+    else
+      puts "Could not process account number '#{line}'"
+    end
+  end
+
+  puts
+  puts "Finished"
+
+end

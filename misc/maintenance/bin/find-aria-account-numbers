@@ -1,0 +1,14 @@
+#!/usr/bin/env oo-ruby
+require 'rubygems'
+$:.unshift('/var/www/openshift/broker')
+require 'config/environment'
+
+db = OpenShift::DataStore.db(:primary)
+users = db["cloud_users"]
+query = {"usage_account_id" => {"$exists" => true}}
+selection = {:fields => ["usage_account_id"], :timeout => false}
+users.find(query, selection) do |cursor|
+  cursor.each do |user|
+    puts user["usage_account_id"]
+  end
+end
