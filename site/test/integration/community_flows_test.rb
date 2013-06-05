@@ -54,34 +54,58 @@ class CommunityFlowsTest < ActionDispatch::IntegrationTest
   end
 
   test 'Products navigation' do
-    visit community_url
-
-    click_link 'Products'
-
-    assert has_link? 'Online'
-    assert has_link? 'Enterprise'
-    assert has_link? 'Origin'
-    assert has_link? 'Pricing'
+    verify_tabs('Products', ['Online', 'Enterprise', 'Origin', 'Pricing'])
   end
 
   test 'Get Involved navigation' do
-    visit community_url
-
-    click_link 'Get Involved'
-
-    assert has_link? 'Blog'
-    assert has_link? 'Events'
-    assert has_link? 'Vote on Features'
-    assert has_link? 'Application Gallery'
+    verify_tabs('Get Involved',['Blog', 'Events', 'Vote on Features', 'Application Gallery'])
   end
 
   test 'Dev Center navigation' do
+    verify_tabs('Dev Center', ['QuickStarts', 'Technologies', 'Documentation'])
+  end
+
+  test 'Products dropdown menu' do
+    verify_dropdown('Products', ['Online', 'Enterprise', 'Origin', 'Pricing'])
+  end
+
+  test 'Get Involved dropdown menu' do
+    verify_dropdown('Get Involved', ['Blog', 'Events', 'Vote on Features', 'Application Gallery'])
+  end
+
+  test 'Dev Center dropdown menu' do
+    verify_dropdown('Dev Center', ['QuickStarts', 'Technologies', 'Documentation'])
+  end
+
+  test 'Support dropdown menu' do
+    verify_dropdown('Support', ['FAQs', 'Forum', 'Knowledge Base'])
+  end
+
+  private
+
+  def verify_tabs(link_text, nav_items)
     visit community_url
 
-    click_link 'Dev Center'
+    click_link link_text
 
-    assert has_link? 'QuickStarts'
-    assert has_link? 'Technologies'
-    assert has_link? 'Documentation'
+    nav = find('ul.nav-tabs')
+
+    nav_items.each do |link|
+      assert nav.has_link? link
+    end
+  end
+
+  def verify_dropdown(link_text, menu_items)
+    visit community_url
+    dropdown = all('li.dropdown').find { |e| e.has_link? link_text }
+
+    # Verify that the menu items are in place
+    menu_items.each do |link|
+      assert dropdown.has_link? link
+    end
+
+    # Verify that hovering over the menu makes it appear
+    dropdown.hover
+    assert dropdown.find('.dropdown-menu').visible?
   end
 end
