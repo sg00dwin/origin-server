@@ -5,42 +5,64 @@
  * OpenShift Partner Self Service Portal template.
  */
 ?>
-<div id='portal-welcome'><h2><?php print (t('Welcome')); ?> <?php print ($partner_level['partner_level']); ?></h2></div>
-<div id='portal-get-started'><h3><?php print (t('Get Started Now!')); ?></h3>
-  <div class='portal-upload'><?php print (l(t('UPLOAD: Company Information'), 'partner/portal/company-info')); ?></div>
-  <div class='portal-download'>
-    <?php if ($partner_level['partner_level'] == 'Ready Partner'): ?>
-      <?php print (l(t('Download: OpenShift by Red Hat Partner Logo'), file_directory_path() . '/openshift_partner_logos_ready.zip')); ?>
-    <?php else: ?>
-      <?php print (l(t('Download: OpenShift by Red Hat Partner Logo'), file_directory_path() . '/openshift_partner_logos_advanced.zip')); ?>
-    <?php endif; ?>
-  </div>
-</div>
-<div id='portal-marketing'><h3><?php print (t('Marketing Assets')); ?></h3>
-  <div class='portal-paas'>
-    <?php print (l(t('The Road to Enterprise PaaS'), file_directory_path() . '/RH_Openshift_Enterprise_PaaS_WP_10204147_1112_dc_web copy.pdf')); ?>
-  </div>
-  <div class='portal-blog-content'>
-    <?php print (l(t('Blog Content'), 'partner/portal/blog-content')); ?>
-  </div>
-  <div class='portal-social-media-posts'>
-    <?php print (l(t('Social Media Posts'), 'partner/portal/social-media-posts')); ?>
-  </div>
-</div>
-<div id='portal-submit'><h3><?php print (t('Manage Your Partnership')); ?></h3>
-  <div class='portal-story'>
-    <?php print (l(t('Submit a Customer Success Story'), 'partner/portal/customer-story')); ?>
-  </div>
-  <?php if ($partner_level['partner_level'] == 'Ready Partner'): ?>
-    <div class='portal-upgrade'>
-      <?php print (l(t('Request to Upgrade Partner Level'), 'partner/portal/upgrade')); ?>
+<div class="partner-portal">
+  <div id='portal-welcome'><h2 class="alert alert-warning" style="display: inline-block;"><?php print (t('Welcome')); ?> <?php print ($partner_level['partner_level']); ?></h2></div>
+  <div><h2><?php print (t('Get Started Now!')); ?></h2></div>
+  <section>
+    <div class="row-fluid">
+      <div class="span6">
+        <a class="tile tile-click tile-compact" href="/partner/portal/company-info">
+          <div style="transform: rotate(180deg); display: inline-block; margin-left: -4px; padding-left: 10px;" class="icon-download-alt font-icon-size-34 pull-left"></div>
+          <h3>Upload: Company Information</h3>
+        </a>
+      </div>
+      <div class="span6">
+        <a href="<?php print "/" . file_directory_path() . (($partner_level['partner_level'] == 'Ready Partner') ? '/openshift_partner_logos_ready.zip' : '/openshift_partner_logos_advanced.zip'); ?>" class="tile tile-click tile-compact">
+          <span class="icon-download-alt font-icon-size-34 pull-left"></span>
+          <h3>Download: OpenShift by Red Hat Partner Logo</h3>
+        </a>
+      </div>
     </div>
-  <?php endif; ?>
-  <div class='portal-materials'>
-    <?php print (l(t('Request Assistance / Materials'), 'partner/portal/request-assistance')); ?>
+  </section>
+  <div class="row-fluid">
+    <div class="span6" style="margin-bottom: 35.875px">
+      <h2><?php print (t('Marketing Assets')); ?></h2>
+      <a href="<?php print "/" . file_directory_path() . '/RH_Openshift_Enterprise_PaaS_WP_10204147_1112_dc_web copy.pdf'; ?>" class="tile tile-click tile-compact">
+        <span class="icon-list-ol font-icon-size-34 pull-left"></span>
+        <h3>The Road to Enterprise PaaS</h3>
+      </a>
+      <a href="/partner/portal/blog-content" class="tile tile-click tile-compact">
+        <span class="icon-code font-icon-size-34 pull-left"></span>
+        <h3>Blog Content</h3>
+      </a>
+      <a href="/partner/portal/social-media-posts" class="tile tile-click tile-compact">
+        <span class="icon-bubbles font-icon-size-34 pull-left"></span>
+        <h3>Social Media Posts</h3>
+      </a>
+    </div>
+    <div class="span6"  style="margin-bottom: 35.875px">
+      <h2><?php print (t('Manage Your Partnership')); ?></h2>
+      <a href="/partner/portal/customer-story" class="tile tile-click tile-compact">
+        <span class="icon-star-empty font-icon-size-34 pull-left"></span>
+        <h3>Submit a Customer Success Story</h3>
+      </a>
+      <?php if ($partner_level['partner_level'] == 'Ready Partner'): ?>
+        <a href="/partner/portal/upgrade" class="tile tile-click tile-compact">
+          <span class="font-icon-block font-icon-size-34 pull-left"> 
+            <span aria-hidden="true" class="font-icon icon-scalable-part1"></span>
+            <span aria-hidden="true" class="font-icon icon-scalable-part2 font-icon-grey"></span>
+          </span>
+          <h3>Request to Upgrade Partner Level</h3>
+        </a>
+      <?php endif; ?>  
+      <a href="/partner/portal/request-assistance" class="tile tile-click tile-compact">
+        <span class="icon-question-sign font-icon-size-34 pull-left"></span>
+        <h3>Request Assistance / Materials</h3>
+      </a>
+    </div>
   </div>
-</div>
-<div id='portal-questions'>
-  <?php print (t('Questions? Email ') . l(t('openshift-partners@redhat.com'), 'mailto:openshift-partners@redhat.com')); ?>
-</div>
 
+  <section>
+    <?php print (t('Questions? Email ') . l(t('openshift-partners@redhat.com'), 'mailto:openshift-partners@redhat.com')); ?>
+  </section>
+</div>
