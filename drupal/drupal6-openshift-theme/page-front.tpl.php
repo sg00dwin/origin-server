@@ -61,7 +61,12 @@
     });
     $(window).scroll(function() {
       var x = $(this).scrollTop();
-      $('body.home2 #home').css('background-position', (65 - parseInt(x / 50)) + '% ' + (50 + parseInt(x / 50)) + '%');
+      if ($(window).width() > 978) {
+        $('body.home2 #home').css('background-position', (65 - parseInt(x / 50)) + '% ' + (50 + parseInt(x / 50)) + '%');
+      }
+      else if ($(window).width() < 979 && $(window).width() > 800) {
+        $('body.home2 #home').css('background-position', (75 - parseInt(x / 25)) + '% ' + (53 + parseInt(x / 50)) + '%');
+      }
     });
   });
 </script>
