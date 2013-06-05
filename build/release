@@ -449,19 +449,23 @@ class Release < Thor
     end
   end
 
-  desc "tag_sanity_check", "Check the sanity of libra-rhel-6 tag tree"
+  desc "tag_sanity", "Check the sanity of libra-rhel-6 tag tree"
   method_option :prod, :type => :boolean, :desc => "Run against prod brew tag"
   method_option :stage, :type => :boolean, :desc => "Run against stage brew tag"
   method_option :candidate, :type => :boolean, :desc => "Run against candidate brew tag"
   method_option :all, :type => :boolean, :desc => "Run against all brew tags"
-  def tag_sanity_check
+  method_option :clean, :type => :boolean, :desc => "Clean non-sane tags"
+  def tag_sanity
 
     unless options.all or options.prod or options.candidate or options.stage
       puts "ERROR: Must provide --all, --prod, --stage, or --candidate"
+      puts "NOTE: If you need to clean tags, use --clean"
       exit 1
     end
 
     tag_sanity_failures = ""
+    cleanable_tags = Array.new
+    clean_failures = ""
 
     # Check for rpmdevtools installation (need rpmdev-vercmp)
     unless run("rpm -q rpmdevtools > /dev/null 2>&1", :verbose => options.verbose?)
@@ -514,6 +518,7 @@ class Release < Thor
             tag_sanity_failures += "### TAG SANITY FAILURE stage vs. prod\n"
             tag_sanity_failures += "#{BASE_RELEASE_BRANCH} - #{ds_pkg}\n"
             tag_sanity_failures += "#{BASE_RELEASE_BRANCH}-stage - #{us_pkg}\n"
+            cleanable_tags.push(["#{BASE_RELEASE_BRANCH}-stage", us_pkg])
           end
         end
       end
@@ -553,6 +558,7 @@ class Release < Thor
             tag_sanity_failures += "### TAG SANITY FAILURE candidate vs. stage\n"
             tag_sanity_failures += "#{BASE_RELEASE_BRANCH}-stage - #{ds_pkg}\n"
             tag_sanity_failures += "#{BASE_RELEASE_BRANCH}-candidate - #{us_pkg}\n"
+            cleanable_tags.push(["#{BASE_RELEASE_BRANCH}-candidate", us_pkg])
           end
         end
       end
@@ -593,6 +599,7 @@ class Release < Thor
             tag_sanity_failures += "### TAG SANITY FAILURE test vs. candidate\n"
             tag_sanity_failures += "#{BASE_RELEASE_BRANCH}-candidate - #{ds_pkg}\n"
             tag_sanity_failures += "#{BASE_RELEASE_BRANCH}-test - #{us_pkg}\n"
+            cleanable_tags.push(["#{BASE_RELEASE_BRANCH}-test", us_pkg])
           end
         end
       end
@@ -602,7 +609,44 @@ class Release < Thor
       puts "Done - Tag inconsistencies found"
       puts "************BEGIN TAG FAILURES****************"
       puts tag_sanity_failures
-      puts "*************END TAG FAILURES*****************\n"
+      puts "*************END TAG FAILURES*****************\n\n"
+
+      unless options.clean
+        puts "***********BEGIN CHECK CLEAN OUTPUT************"
+        puts "If this were run with --clean the following would be removed"
+        puts "from their listed tags in brew"
+        puts "***********************************************"
+
+        cleanable_tags.each do | tag_name, pkg_name |
+          puts "#{tag_name} - #{pkg_name}"
+        end
+
+        puts "***********END CHECK CLEAN OUTPUT************"
+      end
+    end
+    
+    if options.clean
+      puts "******************BEGIN CLEAN******************"
+      puts "Cleaning non-sane brew tags"
+      puts "***********************************************"
+      
+      cleanable_tags.each do | tag_name, pkg_name |
+        pkg_base_name = "#{pkg_name.split('-')[0...-2].join('-')}"
+        brew_clean_cmd = "brew untag-pkg --all #{tag_name} #{pkg_base_name}"
+        `#{brew_clean_cmd}`
+        if $?.exitstatus == 0
+          puts "Untagging all #{pkg_base_name} from #{tag_name}"
+        else
+          clean_failures += "# #{brew_clean_cmd}\n"
+        end
+      end
+      puts "***********END CLEAN************"
+    end
+
+    unless clean_failures.empty?
+      puts "************BEGIN CLEAN FAILURES****************"
+      puts clean_failures
+      puts "*************END CLEAN FAILURES*****************\n"
     end
 
     if tag_sanity_failures.empty?
