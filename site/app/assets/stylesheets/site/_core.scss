@@ -279,6 +279,11 @@ body.signup {
   
 }
 
+@media (min-width: 980px) and (max-width: 1239px) { 
+  .messaging .primary { font-size: 36px; } // responsive
+}
+
+
 @media (max-width: 979px) {
   .messaging {
     .primary {

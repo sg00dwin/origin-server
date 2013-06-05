@@ -18,9 +18,9 @@
         <div class="row row-buzz">
           <div class="span12">
             <div class="column-buzz">
-              <h1>
+              <h2>
                 What others are saying
-              </h1>
+              </h2>
               <hr>
               <div class="row-fluid">
                 <div id="buzz-testimonials" class="span5"><?php $block = module_invoke('block', 'block', 'view', '3'); print $block['content']; ?></div>
