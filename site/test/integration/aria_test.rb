@@ -219,7 +219,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     assert m = Aria.get_client_plan_services(p.plan_no).find{ |s| s.client_coa_code == 'usage_gear_medium' }
     assert unit_record = create_usage_record(u, m.usage_type, 1, {:comments => "Test medium gear hours usage"})
     
-    unit_rate = record.pre_rated_rate
+    unit_rate = unit_record.pre_rated_rate
     if unit_rate.blank? or unit_rate == 0
       puts "\nAuto-rating is not enabled!"
       skip
