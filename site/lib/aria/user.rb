@@ -195,11 +195,6 @@ module Aria
         Aria::UsageLineItem.for_usage(Aria.cached.get_usage_history(acct_no, :date_range_start => current_period_start_date), plan_no).sort_by(&Aria::LineItem.plan_sort)
     end
 
-    def unbilled_usage_balance
-      @unbilled_usage_balance ||=
-        Aria.cached.get_unbilled_usage_summary(acct_no).ptd_balance_amount.to_f
-    end
-
     def unpaid_invoices
       invoices.reject{ |i| i.paid_date }
     end

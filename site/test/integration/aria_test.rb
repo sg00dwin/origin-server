@@ -201,10 +201,16 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     assert usage = Aria.get_unbilled_usage_summary(u.acct_no)
     assert usage.ptd_balance_amount > 0
     assert_equal 'usd', usage.currency_cd
-
     assert u.unbilled_usage_line_items.present?
-    assert_equal usage.ptd_balance_amount, u.unbilled_usage_balance
-    assert_equal u.unbilled_usage_balance.round(2), u.unbilled_usage_line_items.map(&:total_cost).sum.round(2)
+
+    assert p = Aria::MasterPlan.find('silver')
+    assert m = Aria.get_client_plan_services(p.plan_no).find{ |s| s.client_coa_code == 'usage_gear_medium' }
+    assert unit_record = create_usage_record(u, m.usage_type, 1, {:comments => "Test medium gear hours usage"})
+    assert usage_after = Aria.get_unbilled_usage_summary(u.acct_no)
+
+    charge = unit_record.specific_record_charge_amount.round(2)
+    diff = (usage_after.ptd_balance_amount - usage.ptd_balance_amount).round(2)
+    assert_equal charge, diff
   end
 
   test 'should auto rate usage' do

@@ -266,23 +266,23 @@ class AccountControllerTest < ActionController::TestCase
     assert_redirected_to complete_account_path(:promo_code => 'promo1')
   end
 
-  test 'should send support contact mail' do
-    skip 'until support emails are re-enabled'
+  # test 'should send support contact mail' do
+  #   skip 'until support emails are re-enabled'
 
-    with_unique_user
-    email_obj = Object.new
-    AccountSupportContactMailer.expects(:contact_email).once.returns(email_obj)
-    email_obj.expects(:deliver).once
+  #   with_unique_user
+  #   email_obj = Object.new
+  #   AccountSupportContactMailer.expects(:contact_email).once.returns(email_obj)
+  #   email_obj.expects(:deliver).once
 
-    post(:contact_support,
-      {:support_contact => {
-        :from => 'test@example.com',
-        :to => Rails.configuration.acct_help_mail_to,
-        :subject => 'test',
-        :body => 'nothing'}})
-    assert contact = assigns(:contact)
-    assert_redirected_to({:action => 'help'})
-  end
+  #   post(:contact_support,
+  #     {:support_contact => {
+  #       :from => 'test@example.com',
+  #       :to => Rails.configuration.acct_help_mail_to,
+  #       :subject => 'test',
+  #       :body => 'nothing'}})
+  #   assert contact = assigns(:contact)
+  #   assert_redirected_to({:action => 'help'})
+  # end
 
   def get_post_form
     {:email_address => 'tester@example.com', :password => 'pw1234', :password_confirmation => 'pw1234'}
