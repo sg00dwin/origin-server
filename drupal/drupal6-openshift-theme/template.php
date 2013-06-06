@@ -471,8 +471,6 @@ function openshift_form_element($element, $value) {
 }
 
 function openshift_server_url() {
-  #$url = parse_url($GLOBALS['base_url']);
-  #return $url['scheme'].'://'.$url['host'];
   return redhat_sso_server_url();
 }
 
