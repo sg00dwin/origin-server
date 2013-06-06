@@ -424,7 +424,7 @@ service openshift-port-proxy restart
         puts "Done"
       end
 
-      def build_cucumber_command(title="", tags=[], env = {}, old_rerun_file=nil, test_dir="/data/openshift-test/tests", feature_file="*.feature")
+      def build_cucumber_command(title="", tags=[], env = {}, old_rerun_file=nil, test_dir="/data/openshift-test/tests", feature_file="*.feature", require_gemfile_dir=nil)
         rerun_file = "/tmp/rerun_#{SecureRandom.hex}.txt"
         opts = []
         opts << "--strict"
@@ -438,7 +438,11 @@ service openshift-port-proxy restart
         else
           opts << "@#{old_rerun_file}"
         end
-        {:command => wrap_test_command("cucumber #{opts.join(' ')}", env), :options => {:cucumber_rerun_file => rerun_file, :timeout => @@SSH_TIMEOUT, :test_dir => test_dir, :env => env}, :title => title}
+        if not require_gemfile_dir.nil?
+          {:command => wrap_test_command("cd #{require_gemfile_dir}; bundle install --path=gems; bundle exec \"cucumber #{opts.join(' ')}\"", env), :options => {:cucumber_rerun_file => rerun_file, :timeout => @@SSH_TIMEOUT, :test_dir => test_dir, :env => env, :require_gemfile_dir => require_gemfile_dir}, :title => title}
+        else
+          {:command => wrap_test_command("cucumber #{opts.join(' ')}", env), :options => {:cucumber_rerun_file => rerun_file, :timeout => @@SSH_TIMEOUT, :test_dir => test_dir, :env => env}, :title => title}
+        end
       end
 
       def wrap_test_command(command, env={})
@@ -502,7 +506,7 @@ service openshift-port-proxy restart
                 test_queues[0] << {:title => "Site Extended", :command => "cd openshift-test/site; rake test:extended", :options => {}}
               when 'rhc'
                 test_queues[0] << build_cucumber_command("RHC Extended", ['@rhc_extended'], nil, nil, 'openshift-test/tests')
-                test_queues[1] << build_cucumber_command("RHC Integration", [], {'RHC_SERVER'=>'localhost', 'QUIET'=>'1'},nil, 'openshift-test/rhc')
+                test_queues[1] << build_cucumber_command("RHC Integration", [], {'RHC_SERVER'=>'localhost', 'QUIET'=>'1'},nil, 'features', '*.feature', 'openshift-test/rhc')
               else
                 puts "Not supported for extended: #{extended_test}"
                 exit 1
