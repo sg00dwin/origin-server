@@ -848,31 +848,13 @@ rm -rf #{working_dirs}
       end
 
       def sanity_check_impl(tag, hostname, instance, conn, options)
-        validate_instance(hostname)
+        queue = []
+        queue << {:title => "Site Sanity", :command => "cd openshift-test/site; rake test:sanity", :options => {}}
+        queue << {:title => "Broker Sanity", :command => "cd openshift-test/rhc-broker; rake test:sanity", :options => {}}
+        queue << {:title => "OpenShift Broker Sanity", :command => "cd openshift-test/broker; rake test:sanity", :options => {}}
+        queue << {:title => "OpenShift Node Unit", :command => "cd openshift-test/node; rake unit_test", :options => {}}
 
-        threads = []
-        failures = []
-        site_titles = ["Site Sanity"]
-        site_cmds = ["cd openshift-test/site; rake test:sanity"]
-        add_ssh_cmd_to_threads(hostname, threads, failures, site_titles, site_cmds)
-        titles = ["Broker Sanity",
-          "OpenShift Broker Sanity",
-          "OpenShift Node Unit"]
-
-        cmds = ["cd openshift-test/rhc-broker; rake test:sanity",
-          "cd openshift-test/broker; rake test:sanity",
-          "cd openshift-test/node; rake unit_test"]
-        add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
-        add_ssh_cmd_to_threads(hostname, threads, failures, "Cucumber Sanity", "cucumber #{CUCUMBER_OPTIONS} -t @sanity openshift-test/tests/")
-
-        threads.each do |t|
-          t[0].join
-        end
-
-        unless failures.empty?
-          failures.uniq!
-          retry_test_failures(hostname, failures, 1)
-        end
+        run_tests_with_retry([queue], hostname)
         validate_instance(hostname)
       end
 
