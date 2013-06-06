@@ -496,6 +496,7 @@ body.home2 {
 
 @media (max-width: 600px) {
   body.home2 {
+    #home { background-position-y: 71%; }
     .products {
       .cta { 
         padding: 5px 0;
