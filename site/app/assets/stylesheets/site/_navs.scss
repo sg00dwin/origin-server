@@ -395,7 +395,12 @@
   padding: 10px 0 10px 20px;
   position: relative;
   z-index: 2;
+  &:before {
+    content: "\ee14";
+  }
 }
+
+
 .nav-list.nav-tertiary > li > a:hover,
 .nav-list.nav-tertiary .nav-list > li > a:hover {
   background-color: #ddd;

@@ -1521,3 +1521,16 @@ iframe[name="google_conversion_frame"] {
     margin-top: 5px;
   }
 } 
+
+
+.stacked-heading small {
+		text-transform: capitalize;
+		color: #BC000D;
+		font-size: 17px;
+		display: block
+	}
+	.stacked-heading {
+		line-height: normal;
+		text-transform: uppercase;
+		margin: 0 0 10px 0;
+	}
