@@ -17,7 +17,7 @@
         </a>
       </div>
       <div class="span6">
-        <a href="<?php print "/" . file_directory_path() . (($partner_level['partner_level'] == 'Ready Partner') ? '/openshift_partner_logos_ready.zip' : '/openshift_partner_logos_advanced.zip'); ?>" class="tile tile-click tile-compact">
+        <a href="<?php print "/" . file_directory_path() . (($partner_level['partner_level'] == 'Ready Partner') ? '/OpenShiftReadyPartnerLogoFiles.zip' : '/OpenShiftAdvancedPartnerLogoFiles.zip'); ?>" class="tile tile-click tile-compact">
           <span class="icon-download-alt font-icon-size-34 pull-left"></span>
           <h3>Download: OpenShift by Red Hat Partner Logo</h3>
         </a>
@@ -27,7 +27,7 @@
   <div class="row-fluid">
     <div class="span6" style="margin-bottom: 35.875px">
       <h2><?php print (t('Marketing Assets')); ?></h2>
-      <a href="<?php print "/" . file_directory_path() . '/RH_Openshift_Enterprise_PaaS_WP_10204147_1112_dc_web copy.pdf'; ?>" class="tile tile-click tile-compact">
+      <a href="<?php print "/" . file_directory_path() . '/RH_Openshift_Enterprise_PaaS_WP_10204147_1112_dc_web.pdf'; ?>" class="tile tile-click tile-compact">
         <span class="icon-list-ol font-icon-size-34 pull-left"></span>
         <h3>The Road to Enterprise PaaS</h3>
       </a>
