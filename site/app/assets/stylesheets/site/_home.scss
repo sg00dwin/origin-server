@@ -16,6 +16,13 @@ body.home2 {
 
   .messaging {
     margin: 40px 0 45px;
+    .primary {
+      font-size: 32px;
+    }
+    .secondary {
+      font-size: 20px;
+      max-width: none;
+    }
   }
 
   #buzz {
@@ -349,6 +356,19 @@ body.home2 {
   .section-nav.lift-counter { padding-bottom: 0; }
 }
 
+@media (min-width: 1240px) {
+  body.home2 {
+    .messaging {
+      .primary {
+        font-size: 36px;
+      }
+      .secondary {
+        font-size: 24px;
+      }
+    }
+  }
+}
+
 @media (min-width: 1200px) {
   body.home2 {
     .products {
@@ -388,11 +408,10 @@ body.home2 {
       margin-bottom: 30px;
       margin-top: 30px;
       .primary {
-        font-size: 28px;
-        line-height: 36px;
-        small {
-          font-size: 19px;
-        }
+        font-size: 26px;
+      }
+      .secondary {
+        font-size: 18px;
       }
     }
     .products {
@@ -463,6 +482,13 @@ body.home2 {
     .messaging {
       margin-bottom: 30px;
       margin-top: 20px;
+      .primary {
+        font-size: 24px;
+        line-height: 30px;
+      }
+      .secondary {
+        font-size: 16px;
+      }
     }
 
     .products {
@@ -496,6 +522,15 @@ body.home2 {
 
 @media (max-width: 600px) {
   body.home2 {
+    .messaging {
+      .primary {
+        font-size: 21px;
+        line-height: 27px;
+      }
+      .secondary {
+        font-size: 15px;
+      }
+    }
     .products {
       .cta { 
         padding: 5px 0;
@@ -549,8 +584,11 @@ body.home2 {
     }
     .messaging {
       .primary {
-        font-size: 22px; 
-        line-height: 28px;
+        font-size: 16px;
+        line-height: 22px;
+      }
+      .secondary{
+        font-size: 13px;
       }
     }
     .products li.active { 
@@ -567,12 +605,6 @@ body.home2 {
 @media (max-width: 320px) {
   body.home2 {
     #buzz .column-buzz > h2 { font-size: 20px; }
-    .messaging {
-      .primary {
-        font-size: 18px; 
-        line-height: 24px;
-      }
-    }
     .products li {
       &.active {
         &.enterprise  {
