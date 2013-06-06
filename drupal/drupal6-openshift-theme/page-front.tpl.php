@@ -70,15 +70,55 @@
       productDescriptions.css('height', 'auto');
       productDescriptions.setAllToMaxHeight();
     });
-    $(window).scroll(function() {
-      var x = $(this).scrollTop();
-      if ($(window).width() > 978) {
-        $('body.home2 #home').css('background-position', (65 - parseInt(x / 50)) + '% ' + (50 + parseInt(x / 50)) + '%');
-      }
-      else if ($(window).width() < 979 && $(window).width() > 800) {
-        $('body.home2 #home').css('background-position', (75 - parseInt(x / 25)) + '% ' + (53 + parseInt(x / 50)) + '%');
-      }
-    });
+
+    var $window = $(window);
+    if ($window.width() > 800) {
+      var $home = $('body.home2 #home');
+      var cometW = 822, 
+          cometH = 576, 
+          slope  = -3;
+      var windowW, windowH, 
+          centerX, centerY, 
+          homeTop, buzzTop, 
+          intersectY;
+      var calcIntersection = function() {
+        windowW = $window.width();
+        windowH = $window.height();
+
+        homeTop = parseInt($home.offset().top);
+        buzzTop = parseInt($('#buzz').offset().top);
+        
+        // intersect the center of the comet with the top of the buzz section
+        intersectY = buzzTop - (cometH/2);
+
+        // background-position coordinates to center the comet at the top of the screen
+        centerX = parseInt((windowW-cometW)/2);
+        centerY = 0;
+      };
+      var moveComet = function() {
+        var scrollTop = $window.scrollTop();
+
+        // Y offset to keep background vertically stationary while scrolling
+        var offsetY = scrollTop - homeTop;
+
+        // Compute X, given slope and intersect
+        var x = centerX + (scrollTop-intersectY)*slope;
+        if (x > windowW)
+          x = windowW;
+        else if (x < -cometW)
+          x = -cometW;
+
+        $home.css('background-position', x + "px " + (centerY + offsetY) + "px");
+      };
+      var calcAndMove = function() {
+        calcIntersection();
+        moveComet();
+      };
+
+      $(window).scroll(moveComet);
+      $(window).resize(calcAndMove);
+      calcAndMove();
+    }
   });
 </script>
 <?php include 'page_footer.inc' ?>
