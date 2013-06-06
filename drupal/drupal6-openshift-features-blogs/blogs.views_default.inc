@@ -1006,7 +1006,7 @@ function blogs_views_default_views() {
 <h3>Upcoming Events</h3>');
   $handler->override_option('header_format', '46');
   $handler->override_option('header_empty', 1);
-  $handler->override_option('footer', '<p><a href="/" class="action-more">More events</a></p>
+  $handler->override_option('footer', '<p><a href="/events" class="action-more">More events</a></p>
 </div></div>');
   $handler->override_option('footer_format', '46');
   $handler->override_option('footer_empty', 1);
@@ -1303,7 +1303,7 @@ return;',
 <h3>Recent News</h3>');
   $handler->override_option('header_format', '46');
   $handler->override_option('header_empty', 1);
-  $handler->override_option('footer', '<p><a href="/" class="action-more">Older blog posts</a></p>
+  $handler->override_option('footer', '<p><a href="/blogs" class="action-more">Older blog posts</a></p>
 </div>');
   $handler->override_option('footer_format', '46');
   $handler->override_option('footer_empty', 1);
