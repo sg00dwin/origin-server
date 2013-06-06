@@ -205,15 +205,15 @@ body.home2 {
       color: #999;
       -moz-transition:
         background-color .2s,
-        background-position .2s,
+        background-position .3s,
         color 3s ease-in-out;
       -webkit-transition:
         background-color .2s,
-        background-position .2s,
+        background-position .3s,
         color .2s;
       transition:
         background-color .2s,
-        background-position .2s,
+        background-position .3s,
         color .2s;
       &.active {
         background-color: #111;
