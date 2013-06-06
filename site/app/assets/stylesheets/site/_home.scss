@@ -606,12 +606,6 @@ body.home2 {
 @media (max-width: 320px) {
   body.home2 {
     #buzz .column-buzz > h2 { font-size: 20px; }
-    .messaging {
-      .primary {
-        font-size: 18px; 
-        line-height: 24px;
-      }
-    }
     .products li {
       &.active {
         &.enterprise  {
