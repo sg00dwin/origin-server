@@ -128,6 +128,15 @@ body.home2 {
       text-align: center;
       text-decoration: none;
       text-transform: uppercase;
+      -moz-transition:
+        right .1s ease-in-out,
+        top .1s ease-in-out;
+      -webkit-transition:
+        right .1s,
+        top .1s;
+      transition:
+        right .1s,
+        top .1s;
       span {
         display: none;
         margin: 0 0 0 20%;
@@ -191,26 +200,30 @@ body.home2 {
     li {
       background-color: #222;
       background-color: rgba(0,0,0,0.15);
+      background-position: 100% 150%; 
       box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
       color: #999;
+      -moz-transition:
+        background-color .2s,
+        background-position .2s,
+        color 3s ease-in-out;
+      -webkit-transition:
+        background-color .2s,
+        background-position .2s,
+        color .2s;
+      transition:
+        background-color .2s,
+        background-position .2s,
+        color .2s;
       &.active {
         background-color: #111;
         background-color: rgba(0,0,0,.45);
         background-image: image-url('online-bg.png');
-        background-position: right bottom;
+        background-position: 100% 100%;
         background-repeat: no-repeat;
         background-size: 100% auto;
         color: white;
         box-shadow: none;
-        -moz-transition:
-          background-color .2s,
-          color .2s;
-        -webkit-transition:
-          background-color .2s,
-          color .2s;
-        transition:
-          background-color .2s,
-          color .2s;
         &.enterprise {
           background-image: image-url('enterprise-bg.png');
           background-size: 90% auto;
@@ -230,15 +243,6 @@ body.home2 {
           position: relative;
           right: -3px;
           top: -3px;
-          -moz-transition:
-            right .1s,
-            top .1s;
-          -webkit-transition:
-            right .1s,
-            top .1s;
-          transition:
-            right .1s,
-            top .1s;
           &:active {
             box-shadow: none;
             outline: none;
@@ -436,10 +440,7 @@ body.home2 {
 
 @media (min-width: 768px) and (max-width: 980px) {
   body.home2 {
-    #buzz .column-buzz {
-      margin-left:22px;
-      margin-right:22px;
-    }
+    #home { background-position-y: 68%;}
     .logos li {
       width: 25%;
     }
@@ -479,6 +480,7 @@ body.home2 {
       }
       .container { padding: 0; }
     }
+    #home { background-position-y: 75%; }
     .messaging {
       margin-bottom: 30px;
       margin-top: 20px;
@@ -532,6 +534,7 @@ body.home2 {
         font-size: 15px;
       }
     }
+
     .products {
       .cta { 
         padding: 5px 0;
@@ -583,6 +586,7 @@ body.home2 {
       margin-left: -$gridGutterWidthPhone;
       margin-right: -$gridGutterWidthPhone;
     }
+    #home { background-position-y: 69%; }
     .messaging {
       .primary {
         font-size: 16px;
@@ -606,6 +610,13 @@ body.home2 {
 @media (max-width: 320px) {
   body.home2 {
     #buzz .column-buzz > h2 { font-size: 20px; }
+    #home { background-position-y: 63%; }
+    .messaging {
+      .primary {
+        font-size: 18px; 
+        small { font-size: 13px; }
+      }
+    }
     .products li {
       &.active {
         &.enterprise  {
