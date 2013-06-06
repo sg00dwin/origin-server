@@ -119,12 +119,14 @@
       width: 120px;
       > ul {
         float: none;
+        width: auto;
 
         &:first-child { 
           border-right: none;
         }        
 
         + ul {
+          width: auto;
           margin-top: 10px;
           border-left: none;
           padding-left: 0;
