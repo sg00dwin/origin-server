@@ -6,7 +6,7 @@
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
 Version: 1.5.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Openshift Red Hat Custom Video Feature for Drupal6
 Group:   Applications/Publishing
 License: GPLv2+
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Thu Jun 06 2013 Adam Miller 1.5.1-4
+- Bump spec for mass drupal rebuild
+
 * Wed Jun 05 2013 Adam Miller 1.5.1-3
 - Bump spec for mass drupal rebuild
 
