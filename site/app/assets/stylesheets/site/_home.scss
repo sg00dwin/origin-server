@@ -91,7 +91,7 @@ body.home2 {
   }
   > header { background: none; }
   #home {
-    background: image-url('comets.png') no-repeat 65% 50%;
+    background: image-url('comets-muted.png') no-repeat -9999px 50%;
     position: relative;
     &:before { 
       background: image-url('mts-bottom-transparent.png') repeat-x center bottom;
@@ -417,10 +417,7 @@ body.home2 {
 
 @media (min-width: 768px) and (max-width: 980px) {
   body.home2 {
-    #buzz .column-buzz {
-      margin-left:22px;
-      margin-right:22px;
-    }
+    #home { background-position-y: 68%;} 
     .logos li {
       width: 25%;
     }
@@ -460,6 +457,7 @@ body.home2 {
       }
       .container { padding: 0; }
     }
+    #home { background-position-y: 75%; } 
     .messaging {
       margin-bottom: 30px;
       margin-top: 20px;
@@ -496,6 +494,7 @@ body.home2 {
 
 @media (max-width: 600px) {
   body.home2 {
+    #home { background-position-y: 71%; } 
     .products {
       .cta { 
         padding: 5px 0;
@@ -547,6 +546,7 @@ body.home2 {
       margin-left: -$gridGutterWidthPhone;
       margin-right: -$gridGutterWidthPhone;
     }
+    #home { background-position-y: 69%; } 
     .messaging {
       .primary {
         font-size: 22px; 
@@ -567,6 +567,7 @@ body.home2 {
 @media (max-width: 320px) {
   body.home2 {
     #buzz .column-buzz > h2 { font-size: 20px; }
+    #home { background-position-y: 63%; } 
     .messaging {
       .primary {
         font-size: 18px; 
