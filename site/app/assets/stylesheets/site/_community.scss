@@ -354,6 +354,11 @@ td.views-field-vud-node-widget {
 /* Quick fixes to force wrap long strings within table cells */
 .table th, .table td {
   max-width: 550px;
+}
+@media (max-width: 980px) {
+  .table th, .table td {
+    max-width: 350px;
+  }
 } 
 
 .vud-widget-updown > div.down-active {
