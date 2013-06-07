@@ -18,7 +18,7 @@
 %section
   %p.larger
     The Services are subject to the
-    %a{ :href => legal_site_terms_path, :target => '_blank' } OpenShift Legal Terms and Conditions.
+    %a{ :href => legal_site_terms_path, :target => '_blank' } OpenShift Online Legal Terms and Conditions.
     By clicking 'Confirm your plan changes' you acknowledge that you agree to these terms.
 = semantic_form_for @user, :simple => true, :url => account_plan_upgrade_path, :method => :post do |f|
   = hidden_field_tag :plan_id, @plan.id

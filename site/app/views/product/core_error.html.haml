@@ -15,7 +15,7 @@
 
     %section.main
       %p We are unable to show this page due to an error on the server.  Please check our the site status page below for known issues.
-      %p OpenShift status: #{link_to 'No open issues', status_path, :id => 'system-status', :class => 'status'}
+      %p OpenShift Online status: #{link_to 'No open issues', status_path, :id => 'system-status', :class => 'status'}
       %p If the error persists, please contact us via #{link_to_account_mailto} or #{link_to_irc}
       
     %script{:src => status_jsonp_url('system-status')}

@@ -1,7 +1,7 @@
 !!! 5
 -ie_html :class => 'no-js', :lang => 'en' do
   %head
-    %title Maintenance in progress | OpenShift by Red Hat
+    %title Maintenance in progress | OpenShift Online by Red Hat
     = render :partial => 'product/core_head'
 
   %body
@@ -13,7 +13,7 @@
         %h2 HTTP 503
 
     %section.main
-      %p The OpenShift service is temporarily unavailable while we perform maintenance.  Please check the status page below for updates.
-      %p OpenShift status: #{link_to 'No open issues', status_path, :id => 'system-status', :class => 'status'}
+      %p The OpenShift Online service is temporarily unavailable while we perform maintenance.  Please check the status page below for updates.
+      %p OpenShift Online status: #{link_to 'No open issues', status_path, :id => 'system-status', :class => 'status'}
       
     %script{:src => status_jsonp_url('system-status')}

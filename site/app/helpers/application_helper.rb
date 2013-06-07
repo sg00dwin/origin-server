@@ -18,7 +18,7 @@ module ApplicationHelper
   end
 
   def product_title
-    "OpenShift by Red Hat"
+    "OpenShift Online by Red Hat"
   end
 
   def product_branding

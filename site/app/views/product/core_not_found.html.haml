@@ -15,6 +15,6 @@
     %section.main
       %p The page you requested could not be found. Check that you entered the correct address. You can also try #{link_to 'searching for it', community_search_url}.
       %p If you believe you reached this page in error, please contact us at #{link_to_account_mailto}
-      %p OpenShift status: #{link_to 'No open issues', status_path, :id => 'system-status', :class => 'status'}
+      %p OpenShift Online status: #{link_to 'No open issues', status_path, :id => 'system-status', :class => 'status'}
 
     %script{:src => status_jsonp_url('system-status')}

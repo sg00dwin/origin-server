@@ -1,5 +1,5 @@
 - @suppress_ribbon = true
-- content_for :title, 'Sign in to OpenShift'
+- content_for :title, 'Sign in to OpenShift Online'
 - content_for :javascripts do
   :javascript
     showOpenIssues = function(data) {
@@ -34,7 +34,7 @@
   %script{:src => open_issues_jsonp_url('showOpenIssues')}
 
 .column-1
-  %h1.ribbon Sign in to OpenShift
+  %h1.ribbon Sign in to OpenShift Online
   
   = semantic_form_for @user, :url => login_path, :html => {:id => 'login_form', :class => 'label-hide'} do |f|
     - if @redirectUrl.present?
@@ -43,7 +43,7 @@
     = f.input :rhlogin,
               :wrapper_html => { :class => "control-group-important" },
               :label => 'Login',
-              :input_html => {:autofocus => @user.rhlogin.blank?, :placeholder => 'OpenShift or Red Hat account', :class => @user.errors[:base].present? ? 'error max' : 'max'}
+              :input_html => {:autofocus => @user.rhlogin.blank?, :placeholder => 'OpenShift Online or Red Hat account', :class => @user.errors[:base].present? ? 'error max' : 'max'}
     = f.input :password,
               :wrapper_html => { :class => "control-group-important" },
               :as => :password,

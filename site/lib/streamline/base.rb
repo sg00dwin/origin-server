@@ -38,7 +38,7 @@ module Streamline
       domains = Rails.application.config.prohibited_email_domains
       domains.each do |domain|
         if email_domain == domain || email_domain.end_with?(".#{domain}")
-          record.errors.add attr, 'OpenShift does not allow creating accounts with email addresses from anonymous mail services due to security concerns. Please use a different email address.'
+          record.errors.add attr, 'OpenShift Online does not allow creating accounts with email addresses from anonymous mail services due to security concerns. Please use a different email address.'
           break
         end
       end unless email_domain.nil?
