@@ -735,6 +735,11 @@ cp phantomjs-1.9.0-linux-x86_64/bin/phantomjs /usr/local/bin
 cd -
 rm -rf /tmp/phantomjs
 
+# Change login.defs file to match BZ970877
+sed -i '/^PASS_MIN_LEN/c\PASS_MIN_LEN    14' -i /etc/login.defs
+sed -i '/^PASS_MAX_DAYS/c\PASS_MAX_DAYS   60' -i /etc/login.defs
+sed -i '/^PASS_MIN_DAYS/c\PASS_MIN_DAYS   1' -i /etc/login.defs
+
 %files
 %defattr(-,root,root,-)
 %attr(0660,-,-) %{_var}/log/openshift/broker/mcollective-client.log
