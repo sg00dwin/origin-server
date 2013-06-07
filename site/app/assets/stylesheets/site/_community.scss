@@ -353,11 +353,11 @@ td.views-field-vud-node-widget {
 }
 /* Quick fixes to force wrap long strings within table cells */
 .table th, .table td {
-  max-width: 400px;
+  max-width: 550px;
 }
 @media (max-width: 980px) {
   .table th, .table td {
-    max-width: 250px;
+    max-width: 350px;
   }
 } 
 
