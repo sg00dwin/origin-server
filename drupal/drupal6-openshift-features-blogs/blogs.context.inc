@@ -54,6 +54,9 @@ function blogs_context_default_contexts() {
         'developers/node-js' => 'developers/node-js',
         'developers/python' => 'developers/python',
         'developers/mongodb' => 'developers/mongodb',
+        'developers/perl' => 'developers/perl',
+        'developers/mysql' => 'developers/mysql',
+        'developers/postgresql' => 'developers/postgresql',
       ),
     ),
   );

@@ -132,21 +132,39 @@ function user_profile_views_default_views() {
     'type' => 'none',
   ));
   $handler->override_option('css_class', 'partner-blocklist');
-  $handler->override_option('header', '<section>
+  $handler->override_option('header', '<style type="text/css">
+.media-youtube {
+position: relative;
+padding-bottom: 56.25%;
+height: 0;
+overflow: hidden;
+}
+.media-youtube iframe,
+.media-youtube object,
+.media-youtube embed {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+} 
+
+</style>
 <div class="row">
 <div class="span7">
 <p class="lead">An OpenShift by Red Hat Partner has proven their expertise in building and integrating into the OpenShift platform.  These solutions are tested and validated by Red Hat to ensure seamless integration.</p>
-</div>
-<div class="span5">
-<div>VIDEO GOES HERE</div>
-<p>Get the OpenShift experience from OpenShift Partners Zend, Iron.io and SendGrid.
-</div>
-</div>
 <p class="larger">
 Two OpenShift Partner tiers demonstrate the partner\'s integration with OpenShift.  With OpenShift Ready Partner QuickStarts and OpenShift Advanced Partner cartridges.
 </p>
-<a class="action-call" href="mailto:openshift-partners@redhat.com?subject=Become a Partner"><div>Become a partner</div><div class="highlight-arrow"></div></a>
-</section>
+<section><a class="action-call" href="mailto:openshift-partners@redhat.com?subject=Become a Partner"><div>Become a partner</div><div class="highlight-arrow"></div></a></section>
+</div>
+<div class="span5">
+<div class="media-youtube">
+  <iframe width="450" height="253" src="http://www.youtube.com/embed/0om0g8363SM?rel=0" frameborder="0" allowfullscreen></iframe>
+</div>
+<p class="right"><small>Quickstarts or Cartridges - which is best for your business?</small></p>
+</div>
+</div>
 <h2>Find a Partner</h2>');
   $handler->override_option('header_format', '46');
   $handler->override_option('header_empty', 1);
