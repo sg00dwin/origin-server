@@ -6,7 +6,7 @@
 
 Name: drupal%{drupal_release}-openshift-%{modname}
 Version: 0.0.3
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: OpenShift Partner Program Drupal Content
 Group: Applications/Publishing
 License: GPLv2+
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Fri Jun 07 2013 Adam Miller 0.0.3-4
+- Bump spec for mass drupal rebuild
+
 * Thu Jun 06 2013 Adam Miller 0.0.3-3
 - Bump spec for mass drupal rebuild
 
