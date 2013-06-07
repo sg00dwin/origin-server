@@ -6,7 +6,7 @@
  */
 ?>
 <div class="partner-portal">
-  <div id='portal-welcome'><h2 class="alert alert-warning" style="display: inline-block;"><?php print (t('Welcome')); ?> <?php print ($partner_level['partner_level']); ?></h2></div>
+  <div id='portal-welcome'><h2 class="alert alert-error" style="display: inline-block;"><?php print (t('Welcome')); ?> <?php print ($partner_level['partner_level']); ?></h2></div>
   <div><h2><?php print (t('Get Started Now!')); ?></h2></div>
   <section>
     <div class="row-fluid">
