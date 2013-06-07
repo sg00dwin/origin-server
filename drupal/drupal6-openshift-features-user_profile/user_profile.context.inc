@@ -575,6 +575,9 @@ function user_profile_context_default_contexts() {
       'values' => array(
         'developers/extend' => 'developers/extend',
         'developers/cartridge-authors-guide' => 'developers/cartridge-authors-guide',
+        'developers/mysql' => 'developers/mysql',
+        'developers/perl' => 'developers/perl',
+        'developers/postgresql' => 'developers/postgresql',
       ),
     ),
   );
