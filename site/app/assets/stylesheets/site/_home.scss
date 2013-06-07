@@ -203,6 +203,7 @@ body.home2 {
       background-position: 100% 150%; 
       box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
       color: #999;
+      position: relative;
       -moz-transition:
         background-color .2s,
         background-position .3s,
@@ -215,6 +216,7 @@ body.home2 {
         background-color .2s,
         background-position .3s,
         color .2s;
+
       &.active {
         background-color: #111;
         background-color: rgba(0,0,0,.45);
@@ -230,6 +232,11 @@ body.home2 {
         }
         &.online {
           background-position: 7px 102%;
+          .block:before {
+            background-position: 0 100%;
+            left: -2px;
+            top: -2px;
+          }
         }
         &.origin {
           background-image: image-url('origin-bg.png');
@@ -266,6 +273,25 @@ body.home2 {
           &:after { border-left-color: rgb(109, 179, 199); }
         }
         p { color: #fff; }
+      }
+      &.online .block:before {
+        background: image-url('online-ribbon.png') no-repeat;
+        background-size: 100% auto;
+        content: '';
+        height: 120px;
+        left: 0;
+        position: absolute;
+        top: 0;
+        -moz-transition:
+          left .1s,
+          top .1s;
+        -webkit-transition:
+          left .1s,
+          top .1s;
+        transition:
+          left .1s,
+          top .1s;
+        width: 160px;
       }
       a {
         color: #999;
@@ -370,6 +396,11 @@ body.home2 {
         font-size: 24px;
       }
     }
+    .products li.online .block:before {
+        background-image: image-url('online-ribbon-max.png');
+        height: 136px;
+        width: 181px;
+      }
   }
 }
 
@@ -401,6 +432,10 @@ body.home2 {
       .cta { 
         span { right: 4%; }
       }
+      .products li.online .block:before {
+        height: 105px;
+        width: 140px;
+      }
     }
   }
 }
@@ -425,6 +460,10 @@ body.home2 {
       }
       h2 { font-size: 24px; }
       li.active .cta:hover span { display: none; }
+      li.online .block:before {
+        height: 105px;
+        width: 140px;
+      }
     }
     section { 
       margin-bottom: 50px;
@@ -450,18 +489,21 @@ body.home2 {
 @media (max-width: 767px) and (min-width: 481px) {
   body.home2 {
     .products {
+      .cta {
+        display: inline-block;
+        padding: 10px 50px;
+      }
       header {
         float: left;
         padding-bottom: 30px;
-        padding-right: 30px;
+        padding-right: 15px;
         width: 150px;
       }
       .learn {
         display: block;
-      }
-      .cta {
-        display: inline-block;
-        padding: 10px 50px;
+        &:after {
+          display: none;
+        }
       }
     }
   }
@@ -492,7 +534,6 @@ body.home2 {
         font-size: 16px;
       }
     }
-
     .products {
       .cta { letter-spacing: 1px; }
       li {
@@ -511,6 +552,10 @@ body.home2 {
           .cta:hover span { display: block; }
          }
         &:last-child { margin-bottom: 0; }
+        &.online .block:before {
+          height: 105px;
+          width: 140px;
+        }
       }
     }
     .logos li {
@@ -537,7 +582,7 @@ body.home2 {
 
     .products {
       .cta { 
-        padding: 5px 0;
+        padding: 5px 25px;
         span { top: 5px; }
       }
       h2 {
@@ -550,6 +595,10 @@ body.home2 {
         font-size: 13.5px;
         > div { padding: 20px; }
         &.active.online { background-position: 106% 105%;}
+        &.online .block:before {
+          height: 90px;
+          width: 120px;
+        }
       }
       p { 
         font-size: 13.5px; 
@@ -596,9 +645,17 @@ body.home2 {
         font-size: 13px;
       }
     }
-    .products li.active { 
-      &.enterprise, &.origin {
-        background-size: 60% auto;
+    .products {
+      li { 
+        &.active { 
+          &.enterprise, &.origin {
+            background-size: 60% auto;
+          }
+        }
+        &.online .block:before {
+          height: 120px;
+          width: 160px;
+        }
       }
     }
     .logos li {
@@ -617,17 +674,23 @@ body.home2 {
         small { font-size: 13px; }
       }
     }
-    .products li {
-      &.active {
-        &.enterprise  {
-          background-size: 70% auto;
+    .products {
+      li {
+        &.active {
+          &.enterprise  {
+            background-size: 70% auto;
+          }
+          &.online {
+            background-position: 113% 102%;
+            background-size: 80% auto;
+          }
+          &.origin {
+            background-size: 80% auto;
+          }
         }
-        &.online {
-          background-position: 113% 102%;
-          background-size: 80% auto;
-        }
-        &.origin {
-          background-size: 80% auto;
+        &.online .block:before {
+          height: 113px;
+          width: 150px;
         }
       }
     }
