@@ -53,39 +53,43 @@ class CommunityFlowsTest < ActionDispatch::IntegrationTest
     assert_equal href, URI(page.current_url).path
   end
 
-  test 'Products navigation' do
+  test 'Tab navigation' do
+    visit community_url
     verify_tabs('Products', ['Online', 'Enterprise', 'Origin', 'Pricing'])
-  end
-
-  test 'Get Involved navigation' do
     verify_tabs('Get Involved',['Blog', 'Events', 'Vote on Features', 'Application Gallery'])
-  end
-
-  test 'Dev Center navigation' do
     verify_tabs('Dev Center', ['QuickStarts', 'Technologies', 'Documentation'])
+    verify_tabs('Support', ['FAQs', 'Forum', 'Knowledge Base'])
   end
 
-  test 'Products dropdown menu' do
+  test 'Dropdown menus' do
+    visit community_url
     verify_dropdown('Products', ['Online', 'Enterprise', 'Origin', 'Pricing'])
-  end
-
-  test 'Get Involved dropdown menu' do
     verify_dropdown('Get Involved', ['Blog', 'Events', 'Vote on Features', 'Application Gallery'])
-  end
-
-  test 'Dev Center dropdown menu' do
     verify_dropdown('Dev Center', ['QuickStarts', 'Technologies', 'Documentation'])
+    verify_dropdown('Support', ['FAQs', 'Forum', 'Knowledge Base'])
   end
 
-  test 'Support dropdown menu' do
-    verify_dropdown('Support', ['FAQs', 'Forum', 'Knowledge Base'])
+  test 'Top Quickstarts appear tiled' do
+    visit community_url
+
+    find_link('Dev Center').hover
+    click_link('QuickStarts')
+
+    parent = all('div.span6').find { |e| !e.find('h2', :text => 'Top QuickStarts').nil? }
+    assert_selector('.tile.first')
+  end
+
+  test 'Support page has correct navbar' do
+    visit community_url
+
+    click_link 'Support'
+
+    assert_selector('div.column-navbar-secondary')
   end
 
   private
 
   def verify_tabs(link_text, nav_items)
-    visit community_url
-
     click_link link_text
 
     nav = find('ul.nav-tabs')
@@ -96,7 +100,6 @@ class CommunityFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def verify_dropdown(link_text, menu_items)
-    visit community_url
     dropdown = all('li.dropdown').find { |e| e.has_link? link_text }
 
     # Verify that the menu items are in place
