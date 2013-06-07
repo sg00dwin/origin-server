@@ -76,7 +76,7 @@
       var $home = $('body.home2 #home');
       var cometW = 822, 
           cometH = 576, 
-          slope  = -3;
+          slope  = -2.8;
       var windowW, windowH, 
           centerX, centerY, 
           homeTop, buzzTop, 
