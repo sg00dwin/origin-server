@@ -135,6 +135,7 @@
     }
   }
 }
-@media (max-width: 479px) {
+// Hide for phones, landscape and smaller
+@media (max-width: 568px) {
   .dropdown-toggle:hover .dropdown-menu.dropdown-menu-mega {display: none; }
 }

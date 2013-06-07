@@ -509,6 +509,21 @@
     }
   }
 }
+
+// Dedent the last menu item
+@media (max-width: 850px) {
+  .navbar .nav > li:last-child {
+    > .dropdown-menu.dropdown-menu-mega {
+      // move 45px left from -90px to avoid going off the right edge of the screen
+      margin-left: -135px;
+    }
+    > .dropdown-menu.dropdown-menu-mega:before {
+      // move 45px right from -10px
+      margin-left: 35px;
+    }
+  }
+}
+
 @media (max-width: 767px) {
   .navbar {
     margin: 20px 0 0 0;
@@ -561,14 +576,15 @@
     }
 
     .nav > li > .dropdown-menu.dropdown-menu-mega {
-      margin-left: 0;
-      left: 0;
-
+      // move 45px left from -90px to avoid going off the right edge of the screen
+      margin-left: -135px;
+      // Move the menu left, since the text is now left-aligned
+      left: 30%;
       &:before {
         border-width: 7px;
         top: -7px;
-        left: 7px;
-        margin-left: 0;
+        // move 45px right from -10px
+        margin-left: 35px;
       }
     }    
   }
