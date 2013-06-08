@@ -58,7 +58,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
   test 'test being redirected to the login controller' do
     ['/console', '/console/applications?test=bar'].each do |url|
       get url
-      assert_redirected_to login_path(:redirectUrl => url), "Requesting #{url}"
+      assert_redirected_to login_path(:then => url), "Requesting #{url}"
     end
   end
 
