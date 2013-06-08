@@ -4,3 +4,4 @@ session		optional	pam_keyinit.so revoke
 session		required	pam_limits.so
 session		required	pam_unix.so
 session    	required        pam_namespace.so no_unmount_on_close
+session         optional        pam_cgroup.so
