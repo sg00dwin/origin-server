@@ -134,7 +134,7 @@ module Secured
     def authenticate_user!
       logger.debug "Session contents: #{session.inspect}"
 
-      return redirect_to login_path(:redirectUrl => after_login_redirect) unless user_signed_in?
+      return redirect_to login_path(:then => after_login_redirect) unless user_signed_in?
 
       validate_user
     end
@@ -186,7 +186,7 @@ module Secured
     # The URL or path that this controller should redirect to after login.
     #
     def default_after_login_redirect
-      @default_login_workflow || console_path
+      console_path
     end
 
     #

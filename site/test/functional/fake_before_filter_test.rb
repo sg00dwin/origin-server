@@ -54,7 +54,7 @@ class FakeBeforeFilterTest < ActionController::TestCase
 
   test 'not logged in' do
     make_request
-    assert_redirected_to  login_path(:redirectUrl => '/fake_before_filter/1')
+    assert_redirected_to  login_path(:then => '/fake_before_filter/1')
   end
 
   test 'logged in but not accepted terms' do

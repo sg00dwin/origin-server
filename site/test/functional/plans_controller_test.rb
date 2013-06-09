@@ -41,7 +41,7 @@ class PlansControllerTest < ActionController::TestCase
   test "should redirect to login for an unauthenticated show request" do
     get :show
     assert_response :redirect
-    assert_redirected_to login_path(:redirectUrl => '/account/plan')
+    assert_redirected_to login_path(:then => '/account/plan')
   end
 
   test "should provide plan lists and instantiate user when authenticated" do
