@@ -10,19 +10,42 @@
       #errors
         %p.inline-errors #{value}
 
-  %h2 
+  %h2
     Please Accept the Following Terms
 
-  %p 
-    Before receiving access to the OpenShift Online Services, Software and online properties, you need to accept certain terms and conditions. The link below contains a list of the terms that will apply to your use.
-  
-  = link_to 'OpenShift Online Legal Terms and Conditions', acceptance_terms_path, :class => 'more', :target => "_blank"
-  
   %p
-    Clicking <strong>I accept</strong> means that you agree to the above terms.
-  
-  = flashes
+    In order to access and use the OpenShift Services and Software you will need to accept the terms and conditions of the OpenShift Services Agreement. Since OpenShift is just one of several online properties of Red Hat, you will also need to agree to certain site terms that will apply to your use of other Red Hat sites.  As a result, by clicking "I Accept" you agree to comply with the following terms:
+  #terms
+    %ul
+      -# TODO: a lot of this logic should be in the controller, not the view...
+      - accepted_terms_list = Array.new(@user.terms.length)
+      - if @user.terms.length > 0
+        -# Show the OpenShift Online terms first
+        - @user.terms.each_with_index do |value, i|
+          - if value['termTitle'].start_with?('O')
+            - accepted_terms_list[i] = value['termId']
+            %li
+              %a{:title => value['termTitle'], :href => value['termUrl'], :target => '_blank'} #{value['termTitle']}
+              
+              %p.description
+                = @term_description[value['termTitle']]
 
-  = semantic_form_for @term, :simple => true do |form|
-    = form.buttons do
-      = form.commit_button "I Accept", :button_html => { :class => 'btn btn-primary' }
+        -# Now show the remaining terms
+        - @user.terms.each_with_index do |value, i|
+          - unless value['termTitle'].start_with?('O')
+            - accepted_terms_list[i] = value['termId']
+            %li
+              %a{:title => value['termTitle'], :href => value['termUrl'], :target => '_blank'} #{value['termTitle']}
+              
+              - unless @term_description[value['termTitle']].nil?
+                %p.description
+                  = @term_description[value['termTitle']]
+
+  %p
+    Clicking <strong>I Accept</strong> means that you agree to the above terms.
+
+    = flashes
+
+    = semantic_form_for @term, :simple => true do |form|
+      = form.buttons do
+        = form.commit_button "I Accept", :button_html => { :class => 'btn btn-primary' }

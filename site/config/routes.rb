@@ -127,8 +127,6 @@ RedHatCloud::Application.routes.draw do
            :path_names => { :new => 'accept' },
            :only => [:new, :create]
 
-  match 'legal/acceptance_terms' => 'terms#acceptance_terms', :as => 'acceptance_terms'
-
   resource :login,
            :controller => "login",
            :only => [:show, :create]

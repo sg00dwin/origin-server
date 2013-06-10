@@ -82,15 +82,6 @@ class TermsControllerTest < ActionController::TestCase
     assert_redirected_to url
   end
 
-  test "show acceptance terms" do
-    setup_user
-    user = @controller.session_user
-    user.send('terms=', [{'termId' => '1', 'termUrl' => 'localhost', 'termTitle' => 'title'}])
-    get :acceptance_terms
-    assert_equal 0, assigns(:term).errors.size
-    assert_response :success
-  end
-
   test "verify auto-access doesn't fire before accepting terms" do
     setup_user
 
