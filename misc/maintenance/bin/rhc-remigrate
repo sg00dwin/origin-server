@@ -1,0 +1,26 @@
+#!/bin/bash
+
+function print_help {
+    echo "Usage: $0 remigrate_gears_file"
+    exit 255
+}
+
+[ $# -eq 1 ] || print_help
+
+IFS_BAK=$IFS
+IFS="
+"
+
+for CMD in `cat $1`
+do
+   echo "Running command: ${CMD}"
+   out=`eval $CMD 2>&1`
+   if [ $? -eq 0 ]
+   then
+     echo "$out" >> remigrate_success_log
+   else
+     echo "$out" >> remigrate_error_log
+   fi
+done
+
+IFS=$IFS_BAK
