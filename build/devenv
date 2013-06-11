@@ -424,12 +424,17 @@ service openshift-port-proxy restart
         puts "Done"
       end
 
-      def build_cucumber_command(title="", tags=[], env = {}, old_rerun_file=nil, test_dir="/data/openshift-test/tests", feature_file="*.feature", require_gemfile_dir=nil)
+      def build_cucumber_command(title="", tags=[], env = {}, old_rerun_file=nil, test_dir="/data/openshift-test/tests",
+          feature_file="*.feature", require_gemfile_dir=nil, other_outputs = nil)
+        other_outputs ||= {:junit => '/tmp/rhc/cucumber_results'}
         rerun_file = "/tmp/rerun_#{SecureRandom.hex}.txt"
         opts = []
         opts << "--strict"
         opts << "-f progress"
         opts << "-f rerun --out #{rerun_file}"
+        other_outputs.each do |formatter, file|
+          opts << "-f #{formatter} --out #{file}"
+        end
         tags += ["~@fedora-18-only", "~@fedora-19-only", "~@not-rhel"]
         opts += tags.map{ |t| "-t #{t}"}
         opts << "-r #{test_dir}"
