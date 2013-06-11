@@ -70,9 +70,15 @@
     <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'>
     <?php print $head; ?>
     <title><?php print $head_title; ?></title>
-    <?php if ($node && isset($node->field_search_meta_description) && $node->field_search_meta_description[0]) { ?>
-    <meta name="description" content="<?php print $node->field_search_meta_description[0]['safe']; ?>">
-    <?php }
+    <?php 
+      if ($node && isset($node->field_search_meta_description) && $node->field_search_meta_description[0]) {
+        $meta_description = $node->field_search_meta_description[0]['safe'];
+      }
+      if (!empty($meta_description)) {
+        ?><meta <?php 
+          print drupal_attributes(array('name' => 'description', 'content' => $meta_description));
+        ?>><?php 
+      }
 
       $openshift_server_url = openshift_server_url();
       // reference CSS files directly from openshift

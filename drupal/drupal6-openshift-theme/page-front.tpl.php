@@ -1,6 +1,7 @@
 <?php 
   $block = module_invoke('block', 'block', 'view', '4'); 
   $messaging = $block['content'];
+  $meta_description = variable_get('site_mission', "Develop, host, and scale your apps in the cloud with the open hybrid cloud application platform from Red Hat.");
 
 ?><?php include 'page_header.inc' ?>
 
