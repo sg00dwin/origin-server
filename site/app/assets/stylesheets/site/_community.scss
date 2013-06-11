@@ -61,6 +61,10 @@
 
 .community textarea {
   width: 100%;
+
+  .node-form textarea {
+    font-family: $monoFontFamily;
+  }
 }
 
 .community form {
