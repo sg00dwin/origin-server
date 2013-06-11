@@ -9,7 +9,7 @@ class ApplicationTypesControllerTest < ActionController::TestCase
     with_unique_user
     get :index
     assert_response :success
-    assert_select 'head title', 'OpenShift by Red Hat'
+    assert_select 'head title', 'OpenShift Online by Red Hat'
   end
 
   test "should show default currency on index" do
