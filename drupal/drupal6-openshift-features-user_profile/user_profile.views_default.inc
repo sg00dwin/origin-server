@@ -154,9 +154,9 @@ height: 100%;
 <div class="span7">
 <p class="lead">An OpenShift by Red Hat Partner has proven their expertise in building and integrating into the OpenShift platform.  These solutions are tested and validated by Red Hat to ensure seamless integration.</p>
 <p class="larger">
-Two OpenShift Partner tiers demonstrate the partner\'s integration with OpenShift.  With OpenShift Ready Partner QuickStarts and OpenShift Advanced Partner cartridges.
+Two OpenShift by Red Hat Partner tiers demonstrate the partner\'s integration with OpenShift.  With OpenShift by Red Hat Ready Partner QuickStarts and OpenShift by Red Hat Advanced Partner cartridges.
 </p>
-<section><a class="action-call" href="mailto:openshift-partners@redhat.com?subject=Become a Partner"><div>Become a partner</div><div class="highlight-arrow"></div></a></section>
+<section><a class="action-call" href="/partners/become-a-partner"><div>Become a partner</div><div class="highlight-arrow"></div></a></section>
 </div>
 <div class="span5">
 <div class="media-youtube">
@@ -261,7 +261,7 @@ Two OpenShift Partner tiers demonstrate the partner\'s integration with OpenShif
       'label' => '',
       'alter' => array(
         'alter_text' => 1,
-        'text' => '[image_attach_images]<div class="partner-summary">[body]</div>',
+        'text' => '<div class="partner-image-block">[image_attach_images]<div class="partner-summary">[body]</div></div>',
         'make_link' => 1,
         'path' => '[field_website_url]',
         'absolute' => 0,
