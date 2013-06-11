@@ -29,7 +29,7 @@ module OpenShift
         cart_status = do_control('status', cartridge)
 
         cart_status_msg = "[OK]"
-        if cart_status !~ /running|enabled|Tail of JBoss/i
+        if cart_status !~ /running|enabled|Tail of JBoss|status output from the mock cartridge/i
           problem = true
           cart_status_msg = "[PROBLEM]"
         end
@@ -65,7 +65,7 @@ module OpenShiftMigration
   # harmless changes the 2-n times around.
   #
   def self.migrate(uuid, namespace, version, hostname, ignore_cartridge_version)
-    unless version == '2.0.28a'
+    unless version == '2.0.29'
         return "Invalid version: #{version}", 255
     end
 
@@ -86,15 +86,27 @@ module OpenShiftMigration
 
     begin
       progress.log "Beginning #{version} migration for #{uuid}"
+      progress.init_store
 
       inspect_gear_state(progress, uuid, gear_home)
       migrate_cartridges(progress, ignore_cartridge_version, gear_home, gear_env, uuid, hostname)
-      validate_gear(progress, uuid, gear_home)
-      cleanup(progress, gear_home)
+
+      if progress.has_instruction?('validate_gear')
+        validate_gear(progress, uuid, gear_home)
+
+        if progress.complete? 'validate_gear'
+          cleanup(progress, gear_home)
+        end
+      else
+        cleanup(progress, gear_home)
+      end
 
       total_time = (Time.now.to_f * 1000).to_i - start_time
       progress.log "***time_migrate_on_node_measured_from_node=#{total_time}***"
-    rescue => e
+    rescue OpenShift::Utils::ShellExecutionException => e
+      progress.log %Q(#{e.message} stdout => \n #{e.stdout} stderr => \n #{e.stderr})
+      exitcode = 1
+    rescue Exception => e
       progress.log "Caught an exception during internal migration steps: #{e.message}"
       progress.log e.backtrace.join("\n")
       exitcode = 1
@@ -109,14 +121,16 @@ module OpenShiftMigration
   # 1. For each cartridge:
   #   1. Migrate the cartridge to the new version
   #   2. Rebuild the cartridge ident, if applicable
-  # 1. Restart the gear, if required (TODO: expand)
+  # 2. If a cartridge is undergoing an incompatible migration, set an instruction to validate
+  #    the gear.
+  #
   def self.migrate_cartridges(progress, ignore_cartridge_version, gear_home, gear_env, uuid, hostname)
     progress.log "Migrating gear at #{gear_home}"
 
     config               = OpenShift::Config.new
     state                = OpenShift::Utils::ApplicationState.new(uuid)
     user                 = OpenShift::UnixUser.from_uuid(uuid)
-    cartridge_model      = OpenShift::V2MigrationCartridgeModel.new(config, user, state)
+    cartridge_model      = OpenShift::V2MigrationCartridgeModel.new(config, user, state, OpenShift::Utils::Hourglass.new(235))
     cartridge_repository = OpenShift::CartridgeRepository.instance
     restart_required     = false
 
@@ -154,16 +168,20 @@ module OpenShiftMigration
           end
 
           if progress.incomplete? "#{name}_migrate"
+            progress.set_instruction('validate_gear')
+
             if next_manifest.compatible_versions.include?(cartridge_version)
-              progress.log "Fast migration of cartridge #{ident}"
+              progress.log "Compatible migration of cartridge #{ident}"
               compatible_migration(progress, cartridge_model, next_manifest, cartridge_path, user)
             else
               stop_gear(progress, hostname, uuid) unless restart_required
               restart_required = true
 
-              progress.log "Slow migration of cartridge #{ident}"
+              progress.log "Incompatible migration of cartridge #{ident}"
               incompatible_migration(progress, cartridge_model, next_manifest, version, cartridge_path, user)
             end
+
+            progress.mark_complete("#{name}_migrate")
           end
 
           if progress.incomplete? "#{name}_rebuild_ident"
@@ -192,13 +210,13 @@ module OpenShiftMigration
   #  1. Overlay the cartridge directory for the new version on the existing 
   #     instance directory, 
   #  2. Remove the ERB templates for the new version
-  #  4. With gear unlocked, secure the cartridge instance dir
+  #  3. With gear unlocked, secure the cartridge instance dir
   #
   def self.compatible_migration(progress, cart_model, next_manifest, target, user)
     OpenShift::CartridgeRepository.overlay_cartridge(next_manifest, target)
 
     # No ERB's are rendered for fast migrations
-    cart_model.processed_templates(next_manifest).each { |f| Util::rm_exists(f) }
+    FileUtils.rm_f cart_model.processed_templates(next_manifest)
     progress.log "Removed ERB templates for #{next_manifest.name}"
 
     cart_model.unlock_gear(next_manifest) do |m|
@@ -218,12 +236,12 @@ module OpenShiftMigration
   # 4. Connect the frontend
   #
   def self.incompatible_migration(progress, cart_model, next_manifest, version, target, user)
-    cart_model.setup_rewritten(next_manifest).each { |f| Util::rm_exists(f) }
+    FileUtils.rm_f cart_model.setup_rewritten(next_manifest)
 
     OpenShift::CartridgeRepository.overlay_cartridge(next_manifest, target)
 
     name = next_manifest.name
-    
+
     cart_model.unlock_gear(next_manifest) do |m|
       cart_model.secure_cartridge(next_manifest.short_name, user.uid, user.gid, target)
 
@@ -331,7 +349,7 @@ module OpenShiftMigration
         state  = OpenShift::Utils::ApplicationState.new(uuid)
         user   = OpenShift::UnixUser.from_uuid(uuid)
 
-        cart_model = OpenShift::V2MigrationCartridgeModel.new(config, user, state)
+        cart_model = OpenShift::V2MigrationCartridgeModel.new(config, user, state, OpenShift::Utils::Hourglass.new(235))
 
         # only validate via http query on the head gear
         if cart_model.primary_cartridge && (user.uuid == user.application_uuid)
@@ -374,10 +392,8 @@ module OpenShiftMigration
   # run successfully.
   #
   def self.cleanup(progress, gear_home)
-    if progress.complete?('validate_gear')
-      progress.log 'Cleaning up after migration'
-      FileUtils.rm_f(File.join(gear_home, 'app-root', 'runtime', PREMIGRATION_STATE))
-      progress.done
-    end
+    progress.log 'Cleaning up after migration'
+    FileUtils.rm_f(File.join(gear_home, 'app-root', 'runtime', PREMIGRATION_STATE))
+    progress.done
   end
 end
