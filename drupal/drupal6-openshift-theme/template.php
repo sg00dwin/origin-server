@@ -475,7 +475,17 @@ function openshift_server_url() {
 }
 
 function openshift_assets_url() {
-  return variable_get('openshift_assets_url', openshift_server_url() . "/app/assets");
+  $url = variable_get('openshift_assets_url');
+  if (empty($url)) {
+    $asset_version = variable_get('openshift_assets_version');
+    if (empty($asset_version)) {
+      $url = openshift_server_url() . '/app/assets';
+    } 
+    else {
+      $url = openshift_server_url() . '/app/assets-' . $asset_version;
+    }
+  }
+  return $url;
 }
 
 function openshift_button($element) {
