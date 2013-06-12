@@ -378,7 +378,7 @@ module OpenShiftMigration
         problem, status = cart_model.gear_status
 
         if problem
-          progress.log "Leaving migration metadata in place due to problem detected with gear status:\n#{status}"
+          progress.log "Problem detected with gear status:\n#{status}"
           return
         end
       end
