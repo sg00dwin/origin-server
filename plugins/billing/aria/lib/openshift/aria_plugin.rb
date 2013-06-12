@@ -261,6 +261,55 @@ module OpenShift
       OpenShift::AriaEvent.send_entitlements(hash) 
     end
 
+    def check_inconsistencies(user_hash, summary, verbose)
+      invalid_accts = mismatch_plan_id = mismatch_plan_state = false
+      user_hash.each do |user_id, user_info|
+        begin
+          begin
+            acct_info = get_acct_details_all(user_info['usage_account_id'])
+          rescue Exception => e
+            invalid_accts = true
+            summary << "User '#{user_id}' has usage_account_id '#{user_info['usage_account_id']}' in mongo but does not exist in Aria billing provider."
+            next
+          end
+
+          acct_plan_id = get_plan_id_from_plan_no(acct_info['plan_no'].to_i)
+          user = nil
+          selection = {:fields => ["plan_id", "plan_state"], :timeout => false}
+          if user_info['plan_id'].to_s != acct_plan_id.to_s
+            OpenShift::DataStore.find(:cloud_users, {'_id' => BSON::ObjectId(user_id)}, selection) { |cloud_user| user = cloud_user }
+            if user['plan_id'].to_s != acct_plan_id.to_s
+              mismatch_plan_id = true
+              summary << "User '#{user_id}' has plan_id '#{user['plan_id']}' in mongo but has plan_id '#{acct_plan_id}' in Aria billing provider."
+            end
+          end
+
+          if ((user_info['plan_state'] == CloudUser::PLAN_STATES['active']) and (acct_info['status_cd'].to_i != 1)) or
+             ((user_info['plan_state'] != CloudUser::PLAN_STATES['active']) and (acct_info['status_cd'].to_i == 1))
+            OpenShift::DataStore.find(:cloud_users, {'_id' => BSON::ObjectId(user_id)}, selection) { |cloud_user| user = cloud_user } unless user
+            if ((user['plan_state'] == CloudUser::PLAN_STATES['active']) and (acct_info['status_cd'].to_i != 1)) or
+               ((user['plan_state'] != CloudUser::PLAN_STATES['active']) and (acct_info['status_cd'].to_i == 1))
+              mismatch_plan_state = true
+              summary << "User '#{user_id}' has plan_state '#{user['plan_state']}' in mongo that does not correspond to status_cd '#{acct_info['status_cd']}' in Aria billing provider."
+            end
+          end
+        rescue Exception => ex
+          puts "ERROR: check_inconsistencies() failed for user_id: #{user_id}"
+        end
+      end
+      if verbose
+        puts "Checking usage_account_id validity for all billing users: " + (invalid_accts ? "FAIL" : "OK")
+        puts "Checking plan_id validity for all billing users: " + (mismatch_plan_id ? "FAIL" : "OK")
+        puts "Checking plan_state validity for all billing users: " + (mismatch_plan_state ? "FAIL" : "OK")
+      end
+    end
+
+    def display_check_help
+puts <<USAGE
+    Level '2' performs integrity checks for user plan and usage in mongo vs Aria billing provider.
+USAGE
+    end
+
     ######################## ARIA API methods #######################
 
     def get_plans
