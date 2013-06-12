@@ -229,6 +229,39 @@
   margin: 5px 0 20px 0;
 }
 
+/*   Advanced search   */
+
+.search-form .search-advanced {
+  &:last-child {
+    margin-right:0;
+  }
+  .criterion {
+    float: left;
+    margin-right: 1%;
+    width: 47%;
+    &:last-child {
+      clear: left;
+      display: block;
+      width: 100%;
+    }
+  }
+  select#edit-category {
+    width: 100%;
+  }
+  .form-checkboxes .control-group {
+    display: inline-block;
+    width: 150px;
+  }
+}
+@media (max-width: 767px) {
+  .search-form .search-advanced .criterion {
+    float: none;
+    width: auto;
+  }
+}
+
+
+
 form#comment-controls {
   display:inline-block;
   text-align: right;
