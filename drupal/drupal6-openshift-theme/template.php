@@ -551,7 +551,7 @@ function openshift_preprocess_search_block_form(&$vars) {
 }
 
 function openshift_user_guide_url() {
-  return 'http://access.redhat.com/knowledge/docs/en-US/OpenShift/2.0/html/User_Guide/index.html';
+  return '/user-guide';
 }
 
 function openshift_search_form($form) {
