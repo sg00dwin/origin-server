@@ -11,7 +11,7 @@ function og_comment_perms_preprocess_comment_wrapper(&$variables) {
 	if ($do->perm == 'post') return;
 	if ($do->perm == 'join') {
 		// Add our link to the bottom and display none our box.
-		$variables['content'] .= t('You need to !join this group before you can reply to this thread.', array('!join' => l(t('join'), 'modals/nojs/join/'. $do->group->nid, array('query' => drupal_get_destination(), 'attributes' => array('class' => 'ctools-use-modal ctools-modal-join-modal-box')))));
+		$variables['content'] .= t('You need to !join this group before you can reply to this thread.', array('!join' => l(t('join'), 'og/subscribe/'. $do->group->nid, array('query' => drupal_get_destination()))));
 		$variables['content'] .= '<style>.box { display: none; }</style>';
 	}
 }
