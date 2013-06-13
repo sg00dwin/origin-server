@@ -309,9 +309,9 @@ function redhat_events_views_default_views() {
       </a>
     </div>-->
     <ul class="nav nav-tabs">
-      <li><a href="events">View By Date</a></li>
-      <li><a href="events?sort=country">View By Country</a></li>
-      <li class="active"><a href="calendar">Calendar View</a></li>
+      <li><a href="/events">View By Date</a></li>
+      <li><a href="/events?sort=country">View By Country</a></li>
+      <li class="active"><a href="/calendar">Calendar View</a></li>
     </ul>');
   $handler->override_option('header_format', '2');
   $handler->override_option('header_empty', 1);
