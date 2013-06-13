@@ -266,19 +266,26 @@ module OpenShift
       user_hash.each do |user_id, user_info|
         begin
           begin
-            acct_info = get_acct_details_all(user_info['usage_account_id'])
+            acct_info = get_acct_details_all(user_info['usage_account_id'].to_i)
           rescue Exception => e
             invalid_accts = true
             summary << "User '#{user_id}' has usage_account_id '#{user_info['usage_account_id']}' in mongo but does not exist in Aria billing provider."
             next
           end
 
+          acct_queued_plans = get_queued_service_plans(user_info['usage_account_id'].to_i)
+          plan_must_match = false
+          if acct_queued_plans.nil? or acct_queued_plans.empty?
+            plan_must_match = true
+          end
           acct_plan_id = get_plan_id_from_plan_no(acct_info['plan_no'].to_i)
           user = nil
           selection = {:fields => ["plan_id", "plan_state"], :timeout => false}
-          if user_info['plan_id'].to_s != acct_plan_id.to_s
+          if (plan_must_match and (user_info['plan_id'].to_s != acct_plan_id.to_s)) or
+             (!plan_must_match and (user_info['plan_id'].to_s == acct_plan_id.to_s))
             OpenShift::DataStore.find(:cloud_users, {'_id' => BSON::ObjectId(user_id)}, selection) { |cloud_user| user = cloud_user }
-            if user['plan_id'].to_s != acct_plan_id.to_s
+            if (plan_must_match and (user['plan_id'].to_s != acct_plan_id.to_s)) or 
+               (!plan_must_match and (user['plan_id'].to_s == acct_plan_id.to_s))
               mismatch_plan_id = true
               summary << "User '#{user_id}' has plan_id '#{user['plan_id']}' in mongo but has plan_id '#{acct_plan_id}' in Aria billing provider."
             end
@@ -305,9 +312,7 @@ module OpenShift
     end
 
     def display_check_help
-puts <<USAGE
-    Level '2' performs integrity checks for user plan and usage in mongo vs Aria billing provider.
-USAGE
+      "Level '1' performs integrity checks for user plan and usage in mongo vs Aria billing provider."
     end
 
     ######################## ARIA API methods #######################
