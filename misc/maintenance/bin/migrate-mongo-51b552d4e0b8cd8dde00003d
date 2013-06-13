@@ -1,0 +1,21 @@
+#!/usr/bin/env oo-ruby
+require 'rubygems'
+$:.unshift('/var/www/openshift/broker')
+require 'config/environment'
+
+begin
+  db = OpenShift::DataStore.db(:primary)
+
+  # multi update to unset the connections field
+  puts "Before:"
+  puts db["applications"].find_one({"uuid" => "51b552d4e0b8cd8dde00003d"}).pretty_inspect
+  db["applications"].update({"uuid" => "51b552d4e0b8cd8dde00003d"}, {"$pull" => {"group_instances" => {"gears.uid" => 3282}}})
+  puts "After:"
+  puts db["applications"].find_one({"uuid" => "51b552d4e0b8cd8dde00003d"}).pretty_inspect
+  
+rescue Exception => e
+  puts e.message
+  puts e.backtrace
+  exit 1
+end
+puts "Migration Done!"
