@@ -1127,3 +1127,26 @@ table.version-list {
 .pagination {
   height: auto;
 }
+
+
+@media (max-width: 540px) {
+  .community .vertical-tabs {
+    margin-left: 0;
+
+    .vertical-tabs-list {
+      float: none;
+      left: 0;
+      margin: 0;
+      width: auto;
+
+      > li.selected {
+        border-right-width: 1px;
+      }
+    }
+
+    .vertical-tabs-panes {
+      margin-top: 10px;
+      overflow: auto;
+    }
+  }
+}
