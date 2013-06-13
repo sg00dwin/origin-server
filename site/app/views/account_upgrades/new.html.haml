@@ -1,6 +1,16 @@
 - content_for :title, "Upgrade your Plan"
 = plan_upgrade_steps 3
 
+- content_for :javascripts do
+  :javascript
+    jQuery(function($){
+      $('#coupon-link').click(function(){
+        $('#coupon-link').hide();
+        $('#coupon-field-container').show().find('input').focus();
+        return false;
+      });
+    });
+
 = semantic_form_for @user, :simple => true, :url => account_plan_upgrade_path, :method => :post do |f|
   = f.semantic_errors
 
@@ -15,15 +25,33 @@
         - if @billing_info.present?
           = render :partial => 'billing_info/summary', :locals => {:billing_info => @billing_info}
         %p= link_to @billing_info.blank? ? "Add a billing address to this account" : "Change billing address", edit_account_plan_upgrade_billing_info_path
+
   %section
     %p.larger= "The following plan changes will take effect when you switch from #{@current_plan.name}  to #{@plan.name}."
     = render :partial => 'plans/plan_comparison', :locals => { :current_plan => @current_plan, :new_plan => @plan } 
+
+  - if @coupon
+    %section
+      %a#coupon-link{:href => "javascript:;"} I have a coupon code
+      %div#coupon-field-container{:style => "display:none"}
+        = f.inputs :for => @coupon do |c|
+          = c.input :coupon_code
+      - if @coupon.present?
+        :css
+          #coupon-link { display: none; }
+          #coupon-field-container { display: block !important; }
+      %noscript
+        :css
+          #coupon-link { display: none; }
+          #coupon-field-container { display: block !important; }
+
   %section
     %p.larger
       The Services are subject to the
       %a{ :href => legal_site_terms_path, :target => '_blank' } OpenShift Online Legal Terms and Conditions.
       By clicking 'Confirm your plan changes' you acknowledge that you agree to these terms.
   = hidden_field_tag :plan_id, @plan.id
+
   .form-actions
     = link_to "Back to plans", account_plans_path, :class => 'btn'
     = submit_tag "Confirm your plan changes", :class => 'btn btn-primary'

@@ -451,6 +451,43 @@ class AriaUnitTest < ActiveSupport::TestCase
     #assert_equal({:supplemental => {'tax_exempt' => 1}}, info.to_aria_attributes)
   end
 
+  test 'coupon presence' do
+    assert Aria::Coupon.new.blank?
+    assert Aria::Coupon.new(:coupon_code => nil).blank?
+    assert Aria::Coupon.new(:coupon_code => "").blank?
+    assert Aria::Coupon.new(:coupon_code => "A").present?
+  end
+
+  test 'coupon save' do
+    u = TestUser.new
+    u.expects(:acct_no).at_least(0).returns('123')
+
+    stub_aria(:apply_coupon_to_acct, { :acct_no => '123', :coupon_code => 'externalmycoupon' }).to_return(resp(ok_wddx({ :user_success_msg => nil })))
+    assert_equal "Coupon was successfully applied", Aria::Coupon.new(:coupon_code => 'mycoupon').save(u)
+
+    stub_aria(:apply_coupon_to_acct, { :acct_no => '123', :coupon_code => 'externalmycoupon' }).to_return(resp(ok_wddx({ :user_success_msg => "" })))
+    assert_equal "Coupon was successfully applied", Aria::Coupon.new(:coupon_code => 'mycoupon').save(u)
+
+    stub_aria(:apply_coupon_to_acct, { :acct_no => '123', :coupon_code => 'externalmycoupon' }).to_return(resp(ok_wddx({ :user_success_msg => "Custom success message" })))
+    assert_equal "Custom success message", Aria::Coupon.new(:coupon_code => 'mycoupon').save(u)
+
+    stub_aria(:apply_coupon_to_acct, { :acct_no => '123', :coupon_code => 'externalmycoupon' }).to_return(resp(ok_wddx({ :user_success_msg => "Custom success message" })))
+    assert_equal "Custom success message", Aria::Coupon.new(:coupon_code => 'MYCOUPON').save(u)
+
+    stub_aria(:apply_coupon_to_acct, { :acct_no => '123', :coupon_code => 'externalmycoupon' }).to_return(resp(error_wddx(15003,'Coupon already applied')))
+    assert_equal "The coupon was already applied to your account", Aria::Coupon.new(:coupon_code => 'mycoupon').save(u)
+
+    stub_aria(:apply_coupon_to_acct, { :acct_no => '123', :coupon_code => 'externalmycoupon' }).to_return(resp(error_wddx(15001,'Coupon does not exist')))
+    coupon = Aria::Coupon.new(:coupon_code => 'mycoupon')
+    assert_equal false, coupon.save(u)
+    assert_equal "Invalid coupon code", coupon.errors[:coupon_code].first
+
+    stub_aria(:apply_coupon_to_acct, { :acct_no => '123', :coupon_code => 'externalmycoupon' }).to_return(resp(error_wddx(1000,'Unknown')))
+    coupon = Aria::Coupon.new(:coupon_code => 'mycoupon')
+    assert_equal false, coupon.save(u)
+    assert_equal "The coupon could not be applied", coupon.errors[:coupon_code].first
+  end
+
   test 'create_acct_complete should serialize supplemental fields' do
     base = Class.new(Object){ def create_acct_complete(*args) has(*args) end }
     a = Class.new(base){ include Aria::Methods }.new
