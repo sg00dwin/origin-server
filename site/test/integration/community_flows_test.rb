@@ -53,23 +53,23 @@ class CommunityFlowsTest < ActionDispatch::IntegrationTest
     assert_equal href, URI(page.current_url).path
   end
 
-  test 'Tab navigation' do
+  test 'tab navigation' do
     visit community_url
     verify_tabs('Products', ['Online', 'Enterprise', 'Origin', 'Pricing'])
-    verify_tabs('Get Involved',['Blog', 'Events', 'Vote on Features', 'Application Gallery'])
+    verify_tabs('Get Involved',['Blog', 'Events', 'Vote on Features', 'App Gallery'])
     verify_tabs('Dev Center', ['QuickStarts', 'Technologies', 'Documentation'])
     verify_tabs('Support', ['FAQs', 'Forum', 'Knowledge Base'])
   end
 
-  test 'Dropdown menus' do
+  test 'dropdown menus' do
     visit community_url
     verify_dropdown('Products', ['Online', 'Enterprise', 'Origin', 'Pricing'])
-    verify_dropdown('Get Involved', ['Blog', 'Events', 'Vote on Features', 'Application Gallery'])
+    verify_dropdown('Get Involved', ['Blog', 'Events', 'Vote on Features', 'App Gallery'])
     verify_dropdown('Dev Center', ['QuickStarts', 'Technologies', 'Documentation'])
     verify_dropdown('Support', ['FAQs', 'Forum', 'Knowledge Base'])
   end
 
-  test 'Top Quickstarts appear tiled' do
+  test 'top quickstarts appear tiled' do
     visit community_url
 
     find_link('Dev Center').hover
@@ -79,7 +79,7 @@ class CommunityFlowsTest < ActionDispatch::IntegrationTest
     assert_selector('.tile.first')
   end
 
-  test 'Support page has correct navbar' do
+  test 'support page has correct navbar' do
     visit community_url
 
     click_link 'Support'
@@ -95,7 +95,7 @@ class CommunityFlowsTest < ActionDispatch::IntegrationTest
     nav = find('ul.nav-tabs')
 
     nav_items.each do |link|
-      assert nav.has_link? link
+      assert(nav.has_link?(link), "'#{link}' link not found on the '#{link_text}' page menu")
     end
   end
 
@@ -104,7 +104,7 @@ class CommunityFlowsTest < ActionDispatch::IntegrationTest
 
     # Verify that the menu items are in place
     menu_items.each do |link|
-      assert dropdown.has_link? link
+      assert(dropdown.has_link?(link), "'#{link}' link not found under '#{link_text}' dropdown")
     end
 
     # Verify that hovering over the menu makes it appear
