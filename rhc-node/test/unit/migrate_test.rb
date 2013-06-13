@@ -57,9 +57,7 @@ module OpenShiftMigration
       OpenShift::CartridgeRepository.expects(:overlay_cartridge).with(next_manifest, target)
 
       cart_model.expects(:processed_templates).with(next_manifest).returns(%w(a b c))
-      OpenShiftMigration::Util.expects(:rm_exists).with('a')
-      OpenShiftMigration::Util.expects(:rm_exists).with('b')
-      OpenShiftMigration::Util.expects(:rm_exists).with('c')
+      FileUtils.expects(:rm_f).with(%w(a b c))
       
       cart_model.expects(:unlock_gear).with(next_manifest).yields(next_manifest)
       cart_model.expects(:secure_cartridge).with('mock', user.uid, user.gid, target)
@@ -69,8 +67,7 @@ module OpenShiftMigration
 
     def test_incompatible_success
       cart_model.expects(:setup_rewritten).with(next_manifest).returns(%w(a b))
-      OpenShiftMigration::Util.expects(:rm_exists).with('a')
-      OpenShiftMigration::Util.expects(:rm_exists).with('b')
+      FileUtils.expects(:rm_f).with(%w(a b))
 
       OpenShift::CartridgeRepository.expects(:overlay_cartridge).with(next_manifest, target)
 
@@ -94,8 +91,7 @@ module OpenShiftMigration
 
     def test_incompatible_recover_after_setup
       cart_model.expects(:setup_rewritten).with(next_manifest).returns(%w(a b))
-      OpenShiftMigration::Util.expects(:rm_exists).with('a')
-      OpenShiftMigration::Util.expects(:rm_exists).with('b')
+      FileUtils.expects(:rm_f).with(%w(a b))
 
       OpenShift::CartridgeRepository.expects(:overlay_cartridge).with(next_manifest, target)
 
@@ -118,8 +114,7 @@ module OpenShiftMigration
 
     def test_incompatible_recover_after_erb_processing
       cart_model.expects(:setup_rewritten).with(next_manifest).returns(%w(a b))
-      OpenShiftMigration::Util.expects(:rm_exists).with('a')
-      OpenShiftMigration::Util.expects(:rm_exists).with('b')
+      FileUtils.expects(:rm_f).with(%w(a b))
 
       OpenShift::CartridgeRepository.expects(:overlay_cartridge).with(next_manifest, target)
 
@@ -141,8 +136,7 @@ module OpenShiftMigration
 
     def test_incompatible_done
       cart_model.expects(:setup_rewritten).with(next_manifest).returns(%w(a b))
-      OpenShiftMigration::Util.expects(:rm_exists).with('a')
-      OpenShiftMigration::Util.expects(:rm_exists).with('b')
+      FileUtils.expects(:rm_f).with(%w(a b))
 
       OpenShift::CartridgeRepository.expects(:overlay_cartridge).with(next_manifest, target)
 

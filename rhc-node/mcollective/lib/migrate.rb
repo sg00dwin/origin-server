@@ -174,8 +174,8 @@ module OpenShiftMigration
               progress.log "Compatible migration of cartridge #{ident}"
               compatible_migration(progress, cartridge_model, next_manifest, cartridge_path, user)
             else
-              stop_gear(progress, hostname, uuid) unless restart_required
-              restart_required = true
+              stop_gear(progress, hostname, uuid) unless progress.has_instruction?('restart_gear')
+              progress.set_instruction('restart_gear')
 
               progress.log "Incompatible migration of cartridge #{ident}"
               incompatible_migration(progress, cartridge_model, next_manifest, version, cartridge_path, user)
@@ -196,7 +196,7 @@ module OpenShiftMigration
       end
     end
 
-    if restart_required
+    if progress.has_instruction?('restart_gear')
       restart_start_time = (Time.now.to_f * 1000).to_i
       start_gear(progress, hostname, uuid)
       restart_time = (Time.now.to_f * 1000).to_i - restart_start_time
