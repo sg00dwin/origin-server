@@ -6,7 +6,6 @@ require 'config/environment'
 begin
   db = OpenShift::DataStore.db(:primary)
 
-  # multi update to unset the connections field
   puts "Before:"
   puts db["applications"].find_one({"uuid" => "51b552d4e0b8cd8dde00003d"}).pretty_inspect
   db["applications"].update({"uuid" => "51b552d4e0b8cd8dde00003d"}, {"$pull" => {"group_instances" => {"gears.uid" => 3282}}})
