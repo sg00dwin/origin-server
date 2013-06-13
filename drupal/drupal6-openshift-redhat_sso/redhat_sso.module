@@ -101,7 +101,9 @@ function _redhat_sso_page_user() {
     drupal_goto('user/' . $user->uid);
   }
   else if ($_GET['q'] == 'user/login') {
-    drupal_goto('user');
+    $destination = $_REQUEST['destination'];
+    unset($_REQUEST['destination']);
+    drupal_goto('user', isset($destination) ? 'destination=' . urlencode($destination) : NULL);
   }
   else {
     return drupal_get_form('user_login');
