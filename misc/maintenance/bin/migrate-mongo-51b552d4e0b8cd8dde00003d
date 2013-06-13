@@ -7,8 +7,22 @@ begin
   db = OpenShift::DataStore.db(:primary)
 
   puts "Before:"
-  puts db["applications"].find_one({"uuid" => "51b552d4e0b8cd8dde00003d"}).pretty_inspect
-  db["applications"].update({"uuid" => "51b552d4e0b8cd8dde00003d"}, {"$pull" => {"group_instances" => {"gears.uid" => 3282}}})
+  a = db["applications"].find_one({"uuid" => "51b552d4e0b8cd8dde00003d"})
+
+  puts a['group_instances'].class
+  a['group_instances'].each_with_index do |gi, index|
+    puts gi['gears'].class
+    puts gi['_id']
+    gi['gears'].each do |gear|
+      if gear['uid'] == 3282
+        puts 'Updating...'
+        a['group_instances'].delete_at(index)
+        db["applications"].update({"uuid" => "51b552d4e0b8cd8dde00003d"}, {"$set" => {"group_instances" => a['group_instances']}})
+        break
+      end
+    end
+  end
+  
   puts "After:"
   puts db["applications"].find_one({"uuid" => "51b552d4e0b8cd8dde00003d"}).pretty_inspect
   
