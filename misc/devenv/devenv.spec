@@ -177,6 +177,7 @@ Requires:  drupal6-openshift-features-user_profile
 Requires:  drupal6-openshift-features-video
 Requires:  drupal6-openshift-modals
 Requires:  drupal6-openshift-og_comment_perms
+Requires:  drupal6-openshift-partner_program
 Requires:  drupal6-openshift-redhat_acquia
 Requires:  drupal6-openshift-redhat_events
 Requires:  drupal6-openshift-redhat_frontpage
@@ -198,6 +199,7 @@ Requires:  drupal6-views
 Requires:  drupal6-views_bonus
 Requires:  drupal6-views_customfield
 Requires:  drupal6-views_datasource
+Requires:  drupal6-views_rss
 Requires:  drupal6-vote_up_down
 Requires:  drupal6-votingapi
 Requires:  drupal6-wikitools
