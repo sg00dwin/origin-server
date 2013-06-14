@@ -1,11 +1,12 @@
-- js_required("to sign up for an OpenShift account")
-
 :ruby
   options = {
     :ssl => true
   }
 
 #picatcha_widget.control-group{:class => (errors ? 'error' : '')}
+  %noscript 
+    .alert.alert-warning You need JavaScript enabled to sign up for an OpenShift account
+
   -#%label.control-label{ :for => :picatcha_images}
     Are you a spam bot?
   .controls

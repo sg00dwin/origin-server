@@ -1,5 +1,3 @@
-- js_required("to sign up for an OpenShift account")
-
 :ruby
   options = {
     :display => {
@@ -10,6 +8,9 @@
   }
 
 #recaptcha_widget.control-group{:class => (errors ? 'error' : '')}
+  %noscript 
+    .alert.alert-warning You need JavaScript enabled to sign up for an OpenShift account
+
   %label.control-label{ :class => :recaptcha_only_if_image, :for => :recaptcha_response_field } Are you a spam bot?
   %label.control-label{ :class => :recaptcha_only_if_audio, :for => :recaptcha_response_field } Are you a spam bot?
 

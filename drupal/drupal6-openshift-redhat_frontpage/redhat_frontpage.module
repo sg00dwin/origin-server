@@ -22,6 +22,15 @@ function redhat_frontpage_menu() {
   );
   $items['_errors/403'] = $access_denied;
 
+  $items['admin/settings/redhat-frontpage'] = array(
+    'title' => 'OpenShift theme settings',
+    'description' => 'Change settings related to the OpenShift theme configuration',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('redhat_frontpage_settings'),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
+   );
+
   $item = array(
     'page callback' => redhat_page_home,
     'access callback' => TRUE,
@@ -38,6 +47,29 @@ function redhat_frontpage_menu() {
     'menu_name' => 'primary-links',
   );
   return $items;
+}
+
+function redhat_frontpage_settings() {
+  $form = array();
+
+  $form['openshift_assets_version'] = array(
+    '#type' => 'textfield',
+    '#title' => t('OpenShift assets version'),
+    '#default_value' => variable_get('openshift_assets_version', ''),
+    //'#size' => 40,
+    '#maxlength' => 100,
+    '#description' => t("The asset version to retrieve from the OpenShift site.  Use empty string to use the latest version."),
+    '#required' => TRUE,
+  );
+
+  return system_settings_form($form);
+}
+
+function redhat_frontpage_settings_validate($form, &$form_state) {
+  $version = $form_state['values']['openshift_assets_version'];
+  if (empty($version) && strlen($version) > 0) {
+    form_set_error('openshift_assets_version', t('You must enter an empty string (no version) or a valid string.'));
+  }
 }
 
 function redhat_frontpage_form_menu_configure_alter(&$form, &$form_state) {

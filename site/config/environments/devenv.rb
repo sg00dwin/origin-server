@@ -54,6 +54,7 @@ RedHatCloud::Application.configure do
 
   config.assets.compile = false
   config.assets.initialize_on_precompile = false
+  config.assets.digest = true
 
   Console.configure('/etc/openshift/console-devenv.conf')
 end

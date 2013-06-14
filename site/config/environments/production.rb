@@ -52,9 +52,11 @@ RedHatCloud::Application.configure do
 
   if $rails_rake_task
     # Settings specific to the production environment build task
+    config.logger = Logger.new(STDOUT)
 
     # Workaround for Rails 3.2.x and threadsafe!
     config.dependency_loading = true
+    config.assets.digest = true
     
     config.assets.compress = true
     # Digest is disabled so we serve the same resources
@@ -79,6 +81,7 @@ RedHatCloud::Application.configure do
                                   )
   else
     # Settings specific to the production environment server launch
+    config.assets.digest = true
   end
 
   Console.configure(ENV['CONSOLE_CONFIG_FILE'] || '/etc/openshift/console.conf')

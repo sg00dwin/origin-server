@@ -39,4 +39,17 @@ namespace :assets do
       'product/core_app_installing'  => 'error/app/installing.html',
     }
   end
+
+  task :precompile_digested => 'assets:precompile' do
+    asset_path = File.expand_path("#{Rails.root}/public/assets")
+    manifest = YAML.load(File.read("#{asset_path}/manifest.yml"))
+    manifest.each_pair do |file, dest|
+      next unless ['.css', '.css.gz'].any?{ |s| file.end_with? s }
+      puts "Update #{file} to use digested version"
+      FileUtils.cp File.join(asset_path, dest), File.join(asset_path, file)
+      if File.exists?(File.join(asset_path, "#{file}.gz"))
+        FileUtils.cp File.join(asset_path, "#{dest}.gz"), File.join(asset_path, "#{file}.gz")
+      end
+    end
+  end
 end
