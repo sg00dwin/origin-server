@@ -42,10 +42,10 @@
 
 - content_for :page_title, @message || 'Page not found'
 
-%h1.ribbon= @message || 'Page not found <small>404</small>'.html_safe
+%h1= @message || 'Page not found'
 
 %section.row
-  .span7
+  .span12
     - unless @message
       %h2 The page you requested may no longer exist
 
