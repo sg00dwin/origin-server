@@ -14,33 +14,15 @@
     Please Accept the Following Terms
 
   %p
-    In order to access and use the OpenShift Services and Software you will need to accept the terms and conditions of the OpenShift Services Agreement. Since OpenShift is just one of several online properties of Red Hat, you will also need to agree to certain site terms that will apply to your use of other Red Hat sites.  As a result, by clicking "I Accept" you agree to comply with the following terms:
+    In order to access and use the OpenShift Online Services and Software you will need to accept the terms and conditions of the OpenShift Online Services Agreement. Since OpenShift Online is just one of several online properties of Red Hat, you will also need to agree to certain site terms that will apply to your use of other Red Hat sites.  As a result, by clicking "I Accept" you agree to comply with the following terms:
   #terms
     %ul
-      -# TODO: a lot of this logic should be in the controller, not the view...
-      - accepted_terms_list = Array.new(@user.terms.length)
-      - if @user.terms.length > 0
-        -# Show the OpenShift Online terms first
-        - @user.terms.each_with_index do |value, i|
-          - if value['termTitle'].start_with?('O')
-            - accepted_terms_list[i] = value['termId']
-            %li
-              %a{:title => value['termTitle'], :href => value['termUrl'], :target => '_blank'} #{value['termTitle']}
-              
-              %p.description
-                = @term_description[value['termTitle']]
-
-        -# Now show the remaining terms
-        - @user.terms.each_with_index do |value, i|
-          - unless value['termTitle'].start_with?('O')
-            - accepted_terms_list[i] = value['termId']
-            %li
-              %a{:title => value['termTitle'], :href => value['termUrl'], :target => '_blank'} #{value['termTitle']}
-              
-              - unless @term_description[value['termTitle']].nil?
-                %p.description
-                  = @term_description[value['termTitle']]
-
+      - @terms_display_list.each do |term|
+        %li
+          %a{:title => term[:title], :href => term[:href], :target => '_blank'} #{term[:title]}
+          - unless term[:description].blank?
+            %p.description
+              = term[:description]
   %p
     Clicking <strong>I Accept</strong> means that you agree to the above terms.
 

@@ -2,10 +2,7 @@ class TermsController < SiteController
 
   def new
     required_terms
-    new_terms
-  end
 
-  def new_terms
     @user = session_user
     if @user
       if @user.terms.empty?
@@ -15,7 +12,24 @@ class TermsController < SiteController
 
       @term = Term.new
     else
-      redirect_to login_path
+      redirect_to login_path and return
+    end
+
+    @terms_display_list = Array.new()
+    if @user.terms.length > 0
+      @user.terms.each do |term|
+        display_hash = {
+          :title => term['termTitle'],
+          :href => term['termUrl'],
+          :description => @term_description[term['termTitle']],
+        }
+        # Show the OpenShift Online terms first
+        if term['termTitle'].start_with?('O')
+          @terms_display_list.unshift display_hash
+        else
+          @terms_display_list << display_hash
+        end
+      end
     end
   end
 
@@ -38,7 +52,7 @@ class TermsController < SiteController
         render :new
       end
     else
-      redirect_to login_path
+      redirect_to login_path and return
     end
   end
 
