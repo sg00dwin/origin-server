@@ -599,6 +599,7 @@ html.js fieldset.collapsible .fieldset-wrapper {
 
 .community .thread {
   margin-bottom: 70px;
+  clear:right; 
   .picture {
     float: right;
   }
@@ -1150,3 +1151,40 @@ table.version-list {
     }
   }
 }
+
+// Videos
+// -------------------
+
+.media-youtube,
+.media-vimeo {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  embed,
+  iframe,
+  object {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+.field_video_third_party_embed,
+.field_video_third_party_duration {
+  max-width: 767px;
+}
+.field_video_third_party_duration {
+  text-align: right;
+  font-size: 12.5px;
+  background: black;
+  color: $grayLight;
+  padding-right: 10px;
+  margin-bottom: 15px;
+  @include box-sizing(border-box);
+  + .body {
+    max-width: 767px;
+  }
+}
+
