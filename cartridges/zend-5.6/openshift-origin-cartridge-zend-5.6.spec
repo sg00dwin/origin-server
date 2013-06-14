@@ -82,7 +82,8 @@ ln -s %{cartridgedir}/../abstract/info/bin/sync_gears.sh %{buildroot}%{cartridge
 %post
 #this copies over files in zend server rpm install that do not work in openshift 
 cp -rf %{cartridgedir}/files/shared-files/usr/local/zend/* /usr/local/zend/.
-ln -sf /usr/libexec/openshift/cartridges/zend-5.6/info/bin/httpd_ctl.sh /usr/local/zend/bin/apachectl
+#this symlink has changed in v2 and we must not overwrite it
+test -L /usr/local/zend/bin/apachectl || ln -sf /usr/libexec/openshift/cartridges/zend-5.6/info/bin/httpd_ctl.sh /usr/local/zend/bin/apachectl
 sh %{cartridgedir}/info/bin/zend_configure_filesystem.sh
 
 %clean
