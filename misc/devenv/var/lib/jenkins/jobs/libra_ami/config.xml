@@ -58,7 +58,7 @@ popd</command>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.BuildTrigger>
-      <childProjects>broker_extended, runtime_extended, site_extended, rhc_extended, runtime_extended_other</childProjects>
+      <childProjects>broker_extended, runtime_extended, site_extended, rhc_extended</childProjects>
       <threshold>
         <name>UNSTABLE</name>
         <ordinal>1</ordinal>

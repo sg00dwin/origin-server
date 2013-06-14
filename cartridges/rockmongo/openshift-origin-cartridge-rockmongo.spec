@@ -14,6 +14,8 @@ Requires:  openshift-origin-cartridge-mongodb
 Requires:  rubygem(openshift-origin-node)
 Requires:  openshift-origin-node-util
 
+Obsoletes: openshift-origin-cartridge-rockmongo-1.1
+
 %description
 Provides RockMongo V2 cartridge support
 
