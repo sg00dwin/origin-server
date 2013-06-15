@@ -36,6 +36,7 @@ Requires:  openshift-origin-cartridge-jbossews
 Requires:  openshift-origin-cartridge-diy
 Requires:  openshift-origin-cartridge-haproxy
 Requires:  openshift-origin-cartridge-mongodb
+Requires:  openshift-origin-cartridge-rockmongo
 Requires:  openshift-origin-cartridge-metrics
 Requires:  openshift-origin-cartridge-nodejs
 Requires:  openshift-origin-cartridge-10gen-mms-agent
