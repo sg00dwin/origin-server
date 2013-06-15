@@ -15,6 +15,8 @@ BuildArch: noarch
 Requires:      rubygem(openshift-origin-node)
 Requires:      openshift-origin-node-util
 
+Obsoletes: openshift-origin-cartridge-metrics-0.1
+
 %description
 Provides metrics cartridge support
 

@@ -29,7 +29,6 @@ Requires:      ruby193-rubygem-parseconfig
 Requires:      rubygem-openshift-origin-node
 Requires:      openshift-origin-node-util
 Requires:      ruby193-rubygem-systemu
-Requires:      openshift-origin-cartridge-abstract
 Requires:      openshift-origin-msg-node-mcollective
 Requires:      openshift-origin-port-proxy
 Requires:      openshift-origin-node-proxy

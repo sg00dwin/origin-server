@@ -25,7 +25,7 @@ Requires: php-5.3-zend-extensions
 Requires: php-5.3-extra-extensions-zend-server
 Requires: php-5.3-loader-zend-server
 
-#Obsoletes: openshift-origin-cartridge-zend-5.6
+Obsoletes: openshift-origin-cartridge-zend-5.6
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch

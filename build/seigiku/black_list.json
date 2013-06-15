@@ -3,7 +3,7 @@
     "rhc-selinux.spec",
     "devenv.spec",
     "rhc-node.spec",
-    "openshift-origin-cartridge-metrics-0.1.spec",
+    "openshift-origin-cartridge-metrics.spec",
     "site.spec",
     "rhc-broker.spec",
     "rhc-server-common.spec",

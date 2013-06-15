@@ -1,1 +1,0 @@
-/usr/local/zend/gui/application/CheckDependencies.php
