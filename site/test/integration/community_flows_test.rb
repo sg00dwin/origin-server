@@ -10,6 +10,8 @@ class CommunityFlowsTest < ActionDispatch::IntegrationTest
 
     assert has_css?("#buzz-retweets > .tweet"), "No retweets on the homepage"
 
+    assert page.evaluate_script('$().jquery') =~ /\A\d+\.\d+\.\d+\Z/
+
     click_link('Sign Up')
 
     assert find('h1', :text => 'Create an account')
