@@ -20,15 +20,14 @@
       - else
         = link_to "Sign In", console_path, :class => 'btn btn-small sign_in'
 
-      -# ['f', 'g', 't'].each do |p|
-        = link_to p, :class => 'btn btn-small login-provider' do
-          %img{:alt => p}
-    .mobile-block
-      -#= link_to "Newsletter Sign Up", newsletter_signup_url
-      -#= link_to "Plans and Pricing", pricing_url, :class => 'pricing'
-      = link_to enterprise_product_url do
-        %span Streamline App Delivery with
-        OpenShift Enterprise
+    %div
+      .text
+        = link_to "Blog", openshift_blog_url
+        - [ ["Follow us on Twitter", openshift_twitter_url,     "&#xee04;"],
+            ["Like us on Facebook",  openshift_facebook_url,    "&#xee05;"],
+            ["Visit us on Google+",  openshift_google_plus_url, "&#xee06;"] ].each do |link|
+          = link_to link[1], {:class => "icon-social"} do
+            %span{:title => link[0], :"data-icon" => link[2].html_safe, :"aria-hidden" => "true"}
 
 %nav#nav{:class => ((content_for? :nav_class) ? content_for(:nav_class) : 'section-nav lift-counter')}
   .navbar
@@ -40,19 +39,16 @@
           .brand-text
             %strong> Open
             Shift
-      %ul.nav
+      %ul.nav.nav-primary
         - cur_url = url_for(:action => controller.action_name, :controller => controller.controller_name)
-        -[  ["Learn More", product_overview_path, 'learn_more'],
-            ["Get Started", getting_started_path, 'getting_started'],
-            "&nbsp;",
-            ["Developers", developers_path,'developers'],
-            ["Community", community_path, 'community'] ].each do |link|
-          - if link.class.name == "String"
-            %li.divider!= link.to_s
-          -else
-            %li{:class => cur_url == link[1] ? :active : ''}
-              = link_to link[1], :class => link[2] do
-                %span= link[0]
+        -[  ["Products",     product_overview_path],
+            ["Get Involved", get_involved_url],
+            ["Dev Center",   developers_path],
+            ["Support",      support_path],
+            ["Partners",     partners_url] ].each do |link|
+          %li{:class => cur_url == link[1] ? :active : ''}
+            = link_to link[1] do
+              %span= link[0]
 
   - if content_for? :header
     = yield :header
