@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.10.1
+Version: 1.10.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -243,6 +243,42 @@ fi
 
 
 %changelog
+* Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 1.10.2-1
+- Handle quota with v2 migration (dmcphers@redhat.com)
+- First pass at removing v1 cartridges (dmcphers@redhat.com)
+- Merge pull request #1624 from pmorie/dev/migrations
+  (dmcphers+openshiftbot@redhat.com)
+- Port changes for cartridge migrations from stage that were missed earlier
+  (pmorie@gmail.com)
+- Fix bug 973740: do not leave migration metadata in place due to gear status
+  (pmorie@gmail.com)
+- Add cucumber tests for cartridge migrations (pmorie@gmail.com)
+- Migration fixes (dmcphers@redhat.com)
+- Merge pull request #1559 from pmorie/dev/agent
+  (dmcphers+openshiftbot@redhat.com)
+- We can't guarantee a user won't break their own start or a cart writer
+  creates an invalid start (dmcphers@redhat.com)
+- Change working directory to /tmp for libra mcol agent (pmorie@gmail.com)
+- Merge pull request #1534 from rmillner/origin_runtime_137
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 969228 - fix minor error. (rmillner@redhat.com)
+- Remove V1 -> V2 migration tests (pmorie@gmail.com)
+- WIP Cartridge Refactor - Add ignore_cartridge_version to V2->V2 migration
+  (jhonce@redhat.com)
+- WIP Cartridge Refactor - Cleanup files during V2 -> V2 migration
+  (jhonce@redhat.com)
+- Fix stage migration issues (dmcphers@redhat.com)
+- Merge pull request #1505 from rmillner/BZ969228
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1503 from VojtechVitek/bz968943_2
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 969228 - Check selinux node set with oo-accept-node.
+  (rmillner@redhat.com)
+- Fix Zend apachectl deployment settings (vvitek@redhat.com)
+- remove HTTP from migrate (bdecoste@gmail.com)
+- Bug 969228 - The allocator used to just go to 16000 regardless of the node
+  configuration. (rmillner@redhat.com)
+
 * Thu May 30 2013 Adam Miller <admiller@redhat.com> 1.10.1-1
 - bump_minor_versions for sprint 29 (admiller@redhat.com)
 
