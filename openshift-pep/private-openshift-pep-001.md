@@ -1,7 +1,7 @@
 PEP: 1  
 Title: User Dunning and Forced Downgrades  
 Status: draft  
-Author: Dan McPherson <dmcphers@redhat.com>  
+Author: Dan McPherson <dmcphers@redhat.com>, Lili Nader lnader@redhat.com 
 Arch Priority: high  
 Complexity: 40  
 Affected Components: web, api, runtime, cartridges, broker, admin_tools, cli  
@@ -13,9 +13,9 @@ Abstract
 --------
 Dunning is the process users enter when they neglect to pay their bill within a given grace period.  The end of the dunning cycle from a billing perspective results in a user account being downgraded or canceled.  There may also be other scenarios where a user downgrade requires the underlying system to bring the user's assets in line with the constraints of the downgraded plan.  In either case when a downgrade is necessary the following needs to occur:
 
-If the user's assets are above the level the downgraded account allows:  
-  1. The users gears are stopped and deactivated
-  1. After some configurable time period (TBD but think 6 months), the gears are destroyed.
+If the user's assets are above the level the downgraded account allows: 
+  1. The users applications are stopped and deactivated
+  1. After some configurable time period (TBD but think 6 months), the applications are destroyed.
 
 Motivation
 ----------
@@ -30,35 +30,64 @@ OpenShift gets into this scenario in a couple of cases:
 Specification
 -------------
 
-###Entering the Downgrade Process:
+###Entering the Downgrade/Deactivation Process:
   Exit of the billing provider's dunning process in an arrears state is specified by an event from the billing provider (Aria).  When receiving the event, the user's account will be marked as canceled (this logic must be transactional) and pending_plan_id will be set to :free.  In the long term an event should be scheduled to take the user's account through the downgrade process.  In the short term we will want to manage the downgrade via a cron job similar to rhc-admin-ctl-usage --sync.  Let's refer to this as rhc-admin-ctl-plan --process-canceled.
 
-###User Downgrade:
-  + Detected by plan_state of canceled
-  + If current assets are above the level of the pending_plan_id
-    + Loop across all the user's apps.
-      + Change min scale to the min for the cart.  Scale down any existing scaled apps to their min.
-      + Set gear state to deactivated.
-      + Disable carts from starting.
-      + Reduce storage?
-      + Restrict shell access?
-      + Restrict writes (have to allow delete still)?
-    + Set plan_state to deactivated
-  + plan_id is updated
-  + pending_plan_id is set to nil
+###User Downgrade/Deactivation Process:
+  + Detected by plan_state of canceled 
+    + If the user assets are within the level of the pending_plan_id
+      + Update user's plan to pending_plan_id
+      + Set plan_state to active. pending_plan_id is set to nil
+  
+  
+    + If current assets are above the level of the pending_plan_id
+      + Loop across all the user's apps.
+      + ~~Change min scale to the min for the cart.~~ requires changing the user application and cannot be reversed automatically after activation.
+      + Scale down all applications to minimum number of gears. 
+      + Stop all applications
+      + Deactivate all gears for all applications [See detail][deactivate_gear]
+      + Prevent user from creating new assets or controlling any existing ones. i.e. creating new applications, adding new cartridges or aliases to existing applications or running  commands like start/stop on application or cartridge. In other words they will be only able to view, limited update or delete their existing assets. Like, deleting applications, cartridges, removing SSL certs from aliases, updating cartridges to reduce storage or scaling.
+      + Set plan_state to deactivated
+      + plan_id remains as the user's original plan.  The pending_plan_id will remain as :free.
+      
+The downgrade/deactivation will be executed via a cron job until the scheduler exists (let's call it rhc-admin-ctl-plan --process-canceled)
 
 ###User Destroy After Grace Period:
   After waiting for a reasonable time period (TBD) we will destroy any gears remaining for a user if they haven't managed to bring their assets into what the free plan allows.  We could leave assets in the amount of a free account but it's impossible to make a good choice of what gears to leave.  After the destroy of assets the user will be in the same position as a user in arrears who cleaned up their own gears down to the free level.
-  
-###Reactivation After User Action :
-  If users clean up their assets we need a way to bring them back online.  This case will also be handled by rhc-admin-ctl-plan --process-reactivations
-  
-###Exiting an In Arrears State at a Later Date:
-  If later the billing provider sends an event that a previously in arrears account has been resolved
-  + If the downgrade had already occurred they would be eligible to sign up for a paid plan again.  After signing up for the upgraded plan again:
-    + If their existing gears were deactivated, they can be reactivated.  The plan_state will be in left in a reactivating state in this scenario.  The activation will also need to be executed via a cron job until the scheduler exists (let's call it rhc-admin-ctl-plan --process-reactivations)
-    + Else if they were deleted the user is the same as a new user in a paid plan
-  + Else the downgrade can be canceled and the user's pending_plan_id and plan_state restored.
+
+### Entering the Reactivation process:
+  Reactivation can be triggered by 2 events
+   + If user brings their assets within the :free plan then they will be downgraded to :free plan and their applications will reactivated.
+   + The billing provider sends an event that a previously in arrears account has been resolved. When receiving this event:
+     + If plan_state is deactivated then the plan_state will be set to reactivating and pending_plan_id to the upgraded plan.
+     + If the plan_state is canceled then the plan_state will be changed to active and pending_plan_id will be set to nil
+     + If the plan_state is active or pending no changes will be made
+     + If the user is deleted then the user is the same as a new user in a paid plan
+     
+### Available user action to bring assets within :free plan
+  The user should be able to take the following actions while in the canceled or deactivated state in order to bring their assets down to the :free plan level
+    + Delete domains, applications and cartridges
+    + Remove private certificates
+    + Reduce gear size
+    + Reduce additional storage
+   
+### User Reactivation process:
+  + Detected by plan_state of deactivated
+    + If the user assets are within the level of the pending_plan_id
+      + Loop across all user's app
+      + reactivate all gears
+      + Update user's plan to pending_plan_id
+      + Set plan_state to active. pending_plan_id is set to nil
+      
+  + Detected by plan_state of reactivating
+    + If the user assets are within the level of the pending_plan_id
+      + Loop across all user's app
+      + reactivate all gears
+      + Update user's plan to pending_plan_id
+      + Set plan_state to active. pending_plan_id is set to nil
+
+The reactivation will also need to be executed via a cron job until the scheduler exists (let's call it rhc-admin-ctl-plan --process-reactivations)
+
   
 ###Users in the Middle of the Dunning Process Grace Period:
   While the billing providers dunning process is ongoing no changes should happen to a user's assets.  They can continue to use OpenShift as they normally would.
@@ -71,30 +100,43 @@ Specification
 ####Broker:
   - Cloud_User:
     plan_state: active*|deactivated|reactivating|canceled|pending
-
     The existing fields pending_plan_id and plan_id can be used to indicate a downgrade is necessary.  When pending_plan_id < plan_id a downgrade is required or in progress.
-    
-  - Users in a deactivated|canceled plan_state will not be allowed to create or control assets.
-  - Existing plan states of active and pending need to be set properly on the user.
+  - Application:
+    new methods deactivate and reactivate
+  - Enable user to change the gear size on an application (Future feature. For now user can must delete gears which do not match the plan)
   
-
 ####REST API:
-  /user will also have the additional attribute of plan_state.
-
+  - User will also have the additional attribute of plan_state.
+  - Users in a deactivated or canceled plan_state will not be allowed to create assets or control assets like restart application.
+  - User should still be able to perform the following actions in order to bring their assets in line with the :free plan
+    - Delete any assets
+    - Update an existing alias to remove private certificate
+    - Update a cartridge to remove additional storage
+  - Provide an API for user to change the application gear size (Future feature. For now user must delete gears which do not match the plan)
+  
 ####Runtime:
-  Deactivate gear will be a new gear state with limited functionality and resources for a user accessing the gear.  Deactivate gear will be a mcollective hook at the platform level.  Any restrictions we keep on deactivated gears need to be managed by the platform and not the carts.
-
+  - Deactivate gear will be a new gear state with limited functionality and resources for a user accessing the gear. 
+    + User can ssh into the gear.
+    + User can only run snapshot or delete assets.
+  - Any restrictions we keep on deactivated gears need to be managed by the platform and not the carts.
+  - Deactivated gears can be reactivated at a later date
+  - Deactivate/Reactivate gear will be a mcollective hook at the platform level. 
+  - While the gear is deactivate the following operations should be possible
+    - removing the private certificate
+    - reducing additional storage
+    - reducing gear size
+    
 ####Site:
   - The site will need to observe the in_arrears state (as indicated by Aria) on the user and disallow account upgrade.
-  - The new user/gear state of deactivated will also need to be handled.  The user should be encouraged to get their usage down to the level of access they are currently granted.
+  - The new user/applcation state of deactivated will also need to be handled.  The user should be encouraged to get their usage down to the level of access they are currently granted.
 
 ####CLI:
-  - Needs to handle the new gear state / user plan state of deactivated.
+  - Needs to handle the new application state (:active, :deactivated) and user plan_state of canceled/deactivated.
 
 ####Admin Tools:
 
   rhc-admin-ctl-plan --process-canceled  # Should be run on a frequency of at least once a day
-    Loops through all users in arrears/canceled and processes forced downgrades and destroys.
+    Loops through all users in canceled plan_state and processes forced downgrades and deactivation.
   
   rhc-admin-ctl-plan --process-reactivations # Should be run on a frequency of ~ once an hour
     Loops through all users in reactivating state and reactivates existing assets
