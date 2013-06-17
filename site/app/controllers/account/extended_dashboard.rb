@@ -37,6 +37,7 @@ module Account
 
         @has_valid_payment_method = aria_user.has_valid_payment_method?
         @payment_method = aria_user.payment_method
+        @show_usage_rates = Rails.configuration.aria_show_unbilled_usage_rates
       end
 
       if @bill and @bill.unbilled_usage_line_items
@@ -164,6 +165,13 @@ module Account
                 OpenStruct.new({:units_label => 'gear-hour', :units => 60, :total_cost => 3, :name => "Gear: Medium"})
               ]
             }
+        end
+
+        case params[:rates]
+        when 'hide'
+          @show_usage_rates = false;
+        else # when 'show'
+          @show_usage_rates = true;
         end
 
         if @plan.id == 'free' and @is_downgrading == false and forwarded_balance == 0

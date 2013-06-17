@@ -96,6 +96,8 @@ class BillsController < ConsoleController
       @is_test_user = user.test_user?
       @virtual_time = Aria::DateTime.now if Aria::DateTime.virtual_time?
 
+      @show_unbilled_usage_rates = Rails.configuration.aria_show_unbilled_usage_rates
+      
       @next_bill = user.next_bill
       if @next_bill
         current_usage_items = @next_bill.unbilled_usage_line_items

@@ -1,6 +1,7 @@
 - show_dates = false if show_dates.nil?
 - show_details = false if show_details.nil?
 - show_payments = false if show_payments.nil?
+- show_usage_rates = true if show_usage_rates.nil?
 
 :css
   table.plan-items .plan-item-cost { text-align: right; }
@@ -26,13 +27,17 @@
         = li.name
       - if show_details
         %td.plan-item-rate
-          = line_item_details(li) || "&nbsp;".html_safe
-      %td.plan-item-cost{:title => (line_item_details(li) unless show_details)}
-        = number_to_user_currency(li.total_cost)
+          = line_item_details(li, show_usage_rates) || "&nbsp;".html_safe
+      %td.plan-item-cost{:title => (line_item_details(li, show_usage_rates) unless show_details)}
+        - if li.usage? && !show_usage_rates
+          &nbsp;
+        - else
+          = number_to_user_currency(li.total_cost)
 
-  %tr.plan-total
-    %td.right{:colspan => ((show_dates ? 1 : 0) + (show_details ? 1 : 0) + 2)}
-      %strong Total charges:&nbsp; #{number_to_user_currency(bill.estimated_balance)}
+  - if show_usage_rates
+    %tr.plan-total
+      %td.right{:colspan => ((show_dates ? 1 : 0) + (show_details ? 1 : 0) + 2)}
+        %strong Total charges:&nbsp; #{number_to_user_currency(bill.estimated_balance)}
 
   - if show_payments and bill.payments.present?
     %tr.plan-total

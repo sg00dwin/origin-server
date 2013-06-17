@@ -51,7 +51,7 @@
     - if @usage_items and @next_bill
       %section.panel
         %h2 Compare Usage
-        = render :partial => '/account/usage_charges', :locals => {:usage_items => @usage_items, :usage_types => @usage_types}
+        = render :partial => '/account/usage_charges', :locals => {:usage_items => @usage_items, :usage_types => @usage_types, :show_usage_rates => @show_unbilled_usage_rates}
 
         - if @next_bill.day and @next_bill.usage_bill_from and @next_bill.usage_bill_thru
           %p

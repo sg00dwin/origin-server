@@ -78,8 +78,11 @@
         %p You have no recurring charges due for the next month and no recorded usage.
       - else
         %p Today is day #{@bill.day} of the billing period #{collapse_dates(@bill.usage_bill_from, @bill.usage_bill_thru, :ordinalize => true)}
-        = render :partial => 'bill', :locals => {:bill => @bill, :show_details => @usage_items.blank?}
-        %p.disclaimer The amounts above may not reflect discounts, applicable sales taxes, peaks in future usage, recent activity, or unbilled usage outside the current billing period.
+        = render :partial => 'bill', :locals => {:bill => @bill, :show_details => true, :show_usage_rates => @show_usage_rates}
+        %p.disclaimer
+          The amounts above may not reflect discounts, applicable sales taxes, peaks in future usage, recent activity, or unbilled usage outside the current billing period.
+          - if !@show_usage_rates
+            Usage will be billed according to applicable rates.
 
       %p.payment_method
         - if @payment_method.present?
@@ -100,7 +103,7 @@
     .span4
       %section.panel
         %h2.compact Compare Usage
-        = render :partial => 'usage_charges', :locals => {:usage_items => @usage_items, :usage_types => @usage_types}
+        = render :partial => 'usage_charges', :locals => {:usage_items => @usage_items, :usage_types => @usage_types, :show_usage_rates => @show_usage_rates}
 
 .row-fluid
   %div{:class => @can_upgrade ? "span8" : "span12"}

@@ -28,28 +28,31 @@ class ExtendedDashboardControllerTest < ActionController::TestCase
         [:good, :bad, :missing].each do |payment|
           [:paid, :unpaid, :none].each do |last_bill|
             [:none, :paid, :free, :'paid_historical', :'free_historical'].each do |usage|
+              [:show, :hide].each do |rates|
 
-              test "should render dashboard with #{plan} plan #{status} status #{payment} payment #{last_bill} last bill #{usage} usage" do
-                Aria::UserContext.any_instance.expects(:status_cd).at_least(0).returns(status_cd)
-                with_account_holder
+                test "should render dashboard with #{plan} plan #{status} status #{payment} payment #{last_bill} last bill #{usage} usage #{rates} rates" do
+                  Aria::UserContext.any_instance.expects(:status_cd).at_least(0).returns(status_cd)
+                  with_account_holder
 
-                params = {
-                  :debug => 1,
-                  :plan => plan,
-                  :status => status,
-                  :payment => payment,
-                  :last_bill => last_bill,
-                  :usage => usage
-                }
-                
-                get :show, params
+                  params = {
+                    :debug => 1,
+                    :plan => plan,
+                    :status => status,
+                    :payment => payment,
+                    :last_bill => last_bill,
+                    :usage => usage,
+                    :rates => rates
+                  }
+                  
+                  get :show, params
 
-                assert_response :success
-                assert_template :show
-                assert assigns(:user)
-                assert assigns(:plan)
-                assert assigns(:account_status)
-                assert_select 'h1', /My Account/, response.inspect
+                  assert_response :success
+                  assert_template :show
+                  assert assigns(:user)
+                  assert assigns(:plan)
+                  assert assigns(:account_status)
+                  assert_select 'h1', /My Account/, response.inspect
+                end
               end
             end
           end

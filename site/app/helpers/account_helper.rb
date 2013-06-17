@@ -55,10 +55,14 @@ module AccountHelper
     "#{number_with_delimiter(amount)} #{units.pluralize(amount)}"
   end
 
-  def line_item_details(li)
+  def line_item_details(li, show_usage_rates=true)
     if li.tax?
     elsif li.usage?
-      "#{usage_amount_with_units(li.units, li.units_label)} × #{number_to_user_currency(li.rate)}"
+      if show_usage_rates
+        "#{usage_amount_with_units(li.units, li.units_label)} × #{number_to_user_currency(li.rate)}"
+      else
+        "#{usage_amount_with_units(li.units, li.units_label)}"
+      end
     elsif li.recurring?
       if li.rate
         "#{number_to_user_currency(li.rate)} / month#{" (prorated)" if li.units != 1}"
