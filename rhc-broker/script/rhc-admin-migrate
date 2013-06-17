@@ -20,7 +20,7 @@ $restart_only_cart_types = nil
 if MIGRATION_CART_TYPES && RESTART_CART_TYPES && REDEPLOY_HTTPD_PROXY_CART_TYPES
   $all_cart_types = Set.new
   $all_cart_types = MIGRATION_CART_TYPES + RESTART_CART_TYPES + REDEPLOY_HTTPD_PROXY_CART_TYPES
-  
+
   $restart_only_cart_types = RESTART_CART_TYPES.dup
   $restart_only_cart_types -= (MIGRATION_CART_TYPES + REDEPLOY_HTTPD_PROXY_CART_TYPES)
 end
@@ -124,8 +124,8 @@ def migrate_gear(login, app_name, gear_uuid, version, ignore_cartridge_version=f
           rescue Timeout::Error
             raise "Command '#{migrate_cmd}' timed out"
           end
-          gear.quarantined = false
-          gear.save
+          #gear.quarantined = false
+          #gear.save
         else
           out << "WARNING: Gear not found with uuid #{gear_uuid} for app '#{app_name}' and user '#{login}'\n"
         end
@@ -210,7 +210,7 @@ def httpd_proxy_action(gear, action, out)
 
     out << "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
     out << "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
-      
+
     if reply.exitcode != 0
       out << "#{action} for cart: #{cart} on node exit code: #{reply.exitcode}\n"
       raise "Failed deploying httpd proxy for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
@@ -250,13 +250,12 @@ def migrate(version, continue=false, ignore_cartridge_version=false, target_serv
   logins_cnt = 0
   gear_cnt = 0
   node_to_gears = {}
-    
+
   puts "Getting all active gears..."
   gather_active_gears_start_time = (Time.now.to_f * 1000).to_i
   active_gears_map = OpenShift::ApplicationContainerProxy.get_all_active_gears
   gather_active_gears_total_time = (Time.now.to_f * 1000).to_i - gather_active_gears_start_time
-  
-  
+
   puts "Getting all logins..."
   gather_users_start_time = (Time.now.to_f * 1000).to_i
   query = {"group_instances.gears.0" => {"$exists" => true}}
@@ -271,7 +270,7 @@ def migrate(version, continue=false, ignore_cartridge_version=false, target_serv
               "group_instances.gears.server_identity",
               "group_instances.gears.name"], 
              :timeout => false}
-               
+
   ret = []
   user_map = {}
   OpenShift::DataStore.find(:cloud_users, {}, {:fields => ["_id", "uuid", "login"], :timeout => false}) do |hash|
@@ -455,7 +454,7 @@ def migrate(version, continue=false, ignore_cartridge_version=false, target_serv
       puts ""
     end
   end
-  
+
   unless acceptable_errors.empty?
     puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
     puts "Acceptable Errors:"
@@ -463,7 +462,7 @@ def migrate(version, continue=false, ignore_cartridge_version=false, target_serv
     puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
     puts ""
   end
-  
+
   puts "#####################################################"
   puts "Summary:"
   puts "# of users: #{logins_cnt}"
