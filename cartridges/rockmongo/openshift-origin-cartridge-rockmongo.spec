@@ -2,7 +2,7 @@
 
 Summary:   Embedded RockMongo support
 Name:      openshift-origin-cartridge-rockmongo
-Version: 0.3.1
+Version: 0.3.2
 Release:   1%{?dist}
 Group:     Applications/Internet
 License:   ASL 2.0 and NBSD
@@ -46,6 +46,11 @@ Provides RockMongo V2 cartridge support
 %doc %{cartridgedir}/README.md
 
 %changelog
+* Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 0.3.2-1
+- First pass at removing v1 cartridges (dmcphers@redhat.com)
+- Fix bug 969930 (pmorie@gmail.com)
+- Fix httpd stop for httpd-based carts. (mrunalp@gmail.com)
+
 * Thu May 30 2013 Adam Miller <admiller@redhat.com> 0.3.1-1
 - bump_minor_versions for sprint 29 (admiller@redhat.com)
 
