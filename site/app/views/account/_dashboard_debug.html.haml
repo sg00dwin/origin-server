@@ -57,3 +57,9 @@
       #{link_to "free", params.merge({:usage => :free})}
       |
       #{link_to "none", params.merge({:usage => :none})}
+  %tr
+    %td Rates:
+    %td
+      #{link_to "show", params.merge({:rates => :show})}
+      |
+      #{link_to "hide", params.merge({:rates => :hide})}

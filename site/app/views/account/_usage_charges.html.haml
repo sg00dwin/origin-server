@@ -1,8 +1,9 @@
 - usage_items ||= {} # { period_name => [{:name, :units, :total_cost}}, ...] }
 - usage_types ||= {} # { name => { :units, :class_name } }
+- show_usage_rates = true if show_usage_rates.nil?
 
 - max = usage_items.values.map { |items| items.map(&:total_cost).sum }.max
-- if max > 0
+- if max > 0 and show_usage_rates
   %table.table.table-condensed.graph-horizontal.usage-charges
     %caption Usage Charges
     %thead
