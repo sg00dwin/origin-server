@@ -5,8 +5,8 @@
 %global modname             redhat_events
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.8.1
-Release: 5%{?dist}
+Version: 1.8.2
+Release: 1%{?dist}
 Summary: Openshift Red Hat Events Custom Module for Drupal6
 Group:   Applications/Publishing
 License: GPLv2+
@@ -41,6 +41,10 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 1.8.2-1
+- Bug 855721 - event tab links need to be absolute not relative
+  (jforrest@redhat.com)
+
 * Fri Jun 07 2013 Adam Miller 1.8.1-5
 - Bump spec for mass drupal rebuild
 
