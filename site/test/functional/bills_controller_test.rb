@@ -241,33 +241,31 @@ class BillsControllerTest < ActionController::TestCase
     assert_select "h1", "Invoice #9 does not exist"    
   end
 
-  test "should compare usage between bill and current period in usd" do
-    do_usage_test("usd", "$")
-  end
+  [
+    ["usd","$"], 
+    ["cad", "C$"], 
+    ["eur", "€ "]
+  ].each do |(currency_cd, currency_symbol)|
+    [true, false].each do |show_rates|
+      test "should compare usage between bill and current period in #{currency_cd} #{show_rates ? 'with' : 'without'} current rates" do
+        with_config(:aria_show_unbilled_usage_rates, show_rates) do
+          do_usage_test(currency_cd, currency_symbol)
+        end
+      end
+    end
 
-  test "should compare usage between bill and current period in cad" do
-    do_usage_test("cad", "C$")
-  end
+    test "should show forwarded balance based on statements in #{currency_cd}" do
+      do_forwarded_balance_test(currency_cd, currency_symbol)
+    end
 
-  test "should compare usage between bill and current period in eur" do
-    do_usage_test("eur", "€ ")
+    test "should export invoice successfully in #{currency_cd}" do
+      do_export_test(currency_cd, currency_symbol)
+    end
   end
 
   test "should show different title for bill without payments" do
     omit_if_aria_is_unavailable
     # TODO: Not "You were charged $X"
-  end
-
-  test "should show forwarded balance based on statements in usd" do
-    do_forwarded_balance_test("usd", "$")
-  end
-
-  test "should show forwarded balance based on statements in cad" do
-    do_forwarded_balance_test("cad", "C$")
-  end
-
-  test "should show forwarded balance based on statements in eur" do
-    do_forwarded_balance_test("eur", "€ ")
   end
 
   test "should redirect to show invoice" do
@@ -309,18 +307,6 @@ class BillsControllerTest < ActionController::TestCase
     assert_template :error
   end
 
-  test "should export invoice successfully in usd" do
-    do_export_test("usd", "$")
-  end
-
-  test "should export invoice successfully in cad" do
-    do_export_test("cad", "C$")
-  end
-
-  test "should export invoice successfully in eur" do
-    do_export_test("eur", "€ ")
-  end
-
   private
 
   def do_usage_test(currency_cd, currency_symbol)
@@ -359,17 +345,21 @@ class BillsControllerTest < ActionController::TestCase
     assert_template :show
     assert_select "h2", "Compare Usage"
 
-    assert_select "table.usage-charges" do
-      assert_select "caption", :text => "Usage Charges"
-      assert_select "tbody tr", 2 do |tr|
-        assert_select tr[0], 'td:content(?)', 'Next bill'
-        assert_select tr[0], 'div.graph-element.type-2[style*="100%"]'
-        assert_select tr[0], 'td:content(?)', "#{currency_symbol}4.44"
+    if Rails.configuration.aria_show_unbilled_usage_rates
+      assert_select "table.usage-charges" do
+        assert_select "caption", :text => "Usage Charges"
+        assert_select "tbody tr", 2 do |tr|
+          assert_select tr[0], 'td:content(?)', 'Next bill'
+          assert_select tr[0], 'div.graph-element.type-2[style*="100%"]'
+          assert_select tr[0], 'td:content(?)', "#{currency_symbol}4.44"
 
-        assert_select tr[1], 'td:content(?)', 'This bill'
-        assert_select tr[1], 'div.graph-element.type-1[style*="25%"]'
-        assert_select tr[1], 'td:content(?)', "#{currency_symbol}1.11"
+          assert_select tr[1], 'td:content(?)', 'This bill'
+          assert_select tr[1], 'div.graph-element.type-1[style*="25%"]'
+          assert_select tr[1], 'td:content(?)', "#{currency_symbol}1.11"
+        end
       end
+    else
+      assert_select "table.usage-charges", :count => 0
     end
 
     assert_select "table.usage-type-1" do
