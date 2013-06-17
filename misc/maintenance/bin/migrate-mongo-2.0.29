@@ -34,7 +34,8 @@ def fix_domain(d, domain_id, new_env_vars)
   env_attrs = d["env_vars"].dup
   return if env_attrs.find { |env| env["key"]=="JENKINS_URL" }
   env_attrs << new_env_vars
-  env_attrs.flatten
+  env_attrs.flatten!
+  env_attrs.uniq!
   $dom.update( {"_id" => domain_id}, { "$set" => { env_vars: env_attrs }})
 end
 
