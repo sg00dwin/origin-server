@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.10.2
+Version: 1.10.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -195,6 +195,12 @@ fi
 %{sitedir}/public
 
 %changelog
+* Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 1.10.3-1
+- Merge pull request #1632 from liggitt/bug_974483_error_page_header
+  (dmcphers+openshiftbot@redhat.com)
+- Remove obsolete panda container from 404 pages (jliggitt@redhat.com)
+- Fix bug 974483 - make header match openshift.com (jliggitt@redhat.com)
+
 * Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 1.10.2-1
 - Bug 960908 - rhc-outage update only raise exception if call is nested
   (jforrest@redhat.com)
