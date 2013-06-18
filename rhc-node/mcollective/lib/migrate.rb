@@ -133,7 +133,9 @@ module OpenShiftMigration
     cartridge_model      = OpenShift::V2MigrationCartridgeModel.new(config, user, state, OpenShift::Utils::Hourglass.new(235))
     cartridge_repository = OpenShift::CartridgeRepository.instance
     restart_required     = false
-    filesystem, quota, quota_soft, quota_hard, inodes, inodes_soft, inodes_hard = nil, nil, nil, nil, nil, nil, nil
+
+    reset_quota, reset_block_quota, reset_inode_quota = handle_quota(uuid, progress)
+
     begin
       OpenShift::Utils::Cgroups.with_no_cpu_limits(uuid) do
         Dir.chdir(user.homedir) do
@@ -174,9 +176,6 @@ module OpenShiftMigration
               end
             end
 
-            filesystem, quota, quota_soft, quota_hard, inodes, inodes_soft, inodes_hard = OpenShift::Node.get_quota(uuid)
-            OpenShift::Node.set_quota(uuid, quota_hard.to_i * 2, inodes_hard.to_i * 2)
-
             if progress.incomplete? "#{name}_migrate"
               progress.set_instruction('validate_gear')
 
@@ -213,11 +212,36 @@ module OpenShiftMigration
         progress.log "***time_restart=#{restart_time}***"
       end
     ensure
-      if quota_hard && inodes_hard
-        progress.log "Resetting quota blocks: #{quota_hard}  inodes: #{inodes_hard}"
-        OpenShift::Node.set_quota(uuid, quota_hard.to_i, inodes_hard.to_i)
+      if reset_quota
+        progress.log "Resetting quota blocks: #{reset_block_quota}  inodes: #{reset_inode_quota}"
+        OpenShift::Node.set_quota(uuid, reset_block_quota, reset_inode_quota)
       end
     end
+  end
+
+  def self.handle_quota(uuid, progress)
+    filesystem, quota, quota_soft, quota_hard, inodes, inodes_soft, inodes_hard = OpenShift::Node.get_quota(uuid)
+    reset_block_quota = false
+    reset_inode_quota = false
+    new_block_quota = quota_hard.to_i
+    new_inode_quota = inodes_hard.to_i
+
+    if ((quota.to_i * 2) > quota_hard.to_i)
+      reset_block_quota = true
+      new_block_quota = quota_hard.to_i * 2
+    end
+
+    if ((inodes.to_i * 2) > inodes_hard.to_i)
+      reset_inode_quota = true
+      new_inode_quota = inodes_hard.to_i * 2
+    end
+
+    if reset_block_quota || reset_inode_quota
+      progress.log "Relaxing quota to blocks=#{new_block_quota}, inodes=#{new_inode_quota}"
+      OpenShift::Node.set_quota(uuid, new_block_quota, new_inode_quota)
+    end
+
+    return [ reset_block_quota | reset_inode_quota, quota_hard.to_i, inodes_hard.to_i ]
   end
 
   #
