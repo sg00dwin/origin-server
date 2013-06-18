@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.10.3
+Version: 1.10.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -195,6 +195,19 @@ fi
 %{sitedir}/public
 
 %changelog
+* Tue Jun 18 2013 Adam Miller <admiller@redhat.com> 1.10.4-1
+- Fix unit tests (hripps@redhat.com)
+- Fix integration test (hripps@redhat.com)
+- Move terms sort order logic into the controller (hripps@redhat.com)
+- Fixed test to support name change (hripps@redhat.com)
+- Revised terms controller and views for single page workflow
+  (hripps@redhat.com)
+- Changed 'OpenShift' to 'OpenShift Online' as appropriate (hripps@redhat.com)
+- Merge pull request #1642 from liggitt/hide_unbilled_amounts
+  (dmcphers+openshiftbot@redhat.com)
+- Add tests for showing and hiding unbilled rates (jliggitt@redhat.com)
+- Add config flag to hide rates for unbilled usage (jliggitt@redhat.com)
+
 * Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 1.10.3-1
 - Merge pull request #1632 from liggitt/bug_974483_error_page_header
   (dmcphers+openshiftbot@redhat.com)
