@@ -821,7 +821,8 @@ h1.ribbon {
   }
 
   .gutter-right {
-    padding-right: 15px;
+    padding-right: 8px;
+    padding-top: 29px;
     margin-bottom: 30px;
   }
 
@@ -850,6 +851,7 @@ h1.ribbon {
       }
       background-color: #292929;
       color: #fff;
+      margin-right: -7px; // offset gutter-right
       &:hover {
         background-color: #292929;
         color: #fff;
