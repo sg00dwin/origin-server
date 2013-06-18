@@ -169,12 +169,16 @@
 .community .column-nav + .column-content {
   min-height: 700px;
 }
-.community #comments .views-field-name,
-.community #comments .views-field-phpcode,
-.community #comments .views-field-value,
-.community #comments .views-field-phpcode-1 {
-  margin-left: 60px;
+.community #comments {
+  margin-bottom: 70px;
+  .views-field-name,
+  .views-field-phpcode,
+  .views-field-value,
+  .views-field-phpcode-1 {
+    margin-left: 60px;
+  }
 }
+
 .forum-list-main {
   
   .views-field-title {
@@ -300,9 +304,12 @@ form#comment-controls {
     display: block;
   }
 }
-.community #comments .views-field-name {
-  font-size: $h4FontSize;
-  font-weight: bold;
+.community #comments {
+  margin-bottom: 0;
+  .views-field-name {
+    font-size: $h4FontSize;
+    font-weight: bold;
+  }
 }
 .community .thread .thread-author .views-field-name .field-content {
   font-size: inherit;
@@ -598,7 +605,7 @@ html.js fieldset.collapsible .fieldset-wrapper {
 }
 
 .community .thread {
-  margin-bottom: 70px;
+  margin-bottom: 30px;
   clear:right; 
   .picture {
     float: right;
