@@ -58,7 +58,7 @@ module AccountHelper
   def line_item_details(li, show_usage_rates=true)
     if li.tax?
     elsif li.usage?
-      if show_usage_rates
+      if li.rate and show_usage_rates
         "#{usage_amount_with_units(li.units, li.units_label)} × #{number_to_user_currency(li.rate)}"
       else
         "#{usage_amount_with_units(li.units, li.units_label)}"

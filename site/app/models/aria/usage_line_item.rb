@@ -80,7 +80,8 @@ module Aria
     #
     def self.for_usage(usage, plan_no)
       usage.inject({}) do |h, u|
-        key = "#{u.usage_type_no}@#{UsageLineItem.rate(u).round(2)}"
+        rate = (UsageLineItem.rate(u) || 0).round(2)
+        key = "#{u.usage_type_no}@#{rate}"
         if item = h[key]
           item << u
         else
