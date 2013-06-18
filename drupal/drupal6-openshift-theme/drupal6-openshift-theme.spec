@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.18.2
+Version: 3.18.3
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Jun 18 2013 Adam Miller <admiller@redhat.com> 3.18.3-1
+- Bug 975365 - 404 on Deploy Now button on QuickStart (jforrest@redhat.com)
+
 * Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 3.18.2-1
 - Merge pull request #1620 from smarterclayton/bug_972878_version_assets
   (dmcphers+openshiftbot@redhat.com)
