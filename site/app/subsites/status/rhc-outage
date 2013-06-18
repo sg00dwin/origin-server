@@ -62,7 +62,7 @@ class UpdateStatusCli < Thor
           end
         else
           say_errors update, "Unable to update issue"
-          raise ActiveRecord::Rollback
+          raise ActiveRecord::Rollback unless options[:nested].nil?
         end
       rescue ActiveRecord::StatementInvalid => sql
         say_errors update, SQL_RO_ERR

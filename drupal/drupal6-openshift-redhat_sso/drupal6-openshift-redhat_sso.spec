@@ -5,8 +5,8 @@
 %global modname             redhat_sso
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.7.1
-Release: 5%{?dist}
+Version: 1.7.2
+Release: 1%{?dist}
 Summary: Openshift Red Hat Custom SSO Module for Drupal6
 Group:   Applications/Publishing
 License: GPLv2+
@@ -41,6 +41,10 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 1.7.2-1
+- Bug 971754: must forward the destination parameter when redirecting
+  user/login to user (ffranz@redhat.com)
+
 * Fri Jun 07 2013 Adam Miller 1.7.1-5
 - Bump spec for mass drupal rebuild
 

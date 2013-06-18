@@ -5,8 +5,8 @@
 %global modname             blogs
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.16.1
-Release: 5%{?dist}
+Version: 1.16.3
+Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Blog Feature for Drupal6
 Group:   Applications/Publishing
 License: GPLv2+
@@ -41,6 +41,16 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 1.16.3-1
+- Remove dependency on rss_views (jforrest@redhat.com)
+- Bug 962024 - Use new views_rss module to create the blogs rss feed
+  (jforrest@redhat.com)
+
+* Mon Jun 17 2013 Adam Miller <admiller@redhat.com>
+- Remove dependency on rss_views (jforrest@redhat.com)
+- Bug 962024 - Use new views_rss module to create the blogs rss feed
+  (jforrest@redhat.com)
+
 * Fri Jun 07 2013 Adam Miller 1.16.1-5
 - Bump spec for mass drupal rebuild
 

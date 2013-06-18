@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.10.1
-Release:   6%{?dist}
+Version: 1.10.3
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -195,6 +195,69 @@ fi
 %{sitedir}/public
 
 %changelog
+* Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 1.10.3-1
+- Merge pull request #1632 from liggitt/bug_974483_error_page_header
+  (dmcphers+openshiftbot@redhat.com)
+- Remove obsolete panda container from 404 pages (jliggitt@redhat.com)
+- Fix bug 974483 - make header match openshift.com (jliggitt@redhat.com)
+
+* Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 1.10.2-1
+- Bug 960908 - rhc-outage update only raise exception if call is nested
+  (jforrest@redhat.com)
+- Test whether JavaScript is loaded in the community (ccoleman@redhat.com)
+- Merge pull request #1635 from sg00dwin/612dev
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1633 from jtharris/features/Card_46
+  (dmcphers+openshiftbot@redhat.com)
+- CHANGES: Clear avatar picture of column-floating so it's aligned right
+  (sgoodwin@redhat.com)
+- FAQ item tests. (jharris@redhat.com)
+- Merge pull request #1620 from smarterclayton/bug_972878_version_assets
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1552 from jtharris/features/Card_227_web_integration_test
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1619 from liggitt/bug_971280_restart_success_message
+  (dmcphers+openshiftbot@redhat.com)
+- Add restart test stub (jliggitt@redhat.com)
+- Bug 970835 - drupal add content vert tabs on small screens
+  (jforrest@redhat.com)
+- Update link text: Application -> App (jharris@redhat.com)
+- Merge pull request #1615 from sg00dwin/adv-search
+  (dmcphers+openshiftbot@redhat.com)
+- Fix for Bug 970856 .pagination height set to auto to override explict height
+  set by bootstrap (sgoodwin@redhat.com)
+- Bug 972878 - More effectively cache assets for the site and community.
+  (ccoleman@redhat.com)
+- js_required forces session cookie reset, wrong abstraction to use for
+  noscript (ccoleman@redhat.com)
+- make width:auto (sgoodwin@redhat.com)
+- Fix for bug 973393 Advanced search fields are excessively long. This makes
+  those sections compact. (sgoodwin@redhat.com)
+- Merge pull request #1607 from liggitt/remove_amex
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1578 from smarterclayton/textarea_fonts
+  (dmcphers+openshiftbot@redhat.com)
+- Remove AmEx as an accepted payment type (jliggitt@redhat.com)
+- Merge pull request #1606 from jwforres/partner_logo_click_target
+  (dmcphers+openshiftbot@redhat.com)
+- Fix the click target of the partner logos to match hover target
+  (jforrest@redhat.com)
+- Use 'then' in preference to 'redirectUrl' (for later refactoring)
+  (ccoleman@redhat.com)
+- Code review suggestions. (jharris@redhat.com)
+- Refactoring tab and menu tests for new content. (jharris@redhat.com)
+- Adding the start of new community flows. (jharris@redhat.com)
+- Merge pull request #1589 from sg00dwin/dev-general (ccoleman@redhat.com)
+- Add responsive rule back and adjust (sgoodwin@redhat.com)
+- Increase td max-width now we have wider container. Note this max-width is
+  still needed to force wrap long strings within td (sgoodwin@redhat.com)
+- Merge pull request #1588 from
+  liggitt/bug_971717_truncated_postal_code_placeholder
+  (dmcphers+openshiftbot@redhat.com)
+- Fix Bug 971717 - truncated placeholder text for postal code field
+  (jliggitt@redhat.com)
+- Set monospace font in textareas (ccoleman@redhat.com)
+
 * Fri Jun 07 2013 Adam Miller 1.10.1-6
 - Bump spec for site rebuild
 

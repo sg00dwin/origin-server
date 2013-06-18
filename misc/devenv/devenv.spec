@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.9.1
+Version: 1.9.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -734,6 +734,27 @@ sed -i '/^PASS_MIN_DAYS/c\PASS_MIN_DAYS   1' -i /etc/login.defs
 /etc/openshift/development
 
 %changelog
+* Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 1.9.2-1
+- Add back rockmongo (dmcphers@redhat.com)
+- First pass at removing v1 cartridges (dmcphers@redhat.com)
+- Merge pull request #1623 from jwforres/bug_962024_blog_post_rss_feed
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1620 from smarterclayton/bug_972878_version_assets
+  (dmcphers+openshiftbot@redhat.com)
+- Add new drupal modules to devenv.spec (jforrest@redhat.com)
+- Bug 972878 - More effectively cache assets for the site and community.
+  (ccoleman@redhat.com)
+- Bug 971610 - Increase the hard limit on file descriptors to 16k
+  (rmillner@redhat.com)
+- Int, stg and prod polydir /var/tmp.  Make the devenv environment match it.
+  (rmillner@redhat.com)
+- Bug 969528 - cgrulesengd has become very flaky, adding this to pam causes
+  processes to be properly classified when oo-spawn launches them.
+  (rmillner@redhat.com)
+- Merge pull request #1580 from tkramer-rh/dev/tkramer/security/BZ970877
+  (dmcphers+openshiftbot@redhat.com)
+- Security - change login.defs to match info in BZ970877 (tkramer@redhat.com)
+
 * Wed May 08 2013 Adam Miller <admiller@redhat.com> 1.9.1-1
 - bump_minor_versions for sprint 28 (admiller@redhat.com)
 

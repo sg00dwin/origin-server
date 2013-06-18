@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require File.expand_path('../../test_helper', __FILE__)
 
 class AccountControllerTest < ActionController::TestCase
@@ -194,6 +196,86 @@ class AccountControllerTest < ActionController::TestCase
       assert assigns(:plan)
       assert_select 'h2:content(?)', /previous bill .* paid/
       assert_select 'a:content(?)', 'View billing history'
+    end
+
+    test "should show dashboard with next bill with rates" do
+      with_config(:aria_show_unbilled_usage_rates, true) do
+        do_dashboard_with_usage_test
+      end
+    end
+
+    test "should show dashboard with next bill without rates" do
+      with_config(:aria_show_unbilled_usage_rates, false) do
+        do_dashboard_with_usage_test
+      end
+    end
+
+    def do_dashboard_with_usage_test
+      omit_if_aria_is_unavailable
+      with_account_holder
+      bill = Aria::Bill.new(
+        :usage_bill_from => '2010-02-01'.to_datetime,
+        :usage_bill_thru => '2010-02-28'.to_datetime,
+        :due_date => '2010-03-01'.to_datetime,
+        :day => 17,
+        :unbilled_usage_line_items => [
+          Aria::UsageLineItem.new(Aria::WDDX::Struct.new({
+            "billable_acct_no"=>123,
+            "incurring_acct_no"=>nil,
+            "usage_type_no"=>234,
+            "usage_type_description"=>"Medium gear hourly usage",
+            "usage_date"=>"2010-01-01",
+            "usage_time"=>"12:00:00",
+            "units"=>1,
+            "units_description"=>"1.00 hour",
+            "invoice_transaction_id"=>nil,
+            "telco_to"=>nil,
+            "telco_from"=>nil,
+            "specific_record_charge_amount"=>0.1,
+            "is_excluded"=>"false",
+            "exclusion_comments"=>nil,
+            "comments"=>"",
+            "pre_rated_rate"=>0.1,
+            "qualifier_1"=>nil,
+            "qualifier_2"=>nil,
+            "qualifier_3"=>nil,
+            "qualifier_4"=>nil,
+            "recorded_units"=>1,
+            "usage_rec_no"=>123456,
+            "usage_parent_rec_no"=>nil,
+            "usage_type_code"=>"usage_gear_medium",
+            "client_record_id"=>nil}), 123)
+        ]
+      )
+      Aria::UserContext.any_instance.expects(:next_bill).returns(bill)
+      Aria::UserContext.any_instance.expects(:last_bill).returns(nil);
+      Aria::UserContext.any_instance.expects(:past_usage_line_items).returns({"Feb" => bill.unbilled_usage_line_items})
+
+      get :show
+      assert_response :success
+      assert_template :show
+      assert assigns(:user)
+      assert assigns(:bill)
+      assert assigns(:usage_items)
+      assert assigns(:usage_types)
+
+      if Rails.configuration.aria_show_unbilled_usage_rates
+        # Line item for usage includes amount
+        assert_select 'td.plan-item-rate', '1.0 gear-hour × $0.10'
+        assert_select 'td.plan-item-cost', '$0.10'
+        # Has a total row
+        assert_select 'tr.plan-total'
+        # Has a usage charge comparison
+        assert_select 'table.usage-charges'
+      else
+        # Line item for usage excludes amount
+        assert_select 'td.plan-item-rate', '1.0 gear-hour'
+        assert_select 'td.plan-item-cost', '&nbsp;'
+        # No total row
+        assert_select 'tr.plan-total', :count => 0
+        # No usage charge comparison
+        assert_select 'table.usage-charges', :count => 0
+      end
     end
 
     test "should show account dashboard" do

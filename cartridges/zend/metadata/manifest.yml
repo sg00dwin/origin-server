@@ -16,7 +16,7 @@ Website: http://www.zend.com
 Help-Topics:
   "Developer Center": https://openshift.redhat.com/community/developers
 Cart-Data:
-  - Key: OPENSHIFT_LOG_DIR
+  - Key: OPENSHIFT_ZEND_LOG_DIR
     Type: environment
     Description: "Directory to store application log files."
   - Key: OPENSHIFT_TMP_DIR

@@ -5,8 +5,8 @@
 %global modname             user_profile
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.14.1
-Release: 5%{?dist}
+Version: 1.14.3
+Release: 1%{?dist}
 Summary: Openshift Red Hat Custom User Profile Feature for Drupal6
 Group:   Applications/Publishing
 License: GPLv2+
@@ -41,6 +41,24 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 1.14.3-1
+- Merge pull request #1578 from smarterclayton/textarea_fonts
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1606 from jwforres/partner_logo_click_target
+  (dmcphers+openshiftbot@redhat.com)
+- Fix the click target of the partner logos to match hover target
+  (jforrest@redhat.com)
+- Strip 'devel' as a required module (ccoleman@redhat.com)
+
+* Mon Jun 17 2013 Adam Miller <admiller@redhat.com>
+- Merge pull request #1578 from smarterclayton/textarea_fonts
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1606 from jwforres/partner_logo_click_target
+  (dmcphers+openshiftbot@redhat.com)
+- Fix the click target of the partner logos to match hover target
+  (jforrest@redhat.com)
+- Strip 'devel' as a required module (ccoleman@redhat.com)
+
 * Fri Jun 07 2013 Adam Miller 1.14.1-5
 - Bump spec for mass drupal rebuild
 

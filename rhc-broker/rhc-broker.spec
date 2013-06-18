@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.10.1
+Version: 1.10.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -151,6 +151,18 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 1.10.2-1
+- Migration fixes (dmcphers@redhat.com)
+- Merge pull request #1556 from pravisankar/dev/ravi/user-plan-update-changes
+  (dmcphers+openshiftbot@redhat.com)
+- origin_runtime_138 - Add SSL_ENDPOINT variable and filter whether carts use
+  ssl_to_gear. (rmillner@redhat.com)
+- Add links for plans REST api (rpenta@redhat.com)
+- return HTTP Status code 200 from DELETE instead of 204 (lnader@redhat.com)
+- WIP Cartridge Refactor - Add ignore_cartridge_version to V2->V2 migration
+  (jhonce@redhat.com)
+- Fixing alias system tests (abhgupta@redhat.com)
+
 * Thu May 30 2013 Adam Miller <admiller@redhat.com> 1.10.1-1
 - bump_minor_versions for sprint 29 (admiller@redhat.com)
 

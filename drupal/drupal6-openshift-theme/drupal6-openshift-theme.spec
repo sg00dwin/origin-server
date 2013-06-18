@@ -5,8 +5,8 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.18.1
-Release:        5%{?dist}
+Version: 3.18.2
+Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
 Group:          Applications/Publishing
@@ -44,6 +44,22 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 3.18.2-1
+- Merge pull request #1620 from smarterclayton/bug_972878_version_assets
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 972878 - More effectively cache assets for the site and community.
+  (ccoleman@redhat.com)
+- Fix the url to the user guide (jliggitt@redhat.com)
+- Merge pull request #1609 from
+  smarterclayton/bug_972890_add_search_meta_and_block_to_show
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 972890 - Allow homepage to have a meta description (site_mission) and
+  inject content onto every page (ccoleman@redhat.com)
+- Merge pull request #1578 from smarterclayton/textarea_fonts
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 972241 - Bad google+ link (ccoleman@redhat.com)
+- Strip 'devel' as a required module (ccoleman@redhat.com)
+
 * Fri Jun 07 2013 Adam Miller 3.18.1-5
 - Bump spec for mass drupal rebuild
 

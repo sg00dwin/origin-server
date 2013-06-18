@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.8.1
+Version: 1.8.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,15 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 1.8.2-1
+- oo-admin-chk fixes (rpenta@redhat.com)
+- Added user plan_id and plan_state consistency checks (mongo vs aria).
+  (rpenta@redhat.com)
+- Merge pull request #1507 from pravisankar/dev/ravi/billing-event-notification
+  (dmcphers+openshiftbot@redhat.com)
+- Billing Events: Handle dunning/suspended to active aria status change.
+  (rpenta@redhat.com)
+
 * Thu May 30 2013 Adam Miller <admiller@redhat.com> 1.8.1-1
 - bump_minor_versions for sprint 29 (admiller@redhat.com)
 

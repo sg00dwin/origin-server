@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/v2/zend
 
 Name:    openshift-origin-cartridge-zend
-Version: 0.3.1
+Version: 0.3.2
 Release: 1%{?dist}
 Summary: Zend Server cartridge
 Group:   Development/Languages
@@ -65,6 +65,14 @@ sh %{cartridgedir}/versions/5.6/rpm/zend_configure_filesystem.sh
 
 
 %changelog
+* Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 0.3.2-1
+- First pass at removing v1 cartridges (dmcphers@redhat.com)
+- fix zend apachectl symlink (vvitek@redhat.com)
+- Merge pull request #1508 from ironcladlou/dev/v2carts/manifest-defaults
+  (dmcphers+openshiftbot@redhat.com)
+- Make Initial-Build-Required default to false (ironcladlou@gmail.com)
+- Fix Zend apachectl deployment settings (vvitek@redhat.com)
+
 * Thu May 30 2013 Adam Miller <admiller@redhat.com> 0.3.1-1
 - bump_minor_versions for sprint 29 (admiller@redhat.com)
 
