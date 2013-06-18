@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.10.2
+Version: 1.10.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -151,6 +151,16 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Tue Jun 18 2013 Adam Miller <admiller@redhat.com> 1.10.3-1
+- Fix ignore cartridge version for rhc-admin-migrate (dmcphers@redhat.com)
+- Merge pull request #1645 from pravisankar/dev/ravi/bug974925
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1640 from rajatchopra/master
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 974925 - Typo fix (rpenta@redhat.com)
+- Various cleanup (dmcphers@redhat.com)
+- bz969696 - download cart settings (rchopra@redhat.com)
+
 * Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 1.10.2-1
 - Migration fixes (dmcphers@redhat.com)
 - Merge pull request #1556 from pravisankar/dev/ravi/user-plan-update-changes
