@@ -32,7 +32,7 @@ STDOUT.sync, STDERR.sync = true
 #
 def migrate_gear(login, app_name, gear_uuid, version, ignore_cartridge_version=false)
   total_migrate_gear_start_time = (Time.now.to_f * 1000).to_i
-  migrate_cmd = "#{__FILE__} --login '#{login}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}' --ignore-cartridge-version '#{ignore_cartridge_version}'"
+  migrate_cmd = "#{__FILE__} --login '#{login}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}' #{ignore_cartridge_version ? '--ignore-cartridge-version' : ''}"
   out = StringIO.new
   out << "Migrating gear on node with: #{migrate_cmd}\n"
   begin
@@ -336,7 +336,7 @@ def migrate(version, continue=false, ignore_cartridge_version=false, target_serv
   position = migrate_position - 1
   migrator_position_nodes = []
   if num_migrators > 1
-    server_identities = node_to_gears.keys.sort 
+    server_identities = node_to_gears.keys.sort
     server_identities.each_with_index do |server_identity, index|
       if index == position
         migrator_position_nodes << server_identity
@@ -556,7 +556,7 @@ def migrate_from_file(file)
       login = params[4]
       version = params[5]
       ignore_cartridge_version = params[6] ? params[6] : 'false'
-      migrate_on_node_cmd = "#{__FILE__} --login '#{login}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}' --ignore-cartridge-version '#{ignore_cartridge_version}'"
+      migrate_on_node_cmd = "#{__FILE__} --login '#{login}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}' #{ignore_cartridge_version == 'true' ? '--ignore-cartridge-version' : ''}"
       base_path = server_identity
       if File.basename(file) == File.basename(migrate_file_path(server_identity) + ACTIVE_SUFFIX)
         base_path += ACTIVE_SUFFIX
@@ -731,7 +731,7 @@ elsif opt['migrate-node']
 !!!!!!!!!!!!!!!!!!!! EXISTING MIGRATION DATA FOUND !!!!!!!!!!!!!!!!!!!!
 Data from a previous migration exists at #{migrate_file}.  You must 
 either move/remove (Ex: rm #{migrate_file}) that data or pick up
-where it left off with '#{__FILE__} --migrate-node #{opt['migrate-node']} --version '#{opt['version']}' --ignore-cartridge-version #{opt['ignore-cartridge-version']} --continue'.
+where it left off with '#{__FILE__} --migrate-node #{opt['migrate-node']} --version '#{opt['version']}'#{opt['ignore-cartridge-version'] ? ' --ignore-cartridge-version' : ''} --continue'.
 WARNING
         exit 1
     else
