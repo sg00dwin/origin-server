@@ -32,7 +32,7 @@ STDOUT.sync, STDERR.sync = true
 #
 def migrate_gear(login, app_name, gear_uuid, version, ignore_cartridge_version=false)
   total_migrate_gear_start_time = (Time.now.to_f * 1000).to_i
-  migrate_cmd = "#{__FILE__} --login '#{login}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}' --ignore_cartridge_version '#{ignore_cartridge_version}'"
+  migrate_cmd = "#{__FILE__} --login '#{login}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}' --ignore-cartridge-version '#{ignore_cartridge_version}'"
   out = StringIO.new
   out << "Migrating gear on node with: #{migrate_cmd}\n"
   begin
