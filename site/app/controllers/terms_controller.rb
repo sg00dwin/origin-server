@@ -1,15 +1,8 @@
 class TermsController < SiteController
 
   def new
-    new_terms
-  end
-
-  def acceptance_terms
     required_terms
-    new_terms
-  end
 
-  def new_terms
     @user = session_user
     if @user
       if @user.terms.empty?
@@ -19,7 +12,24 @@ class TermsController < SiteController
 
       @term = Term.new
     else
-      redirect_to login_path
+      redirect_to login_path and return
+    end
+
+    @terms_display_list = Array.new()
+    if @user.terms.length > 0
+      @user.terms.each do |term|
+        display_hash = {
+          :title => term['termTitle'],
+          :href => term['termUrl'],
+          :description => @term_description[term['termTitle']],
+        }
+        # Show the OpenShift Online terms first
+        if term['termTitle'].start_with?('O')
+          @terms_display_list.unshift display_hash
+        else
+          @terms_display_list << display_hash
+        end
+      end
     end
   end
 
@@ -42,16 +52,15 @@ class TermsController < SiteController
         render :new
       end
     else
-      redirect_to login_path
+      redirect_to login_path and return
     end
   end
 
   protected
     def required_terms
       @term_description ||= {
-        'OpenShift Service Agreement' => 'This agreement contains the terms and conditions that apply to your access and use of the OpenShift Services and Software. The Agreement also incorporates the Acceptable Use Policy which can be reviewed at http://openshift.redhat.com/app/legal.',   
-        'Red Hat Site Terms' => "These terms apply to use of Red Hat's websites, including this OpenShift site.", 
-        'Red Hat Portals Terms of Use' => 'These terms apply to the extent you use the Red Hat Customer Portal website.' 
+        'OpenShift Online Services Agreement' => 'This agreement contains the terms and conditions that apply to your access and use of the OpenShift Online Services and Software. The Agreement also incorporates the Acceptable Use Policy which can be reviewed at http://www.openshift.com/legal.',
+        'Red Hat Portals Terms of Use' => 'These terms apply to the extent you use the Red Hat Customer Portal website.'
       }
     end
 end

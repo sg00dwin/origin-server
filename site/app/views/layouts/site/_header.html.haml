@@ -2,7 +2,7 @@
   - if content_for? :top_banner
     = yield :top_banner
   .container
-    = link_to "Status", status_path, :title => 'Track open issues on the OpenShift status page', :class => 'btn btn-small btn-warning', :style => 'display:none;', :id => 'outage'
+    = link_to "Status", status_path, :title => 'Track open issues on the OpenShift Online status page', :class => 'btn btn-small btn-warning', :style => 'display:none;', :id => 'outage'
     .pull-right.login
       %form#search-top{:action => community_search_url, :method => "get"}
         %label.invisible{:for => 'keys'} Search

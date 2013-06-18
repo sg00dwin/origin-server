@@ -65,7 +65,7 @@ en:
   aria:
     direct_post:
       unknown: 
-        Your payment information could not be processed at this time. Please verify your billing address and credit card details are correct and try again. If you continue to experience problems, please contact the OpenShift support team.
+        Your payment information could not be processed at this time. Please verify your billing address and credit card details are correct and try again. If you continue to experience problems, please contact the OpenShift Online support team.
       serveryoumustenterccnumber: 
         Please enter the credit card number you wish to make payments with.
       server_card_cvv: 
@@ -75,6 +75,6 @@ en:
       serverccexpired:
         The expiration date is invalid, or your card has expired.
       servercouldnotvalidatecard:
-        Your credit card could not be validated at this time. Please verify your billing address and credit card details are correct and try again. If you continue to experience problems, please contact the OpenShift support team.
+        Your credit card could not be validated at this time. Please verify your billing address and credit card details are correct and try again. If you continue to experience problems, please contact the OpenShift Online support team.
       serveryoumustenterccnumber:
         You must enter a credit card number.

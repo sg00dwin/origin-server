@@ -4,7 +4,7 @@ class Term
   include ActiveModel::Serialization
   extend ActiveModel::Naming
 
-  attr_accessor :terms_accepted, :accepted_terms_list
+  attr_accessor :terms_accepted
 
   def initialize(attributes = {})
     attributes.each do |name, value|

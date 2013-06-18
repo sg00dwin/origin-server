@@ -43,7 +43,7 @@ class TermsControllerTest < ActionController::TestCase
     setup_user
     user = @controller.session_user
     user.send('terms=', [])
-    user.expects(:accept_terms).never    
+    user.expects(:accept_terms).never
     post :create
     assert_equal 0, assigns(:term).errors.size
     assert_redirected_to console_path
@@ -72,7 +72,7 @@ class TermsControllerTest < ActionController::TestCase
 
   test "accept terms successfully with external workflow" do
     setup_user
-    url = 'http://external.url/to-something' 
+    url = 'http://external.url/to-something'
     @controller.send(:terms_redirect=, url)
     user = @controller.session_user
     user.send('terms=', [{'termId' => '1', 'termUrl' => 'localhost'}])
@@ -80,15 +80,6 @@ class TermsControllerTest < ActionController::TestCase
     post :create
     assert_equal 0, assigns(:term).errors.size
     assert_redirected_to url
-  end
-
-  test "show acceptance terms" do
-    setup_user
-    user = @controller.session_user
-    user.send('terms=', [{'termId' => '1', 'termUrl' => 'localhost', 'termTitle' => 'title'}])
-    get :acceptance_terms
-    assert_equal 0, assigns(:term).errors.size
-    assert_response :success
   end
 
   test "verify auto-access doesn't fire before accepting terms" do

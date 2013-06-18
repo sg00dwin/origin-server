@@ -17,7 +17,7 @@
     .right= link_to "View details", account_plan_path
 
 - if @is_test_user
-  .alert.alert-warning You are accessing OpenShift with a test user.  If this is unexpected, please contact the account support team immediately.
+  .alert.alert-warning You are accessing OpenShift Online with a test user.  If this is unexpected, please contact the account support team immediately.
 - if @virtual_time
   .alert.alert-warning You are accessing an Aria test system. The virtual time is #{@virtual_time}.
 
@@ -54,7 +54,7 @@
 
 - if @is_downgrading
   .alert.alert-info
-    You have access to OpenShift support until the end of the month.
+    You have access to OpenShift Online support until the end of the month.
     You will be billed for any usage above the 2250 included small gear-hours.
 
 

@@ -237,7 +237,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
         }
       }
 
-      assert_select 'p.help-inline', 'OpenShift does not allow creating accounts with email addresses from anonymous mail services due to security concerns. Please use a different email address.'
+      assert_select 'p.help-inline', 'OpenShift Online does not allow creating accounts with email addresses from anonymous mail services due to security concerns. Please use a different email address.'
     end
   end
 end
