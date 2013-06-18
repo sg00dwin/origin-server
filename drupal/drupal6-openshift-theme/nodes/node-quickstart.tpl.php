@@ -19,7 +19,7 @@
   <?php if ($node->comment_count > 0) { ?><span class="divider"> | </span><span class="comment-count"><?php print $node->comment_count; ?> comments</span><?php } ?>
   </div>
 
-  <p><a class="btn btn-primary" href="<?php print openshift_server_url(); ?>/app/console/application_types/quickstart!<?php print check_plain($node->nid); ?>">Deploy Now</a></p>
+  <p><a class="btn btn-primary" href="<?php print openshift_server_url(); ?>/app/console/application_type/quickstart!<?php print check_plain($node->nid); ?>">Deploy Now</a></p>
 
   <div class="content cleafix">
     <div class="pull-right" style="margin-left: 10px;"><?php print $node->content['vud_node_widget_display']['#value']; ?></div>
