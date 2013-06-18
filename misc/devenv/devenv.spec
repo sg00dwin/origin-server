@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.9.2
+Version: 1.9.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -734,6 +734,9 @@ sed -i '/^PASS_MIN_DAYS/c\PASS_MIN_DAYS   1' -i /etc/login.defs
 /etc/openshift/development
 
 %changelog
+* Tue Jun 18 2013 Adam Miller <admiller@redhat.com> 1.9.3-1
+- Bug 918819 - devenv drupal, add session.cookie_secure (jforrest@redhat.com)
+
 * Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 1.9.2-1
 - Add back rockmongo (dmcphers@redhat.com)
 - First pass at removing v1 cartridges (dmcphers@redhat.com)
