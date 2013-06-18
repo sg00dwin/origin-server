@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/v2/zend
 
 Name:    openshift-origin-cartridge-zend
-Version: 0.3.2
+Version: 0.3.3
 Release: 1%{?dist}
 Summary: Zend Server cartridge
 Group:   Development/Languages
@@ -65,6 +65,13 @@ sh %{cartridgedir}/versions/5.6/rpm/zend_configure_filesystem.sh
 
 
 %changelog
+* Tue Jun 18 2013 Adam Miller <admiller@redhat.com> 0.3.3-1
+- Merge pull request #1639 from ironcladlou/bz/974923
+  (dmcphers+openshiftbot@redhat.com)
+- Various cleanup (dmcphers@redhat.com)
+- Bug 974923: Fix inaccurate Cart-Data env var references
+  (ironcladlou@gmail.com)
+
 * Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 0.3.2-1
 - First pass at removing v1 cartridges (dmcphers@redhat.com)
 - fix zend apachectl symlink (vvitek@redhat.com)
