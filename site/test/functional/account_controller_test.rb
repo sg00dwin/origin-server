@@ -198,15 +198,11 @@ class AccountControllerTest < ActionController::TestCase
       assert_select 'a:content(?)', 'View billing history'
     end
 
-    test "should show dashboard with next bill with rates" do
-      with_config(:aria_show_unbilled_usage_rates, true) do
-        do_dashboard_with_usage_test
-      end
-    end
-
-    test "should show dashboard with next bill without rates" do
-      with_config(:aria_show_unbilled_usage_rates, false) do
-        do_dashboard_with_usage_test
+    [true, false].each do |show_rates|
+      test "should show dashboard with next bill #{show_rates ? 'with' : 'without'} rates" do
+        with_config(:aria_show_unbilled_usage_rates, show_rates) do
+          do_dashboard_with_usage_test
+        end
       end
     end
 

@@ -32,10 +32,15 @@ class ActiveSupport::TestCase
     User.find(:one, :as => u).tap{ |a| a.plan_id = :silver; assert a.save }
   end
 
-  def create_usage_record(user, usage_type, usage_amount, opts={})
-    assert usage_rec_no = Aria.record_usage(user.acct_no, usage_type, usage_amount, opts)
+  def create_usage_record(user, usage_type, usage_amount, bulk=false)
+    id = new_uuid
+    if bulk
+      Aria.bulk_record_usage(:acct_no => user.acct_no, :usage_type => usage_type, :usage_units => usage_amount, :client_record_id => id)
+    else
+      Aria.record_usage(user.acct_no, usage_type, usage_amount, {:client_record_id => id})
+    end
     assert records = Aria.get_usage_history(user.acct_no, :date_range_start => Aria::DateTime.today, :date_range_end => Aria::DateTime.today, :specified_usage_type_no => usage_type)
-    assert record = records.find {|r| r.usage_rec_no == usage_rec_no }
+    assert record = records.find {|r| r.client_record_id == id }
     record
   end
 
