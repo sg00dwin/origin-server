@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.18.3
+Version: 3.18.4
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,18 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Jun 19 2013 Adam Miller <admiller@redhat.com> 3.18.4-1
+- Fix bug 975724 - don't output nav header unless there is nav content
+  (jliggitt@redhat.com)
+- Merge pull request #1649 from sg00dwin/617dev
+  (dmcphers+openshiftbot@redhat.com)
+- Merge branch 'master' of github.com:openshift/li into 617dev
+  (sgoodwin@redhat.com)
+- CHANGES Addition of print specific rules Correct incorrectly closed tag
+  around social-sharing - required updated margin-bottom values on comments and
+  thread Slightly muted stars on planets and stars graphics - updated
+  positioning of stars.png (sgoodwin@redhat.com)
+
 * Tue Jun 18 2013 Adam Miller <admiller@redhat.com> 3.18.3-1
 - Bug 975365 - 404 on Deploy Now button on QuickStart (jforrest@redhat.com)
 
