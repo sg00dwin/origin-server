@@ -8,6 +8,7 @@
     <div id="content" class="section-striped">
       <div class="container"><div class="row-content">
       <div class='row row-flush-right'>
+        <?php if ($content_header || in_array($layout, array('left','right','both'))) :?>
         <div class="column-navbar">       
           <a data-toggle="collapse" data-target=".nav-collapse" class="btn btn-navbar">
           <span class="pull-left">Navigate</span>
@@ -18,6 +19,7 @@
           </span>
           </a>
         </div>
+        <?php endif; ?>
 
         <?php if ($content_header) :?><div class="column-navbar-secondary lift grid-wrapper"><div class="nav-collapse collapse"><?php print $content_header; ?></div></div><?php endif; ?>
 
