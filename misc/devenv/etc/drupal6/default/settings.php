@@ -160,7 +160,7 @@ ini_set('magic_quotes_runtime',     0);
 ini_set('magic_quotes_sybase',      0);
 ini_set('session.cache_expire',     604800);
 ini_set('session.cache_limiter',    'none');
-ini_set('session.cookie_lifetime',  0);
+ini_set('session.cookie_lifetime',  604800);
 ini_set('session.gc_maxlifetime',   604800);
 ini_set('session.save_handler',     'user');
 ini_set('session.use_cookies',      1);
