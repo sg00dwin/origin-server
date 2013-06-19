@@ -226,6 +226,41 @@ body.signup {
   
 }
 
+@media print {
+  .section-top,
+  .column-navbar .btn-navbar,
+  .navbar .nav-primary,
+  .media-youtube,
+  .social-sharing {
+    display: none;
+  }
+  .navbar .brand {
+    float: none;
+    a:after {
+      content:"OPENSHIFT";
+      font-size: 32pt;
+      left: -.5em;
+      bottom: 0;
+      position: absolute;
+    }
+  }
+  .action-call > div {
+    white-space: nowrap;
+    padding: 0;
+    display: block;
+  }
+  .thumbnail-video.span2 {
+    width: auto;
+    height: auto;
+    .views-field-field-video-third-party-embed {
+      height: auto;
+    }
+    img {
+      display: none;
+    }
+  }
+}
+
 @media (max-width: 767px) {
   .section-top {
     #outage {
@@ -786,7 +821,8 @@ h1.ribbon {
   }
 
   .gutter-right {
-    padding-right: 15px;
+    padding-right: 8px;
+    padding-top: 29px;
     margin-bottom: 30px;
   }
 
@@ -815,6 +851,7 @@ h1.ribbon {
       }
       background-color: #292929;
       color: #fff;
+      margin-right: -7px; // offset gutter-right
       &:hover {
         background-color: #292929;
         color: #fff;

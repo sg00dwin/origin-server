@@ -163,7 +163,7 @@ function openshift_social_sharing($url, $title = NULL) {
       '<a target="_blank" href="http://twitter.com/intent/tweet?text='. $tweet_text .'" aria-hidden="true" data-icon="&#xee04;" title="Post to Twitter"> </a>'.
       '<a target="_blank" href="http://www.facebook.com/sharer.php?u='. $share_url .'&t='. urlencode($title) .'" aria-hidden="true" data-icon="&#xee05;" title="Post to Facebook"> </a>'.
       '<a target="_blank" href="https://plus.google.com/share?url='. $share_url .'" aria-hidden="true" data-icon="&#xee06;" title="Post to Google+"> </a>'.
-    '</p';
+    '</div>';
 }
 
 function openshift_wrap_region($s) {
