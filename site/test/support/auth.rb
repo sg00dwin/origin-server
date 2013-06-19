@@ -41,6 +41,9 @@ end
 
 class ActionDispatch::IntegrationTest
   protected
+    def user_env
+      # Empty stub
+    end
     def set_user(user)
       @user = user
     end
