@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.9.3
+Version: 1.9.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -734,6 +734,12 @@ sed -i '/^PASS_MIN_DAYS/c\PASS_MIN_DAYS   1' -i /etc/login.defs
 /etc/openshift/development
 
 %changelog
+* Wed Jun 19 2013 Adam Miller <admiller@redhat.com> 1.9.4-1
+- Bug 975657 - adjust the cookie timeout for the drupal session
+  (jforrest@redhat.com)
+- Bug 975657 - adjust the drupal session timeout values (jforrest@redhat.com)
+- Fix https://<ip-addr>/datastore rockmongo interface (rpenta@redhat.com)
+
 * Tue Jun 18 2013 Adam Miller <admiller@redhat.com> 1.9.3-1
 - Bug 918819 - devenv drupal, add session.cookie_secure (jforrest@redhat.com)
 
