@@ -191,8 +191,11 @@ module Aria
     end
 
     def unbilled_usage_line_items
-      @unbilled_usage_line_items ||=
-        Aria::UsageLineItem.for_usage(Aria.cached.get_usage_history(acct_no, :date_range_start => current_period_start_date), plan_no).sort_by(&Aria::LineItem.plan_sort)
+      @unbilled_usage_line_items ||= begin
+        usage_history = Aria.cached.get_usage_history(acct_no, :date_range_start => current_period_start_date)
+        usage_history = usage_history.select(&:specific_record_charge_amount) unless Rails.configuration.aria_show_unrated_unbilled_usage
+        Aria::UsageLineItem.for_usage(usage_history, plan_no).sort_by(&Aria::LineItem.plan_sort)
+      end
     end
 
     def unpaid_invoices

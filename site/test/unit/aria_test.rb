@@ -1053,7 +1053,7 @@ Features:
         "invoice_transaction_id"=>nil,
         "telco_to"=>nil,
         "telco_from"=>nil,
-        "specific_record_charge_amount"=>0.5,
+        "specific_record_charge_amount"=>1.0,
         "is_excluded"=>"false",
         "exclusion_comments"=>nil,
         "comments"=>nil,

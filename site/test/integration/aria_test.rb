@@ -205,7 +205,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
 
     assert p = Aria::MasterPlan.find('silver')
     assert m = Aria.get_client_plan_services(p.plan_no).find{ |s| s.client_coa_code == 'usage_gear_medium' }
-    assert unit_record = create_usage_record(u, m.usage_type, 1, {:comments => "Test medium gear hours usage"})
+    assert unit_record = create_usage_record(u, m.usage_type, 1)
     assert usage_after = Aria.get_unbilled_usage_summary(u.acct_no)
 
     charge = unit_record.specific_record_charge_amount.round(2)
@@ -217,7 +217,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     u = with_account_holder
     assert p = Aria::MasterPlan.find('silver')
     assert m = Aria.get_client_plan_services(p.plan_no).find{ |s| s.client_coa_code == 'usage_gear_medium' }
-    assert unit_record = create_usage_record(u, m.usage_type, 1, {:comments => "Test medium gear hours usage"})
+    assert unit_record = create_usage_record(u, m.usage_type, 1)
     
     unit_rate = unit_record.pre_rated_rate
     if unit_rate.blank? or unit_rate == 0
@@ -245,6 +245,35 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     end
 
     skip if hasErrors
+  end
+
+  [true, false].each do |show_unrated|
+    test "#{show_unrated ? 'should' : 'should not'} show unrated unbilled usage" do
+      with_config(:aria_show_unrated_unbilled_usage, show_unrated) do
+        u = with_account_holder
+        assert p = Aria::MasterPlan.find('silver')
+        assert m = Aria.get_client_plan_services(p.plan_no).find{ |s| s.client_coa_code == 'usage_gear_medium' }
+
+        u.clear_cache!
+        pre_records = u.unbilled_usage_line_items
+        pre_units = pre_records.map(&:units).sum.round(2)
+        
+        assert bulk_record = create_usage_record(u, m.usage_type, 1, true)
+        
+        u.clear_cache!
+        post_records = u.unbilled_usage_line_items
+        post_units = post_records.map(&:units).sum.round(2)
+        u.clear_cache!
+
+        if show_unrated or bulk_record.specific_record_charge_amount
+          # If we want to show unrated records, or the bulk record somehow got rated, expect to see it
+          assert_equal pre_units+1, post_units
+        else
+          # The bulk recorded record shouldn't factor into the unbilled usage line items
+          assert_equal pre_units, post_units
+        end
+      end
+    end
   end
 
   #
