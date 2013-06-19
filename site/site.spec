@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.10.4
+Version: 1.10.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -195,6 +195,27 @@ fi
 %{sitedir}/public
 
 %changelog
+* Wed Jun 19 2013 Adam Miller <admiller@redhat.com> 1.10.5-1
+- Merge pull request #1649 from sg00dwin/617dev
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1651 from liggitt/hide_unrated_usage
+  (dmcphers+openshiftbot@redhat.com)
+- Fix invalid test data, add test to exclude unrated unbilled usage
+  (jliggitt@redhat.com)
+- Guard against nil rate, add SHOW_UNRATED_UNBILLED_USAGE config option
+  (jliggitt@redhat.com)
+- Fix for Bug 970019 - gutter-right overflow:hidden causes long text to be
+  clipped "Create a Quickstar" - reduce padding-right and offset margin-right
+  by same value - also moved styles to be centrally located in _core
+  (sgoodwin@redhat.com)
+- Merge branch 'master' of github.com:openshift/li into 617dev
+  (sgoodwin@redhat.com)
+- CHANGES Addition of print specific rules Correct incorrectly closed tag
+  around social-sharing - required updated margin-bottom values on comments and
+  thread Slightly muted stars on planets and stars graphics - updated
+  positioning of stars.png (sgoodwin@redhat.com)
+- Change made to gitignore that's more specific (sgoodwin@redhat.com)
+
 * Tue Jun 18 2013 Adam Miller <admiller@redhat.com> 1.10.4-1
 - Fix unit tests (hripps@redhat.com)
 - Fix integration test (hripps@redhat.com)
