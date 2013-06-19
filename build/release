@@ -214,7 +214,18 @@ class Release < Thor
 
           # Chain builds are special, will handle their tito release elsewhere
           unless chain_sets_need_build.flatten.uniq.include?(build_info[0])
-            tito_cmd = "tito release brew < #{options.temp_dir}/answerfile"
+            
+            # Need to handle the case where packages that are normally in a
+            # chain build (but are not because the chain_build_iniator was not
+            # found to need building) land in the -dirty brew build target so 
+            # they are built against the correct set of dependencies instead of
+            # last PROD package set
+            if CHAIN_BUILD_SETS.flatten.uniq.include?(build_info[0])
+              tito_cmd = "tito release brew-dirty < #{options.temp_dir}/answerfile"
+            else
+              tito_cmd = "tito release brew < #{options.temp_dir}/answerfile"
+            end
+
             # Build the RPM in brew
             if push_failures.empty? && run(tito_cmd, :verbose => options.verbose?)
               puts "Done"
