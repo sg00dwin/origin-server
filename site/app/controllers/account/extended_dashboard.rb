@@ -167,6 +167,13 @@ module Account
             }
         end
 
+        case params[:day]
+        when 'outside'
+          day = nil
+        else # when 'inside'
+          day = 17
+        end
+
         case params[:rates]
         when 'hide'
           @show_usage_rates = false;
@@ -180,8 +187,10 @@ module Account
           @bill = Aria::Bill.new(
             :usage_bill_from => '2010-02-01'.to_datetime,
             :usage_bill_thru => '2010-02-28'.to_datetime,
+            :recurring_bill_from => '2010-03-01'.to_datetime,
+            :recurring_bill_thru => '2010-03-31'.to_datetime,
             :due_date => '2010-03-01'.to_datetime,
-            :day => 17,
+            :day => day,
             :invoice_line_items => Aria::RecurringLineItem.find_all_by_plan_no(@plan.plan_no.to_s),
             :unbilled_usage_line_items => current_usage,
             :forwarded_balance => forwarded_balance

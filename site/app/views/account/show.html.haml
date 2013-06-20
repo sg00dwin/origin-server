@@ -77,7 +77,7 @@
       - elsif @bill.blank?
         %p You have no recurring charges due for the next month and no recorded usage.
       - else
-        %p Today is day #{@bill.day} of the billing period #{collapse_dates(@bill.usage_bill_from, @bill.usage_bill_thru, :ordinalize => true)}
+        %p= bill_current_day_description(@bill) || bill_period_description(@bill)
         = render :partial => 'bill', :locals => {:bill => @bill, :show_details => true, :show_usage_rates => @show_usage_rates}
         %p.disclaimer
           The amounts above may not reflect discounts, applicable sales taxes, peaks in future usage, recent activity, or unbilled usage outside the current billing period.
@@ -91,7 +91,7 @@
             (ending in <span class="card_number">#{@payment_method.cc_no}</span> 
             and expiring <span class="card_expiration">#{@payment_method.expiration_date.to_s(:credit_card)}</span>)
             - if @bill && @bill.balance > 0
-              will be charged on #{@bill.due_date.to_s(:billing_date)}.
+              will be charged on or after #{@bill.due_date.to_s(:billing_date)}.
             - else
               will be used for any future charges.
         %div

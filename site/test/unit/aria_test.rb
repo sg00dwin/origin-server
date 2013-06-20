@@ -942,6 +942,26 @@ Features:
     assert_equal 1, bill.day
     assert_equal Date.today, bill.usage_bill_from
     assert_equal Date.today, bill.usage_bill_thru
+    assert_equal Date.today + 1.day, bill.recurring_bill_from
+    assert_equal Date.today + 1.month, bill.recurring_bill_thru
+  end
+
+  def test_user_should_have_bill_with_nil_day_when_outside_billing_period
+    u = TestUser.new
+    Aria::DateTime.expects(:today).returns(Date.today + 1.day)
+    u.expects(:acct_no).at_least_once.returns(1.to_s)
+    stub_next_bill(
+      :plan_no => '2',
+      :next_bill_date => (Date.today + 1.days).to_s,
+      :last_arrears_bill_thru_date => (Date.today - 1.day).to_s,
+    )
+    assert bill = u.next_bill
+    assert bill.present?
+    assert_equal nil, bill.day
+    assert_equal Date.today, bill.usage_bill_from
+    assert_equal Date.today, bill.usage_bill_thru
+    assert_equal Date.today + 1.day, bill.recurring_bill_from
+    assert_equal Date.today + 1.month, bill.recurring_bill_thru
   end
 
   def test_user_should_have_bill_when_created_today
@@ -958,6 +978,8 @@ Features:
     assert_equal 1, bill.day
     assert_equal Date.today, bill.usage_bill_from
     assert_equal Date.today, bill.usage_bill_thru
+    assert_equal Date.today + 1.day, bill.recurring_bill_from
+    assert_equal Date.today + 1.month, bill.recurring_bill_thru
   end
 
   def test_new_user_current_period
@@ -1119,6 +1141,7 @@ Features:
     stub_aria(:get_usage_history, {
       :acct_no => acct_no.to_s,
       :date_range_start => Date.today.to_s,
+      :date_range_end => (opts[:next_bill_date].to_date - 1.day).to_s
     }).to_return(resp(ok_wddx({
       :usage_history_records => opts[:usage_history] || [],
     })))
