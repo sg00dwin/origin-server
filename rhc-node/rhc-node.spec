@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.10.4
+Version: 1.10.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -243,6 +243,9 @@ fi
 
 
 %changelog
+* Thu Jun 20 2013 Adam Miller <admiller@redhat.com> 1.10.5-1
+- Add doc for migration handle_quota (pmorie@gmail.com)
+
 * Wed Jun 19 2013 Adam Miller <admiller@redhat.com> 1.10.4-1
 - Fix bug 971129: enhance quota handling for gears during migration
   (pmorie@gmail.com)
