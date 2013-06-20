@@ -132,4 +132,11 @@ Broker::Application.configure do
       :url => conf.get("NURTURE_URL", ""),
     }
   }
+
+  config.downloaded_cartridges = {
+    :max_downloaded_carts_per_app => conf.get("MAX_DOWNLOADED_CARTS_PER_APP", "5").to_i,
+    :max_download_redirects => conf.get("MAX_DOWNLOAD_REDIRECTS", "2").to_i,
+    :max_cart_size => conf.get("MAX_CART_SIZE", "20480").to_i,
+    :max_download_time => conf.get("MAX_DOWNLOAD_TIME", "10").to_i
+  }
 end
