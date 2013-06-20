@@ -219,6 +219,13 @@ module OpenShiftMigration
     end
   end
 
+  #
+  # Double the block and/or inode quotas if the gear user's current usage is over 50 percent
+  # of the hard quota.  
+  #
+  # Returns an array whose elements are a boolean indicating whether the quota will need to be
+  # reset, and the block and inode quotas to reset to.
+  #
   def self.handle_quota(uuid, progress)
     filesystem, quota, quota_soft, quota_hard, inodes, inodes_soft, inodes_hard = OpenShift::Node.get_quota(uuid)
     reset_block_quota = false
