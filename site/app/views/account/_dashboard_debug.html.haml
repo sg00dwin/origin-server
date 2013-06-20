@@ -63,3 +63,9 @@
       #{link_to "show", params.merge({:rates => :show})}
       |
       #{link_to "hide", params.merge({:rates => :hide})}
+  %tr
+    %td Today:
+    %td
+      #{link_to "Inside period", params.merge({:day => :inside})}
+      |
+      #{link_to "Outside period", params.merge({:day => :outside})}
