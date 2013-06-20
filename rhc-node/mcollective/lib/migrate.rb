@@ -283,7 +283,10 @@ module OpenShiftMigration
   # 4. Connect the frontend
   #
   def self.incompatible_migration(progress, cart_model, next_manifest, version, target, user)
-    FileUtils.rm_f cart_model.setup_rewritten(next_manifest)
+    cart_model.setup_rewritten(next_manifest).each do |entry|
+      FileUtils.rm entry if File.file? entry
+      FileUtils.rm_r entry if File.directory? entry
+    end
 
     OpenShift::CartridgeRepository.overlay_cartridge(next_manifest, target)
 
