@@ -53,9 +53,8 @@
         %h2 Compare Usage
         = render :partial => '/account/usage_charges', :locals => {:usage_items => @usage_items, :usage_types => @usage_types, :show_usage_rates => @show_unbilled_usage_rates}
 
-        - if @next_bill.day and @next_bill.usage_bill_from and @next_bill.usage_bill_thru
-          %p
-            Day #{@next_bill.day} of billing period #{collapse_dates(@next_bill.usage_bill_from, @next_bill.usage_bill_thru, :ordinalize => true)}
+        - if current_day_description = bill_current_day_description(@next_bill, :short => true)
+          %p= current_day_description
 
     %section.panel
       %h2 Got Questions?

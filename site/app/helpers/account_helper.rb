@@ -36,9 +36,14 @@ module AccountHelper
     "https://access.redhat.com/customerservice"
   end
 
-  def bill_current_day_description(bill)
+  def bill_current_day_description(bill, opts={})
     if bill.day and bill.usage_bill_from and bill.usage_bill_thru
-      "Today is day #{bill.day} of the billing period #{collapse_dates(bill.usage_bill_from, bill.usage_bill_thru, :ordinalize => true)}"
+      dates = collapse_dates(bill.usage_bill_from, bill.usage_bill_thru, :ordinalize => true)
+      if opts[:short]
+        "Day #{bill.day} of billing period #{dates}"
+      else
+        "Today is day #{bill.day} of the billing period #{dates}"
+      end
     end
   end
 
