@@ -402,9 +402,15 @@ module OpenShiftMigration
           while true do
             http = Net::HTTP.new(uri.host, uri.port)
             request = Net::HTTP::Get.new(uri.request_uri)
-            response = http.request(request)
+
+            begin
+              response = http.request(request)
+            rescue Timeout::Error => e
+              timeout = true
+            end
+
             # Give the app a chance to start fully
-            if response.code == '503' && num_tries < 5
+            if ((timeout || response.code == '503') && num_tries < 5)
               sleep num_tries
             else
               break
