@@ -163,12 +163,25 @@ module Aria
           if plan_no == default_plan && next_plan_no == default_plan && forwarded_balance == 0
             false
           else
-            usage_bill_from = aria_datetime(current_period_start_date)
+            current_start = aria_datetime(current_period_start_date)
+            current_end   = aria_datetime(current_period_end_date)
+            
+            usage_bill_from = current_start
+            usage_bill_thru = current_end
+
+            recurring_bill_from = (current_end + 1.day) if current_end
+            recurring_bill_thru = (recurring_bill_from + 1.month - 1.day) if recurring_bill_from
+
+            today = Aria::DateTime.today
+            day = ((today - usage_bill_from).to_i + 1) if today <= usage_bill_thru
+
             Aria::Bill.new(
               :usage_bill_from => usage_bill_from,
-              :usage_bill_thru => aria_datetime(current_period_end_date),
+              :usage_bill_thru => usage_bill_thru,
+              :recurring_bill_from => recurring_bill_from,
+              :recurring_bill_thru => recurring_bill_thru,
               :due_date => aria_datetime(account_details.next_bill_date),
-              :day => (Aria::DateTime.today - usage_bill_from).to_i + 1,
+              :day => day,
               :invoice_line_items => next_plan_recurring_line_items,
               :unbilled_usage_line_items => unbilled_usage_line_items,
               :forwarded_balance => forwarded_balance
@@ -192,7 +205,7 @@ module Aria
 
     def unbilled_usage_line_items
       @unbilled_usage_line_items ||= begin
-        usage_history = Aria.cached.get_usage_history(acct_no, :date_range_start => current_period_start_date)
+        usage_history = Aria.cached.get_usage_history(acct_no, :date_range_start => current_period_start_date, :date_range_end => current_period_end_date)
         usage_history = usage_history.select(&:specific_record_charge_amount) unless Rails.configuration.aria_show_unrated_unbilled_usage
         Aria::UsageLineItem.for_usage(usage_history, plan_no).sort_by(&Aria::LineItem.plan_sort)
       end

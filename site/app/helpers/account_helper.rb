@@ -36,6 +36,12 @@ module AccountHelper
     "https://access.redhat.com/customerservice"
   end
 
+  def bill_current_day_description(bill)
+    if bill.day and bill.usage_bill_from and bill.usage_bill_thru
+      "Today is day #{bill.day} of the billing period #{collapse_dates(bill.usage_bill_from, bill.usage_bill_thru, :ordinalize => true)}"
+    end
+  end
+
   def bill_period_description(bill)
     recurring_dates = collapse_dates(bill.recurring_bill_from, bill.recurring_bill_thru, :year => true) if bill.has_recurring?
     usage_dates = collapse_dates(bill.usage_bill_from, bill.usage_bill_thru, :year => true) if bill.has_usage?
