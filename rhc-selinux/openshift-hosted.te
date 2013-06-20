@@ -94,6 +94,10 @@ corenet_tcp_bind_pulseaudio_port(openshift_net_domain)
 corenet_tcp_bind_postgresql_port(openshift_net_domain)
 allow openshift_net_domain openshift_port_t:tcp_socket name_connect;
 
+# For heroku on port 5000
+corenet_tcp_connect_commplex_port(openshift_net_domain)
+
+
 ########################################
 #
 # openshift net local policy
