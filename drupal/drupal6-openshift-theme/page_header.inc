@@ -94,20 +94,9 @@
     <meta name="application-name" content="OpenShift"/>
     <meta name="msapplication-TileColor" content="#000000"/>
     <meta name="msapplication-TileImage" content="<?php print openshift_assets_url(); ?>/touch-icon-precomposed.png"/>
-    
-    <!-- Each meta tag below adds a Static Jump List item to the Tasks list on our pinned site's Jump List menu -->
-    <meta name="msapplication-task"
-    content="name=Manage your applications on OpenShift Online;
-    action-uri=https://openshift.redhat.com/app/console;
-    icon-uri=/favicon.ico" />
-    <meta name="msapplication-task"
-    content="name=Latest News from OpenShift;
-    action-uri=https://www.openshift.com/blogs;
-    icon-uri=/favicon.ico" />  
-    <meta name="msapplication-task"
-    content="name=Get help in the OpenShift Dev Center;
-    action-uri=https://www.openshift.com/support;
-    icon-uri=/favicon.ico" />
+    <meta name="msapplication-task" content="name=Manage your applications on OpenShift Online;action-uri=https://openshift.redhat.com/app/console;icon-uri=/favicon.ico" />
+    <meta name="msapplication-task" content="name=Latest News from OpenShift;action-uri=https://www.openshift.com/blogs;icon-uri=/favicon.ico" />  
+    <meta name="msapplication-task" content="name=Get help in the OpenShift Dev Center;action-uri=https://www.openshift.com/support;icon-uri=/favicon.ico" />
     
 
     
