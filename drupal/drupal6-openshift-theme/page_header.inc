@@ -86,7 +86,20 @@
       global $base_url;
       global $base_root;
     ?> 
-    <link type="image/png" rel="shortcut icon" href="<?php print openshift_assets_url(); ?>/favicon-32.png"></link>
+    
+    <link rel="apple-touch-icon-precomposed" href="<?php print openshift_assets_url(); ?>/touch-icon-precomposed.png">
+    <link rel="icon" href="<?php print openshift_assets_url(); ?>/favicon.ico">
+    <!--[if IE]><link rel="shortcut icon" href="<?php print openshift_assets_url(); ?>/favicon.ico"><![endif]-->
+    <!-- or, set /favicon.ico for IE10 win -->    
+    <meta name="application-name" content="OpenShift"/>
+    <meta name="msapplication-TileColor" content="#000000"/>
+    <meta name="msapplication-TileImage" content="<?php print openshift_assets_url(); ?>/touch-icon-precomposed.png"/>
+    <meta name="msapplication-task" content="name=Manage your applications on OpenShift Online;action-uri=https://openshift.redhat.com/app/console;icon-uri=/favicon.ico" />
+    <meta name="msapplication-task" content="name=Latest News from OpenShift;action-uri=https://www.openshift.com/blogs;icon-uri=/favicon.ico" />  
+    <meta name="msapplication-task" content="name=Get help in the OpenShift Dev Center;action-uri=https://www.openshift.com/support;icon-uri=/favicon.ico" />
+    
+
+    
     <link type="text/css" rel="stylesheet" href="<?php print openshift_assets_url(); ?>/overpass.css"></link>
     <script src="<?php print openshift_assets_url(); ?>/modernizr.min.js" type="text/javascript"></script>
     <link type="text/css" rel="stylesheet" href="<?php print openshift_assets_url(); ?>/common.css"></link>
