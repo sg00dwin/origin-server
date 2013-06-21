@@ -74,8 +74,9 @@ class AccountUpgradesController < ConsoleController
 
   def update
     user_params = params[:streamline_full_user]
+    email = current_aria_user.email_address || current_aria_user.load_email_address
     @billing_info = Aria::BillingInfo.new(user_params[:aria_billing_info], current_aria_user.has_account?)
-    @billing_info.email = current_aria_user.email_address || current_aria_user.load_email_address
+    @billing_info.email = email
 
     user = current_user
     @full_user = user.full_user
@@ -84,6 +85,7 @@ class AccountUpgradesController < ConsoleController
     # if they aren't already
     if @full_user.persisted?
       @contact_info = Aria::ContactInfo.from_full_user(@full_user)
+      @contact_info.email = email
     else
       @contact_info = Aria::ContactInfo.from_billing_info(@billing_info)
 

@@ -74,11 +74,6 @@ module Aria
         attributes = full_user.attributes.slice(*@@attribute_names)
         attributes['region'] = full_user.state
         attributes['zip'] = full_user.postal_code
-        attributes['email'] = begin
-          full_user.email_address || full_user.load_email_address
-        rescue
-          Rails.logger.warn("Streamline::FullUser#load_email_address failed")
-        end
         new(attributes)
       end
     end
