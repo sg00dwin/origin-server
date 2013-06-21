@@ -219,13 +219,9 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     assert m = Aria.get_client_plan_services(p.plan_no).find{ |s| s.client_coa_code == 'usage_gear_medium' }
     assert unit_record = create_usage_record(u, m.usage_type, 1)
     
-    unit_rate = unit_record.pre_rated_rate
-    if unit_rate.blank? or unit_rate == 0
-      puts "\nAuto-rating is not enabled!"
-      skip
-    end
+    assert unit_rate = unit_record.pre_rated_rate
+    assert unit_rate > 0
 
-    hasErrors = false
     records = []
     records << unit_record
     records << create_usage_record(u, m.usage_type, 10)
@@ -235,16 +231,9 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     records << create_usage_record(u, m.usage_type, 0.26)
     records << create_usage_record(u, m.usage_type, 0.06)
     records.each do |r|
-      if r.pre_rated_rate.blank?
-        hasErrors = true
-        puts "\nNo pre_rated_rate for #{r.inspect}" and next unless record_rate
-      elsif unit_rate.round(2) != r.pre_rated_rate.round(2)
-        hasErrors = true
-        puts "\nExpected <#{unit_rate.round(2)}> but got <#{r.pre_rated_rate.round(2)}> for #{r.units} units: #{r.inspect}"
-      end
+      assert r.pre_rated_rate.present?, "No pre_rated_rate for #{r.inspect}"
+      assert_equal unit_rate.round(2), r.pre_rated_rate.round(2), "Expected <#{unit_rate.round(2)}> but got <#{r.pre_rated_rate.round(2)}> for #{r.units} units: #{r.inspect}"
     end
-
-    skip if hasErrors
   end
 
   [true, false].each do |show_unrated|
