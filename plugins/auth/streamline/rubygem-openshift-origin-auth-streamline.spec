@@ -9,7 +9,7 @@
 
 Summary:        OpenShift plugin for streamline auth service
 Name:           rubygem-%{gem_name}
-Version: 1.6.1
+Version: 1.6.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -81,6 +81,11 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-auth-streamline-dev.conf
 
 %changelog
+* Fri Jun 21 2013 Adam Miller <admiller@redhat.com> 1.6.2-1
+- Mark ticket as ignored (ccoleman@redhat.com)
+- Bug 975556 - Pass noticket=true to Streamline to avoid creating a ticket
+  (ccoleman@redhat.com)
+
 * Thu Apr 25 2013 Adam Miller <admiller@redhat.com> 1.6.1-1
 - bump_minor_versions for sprint XX (tdawson@redhat.com)
 
