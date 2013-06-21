@@ -60,9 +60,9 @@ module OpenShift
       unless rhlogin
         begin
           return rhlogin if not user or not password
-          login_args = {'login' => user, 'password' => password}
+          login_args = {'login' => user, 'password' => password, 'noticket' => true}
           # Establish the authentication ticket
-          json, ticket = http_post(@login_url, login_args)
+          json, _ = http_post(@login_url, login_args)
           Rails.logger.debug("Current login = #{user} / authenticated for #{json['username'] || json['login']}")
           login = json['username'] || json['login']
           roles = json['roles']
