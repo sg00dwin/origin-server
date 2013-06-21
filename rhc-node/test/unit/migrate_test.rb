@@ -66,8 +66,14 @@ module OpenShiftMigration
     end
 
     def test_incompatible_success
-      cart_model.expects(:setup_rewritten).with(next_manifest).returns(%w(a b))
-      FileUtils.expects(:rm_f).with(%w(a b))
+      cart_model.expects(:setup_rewritten).with(next_manifest).returns(%w(a b/))
+      File.expects(:file?).with('a').returns(true)
+      File.expects(:directory?).with('a').returns(false)
+      FileUtils.expects(:rm).with('a')
+
+      File.expects(:directory?).with('b/').returns(true)
+      File.expects(:file?).with('b/').returns(false)
+      FileUtils.expects(:rm_r).with('b/')
 
       OpenShift::CartridgeRepository.expects(:overlay_cartridge).with(next_manifest, target)
 
@@ -90,8 +96,14 @@ module OpenShiftMigration
     end
 
     def test_incompatible_recover_after_setup
-      cart_model.expects(:setup_rewritten).with(next_manifest).returns(%w(a b))
-      FileUtils.expects(:rm_f).with(%w(a b))
+      cart_model.expects(:setup_rewritten).with(next_manifest).returns(%w(a b/))
+      File.expects(:file?).with('a').returns(true)
+      File.expects(:directory?).with('a').returns(false)
+      FileUtils.expects(:rm).with('a')
+
+      File.expects(:directory?).with('b/').returns(true)
+      File.expects(:file?).with('b/').returns(false)
+      FileUtils.expects(:rm_r).with('b/')
 
       OpenShift::CartridgeRepository.expects(:overlay_cartridge).with(next_manifest, target)
 
@@ -113,8 +125,14 @@ module OpenShiftMigration
     end
 
     def test_incompatible_recover_after_erb_processing
-      cart_model.expects(:setup_rewritten).with(next_manifest).returns(%w(a b))
-      FileUtils.expects(:rm_f).with(%w(a b))
+      cart_model.expects(:setup_rewritten).with(next_manifest).returns(%w(a b/))
+      File.expects(:file?).with('a').returns(true)
+      File.expects(:directory?).with('a').returns(false)
+      FileUtils.expects(:rm).with('a')
+
+      File.expects(:directory?).with('b/').returns(true)
+      File.expects(:file?).with('b/').returns(false)
+      FileUtils.expects(:rm_r).with('b/')
 
       OpenShift::CartridgeRepository.expects(:overlay_cartridge).with(next_manifest, target)
 
@@ -135,8 +153,14 @@ module OpenShiftMigration
     end
 
     def test_incompatible_done
-      cart_model.expects(:setup_rewritten).with(next_manifest).returns(%w(a b))
-      FileUtils.expects(:rm_f).with(%w(a b))
+      cart_model.expects(:setup_rewritten).with(next_manifest).returns(%w(a b/))
+      File.expects(:file?).with('a').returns(true)
+      File.expects(:directory?).with('a').returns(false)
+      FileUtils.expects(:rm).with('a')
+
+      File.expects(:directory?).with('b/').returns(true)
+      File.expects(:file?).with('b/').returns(false)
+      FileUtils.expects(:rm_r).with('b/')
 
       OpenShift::CartridgeRepository.expects(:overlay_cartridge).with(next_manifest, target)
 
@@ -154,5 +178,6 @@ module OpenShiftMigration
 
       OpenShiftMigration.incompatible_migration(progress, cart_model, next_manifest, version, target, user)
     end
+
   end
 end
