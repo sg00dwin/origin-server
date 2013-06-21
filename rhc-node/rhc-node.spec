@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.10.5
+Version: 1.10.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -243,6 +243,13 @@ fi
 
 
 %changelog
+* Fri Jun 21 2013 Adam Miller <admiller@redhat.com> 1.10.6-1
+- Bug 976583 - migration did not handle directories from setup_versions
+  (jhonce@redhat.com)
+- Merge pull request #1662 from pmorie/bugs/976113
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 976113: handle timeout in migration validate_gear (pmorie@gmail.com)
+
 * Thu Jun 20 2013 Adam Miller <admiller@redhat.com> 1.10.5-1
 - Add doc for migration handle_quota (pmorie@gmail.com)
 
