@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.18.4
+Version: 3.18.5
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Jun 21 2013 Adam Miller <admiller@redhat.com> 3.18.5-1
+- Fix call to get_variable to remove warnings (jliggitt@redhat.com)
+
 * Wed Jun 19 2013 Adam Miller <admiller@redhat.com> 3.18.4-1
 - Fix bug 975724 - don't output nav header unless there is nav content
   (jliggitt@redhat.com)
