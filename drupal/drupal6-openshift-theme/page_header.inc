@@ -86,7 +86,6 @@
       global $base_url;
       global $base_root;
     ?> 
-    <!-- link type="image/png" rel="shortcut icon" href="<?php print openshift_assets_url(); ?>/favicon-32.png"></link -->
     
     <link rel="apple-touch-icon-precomposed" href="<?php print openshift_assets_url(); ?>/touch-icon-precomposed.png">
     <link rel="icon" href="<?php print openshift_assets_url(); ?>/favicon.ico">
