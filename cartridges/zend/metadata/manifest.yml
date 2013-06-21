@@ -6,7 +6,7 @@ Version: '5.6'
 License: "Commercial"
 License-Url: http://static.zend.com/topics/Zend-License-EULA-2010-09-2.pdf
 Vendor: Zend
-Cartridge-Version: 0.0.1
+Cartridge-Version: 0.0.2
 Cartridge-Vendor: redhat
 Categories:
   - service
