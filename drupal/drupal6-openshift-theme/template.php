@@ -475,9 +475,9 @@ function openshift_server_url() {
 }
 
 function openshift_assets_url() {
-  $url = variable_get('openshift_assets_url');
+  $url = variable_get('openshift_assets_url', '');
   if (empty($url)) {
-    $asset_version = variable_get('openshift_assets_version');
+    $asset_version = variable_get('openshift_assets_version', '');
     if (empty($asset_version)) {
       $url = openshift_server_url() . '/app/assets';
     } 
