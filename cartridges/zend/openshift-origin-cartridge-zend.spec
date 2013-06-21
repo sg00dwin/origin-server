@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/v2/zend
 
 Name:    openshift-origin-cartridge-zend
-Version: 0.3.3
+Version: 0.3.4
 Release: 1%{?dist}
 Summary: Zend Server cartridge
 Group:   Development/Languages
@@ -65,6 +65,10 @@ sh %{cartridgedir}/versions/5.6/rpm/zend_configure_filesystem.sh
 
 
 %changelog
+* Fri Jun 21 2013 Adam Miller <admiller@redhat.com> 0.3.4-1
+- Criteria for incompatible vs. compatible change: - Did "control start"
+  change? - Did you create new files? (jhonce@redhat.com)
+
 * Tue Jun 18 2013 Adam Miller <admiller@redhat.com> 0.3.3-1
 - Merge pull request #1639 from ironcladlou/bz/974923
   (dmcphers+openshiftbot@redhat.com)
