@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.10.6
+Version: 1.10.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -195,6 +195,23 @@ fi
 %{sitedir}/public
 
 %changelog
+* Fri Jun 21 2013 Adam Miller <admiller@redhat.com> 1.10.7-1
+- Merge pull request #1667 from liggitt/drupal_get_variable
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1658 from jtharris/features/Card_46_twitter
+  (dmcphers+openshiftbot@redhat.com)
+- Make auto-rate test required for site_extended (jliggitt@redhat.com)
+- Merge pull request #1663 from liggitt/aria_current_period
+  (dmcphers+openshiftbot@redhat.com)
+- Reuse current day logic (jliggitt@redhat.com)
+- Update unit tests to check outside billing period, stub :date_range_end for
+  usage history query (jliggitt@redhat.com)
+- Add debug options to display dashboard inside and outside current billing
+  period (jliggitt@redhat.com)
+- Fix bug 976403 - Handle display of next bill during invoice generation lag
+  time (jliggitt@redhat.com)
+- Twitter controller functional test (jharris@redhat.com)
+
 * Thu Jun 20 2013 Adam Miller <admiller@redhat.com> 1.10.6-1
 - Bug 969356 - Disable the footer in console until we have time to change
   (ccoleman@redhat.com)
