@@ -312,11 +312,10 @@ class AriaUnitTest < ActiveSupport::TestCase
   end
 
   test 'should enable creation of ContactInfo from FullUser' do
-    email_address = "foo@bar.com"
     full_user = Streamline::FullUser.test
-    full_user.expects(:email_address).returns(email_address)
     assert contact_info = Aria::ContactInfo.from_full_user(full_user)
-    assert_equal email_address, contact_info.email
+    assert_equal full_user.first_name, contact_info.first_name
+    assert_equal nil, contact_info.email
   end
 
   test 'get_acct_no_from_user_id is cacheable' do
