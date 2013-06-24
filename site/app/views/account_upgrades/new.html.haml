@@ -1,32 +1,33 @@
 - content_for :title, "Upgrade your Plan"
 = plan_upgrade_steps 3
 
-%h2.divide Review and confirm your plan changes
-%section
-  .row
-    .span6.offset1
-      %h3 Payment Method
-      = render :partial => 'payment_method_summary', :locals => {:payment_method => @payment_method}
-    .span5
-      %h3 Billing Information
-      - if @billing_info.present?
-        = render :partial => 'billing_info/summary', :locals => {:billing_info => @billing_info}
-      %p= link_to @billing_info.blank? ? "Add a billing address to this account" : "Change billing address", edit_account_plan_upgrade_billing_info_path
-%section
-  %p.larger= "The following plan changes will take effect when you switch from #{@current_plan.name}  to #{@plan.name}."
-  = render :partial => 'plans/plan_comparison', :locals => { :current_plan => @current_plan, :new_plan => @plan } 
-%section
-  %p.larger
-    The Services are subject to the
-    %a{ :href => legal_site_terms_path, :target => '_blank' } OpenShift Online Legal Terms and Conditions.
-    By clicking 'Confirm your plan changes' you acknowledge that you agree to these terms.
 = semantic_form_for @user, :simple => true, :url => account_plan_upgrade_path, :method => :post do |f|
-  = hidden_field_tag :plan_id, @plan.id
   = f.semantic_errors
+
+  %h2.divide Review and confirm your plan changes
+  %section
+    .row
+      .span6.offset1
+        %h3 Payment Method
+        = render :partial => 'payment_method_summary', :locals => {:payment_method => @payment_method}
+      .span5
+        %h3 Billing Information
+        - if @billing_info.present?
+          = render :partial => 'billing_info/summary', :locals => {:billing_info => @billing_info}
+        %p= link_to @billing_info.blank? ? "Add a billing address to this account" : "Change billing address", edit_account_plan_upgrade_billing_info_path
+  %section
+    %p.larger= "The following plan changes will take effect when you switch from #{@current_plan.name}  to #{@plan.name}."
+    = render :partial => 'plans/plan_comparison', :locals => { :current_plan => @current_plan, :new_plan => @plan } 
+  %section
+    %p.larger
+      The Services are subject to the
+      %a{ :href => legal_site_terms_path, :target => '_blank' } OpenShift Online Legal Terms and Conditions.
+      By clicking 'Confirm your plan changes' you acknowledge that you agree to these terms.
+  = hidden_field_tag :plan_id, @plan.id
   .form-actions
     = link_to "Back to plans", account_plans_path, :class => 'btn'
     = submit_tag "Confirm your plan changes", :class => 'btn btn-primary'
     = f.loading
 
-- content_for :stylesheets do
-  = stylesheet_link_tag 'plan_upgrade', :media => :all
+  - content_for :stylesheets do
+    = stylesheet_link_tag 'plan_upgrade', :media => :all

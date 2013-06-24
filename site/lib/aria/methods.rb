@@ -46,6 +46,10 @@ module Aria
       Array(super(:acct_no => acct_no).acct_groups)
     end
 
+    def get_acct_tax_exempt_status(acct_no)
+      super(:acct_no => acct_no)
+    end
+
     def create_acct_complete(params)
       super encode_supplemental(params)
     end

@@ -68,11 +68,13 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     info.zip = 12345.to_s
     info.region = 'TX'
     info.middle_initial = 'P'
-
+    expected_attributes = info.attributes.merge({'taxpayer_id' => nil})
     assert contact_info = Aria::ContactInfo.from_billing_info(info)
     assert user.create_account(:billing_info => info, :contact_info => contact_info), user.errors.inspect
-    assert_equal info.attributes, user.billing_info.attributes
+    assert_equal expected_attributes, user.billing_info.attributes
     assert_equal 'usd', user.currency_cd
+    assert_equal nil, user.billing_info.taxpayer_id
+    assert_equal false, user.tax_exempt?
     assert_equal Rails.configuration.aria_invoice_template_id_map['US'], user.account_details.alt_msg_template_no.to_s
 
     # update to Canadian address
@@ -80,9 +82,12 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     info.zip = 'K1A0B1'
     info.region = 'ON'
     info.middle_initial = 'M'
+    expected_attributes = info.attributes.merge({'taxpayer_id' => nil})
     assert user.update_account(:billing_info => info), user.errors.inspect
-    assert_equal info.attributes, user.billing_info.attributes
+    assert_equal expected_attributes, user.billing_info.attributes
     assert_equal 'usd', user.currency_cd
+    assert_equal nil, user.billing_info.taxpayer_id
+    assert_equal false, user.tax_exempt?
     assert_equal Rails.configuration.aria_invoice_template_id_map['US'], user.account_details.alt_msg_template_no.to_s
 
     # update to French address, unset some optional fields
@@ -90,7 +95,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     info.zip = 54321.to_s
     info.region = 'Loraine'
     info.middle_initial = info.address2 = "" # Unset some fields using an empty string
-    expected_attributes = Hash[info.attributes.map {|(k,v)| [k, v == "" ? nil : v] }]
+    expected_attributes = Hash[info.attributes.map {|(k,v)| [k, v == "" ? nil : v] }].merge({'taxpayer_id' => nil})
     info.address3 = nil # Set some fields to nil, meaning "preserve existing value"
     assert user.update_account(:billing_info => info), user.errors.inspect
     # Ensure all unset fields go to nil in Aria
@@ -108,25 +113,39 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     info.zip = 54321.to_s
     info.region = 'Loraine'
     info.middle_initial = 'P'
+    info.taxpayer_id = "IE6388047V"
+    info.vies_country = "IE"
     assert contact_info = Aria::ContactInfo.from_billing_info(info)
     assert user_eur.create_account(:billing_info => info, :contact_info => contact_info), user_eur.errors.inspect
     assert_equal info.attributes, user_eur.billing_info.attributes
     assert_equal 'eur', user_eur.currency_cd
+    assert_equal true, user_eur.tax_exempt?
     assert_equal Rails.configuration.aria_invoice_template_id_map['FR'], user_eur.account_details.alt_msg_template_no.to_s
+
+    # update to non-exempt
+    info.taxpayer_id = ""
+    expected_attributes = info.attributes
+    assert user_eur.update_account(:billing_info => info), user_eur.errors.inspect
+    assert_equal expected_attributes, user_eur.billing_info.attributes
+    assert_equal false, user_eur.tax_exempt?
 
     #
     # user_cad
     #
-    # create new French account
+    # create new Canadian account
     methods.each {|m| info.send(m, ::SecureRandom.base64(5)) if m.to_s.ends_with?('=') }
     info.country = 'CA'
     info.zip = 'K1A0B1'
     info.region = 'ON'
     info.middle_initial = 'P'
+    info.taxpayer_id = nil
+    info.vies_country = "IE"
     assert contact_info = Aria::ContactInfo.from_billing_info(info)
     assert user_cad.create_account(:billing_info => info, :contact_info => contact_info), user_cad.errors.inspect
     assert_equal info.attributes, user_cad.billing_info.attributes
     assert_equal 'cad', user_cad.currency_cd
+    assert_equal nil, user_cad.billing_info.taxpayer_id
+    assert_equal false, user_cad.tax_exempt?
     assert_equal Rails.configuration.aria_invoice_template_id_map['CA'], user_cad.account_details.alt_msg_template_no.to_s
   end
 
@@ -220,7 +239,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     assert unit_record = create_usage_record(u, m.usage_type, 1)
     
     assert unit_rate = unit_record.pre_rated_rate
-    assert unit_rate > 0
+    assert unit_rate > 0, unit_record.inspect
 
     records = []
     records << unit_record
@@ -247,7 +266,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
         pre_records = u.unbilled_usage_line_items
         pre_units = pre_records.map(&:units).sum.round(2)
         
-        assert bulk_record = create_usage_record(u, m.usage_type, 1, true)
+        assert bulk_record = create_usage_record(u, m.usage_type, 1, true, u.current_period_end_date.to_date)
         
         u.clear_cache!
         post_records = u.unbilled_usage_line_items

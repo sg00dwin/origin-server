@@ -69,6 +69,12 @@ class AccountUpgradesController < ConsoleController
     @full_user = current_aria_user.full_user
     @full_user = Streamline::FullUser.test if !@full_user.persisted? && Rails.env.development?
 
+    if @full_user.persisted?
+      @show_vat = Aria::ContactInfo.from_full_user(@full_user).vies_country.present?
+    else
+      @show_vat = Rails.configuration.vies_countries.present? ? :dynamic : false
+    end
+
     copy_user_to_billing(@full_user, @billing_info) unless @billing_info.persisted?
   end
 
@@ -86,8 +92,21 @@ class AccountUpgradesController < ConsoleController
     if @full_user.persisted?
       @contact_info = Aria::ContactInfo.from_full_user(@full_user)
       @contact_info.email = email
+      # Tell the billing info how to validate the taxpayer id
+      @billing_info.vies_country = @contact_info.vies_country
+      # Set in case we show :edit again
+      @show_vat = @contact_info.vies_country.present?
     else
       @contact_info = Aria::ContactInfo.from_billing_info(@billing_info)
+      @contact_info.email = email
+      # Tell the billing info how to validate the taxpayer id
+      @billing_info.vies_country = @contact_info.vies_country
+      # Set in case we show :edit again
+      @show_vat = Rails.configuration.vies_countries.present? ? :dynamic : false
+
+      # Validate so we see all errors if promotion fails
+      @contact_info.valid?
+      @billing_info.valid?
 
       @full_user = Streamline::FullUser.new(
         {:postal_code => user_params[:aria_billing_info][:zip], :state => user_params[:aria_billing_info][:region]}.
@@ -99,7 +118,7 @@ class AccountUpgradesController < ConsoleController
     end
 
     current_user_changed!
-
+    
     if current_aria_user.has_account?
       # This is definitely an update scenario
       render :edit and return unless current_aria_user.update_account(:billing_info => @billing_info)
