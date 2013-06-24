@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.10.7
+Version: 1.10.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -195,6 +195,29 @@ fi
 %{sitedir}/public
 
 %changelog
+* Mon Jun 24 2013 Adam Miller <admiller@redhat.com> 1.10.8-1
+- Merge pull request #1672 from smarterclayton/fix_styleguide
+  (dmcphers+openshiftbot@redhat.com)
+- Styleguide page shows errors (ccoleman@redhat.com)
+- Merge pull request #1671 from
+  liggitt/bug_976798_aria_accounts_with_true_email
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1670 from sg00dwin/617dev
+  (dmcphers+openshiftbot@redhat.com)
+- Update unit test - ContactInfo doesn't get email from full_user any longer
+  (jliggitt@redhat.com)
+- Fix bug 976798 - assign email correctly (jliggitt@redhat.com)
+- Merge branch 'master' of github.com:openshift/li into 617dev
+  (sgoodwin@redhat.com)
+- CHANGE SET Updated favicon.ico with multiple sizes embedded, which IE can
+  serve according to function -
+  http://iconhandbook.co.uk/reference/chart/windows/ Addition of touch-icon-
+  precomposed.png at 144x144 size which will be used by iOS and android phones
+  and tablets Addition of meta data to create tile used by IE pinned sites -
+  and associate 3 jump links (Reference)
+  http://www.buildmypinnedsite.com/windows7/en New style added to force
+  width:100%% for responsive video still image on Chrome (sgoodwin@redhat.com)
+
 * Fri Jun 21 2013 Adam Miller <admiller@redhat.com> 1.10.7-1
 - Merge pull request #1667 from liggitt/drupal_get_variable
   (dmcphers+openshiftbot@redhat.com)
