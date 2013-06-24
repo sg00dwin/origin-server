@@ -13,20 +13,5 @@
 
     = content_for?(:sub_layout) ? yield(:sub_layout) : yield
 
-
-    -# Javascript at the bottom for fast page loading
-    :ruby
-      scripts = [
-        'jquery.min.js',
-        'rails',
-        'plugins',
-        'jquery.validate.min.js',
-        'jquery.cookie.js',
-        'form'
-      ]
-
-    - scripts.each do |script|
-      = javascript_include_tag script
-
     = render 'layouts/site/javascripts'
     = yield :javascripts
