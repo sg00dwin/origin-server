@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.18.5
+Version: 3.18.6
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,22 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Jun 24 2013 Adam Miller <admiller@redhat.com> 3.18.6-1
+- Merge pull request #1670 from sg00dwin/617dev
+  (dmcphers+openshiftbot@redhat.com)
+- condense markup (sgoodwin@redhat.com)
+- revove non-used code (sgoodwin@redhat.com)
+- Merge branch 'master' of github.com:openshift/li into 617dev
+  (sgoodwin@redhat.com)
+- CHANGE SET Updated favicon.ico with multiple sizes embedded, which IE can
+  serve according to function -
+  http://iconhandbook.co.uk/reference/chart/windows/ Addition of touch-icon-
+  precomposed.png at 144x144 size which will be used by iOS and android phones
+  and tablets Addition of meta data to create tile used by IE pinned sites -
+  and associate 3 jump links (Reference)
+  http://www.buildmypinnedsite.com/windows7/en New style added to force
+  width:100%% for responsive video still image on Chrome (sgoodwin@redhat.com)
+
 * Fri Jun 21 2013 Adam Miller <admiller@redhat.com> 3.18.5-1
 - Fix call to get_variable to remove warnings (jliggitt@redhat.com)
 
