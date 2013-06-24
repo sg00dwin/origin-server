@@ -36,10 +36,10 @@ require 'facter'
 
 module MCollective
   #
-  # Li mcollective agent
+  # Libra mcollective agent
   #
   module Agent
-  
+
     class Libra<RPC::Agent
       metadata    :name        => "Libra Agent",
                   :description => "Agent to manage Libra services",
@@ -60,7 +60,7 @@ module MCollective
       # Migrate between versions
       #
       def migrate_action
-        Log.instance.debug("migrate_action call / request = #{request.pretty_inspect}")
+        Log.instance.info("migrate_action call / action=#{request.action}, agent=#{request.agent}, data=#{request.data.pretty_inspect}")
         validate :uuid, /^[a-zA-Z0-9]+$/
         validate :version, /^.+$/
         validate :namespace, /^.+$/  
@@ -85,13 +85,13 @@ module MCollective
           exitcode = 1
           output += "Gear failed to migrate with exception: #{e.message}\n#{e.backtrace}\n"
         end
-        Log.instance.debug("migrate_action (#{exitcode})\n------\n#{output}\n------)")
+        Log.instance.info("migrate_action (#{exitcode})\n------\n#{output}\n------)")
 
         reply[:output] = output
         reply[:exitcode] = exitcode
         reply.fail! "migrate_action failed #{exitcode}.  Output #{output}" unless exitcode == 0
       end
-      
+
     end
   end
 end
