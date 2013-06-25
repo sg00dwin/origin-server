@@ -5,8 +5,8 @@
 %global modname partner_program
 
 Name: drupal%{drupal_release}-openshift-%{modname}
-Version: 0.1.0
-Release: 4%{?dist}
+Version: 0.1.1
+Release: 1%{?dist}
 Summary: OpenShift Partner Program Drupal Content
 Group: Applications/Publishing
 License: GPLv2+
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Tue Jun 25 2013 Adam Miller <admiller@redhat.com> 0.1.1-1
+- bump_minor_versions for sprint 30 (admiller@redhat.com)
+
 * Fri Jun 07 2013 Adam Miller 0.0.3-4
 - Bump spec for mass drupal rebuild
 
