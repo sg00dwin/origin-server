@@ -6,7 +6,8 @@ module Streamline
 
   class Error < StandardError
     attr :exit_code
-    def initialize(exit_code=nil)
+    def initialize(exit_code=nil, message=nil)
+      super(message)
       @exit_code = exit_code
     end
   end
@@ -17,8 +18,7 @@ module Streamline
 
   class StreamlineException < Error
     def initialize(message=nil)
-      super(message)
-      @exit_code = 144
+      super(144, message)
     end
   end
 
