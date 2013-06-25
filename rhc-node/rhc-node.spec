@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.10.6
+Version: 1.10.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -243,6 +243,9 @@ fi
 
 
 %changelog
+* Tue Jun 25 2013 Adam Miller <admiller@redhat.com> 1.10.7-1
+- move migration logging to info (dmcphers@redhat.com)
+
 * Fri Jun 21 2013 Adam Miller <admiller@redhat.com> 1.10.6-1
 - Bug 976583 - migration did not handle directories from setup_versions
   (jhonce@redhat.com)
