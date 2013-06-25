@@ -5,7 +5,7 @@
 %global modname             redhat_frontpage
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.9.0
+Version: 1.9.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Front Page Custom Module for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Tue Jun 25 2013 Adam Miller <admiller@redhat.com> 1.9.1-1
+- bump_minor_versions for sprint 30 (admiller@redhat.com)
+
 * Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 1.8.3-1
 - Bug 972878 - More effectively cache assets for the site and community.
   (ccoleman@redhat.com)
