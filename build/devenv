@@ -476,7 +476,7 @@ service openshift-port-proxy restart
           broker_profiler(hostname) if options.profile_broker?
 
           test_queues = [[], [], [], []]
-          
+
           extended_tests = nil
           if options.include_extended
             extended_tests = []
