@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/openshift/cartridges/v2/metrics
 
 Name: openshift-origin-cartridge-metrics
-Version: 1.11.0
+Version: 1.11.1
 Release: 1%{?dist}
 Summary: Metrics cartridge
 
@@ -49,6 +49,9 @@ Provides metrics cartridge support
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Jun 25 2013 Adam Miller <admiller@redhat.com> 1.11.1-1
+- bump_minor_versions for sprint 30 (admiller@redhat.com)
+
 * Mon Jun 17 2013 Adam Miller <admiller@redhat.com> 1.10.2-1
 - First pass at removing v1 cartridges (dmcphers@redhat.com)
 
