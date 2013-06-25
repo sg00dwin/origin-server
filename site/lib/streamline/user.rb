@@ -54,12 +54,6 @@ module Streamline
     end
 
     def authenticate!(login, password)
-      authenticate(login, password) or raise Streamline::AuthenticationDenied
-      self
-    end
-
-    # Clears the current ticket and authenticates with streamline
-    def authenticate(login, password)
       self.ticket = nil
       Rails.logger.debug "  Authenticating user #{login}"
       errors.clear
@@ -68,11 +62,17 @@ module Streamline
         self.roles = json['roles']
         self.rhlogin = json['login']
       end
+      self
+    end
+
+    # Clears the current ticket and authenticates with streamline
+    def authenticate(login, password)
+      authenticate!(login, password)
       true
     rescue AccessDeniedException
       errors.add(:base, I18n.t(:login_error, :scope => :streamline))
       false
-    rescue Streamline::StreamlineException
+    rescue Streamline::StreamlineException => e
       errors.add(:base, I18n.t(:service_error, :scope => :streamline))
       false
     end
@@ -477,7 +477,7 @@ module Streamline
               yield json if block_given?
             when Net::HTTPForbidden, Net::HTTPUnauthorized
               raise Streamline::StreamlineException, "Server error" if json && json['errors'] && json['errors'].include?('service_error')
-              raise AccessDeniedException, "Streamline rejected the request (#{res.code})\n#{res.body}"
+              raise AccessDeniedException, "Streamline rejected the request (#{res.code})"
             else
               Rails.logger.error "Streamline returned an unexpected response"
               Rails.logger.error res.to_yaml
@@ -495,7 +495,7 @@ module Streamline
         rescue Exception => e
           Rails.logger.error "Exception occurred while calling streamline - #{e}\n  #{e.backtrace.join("\n  ")}"
           if raise_exception_on_error
-            raise Streamline::StreamlineException#, "Unable to communicate with streamline: #{$!}", $!.backtrace
+            raise Streamline::StreamlineException, e.message, e.backtrace
           else
             errors.add(:base, I18n.t(:unknown))
             false

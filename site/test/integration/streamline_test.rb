@@ -28,6 +28,31 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     assert u.authenticate!(u.login, u.password)
   end
 
+  test 'rhlogin is properly preserved for full users' do
+    u = Streamline::UserContext.new(TestWebUser.new(
+      :email_address => "ccoleman+stagetest@redhat.com",
+      :password => "aoeuaoeu"
+    ))
+    assert u.authenticate!(u.email_address, u.password)
+    assert_equal 'openshiftstagetest', u.login
+    ticket_from_email = u.ticket
+
+    u.instance_variable_set(:@rhlogin, nil)
+    assert u.roles!.include?('authenticated')
+    assert_equal 'openshiftstagetest', u.rhlogin
+
+    u2 = Streamline::UserContext.new(TestWebUser.new(
+      :login => "openshiftstagetest",
+      :password => "aoeuaoeu"
+    ))
+    assert u2.authenticate!(u.login, u.password)
+    assert_equal 'openshiftstagetest', u2.login
+
+    u2.instance_variable_set(:@rhlogin, nil)
+    assert u2.roles!.include?('authenticated')
+    assert_equal 'openshiftstagetest', u2.rhlogin
+  end
+
 =begin
   test 'should slaughter the streamline auth cache' do
     count = 0

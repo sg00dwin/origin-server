@@ -69,6 +69,7 @@ class WebUserTest < ActiveSupport::TestCase
 
 
   test "get simple identity" do
+    assert WebUser.new.mock?
     user = WebUser.new.authenticate!('bob@bob.com', 'password')
     identities = Identity.find(user)
     assert_equal 1, identities.length
@@ -77,6 +78,7 @@ class WebUserTest < ActiveSupport::TestCase
   end
 
   test "get rhn identity" do
+    assert WebUser.new.mock?
     user = WebUser.new.authenticate!('bob', 'password')
     identities = Identity.find(user)
     assert_equal 1, identities.length
@@ -85,6 +87,7 @@ class WebUserTest < ActiveSupport::TestCase
   end
 
   test 'logout should delete the token' do
+    assert WebUser.new.mock?
     assert user = WebUser.new
     assert_nil user.api_ticket
     user.api_ticket = 'foo'
