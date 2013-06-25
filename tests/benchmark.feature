@@ -11,14 +11,7 @@ Feature: Application Benchmark Tests
   Scenarios: Application Scenarios
     |     type     |
     |  php-5.3     |
-    |  ruby-1.8    |
-    |  ruby-1.9    |
-    |  python-2.6  |
-    |  perl-5.10   |
     |  jbossas-7   |
-    |  nodejs-0.6  |
-    |  jenkins-1.4 |
-    |  diy-0.1     |
 
   Scenario: Generate Application Creation Benchmark Report
     Given an accepted node
@@ -32,16 +25,8 @@ Feature: Application Benchmark Tests
     |     type     |   num   |
     |  php-5.3     |   1     |
     |  php-5.3     |   4     |
-    |  ruby-1.8    |   1     |
-    |  ruby-1.9    |   1     |
-    |  ruby-1.9    |   3     |
-    |  python-2.6  |   1     |
-    |  perl-5.10   |   1     |
     |  jbossas-7   |   1     |
-    |  jbossas-7   |   2     |
-    |  jbossas-7   |   3     |
     |  jbossas-7   |   4     |
-    |  nodejs-0.6  |   1     |
 
   Scenario: Generate Scaled Application Creation Benchmark Report
     Given an accepted node
