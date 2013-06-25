@@ -93,7 +93,7 @@ module Streamline
       true
     end
 
-    def authenticate(login, password)
+    def authenticate!(login, password)
       self.rhlogin = login
       self.ticket = nil
       Rails.logger.debug "Authenticating user #{login}"
@@ -102,11 +102,10 @@ module Streamline
         @ticket = Base64.strict_encode64(login)
         @rhlogin = login
         set_fake_roles
-        true
       else
-        errors.add(:base, I18n.t(:login_error, :scope => :streamline))
-        false
+        raise Streamline::StreamlineException, "Bad stuff"
       end
+      self
     end
 
     def logout

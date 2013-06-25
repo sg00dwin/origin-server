@@ -68,6 +68,7 @@ module Streamline
     # Clears the current ticket and authenticates with streamline
     def authenticate(login, password)
       authenticate!(login, password)
+      true
     rescue AccessDeniedException
       errors.add(:base, I18n.t(:login_error, :scope => :streamline))
       false
@@ -476,7 +477,7 @@ module Streamline
               yield json if block_given?
             when Net::HTTPForbidden, Net::HTTPUnauthorized
               raise Streamline::StreamlineException, "Server error" if json && json['errors'] && json['errors'].include?('service_error')
-              raise AccessDeniedException, "Streamline rejected the request (#{res.code})\n#{res.body}"
+              raise AccessDeniedException, "Streamline rejected the request (#{res.code})"
             else
               Rails.logger.error "Streamline returned an unexpected response"
               Rails.logger.error res.to_yaml
