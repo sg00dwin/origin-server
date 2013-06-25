@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 1.4.0
+Version: 1.4.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -66,6 +66,9 @@ fi
 
 
 %changelog
+* Tue Jun 25 2013 Adam Miller <admiller@redhat.com> 1.4.1-1
+- bump_minor_versions for sprint 30 (admiller@redhat.com)
+
 * Thu Jun 20 2013 Adam Miller <admiller@redhat.com> 1.3.2-1
 - Bug 975746 - Access port 5000 for heroku toolkit (rmillner@redhat.com)
 
