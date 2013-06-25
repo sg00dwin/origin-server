@@ -19,11 +19,11 @@ class Download
   end
 
   def path
-    return File.join(@location,@filename)
+    File.join(@location,@filename) rescue nil
   end
 
   def to_param
-    return @id
+    @id
   end
 
   files = [

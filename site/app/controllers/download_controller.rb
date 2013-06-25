@@ -9,8 +9,7 @@ class DownloadController < ApplicationController
   def show
     begin
       download = Download.find params[:id]
-      redirect_to download.path and return
-      redirect_to root_path
+      redirect_to download.path || root_path
     rescue Download::NotFound
       redirect_to root_path
     end
