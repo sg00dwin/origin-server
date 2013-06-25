@@ -15,6 +15,7 @@ License:   ASL 2.0
 URL:       http://openshift.redhat.com
 Source0:   rhc-site-%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+Requires:       %{scl}-ruby-wrapper
 Requires:       %{?scl:%scl_prefix}ruby(abi) = %{rubyabi}
 Requires:       %{?scl:%scl_prefix}ruby
 Requires:       %{?scl:%scl_prefix}rubygems

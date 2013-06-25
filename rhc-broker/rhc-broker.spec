@@ -13,6 +13,7 @@ Source0:   rhc-broker-%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Requires:  rhc-common
 Requires:  rhc-server-common
+Requires:  ruby193-ruby-wrapper
 Requires:  httpd
 Requires:  mod_ssl
 Requires:  ruby193-mod_passenger
