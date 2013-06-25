@@ -9,6 +9,9 @@
 # moved out of the way.
 #
 
+echo "This script hasn't been updated for v2"
+exit 255
+
 source /etc/openshift/node.conf
 
 RC='system_u:system_r:openshift_initrc_t:s0-s0:c0.c1023'
@@ -31,8 +34,10 @@ grep :"$GEAR_GECOS": /etc/passwd | {
              echo "Attempting to fix: $uuid"
              (
                  set -e
-                 source $geardir/.env/OPENSHIFT_GEAR_NAME
-                 source $geardir/.env/OPENSHIFT_GEAR_DNS
+
+                 local key=$(basename $1)
+                 export OPENSHIFT_GEAR_NAME="$(< $geardir/.env/OPENSHIFT_GEAR_NAME)"
+                 export OPENSHIFT_GEAR_DNS="$(< $geardir/.env/OPENSHIFT_GEAR_DNS)"
 
                  namespace=$(echo "$OPENSHIFT_GEAR_DNS" | cut -f 1 -d . | cut -f 2 -d -)
 
@@ -41,6 +46,7 @@ grep :"$GEAR_GECOS": /etc/passwd | {
                      --with-namespace "$namespace" \
                      --with-container-name "$OPENSHIFT_GEAR_NAME"
 
+                 #TODO This is no longer valid with v2.  Not sure if we still need this script at all.
                  for cart_path in $geardir/*
                  do
                      cart=$(basename "$cart_path")
@@ -48,7 +54,7 @@ grep :"$GEAR_GECOS": /etc/passwd | {
                      if [ -e "$hook" ]
                      then
                          (
-                             source $geardir/.env/PATH
+                             export PATH="$(< $geardir/.env/PATH)"
                              $DEBUG runcon "$RC" "$hook" "$OPENSHIFT_GEAR_NAME" "$namespace" "$uuid"
                          )
                      fi
