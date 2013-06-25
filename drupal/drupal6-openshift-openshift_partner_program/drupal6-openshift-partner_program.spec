@@ -5,7 +5,7 @@
 %global modname partner_program
 
 Name: drupal%{drupal_release}-openshift-%{modname}
-Version: 0.0.3
+Version: 0.1.0
 Release: 4%{?dist}
 Summary: OpenShift Partner Program Drupal Content
 Group: Applications/Publishing
