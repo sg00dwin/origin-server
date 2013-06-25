@@ -38,14 +38,6 @@ module OpenShift
       log_config.stubs(:get).with("PLATFORM_LOG_CLASS").returns("StdoutLogger")
       OpenShift::NodeLogger.stubs(:load_config).returns(log_config)
 
-      OpenShift::Utils::Sdk.stubs(:new_sdk_app?).returns(true)
-      OpenShift::Utils::Sdk.stubs(:node_default_model).returns(:v2)
-      super
-    end
-
-    def after_teardown
-      OpenShift::Utils::Sdk.unstub(:new_sdk_app?)
-      OpenShift::Utils::Sdk.unstub(:node_default_model)
       super
     end
 
