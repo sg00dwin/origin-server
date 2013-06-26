@@ -623,7 +623,7 @@ service openshift-port-proxy restart
               output = ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc*,node*' 2>&1", 1800)
               puts "Done"
               print_highlighted_output('Update Output', output)
-              
+
               output, exit_code = ssh(hostname, "yum -y install openssh-clients", 240, true)
               print_highlighted_output('Install OpenSSH Clients Output', output)
               exit 1 unless exit_code == 0
@@ -648,9 +648,9 @@ service openshift-port-proxy restart
               ssh(hostname, "chmod 0600 /root/.ssh/id_rsa; chmod 0644 /root/.ssh/id_rsa.pub /root/.ssh/known_hosts;")
               puts "Done"
             end
-            
+
             ssh(hostname, "/bin/bash ~/setup-devenv-repos.sh #{options.yum_repo} #{BASE_RELEASE_BRANCH};", 1800)
-            
+
             puts "Updating all packages on the system..."
             output = ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc*,node*' 2>&1", 1800)
             puts "Done"
@@ -690,7 +690,7 @@ enabled=0
 gpgcheck=0
 priority=1
 EOF
-            
+
 cp /tmp/tito/x86_64/*.rpm /root/devenv-local/
 cp /tmp/tito/noarch/*.rpm /root/devenv-local/
 createrepo /root/devenv-local/
@@ -700,7 +700,7 @@ yum -y install rhc-devenv --enablerepo=devenv-local 2>&1
 pushd /root/#{DEV_TOOLS_EXT_REPO} > /dev/null
   build/devenv write_sync_history 2>&1
 popd > /dev/null
-                
+
 rm -rf /tmp/tito; mkdir -p /root/.source_build;
 }
               SIBLING_REPOS.each_key do |repo_name|
@@ -770,7 +770,7 @@ yum -y install rubygem-commander rubygem-highline rubygem-httpclient rubygem-net
               cmd += "yum -y install rhc-devenv;"
             end
             cmd += 'sed -i "/nameserver 127.0.0.1/d" /etc/resolv.conf;'
-                  
+
             output, exit_code = ssh(hostname, cmd, 3600, true)
 
             print_highlighted_output('Install Output', output)
