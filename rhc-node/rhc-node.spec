@@ -90,14 +90,12 @@ mkdir -p %{buildroot}%{_var}/lib/openshift/.tc_user_dir
 mkdir -p %{buildroot}/%{_sysconfdir}/httpd/conf.d/
 mkdir -p %{buildroot}/lib64/security/
 mkdir -p %{buildroot}/sandbox
-mkdir -p %{buildroot}%{mco_root}agent/
 mkdir -p %{buildroot}%{mco_root}lib/
 # ln -s %{_var}/lib/openshift/.httpd.d/ %{buildroot}/%{_sysconfdir}/httpd/conf.d/openshift
 
 cp -r lib %{buildroot}%{_libexecdir}/openshift
 cp -r conf/httpd %{buildroot}%{_sysconfdir}
 cp -r conf/openshift %{buildroot}%{_sysconfdir}
-cp mcollective/agent/* %{buildroot}%{mco_root}agent/
 cp mcollective/lib/* %{buildroot}%{mco_root}lib/
 cp scripts/bin/* %{buildroot}%{_bindir}
 cp scripts/init/* %{buildroot}%{_initddir}
@@ -198,7 +196,6 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%attr(0640,-,-) %{mco_root}agent/*
 %attr(0640,-,-) %{mco_root}lib/*
 %attr(0750,-,-) %{_initddir}/libra-data
 %attr(0750,-,-) %{_initddir}/libra-tc
