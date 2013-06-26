@@ -4,7 +4,6 @@ Feature: Rockmongo Embedded Cartridge
 
   @rhel-only
   Scenario: Rockmongo Embedded Cartridge
-    Given a v2 default node
     And a new mock-0.1 type application
     And I embed a mongodb-2.2 cartridge into the application
     And an agent settings.py file is created
