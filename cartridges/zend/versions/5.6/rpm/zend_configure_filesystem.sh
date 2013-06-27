@@ -57,7 +57,7 @@ if [ $uid -eq 0 ] ; then
 
  # apachectl symlink used to be configured in v1 spec file but has changed for v2 apps
  mkdir -p $zend_sandbox/bin
- ln -s /usr/libexec/openshift/cartridges/v2/zend/bin/control $zend_sandbox/bin/apachectl
+ ln -sf /usr/libexec/openshift/cartridges/zend/bin/control $zend_sandbox/bin/apachectl
  if [ ! -L "$zend_install_dir/bin/apachectl" -o "$(readlink $zend_install_dir/bin/apachectl)" != "$zend_sandbox/bin/apachectl" ]; then
   rm -f $zend_install_dir/bin/apachectl
   ln -s $zend_sandbox/bin/apachectl $zend_install_dir/bin/apachectl

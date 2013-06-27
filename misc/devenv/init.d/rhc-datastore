@@ -71,7 +71,7 @@ rh_configure_mongo() {
 }
 
 rh_configure_rockmongo() {
-    /bin/cp -r /usr/libexec/openshift/cartridges/v2/rockmongo/usr/rockmongo /var/www/html/
+    /bin/cp -r /usr/libexec/openshift/cartridges/rockmongo/usr/rockmongo /var/www/html/
     /bin/chmod -R 755 /var/www/html/rockmongo/
     echo '
 <?php

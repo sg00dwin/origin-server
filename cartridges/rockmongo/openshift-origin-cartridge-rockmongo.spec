@@ -1,4 +1,4 @@
-%global cartridgedir %{_libexecdir}/openshift/cartridges/v2/rockmongo
+%global cartridgedir %{_libexecdir}/openshift/cartridges/rockmongo
 
 Summary:   Embedded RockMongo support
 Name:      openshift-origin-cartridge-rockmongo
