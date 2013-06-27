@@ -701,7 +701,7 @@ fi
 /etc/drupal6/drupal-setup.sh
 
 # Install the carts
-oo-admin-cartridge --recursive -a install -s /usr/libexec/openshift/cartridges/v2/
+oo-admin-cartridge --recursive -a install -s /usr/libexec/openshift/cartridges/
 
 # PhantomJS install
 mkdir /tmp/phantomjs

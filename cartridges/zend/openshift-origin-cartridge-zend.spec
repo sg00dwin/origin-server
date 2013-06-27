@@ -1,5 +1,5 @@
-%global cartridgedir %{_libexecdir}/openshift/cartridges/v2/zend
-%global frameworkdir %{_libexecdir}/openshift/cartridges/v2/zend
+%global cartridgedir %{_libexecdir}/openshift/cartridges/zend
+%global frameworkdir %{_libexecdir}/openshift/cartridges/zend
 
 Name:    openshift-origin-cartridge-zend
 Version: 0.4.1
