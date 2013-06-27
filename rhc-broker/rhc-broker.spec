@@ -24,6 +24,7 @@ Requires:  rubygem-passenger-native-libs
 Requires:  ruby193-rubygem-rails
 Requires:  ruby193-rubygem-xml-simple
 Requires:  rubygem-openshift-origin-controller
+Requires:  rubygem-openshift-origin-container-selinux
 Requires:  ruby193-rubygem-bson_ext
 Requires:  ruby193-rubygem-rest-client
 Requires:  rubygem-openshift-origin-auth-streamline
@@ -123,6 +124,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /etc/openshift/quickstarts.json
 %config(noreplace) /etc/openshift/plugins.d/openshift-origin-msg-broker-mcollective.conf
 %config(noreplace) /etc/openshift/broker.conf
+
 /etc/openshift/plugins.d/openshift-origin-msg-broker-mcollective-dev.conf
 /etc/openshift/broker-dev.conf
 

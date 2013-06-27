@@ -183,9 +183,9 @@ module OpenShiftMigration
 
     def self.make_user_owned(target, user)
       if File.exists?(target)
-        mcs_label = OpenShift::Utils::SELinux.get_mcs_label(user.uid)
+        mcs_label = OpenShift::Runtime::Utils::SELinux.get_mcs_label(user.uid)
         PathUtils.oo_chown_R(user.uid, user.gid, target)
-        OpenShift::Utils::SELinux.set_mcs_label_R(mcs_label, target)
+        OpenShift::Runtime::Utils::SELinux.set_mcs_label_R(mcs_label, target)
       end
     end
 
@@ -208,7 +208,7 @@ module OpenShiftMigration
         Dir.glob(File.join(user.homedir, old_cartridge_name, directory, '*')).each do |entry|
           output << " Moving #{entry}\n"
           target = File.join(target_directory, File.basename(entry))
-          OpenShift::Utils.oo_spawn("/bin/mv -f #{entry} #{target}")
+          OpenShift::Runtime::Utils.oo_spawn("/bin/mv -f #{entry} #{target}")
         end
 
         make_user_owned(target_directory, user)
@@ -233,9 +233,9 @@ module OpenShiftMigration
         file.write value.to_s
       end
 
-      mcs_label = OpenShift::Utils::SELinux.get_mcs_label(user.uid)
+      mcs_label = OpenShift::Runtime::Utils::SELinux.get_mcs_label(user.uid)
       PathUtils.oo_chown(user.uid, user.gid, filename)
-      OpenShift::Utils::SELinux.set_mcs_label(mcs_label, filename)
+      OpenShift::Runtime::Utils::SELinux.set_mcs_label(mcs_label, filename)
     end
   end
 end

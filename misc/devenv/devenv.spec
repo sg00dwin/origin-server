@@ -444,11 +444,11 @@ chkconfig httpd on
 service cgconfig start
 service cgred start
 service openshift-cgroups start
-service libra-tc start
+service openshift-tc start
 chkconfig cgconfig on
 chkconfig cgred on
 chkconfig openshift-cgroups on
-chkconfig libra-tc on
+chkconfig openshift-tc on
 
 # DHCP/DNS Service initialization
 service network restart

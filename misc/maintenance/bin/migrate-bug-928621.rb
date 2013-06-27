@@ -12,7 +12,7 @@ gears = {}
 
 OpenShift::ApplicationContainer.all.each do |gear|
   begin
-    env = OpenShift::Utils::Environ.for_gear(gear.user.homedir)
+    env = OpenShift::Runtime::Utils::Environ.for_gear(gear.user.homedir)
     fqdn = env['OPENSHIFT_GEAR_DNS'].downcase
     container_name = env['OPENSHIFT_GEAR_NAME']
     namespace = env['OPENSHIFT_GEAR_DNS'].sub(/\..*$/,"").sub(/^.*\-/,"")
