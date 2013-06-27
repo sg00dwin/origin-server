@@ -36,10 +36,8 @@ Provides the common dependencies for the OpenShift server and nodes
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{_sysconfdir}/mcollective
 mkdir -p %{buildroot}%{_libexecdir}/mcollective/mcollective/connector
-mkdir -p %{buildroot}%{mco_agent_root}
 cp mcollective/connector/amqp.rb %{buildroot}%{_libexecdir}/mcollective/mcollective/connector
 touch %{buildroot}%{_sysconfdir}/mcollective/client.cfg
-cp mcollective/agent/* %{buildroot}%{mco_agent_root}
 
 %clean
 rm -rf %{buildroot}
@@ -48,7 +46,6 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %ghost %attr(0640,-,libra_user) %{_sysconfdir}/mcollective/client.cfg
 %{_libexecdir}/mcollective/mcollective/connector/amqp.rb
-%attr(0640,-,-) %{mco_agent_root}*
 
 %pre
 getent group libra_user >/dev/null || groupadd -r libra_user
