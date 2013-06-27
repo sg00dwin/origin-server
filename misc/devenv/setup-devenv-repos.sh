@@ -53,7 +53,7 @@ name=RHSCL repo for Enterprise Linux 6
 baseurl=https://mirror1.ops.rhcloud.com/libra/rhscl-1.0-rhel-6/x86_64
         https://mirror2.ops.rhcloud.com/libra/rhscl-1.0-rhel-6/x86_64
 failovermethod=priority
-enabled=0
+enabled=1
 gpgcheck=0
 sslverify=0
 sslclientcert=/var/lib/yum/client-cert.pem
