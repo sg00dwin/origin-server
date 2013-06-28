@@ -115,17 +115,34 @@ The reactivation will also need to be executed via a cron job until the schedule
   - Provide an API for user to change the application gear size (Future feature. For now user must delete gears which do not match the plan)
   
 ####Runtime:
-  - Deactivate gear will be a new gear state with limited functionality and resources for a user accessing the gear. 
-    + User can ssh into the gear.
-    + User can only run snapshot or delete assets.
-  - Any restrictions we keep on deactivated gears need to be managed by the platform and not the carts.
-  - Deactivated gears can be reactivated at a later date
-  - Deactivate/Reactivate gear will be a mcollective hook at the platform level. 
-  - While the gear is deactivate the following operations should be possible
-    - removing the private certificate
-    - reducing additional storage
-    - reducing gear size
-    
+  - Gear deactivation is a configuration of the application container (gear):
+    + Securely managed by the platform (node).
+    + Designed to make the application unstartable and unusable.
+    + Designed to allow application snapshot.
+    + Designed to allow the gear owner to bring the application into compliance by removing assets.
+    + Designed to allow complete platform API management except for start.
+    + Entered into and exited from an mcollective call.
+    + Once exited, the application should be able to return to a usable state.
+
+  - Deactivation of a gear limits the CPU available to the gear.
+    + Prevent subverting the purpose of deactivation.
+    + CPU Quota is set to at most 5% of a CPU.
+    + More stringent memory and nproc limits may interfere with snapshot.
+
+  - Deactivation of a gear prevents the frontend http server from forwarding requests.
+    + Removed from the idle list if it was idle.
+    + The gear is added to a "disabled" list which causes the front-end to issue a "403 Forbidden" http response.
+
+  - Deactivation of a gear will stop the gear and mark it as disabled.
+    + The gear is stopped, the stop lock is created and its state is set to "stopped".
+    + A ".disabled" file is created in the root of the gear, owned by root and is not removable or modifiable by the gear user.
+    + All calls to build or start the gear or cartridges will be silently disabled.
+
+  - Reactivation of the gear returns the gear to a stopped state
+    + Resource limits are returned to normal.
+    + The ".disabled" file is removed.
+    + A gear may be started by the end-user or platform.
+
 ####Site:
   - The site will need to observe the in_arrears state (as indicated by Aria) on the user and disallow account upgrade.
   - The new user/applcation state of deactivated will also need to be handled.  The user should be encouraged to get their usage down to the level of access they are currently granted.
