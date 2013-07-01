@@ -126,7 +126,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     assert_equal(0, group_instance.addtl_fs_gb)
 
     usage_records = []
-    UsageRecord.where(user_id: @user_id).asc(:usage_type).asc(:time).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).asc(:created_at).each { |rec| usage_records << rec }
     assert_equal(3, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:continue], usage_records[0].event)
@@ -166,7 +166,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     app.destroy_app
 
     usage_records = []
-    UsageRecord.where(user_id: @user_id).asc(:usage_type).asc(:time).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).asc(:created_at).each { |rec| usage_records << rec }
     assert_equal(4, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:begin], usage_records[0].event)
@@ -227,7 +227,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     app.destroy_app
 
     usage_records = []
-    UsageRecord.where(user_id: @user_id).asc(:usage_type).asc(:time).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).asc(:created_at).each { |rec| usage_records << rec }
     assert_equal(4, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:continue], usage_records[0].event)
@@ -268,7 +268,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     app.destroy_app
 
     usage_records = []
-    UsageRecord.where(user_id: @user_id).asc(:usage_type).asc(:time).each { |rec| usage_records << rec }
+    UsageRecord.where(user_id: @user_id).asc(:usage_type).asc(:created_at).each { |rec| usage_records << rec }
     assert_equal(4, usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:begin], usage_records[0].event)
