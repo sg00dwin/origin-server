@@ -44,7 +44,7 @@ $ ->
   $.validator.addMethod "accepted_card", ((val, el) ->
     accepted_cards = $(el).form_meta_value('accepted_card_types').split(':')
     type = $.payment.cardType(val)
-    type && accepted_cards && $.inArray(type, accepted_card_types) >= 0
+    type && accepted_cards && $.inArray(type, accepted_cards) >= 0
   ), "Please use an accepted card type"
 
   $.validator.addMethod "cvv", ((val,el) ->
