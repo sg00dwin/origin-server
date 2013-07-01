@@ -134,13 +134,15 @@ module OpenShift
           new_srec = srec.dup
           srec['end_time'] = month_begin_time
           srec['usage'] = get_usage_time(srec)
+          new_srecs << srec
 
           new_srec['time'] = month_begin_time
           new_srec['usage'] = get_usage_time(new_srec)
           new_srec['no_update'] = true
           new_srecs << new_srec
+        else
+          new_srecs << srec
         end
-        new_srecs << srec
       end
       new_srecs
     end
@@ -217,8 +219,8 @@ module OpenShift
 
         user_srecs.each do |srec|
           if (srec['usage'] == 0) or
-             record_usage(srec['acct_no'], srec['billing_usage_type'], srec['usage'], srec['gear_id'].to_s,
-                          srec['app_name'], sync_time, srec['time'].to_i, get_usage_date(srec))
+            record_usage(srec['acct_no'], srec['billing_usage_type'], srec['usage'], srec['gear_id'].to_s,
+                         srec['app_name'], sync_time, srec['time'].to_i, get_usage_date(srec))
             if srec['no_update']
               # Ignore
             elsif !srec['ended']
