@@ -47,9 +47,16 @@ class WebFlowsTest < ActionDispatch::IntegrationTest
   end
 
   test 'validation on payment page' do
+    skip unless Aria.available?
+
     with_logged_in_console_user
     
-    Aria::UserContext.any_instance.expects(:create_session).at_least(0).returns("123")
+    begin
+      billing_info = Aria::BillingInfo.test
+      contact_info = Aria::ContactInfo.from_billing_info(billing_info)
+      Aria::UserContext.new(@user).create_account({:billing_info => billing_info, :contact_info => contact_info})
+    rescue Aria::AccountExists
+    end
 
     visit edit_account_payment_method_path
 
