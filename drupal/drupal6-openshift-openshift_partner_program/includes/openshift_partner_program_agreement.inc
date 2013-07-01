@@ -16,7 +16,7 @@ These Partner Terms and Conditions authorize you to participate in the OpenShift
 1.	Purpose
 Red Hat designs programs for its partners ("Programs") to promote Red Hat Products, enhance the satisfaction of Red Hat's End Users and augment the expertise and resources of partners. Partner's participation in the Program(s) is governed by the following:
 
-	(a)	Partner Agreement including these Partner Terms and Conditions;
+(a)	Partner Agreement including these Partner Terms and Conditions;
 (b)	the applicable Program Appendix(ices) which have been agreed to by the Parties, including any End User License Agreements and Program Guide that may be referenced and/or incorporated into these documents; and
 (c)	any transaction documents (subject to this Agreement) for Red Hat Products and/or Services (each, an "Order Form")
 
