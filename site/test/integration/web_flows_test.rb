@@ -46,6 +46,64 @@ class WebFlowsTest < ActionDispatch::IntegrationTest
     assert has_css?('.tile h3', :text => /Drupal/)    
   end
 
+  test 'validation on payment page' do
+    with_logged_in_console_user
+    
+    Aria::UserContext.any_instance.expects(:create_session).at_least(0).returns("123")
+
+    visit edit_account_payment_method_path
+
+    cc_no   = find('#aria_payment_method_cc_no')
+    cc_mm   = find('#aria_payment_method_cc_exp_mm')
+    cc_yyyy = find('#aria_payment_method_cc_exp_yyyy')
+    cc_cvc  = find('#aria_payment_method_cvv')
+    submit  = find("input[type=submit]")
+
+    cc_no_selector = '#aria_payment_method_cc_no'
+    cc_no_error_selector = '.error-client .help-inline[for=aria_payment_method_cc_no]'
+
+    # Prevent actual submission
+    page.execute_script('$("form").submit(function(){ return false; })')
+
+    # Initial load
+    assert has_css?(cc_no_selector), "Missing credit card number input"
+    assert has_no_css?(cc_no_error_selector), "Should not have errors on initial load"
+
+    # Required error on first click
+    cc_no.set("")
+    submit.click
+    assert has_css?(cc_no_error_selector), "Should show a required error when submitting with empty credit card number"
+
+    # Valid VISA format should pass
+    cc_no.set("4111111111111111")
+    submit.click
+    assert has_no_css?(cc_no_error_selector), "Should allow valid VISA format"
+
+    # Invalid VISA format should fail
+    cc_no.set("4111111111111112")
+    submit.click
+    assert has_css?(cc_no_error_selector), "Should disallow invalid VISA format"
+
+    # Valid Mastercard format should pass
+    cc_no.set("5555555555554444")
+    submit.click
+    assert has_no_css?(cc_no_error_selector), "Should allow valid Mastercard format"
+
+    # Disallow valid Amex format (disallowed type)
+    cc_no.set("378282246310005")
+    submit.click
+    assert has_css?(cc_no_error_selector), "Should disallow unaccepted card type"
+
+    # Set valid data
+    cc_no.set("4111111111111111")
+    cc_mm.set("1")
+    cc_yyyy.set(Date.today.year + 1)
+    cc_cvc.set("123")
+    submit.click
+    assert has_no_css?('.error-client'), "Errors were still shown after submitting valid data"
+    assert has_css?('.icon-loading'), "Form submission did not trigger"
+  end
+
   test 'help page displays' do
     with_logged_in_console_user
 
