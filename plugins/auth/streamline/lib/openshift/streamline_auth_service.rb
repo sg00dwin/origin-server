@@ -43,6 +43,7 @@ module OpenShift
     private
 
     def check_login(ticket, user, password)
+      raise OpenShift::UserException.new("Invalid characters found in login '#{user}'.", 107) if user and (user =~ /["\$\^<>\|%\/;:,\\\*=~]/)
       rhlogin = nil
       is_cached = false
       begin

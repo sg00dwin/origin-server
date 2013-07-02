@@ -87,6 +87,7 @@ mkdir -p -m 770 %{buildroot}%{brokerdir}/tmp/sockets
 
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-plan %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-stale-dns %{buildroot}/%{_bindir}
+mv %{buildroot}%{brokerdir}/script/rhc-admin-delete-subaccounts %{buildroot}/%{_bindir}
 
 cp conf/broker.conf %{buildroot}/etc/openshift/
 cp conf/broker-dev.conf %{buildroot}/etc/openshift/
@@ -117,6 +118,7 @@ rm -rf $RPM_BUILD_ROOT
 %{htmldir}/broker
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-plan
 %attr(0750,-,-) %{_bindir}/rhc-admin-stale-dns
+%attr(0750,-,-) %{_bindir}/rhc-admin-delete-subaccounts
 
 %config(noreplace) /etc/openshift/quickstarts.json
 %config(noreplace) /etc/openshift/plugins.d/openshift-origin-msg-broker-mcollective.conf
