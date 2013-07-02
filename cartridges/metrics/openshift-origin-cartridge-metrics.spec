@@ -36,7 +36,7 @@ Provides metrics cartridge support
 %clean
 %__rm -rf %{buildroot}
 
-%post
+%posttrans
 %{_sbindir}/oo-admin-cartridge --action install --source %{cartridgedir}
 
 %files
