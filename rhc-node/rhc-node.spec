@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.11.1
+Version: 1.11.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -240,6 +240,12 @@ fi
 
 
 %changelog
+* Tue Jul 02 2013 Adam Miller <admiller@redhat.com> 1.11.2-1
+- Remove migrate_test.rb (pmorie@gmail.com)
+- Move core migration to origin-server (pmorie@gmail.com)
+- Remove V1 code and V2-specific stepdefs (pmorie@gmail.com)
+- Removing v1 logic (dmcphers@redhat.com)
+
 * Tue Jun 25 2013 Adam Miller <admiller@redhat.com> 1.11.1-1
 - bump_minor_versions for sprint 30 (admiller@redhat.com)
 
