@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.10.1
+Version: 1.10.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -734,6 +734,10 @@ sed -i '/^PASS_MIN_DAYS/c\PASS_MIN_DAYS   1' -i /etc/login.defs
 /etc/openshift/development
 
 %changelog
+* Tue Jul 02 2013 Adam Miller <admiller@redhat.com> 1.10.2-1
+- remove v2 folder from cart install (dmcphers@redhat.com)
+- enable rhscl repos (admiller@redhat.com)
+
 * Tue Jun 25 2013 Adam Miller <admiller@redhat.com> 1.10.1-1
 - bump_minor_versions for sprint 30 (admiller@redhat.com)
 
