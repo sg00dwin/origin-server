@@ -5,7 +5,7 @@
 %global modname             user_profile
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.15.1
+Version: 1.15.2
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom User Profile Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,11 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Tue Jul 02 2013 Adam Miller <admiller@redhat.com> 1.15.2-1
+- Merge pull request #1675 from jwforres/export_drupal_features
+  (dmcphers+openshiftbot@redhat.com)
+- Drupal feature export from prod server (jforrest@redhat.com)
+
 * Tue Jun 25 2013 Adam Miller <admiller@redhat.com> 1.15.1-1
 - bump_minor_versions for sprint 30 (admiller@redhat.com)
 
