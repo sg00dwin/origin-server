@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.9.1
+Version: 1.9.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,10 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Tue Jul 02 2013 Adam Miller <admiller@redhat.com> 1.9.2-1
+- Aria sync usage minor fix: Maintain chronological order while reporting.
+  (rpenta@redhat.com)
+
 * Tue Jun 25 2013 Adam Miller <admiller@redhat.com> 1.9.1-1
 - bump_minor_versions for sprint 30 (admiller@redhat.com)
 
