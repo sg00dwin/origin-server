@@ -20,7 +20,7 @@ module Online
 
     desc "write_sync_history", "Write out the sync history so updates won't happen for already installed changes"
     def write_sync_history()
-      options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+      options.verbose? ? log.level = Logger::DEBUG : log.level = Logger::ERROR
       get_sync_dirs
     end
 
@@ -187,7 +187,7 @@ module Online
     method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
 
     def setup_multi_node_broker
-      options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+      options.verbose? ? log.level = Logger::DEBUG : log.level = Logger::ERROR
 
       #internal_hostname = get_internal_hostname("verifier")
       internal_ip = get_private_ip("verifier")
@@ -204,7 +204,7 @@ module Online
     method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
 
     def add_multi_node_devenv(hostname)
-      options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+      options.verbose? ? log.level = Logger::DEBUG : log.level = Logger::ERROR
 
       internal_hostname = get_internal_hostname("verifier")
       internal_ip = get_private_ip("verifier")
