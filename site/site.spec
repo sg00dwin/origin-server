@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.11.1
+Version: 1.11.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -196,6 +196,31 @@ fi
 %{sitedir}/public
 
 %changelog
+* Tue Jul 02 2013 Adam Miller <admiller@redhat.com> 1.11.2-1
+- Merge pull request #1689 from sg00dwin/701dev
+  (dmcphers+openshiftbot@redhat.com)
+- Create real aria user to do payment page validation (jliggitt@redhat.com)
+- Test payment JS validation (jliggitt@redhat.com)
+- Fix typo (jliggitt@redhat.com)
+- Changes: (sgoodwin@redhat.com)
+- Fix bug 979305 - Verify card type without assuming the type class has been
+  set on the field (jliggitt@redhat.com)
+- enable rhscl repos (admiller@redhat.com)
+- Merge pull request #1657 from
+  jwforres/bug_975365_singular_resources_test_case
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1676 from smarterclayton/add_streamline_rhlogin_test
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1674 from jtharris/features/Card_46_downloads
+  (dmcphers+openshiftbot@redhat.com)
+- Unit test failures, needed to define mock after refactor
+  (ccoleman@redhat.com)
+- Add a test to verify the streamline rhlogin returned is correct.  Requires
+  the ccoleman+stagetest@redhat.com user to be created in STG/INT.
+  (ccoleman@redhat.com)
+- Download controller functional tests. (jharris@redhat.com)
+- Bug 975365 - fix singular resources test case (jforrest@redhat.com)
+
 * Tue Jun 25 2013 Adam Miller <admiller@redhat.com> 1.11.1-1
 - bump_minor_versions for sprint 30 (admiller@redhat.com)
 
