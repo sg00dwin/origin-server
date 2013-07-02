@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.11.1
+Version: 1.11.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -152,6 +152,17 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Tue Jul 02 2013 Adam Miller <admiller@redhat.com> 1.11.2-1
+- Added '-all' option to rhc-admin-delete-subaccounts script
+  (rpenta@redhat.com)
+- Added rhc-admin-delete-subaccounts script: Deletes subaccounts that has no
+  activity for at least one week and has no apps for the given parent login.
+  (rpenta@redhat.com)
+- Aria sync usage minor fix: Maintain chronological order while reporting.
+  (rpenta@redhat.com)
+- Move core migration to origin-server (pmorie@gmail.com)
+- enable rhscl repos (admiller@redhat.com)
+
 * Tue Jun 25 2013 Adam Miller <admiller@redhat.com> 1.11.1-1
 - bump_minor_versions for sprint 30 (admiller@redhat.com)
 
