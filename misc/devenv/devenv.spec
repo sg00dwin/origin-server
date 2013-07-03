@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.10.2
+Version: 1.10.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -734,6 +734,13 @@ sed -i '/^PASS_MIN_DAYS/c\PASS_MIN_DAYS   1' -i /etc/login.defs
 /etc/openshift/development
 
 %changelog
+* Tue Jul 02 2013 Adam Miller <admiller@redhat.com> 1.10.3-1
+- Merge pull request #1682 from kraman/libvirt-f19-2
+  (dmcphers+openshiftbot@redhat.com)
+- Removing unix_user_observer.rb Moving libra-tc to origin Fix rhc-ip-prep to
+  use Runtime namespaces Fixing OpenShift::Utils package name
+  (kraman@gmail.com)
+
 * Tue Jul 02 2013 Adam Miller <admiller@redhat.com> 1.10.2-1
 - remove v2 folder from cart install (dmcphers@redhat.com)
 - enable rhscl repos (admiller@redhat.com)
