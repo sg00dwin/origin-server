@@ -5,7 +5,7 @@
 %global modname             rules_by_category
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.6.2
+Version: 1.6.3
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Rules by Category Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,11 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Jul 03 2013 Adam Miller <admiller@redhat.com> 1.6.3-1
+- push version change so tito will increment properly for tag
+  (admiller@redhat.com)
+- Drupal feature export from prod server (jforrest@redhat.com)
+
 * Wed Jul 03 2013 Adam Miller <admiller@redhat.com>
 - Drupal feature export from prod server (jforrest@redhat.com)
 
