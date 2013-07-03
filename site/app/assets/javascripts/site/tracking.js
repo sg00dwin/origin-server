@@ -166,8 +166,8 @@ var _gaq = _gaq || [];
 			_gaq.push(['_trackEvent', 'Outbound Links', 'OpenShift Enterprise', url]);
 
 			var pixel = new Image;
-			var pixel_src = '//www.googleadservices.com/pagead/conversion/997127018/?value=0&amp;label=SomnCJaDrwQQ6ua72wM&amp;guid=ON';
-			pixel_src += "&amp;url=" + url.substring(0, 256);
+			var pixel_src = '//www.googleadservices.com/pagead/conversion/997127018/?value=0&label=SomnCJaDrwQQ6ua72wM&guid=ON';
+			pixel_src += "&url=" + url.substring(0, 256);
 			pixel.src = pixel_src;
 			pixel.onload = function() {};
 
@@ -183,8 +183,8 @@ var _gaq = _gaq || [];
 			_gaq.push(['_trackEvent', 'Downloads', 'PDF Whitepaper', url]);
 			
 			var pixel = new Image;
-			var pixel_src = '//www.googleadservices.com/pagead/conversion/997127018/?value=0&amp;label=SomnCJaDrwQQ6ua72wM&amp;guid=ON';
-			pixel_src += "&amp;url=" + url.substring(0, 256);
+			var pixel_src = '//www.googleadservices.com/pagead/conversion/997127018/?value=0&label=SomnCJaDrwQQ6ua72wM&guid=ON';
+			pixel_src += "&url=" + url.substring(0, 256);
 			pixel.src = pixel_src;
 			pixel.onload = function() {};
 			
