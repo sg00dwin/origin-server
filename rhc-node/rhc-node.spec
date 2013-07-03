@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.11.2
+Version: 1.11.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -243,6 +243,13 @@ fi
 
 
 %changelog
+* Tue Jul 02 2013 Adam Miller <admiller@redhat.com> 1.11.3-1
+- Merge pull request #1682 from kraman/libvirt-f19-2
+  (dmcphers+openshiftbot@redhat.com)
+- Removing unix_user_observer.rb Moving libra-tc to origin Fix rhc-ip-prep to
+  use Runtime namespaces Fixing OpenShift::Utils package name
+  (kraman@gmail.com)
+
 * Tue Jul 02 2013 Adam Miller <admiller@redhat.com> 1.11.2-1
 - Remove migrate_test.rb (pmorie@gmail.com)
 - Move core migration to origin-server (pmorie@gmail.com)
