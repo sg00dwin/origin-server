@@ -142,7 +142,7 @@ var _gaq = _gaq || [];
 				event.preventDefault();
 				var url = $(this).attr("href");
 				_gaq.push(['_trackEvent', 'Downloads', 'Origin', url]);
-				setTimeout('document.location = "' + url + '"', 500);
+				setTimeout(function(){document.location = url;}, 100);
 			});
 		});
 	}
@@ -161,7 +161,7 @@ var _gaq = _gaq || [];
 	_gaq.push(function(){
 		$('a[href*="engage.redhat.com"],a[href*="inxpo.com"],a[href*="www.redhat.com/wapps/"]').on("click", function(event){
 			event.preventDefault();
-
+			
 			var url = $(this).attr("href");
 			_gaq.push(['_trackEvent', 'Outbound Links', 'OpenShift Enterprise', url]);
 
@@ -169,9 +169,10 @@ var _gaq = _gaq || [];
 			var pixel_src = '//www.googleadservices.com/pagead/conversion/997127018/?value=0&label=SomnCJaDrwQQ6ua72wM&guid=ON';
 			pixel_src += "&url=" + url.substring(0, 256);
 			pixel.src = pixel_src;
-			pixel.onload = function() {};
-
-			setTimeout('document.location = "' + url + '"', 700);  
+			pixel.onload = function() {
+				document.location = url;
+			};
+			setTimeout(function(){document.location = url;}, 1000);  
 		});
 	});
 	
@@ -186,9 +187,10 @@ var _gaq = _gaq || [];
 			var pixel_src = '//www.googleadservices.com/pagead/conversion/997127018/?value=0&label=SomnCJaDrwQQ6ua72wM&guid=ON';
 			pixel_src += "&url=" + url.substring(0, 256);
 			pixel.src = pixel_src;
-			pixel.onload = function() {};
-			
-			setTimeout('document.location = "' + url + '"', 700);  
+			pixel.onload = function() {
+				document.location = url;
+			};
+			setTimeout(function(){document.location = url;}, 1000);    
 		});
 	});
 	
@@ -199,7 +201,7 @@ var _gaq = _gaq || [];
 			var url = $(this).attr("href");
 			_gaq.push(['_trackEvent', 'Outbound Links', 'Origin Github Site', url]);
 			
-			setTimeout('document.location = "' + url + '"', 300);  
+			setTimeout(function(){document.location = url;}, 100);  
 		});
 	});
 	
