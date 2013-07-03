@@ -7,9 +7,18 @@
   "github_user": "openshift",
   "irc_channel": "#openshift-dev",
   "bot_github_user": "openshift-bot",
-  "product": "Online",
+  "repo_to_product": {
+     "li": "Online",
+     "origin-server": "Online",
+     "rhc": "Online",
+     "origin-dev-tools": "Online",
+     "enterprise": "Enterprise",
+     "enterprise-server": "Enterprise",
+     "enterprise-rhc": "Enterprise",
+     "enterprise-dev-tools": "Enterprise"
+  }
   "action_required_prefix": "Online Action Required:",
-  
+
   "repo_groups": {
     "li": "hosted",
     "origin-server": "hosted",

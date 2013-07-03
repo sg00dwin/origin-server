@@ -7,7 +7,9 @@
   "github_user": "openshift",
   "irc_channel": "#openshift-dev",
   "bot_github_user": "openshift-bot",
-  "product": "JavaClient",
+  "repo_to_product": {
+     "openshift-java-client": "JavaClient"
+  }
   "action_required_prefix": "Java Client Action Required:",
 
   "repo_groups": {
