@@ -101,6 +101,9 @@ cp scripts/bin/* %{buildroot}%{_bindir}
 cp scripts/init/* %{buildroot}%{_initddir}
 cp scripts/openshift_tmpwatch.sh %{buildroot}%{_sysconfdir}/cron.daily/openshift_tmpwatch.sh
 
+mkdir -p %{buildroot}/etc/openshift/node-plugins.d/
+/bin/touch %{buildroot}/etc/openshift/node-plugins.d/openshift-origin-container-selinux.conf
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -109,7 +112,7 @@ echo "/usr/bin/oo-trap-user" >> /etc/shells
 
 /sbin/chkconfig --add openshift-gears || :
 /sbin/chkconfig --add libra-data || :
-/sbin/chkconfig --add libra-tc || :
+/sbin/chkconfig --add openshift-tc || :
 /sbin/chkconfig --add libra-avc-cache-threshold || :
 /sbin/chkconfig --add libra-watchman || :
 /sbin/chkconfig --add openshift-cgroups || :
@@ -140,7 +143,7 @@ fi
 if ! ( tc qdisc show | grep -q 'qdisc htb 1: dev' )
 then
     # only enable if cgconfig is
-    chkconfig cgconfig && /sbin/service libra-tc start > /dev/null 2>&1 || :
+    chkconfig cgconfig && /sbin/service openshift-tc start > /dev/null 2>&1 || :
 fi
 
 /sbin/chkconfig oddjobd on
@@ -169,11 +172,11 @@ chmod o+w /tmp
 
 %preun
 if [ "$1" -eq "0" ]; then
-    /sbin/service libra-tc stop > /dev/null 2>&1 || :
+    /sbin/service openshift-tc stop > /dev/null 2>&1 || :
     /sbin/service openshift-cgroups stop > /dev/null 2>&1 || :
     /sbin/service libra-watchman stop > /dev/null 2>&1 || :
     /sbin/chkconfig --del libra-avc-cache-threshold || :
-    /sbin/chkconfig --del libra-tc || :
+    /sbin/chkconfig --del openshift-tc || :
     /sbin/chkconfig --del libra-data || :
     /sbin/chkconfig --del openshift-cgroups || :
     /sbin/chkconfig --del libra-watchman || :
@@ -198,7 +201,6 @@ fi
 %defattr(-,root,root,-)
 %attr(0640,-,-) %{mco_root}lib/*
 %attr(0750,-,-) %{_initddir}/libra-data
-%attr(0750,-,-) %{_initddir}/libra-tc
 %attr(0750,-,-) %{_initddir}/libra-avc-cache-threshold
 %attr(0750,-,-) %{_initddir}/libra-watchman
 %attr(0750,-,-) %{_bindir}/rhc-ip-prep
@@ -237,6 +239,7 @@ fi
 #%attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/openshift
 %dir %attr(0755,root,root) %{_sysconfdir}/openshift/skel
 %dir %attr(1777,root,root) /sandbox
+%config(noreplace) /etc/openshift/node-plugins.d/openshift-origin-container-selinux.conf
 
 
 %changelog

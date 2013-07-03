@@ -164,7 +164,7 @@ class Watchman
 
   # Load environment variables into a hash
   def read_env(path)
-    Hash[OpenShift::Utils::Environ.for_gear(path).map{ |k, v| [k.to_sym, v]}]
+    Hash[OpenShift::Runtime::Utils::Environ.for_gear(path).map{ |k, v| [k.to_sym, v]}]
   end
 
   # Make current process a daemon

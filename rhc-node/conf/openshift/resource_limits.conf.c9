@@ -62,7 +62,7 @@ apache_maxconnection="all 20"
 apache_bandwidtherror="510"
 #
 
-# Traffic control.  used by /etc/init.d/libra-tc
+# Traffic control.  used by /etc/init.d/openshift-tc
 tc_max_libra=800   # mbit/sec - Total bandwidth allowed for Libra
 tc_user_share=2     # mbit/sec - one user is allotted...
 
