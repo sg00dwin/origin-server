@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.11.2
+Version: 1.11.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -154,6 +154,13 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Tue Jul 02 2013 Adam Miller <admiller@redhat.com> 1.11.3-1
+- Merge pull request #1682 from kraman/libvirt-f19-2
+  (dmcphers+openshiftbot@redhat.com)
+- Removing unix_user_observer.rb Moving libra-tc to origin Fix rhc-ip-prep to
+  use Runtime namespaces Fixing OpenShift::Utils package name
+  (kraman@gmail.com)
+
 * Tue Jul 02 2013 Adam Miller <admiller@redhat.com> 1.11.2-1
 - Added '-all' option to rhc-admin-delete-subaccounts script
   (rpenta@redhat.com)
