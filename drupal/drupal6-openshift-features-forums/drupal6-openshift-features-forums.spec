@@ -5,7 +5,7 @@
 %global modname             forums
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.7.3
+Version: 1.7.4
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Forums Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,13 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Jul 03 2013 Adam Miller <admiller@redhat.com> 1.7.4-1
+- we might need to revisit a new way of importing drupal bits, bump for tag fix
+  (admiller@redhat.com)
+- push version change so tito will increment properly for tag
+  (admiller@redhat.com)
+- Drupal feature export from prod server (jforrest@redhat.com)
+
 * Wed Jul 03 2013 Adam Miller <admiller@redhat.com>
 - push version change so tito will increment properly for tag
   (admiller@redhat.com)
