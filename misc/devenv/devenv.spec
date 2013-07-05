@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.10.3
+Version: 1.10.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -763,6 +763,13 @@ mv -f /root/IPTABLES_NEW.txt /etc/sysconfig/iptables
 /etc/openshift/development
 
 %changelog
+* Fri Jul 05 2013 Adam Miller <admiller@redhat.com> 1.10.4-1
+- Merge pull request #1701 from tkramer-
+  rh/dev/tkramer/security/IPTables_UDP_Block (dmcphers+openshiftbot@redhat.com)
+- Separating product name by repo (dmcphers@redhat.com)
+- Security - Add iptables block for UDP except for DNS - commented out
+  (tkramer@redhat.com)
+
 * Tue Jul 02 2013 Adam Miller <admiller@redhat.com> 1.10.3-1
 - Merge pull request #1682 from kraman/libvirt-f19-2
   (dmcphers+openshiftbot@redhat.com)
