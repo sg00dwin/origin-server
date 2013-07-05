@@ -32,6 +32,7 @@ Requires:      ruby193-rubygem-systemu
 Requires:      openshift-origin-msg-node-mcollective
 Requires:      openshift-origin-port-proxy
 Requires:      openshift-origin-node-proxy
+Requires:      rubygem-openshift-origin-container-selinux
 Requires:      quota
 Requires:      lsof
 Requires:      wget
