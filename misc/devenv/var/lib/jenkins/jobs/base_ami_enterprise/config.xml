@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>BRANCH</name>
+          <description></description>
+          <defaultValue>enterprise-1.2.z</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>DEV_TOOLS_EXT_REPO</name>
+          <description></description>
+          <defaultValue>enterprise</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>DEV_TOOLS_REPO</name>
+          <description></description>
+          <defaultValue>enterprise-dev-tools</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>IMAGE_BASE_NAME</name>
+          <description></description>
+          <defaultValue>enterprise</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>YUM_REPO</name>
+          <description></description>
+          <defaultValue>enterprise-1.2.z</defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>true</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector">
+    <hudson.triggers.TimerTrigger>
+      <spec>@weekly</spec>
+    </hudson.triggers.TimerTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>PARAMS=&quot;token=libra1&amp;YUM_REPO=${YUM_REPO}&amp;BRANCH=${BRANCH}&amp;DEV_TOOLS_REPO=${DEV_TOOLS_REPO}&amp;DEV_TOOLS_EXT_REPO=${DEV_TOOLS_EXT_REPO}&amp;IMAGE_BASE_NAME=${IMAGE_BASE_NAME}&quot;
+curl -kL &quot;https://ci.dev.openshift.redhat.com/jenkins/job/base_ami/buildWithParameters?${PARAMS}&quot;</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>
