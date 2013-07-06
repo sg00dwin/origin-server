@@ -1,5 +1,5 @@
 @runtime_extended
-@runtime_extended_other1
+@runtime_extended1
 Feature: Scaling Verification Tests
   Scenario Outline: AutoScale App
     Given the libra client tools
@@ -19,14 +19,7 @@ Feature: Scaling Verification Tests
   Scenarios: AutoScale App Scenarios
    | app_count |     type      |
    |     1     |  jbossas-7    |
-   |     1     |  jbosseap-6.0 |
-   |     1     |  jbossews-1.0 |
-   |     1     |  nodejs-0.6   |
-   |     1     |  perl-5.10    |
    |     1     |  php-5.3      |
-   |     1     |  python-2.6   |
-   |     1     |  ruby-1.8     |
-   |     1     |  ruby-1.9     |
 
   Scenario Outline: Scale App
     Given the libra client tools
@@ -55,12 +48,5 @@ Feature: Scaling Verification Tests
   Scenarios: Scaled App Scenarios
    | app_count |     type      |
    |     1     |  jbossas-7    |
-   |     1     |  jbosseap-6.0 |
-   |     1     |  jbossews-1.0 |
-   |     1     |  nodejs-0.6   |
-   |     1     |  perl-5.10    |
    |     1     |  php-5.3      |
-   |     1     |  python-2.6   |
-   |     1     |  ruby-1.8     |
-   |     1     |  ruby-1.9     |
 

@@ -502,11 +502,6 @@ service openshift-port-proxy restart
                 test_queues[0] << build_cucumber_command("Extended Runtime Group 1", ['@runtime_extended1'], nil, nil, 'openshift-test/tests')
                 test_queues[1] << build_cucumber_command("Extended Runtime Group 2", ['@runtime_extended2'], nil, nil, 'openshift-test/tests')
                 test_queues[2] << build_cucumber_command("Extended Runtime Group 3", ['@runtime_extended3'], nil, nil, 'openshift-test/tests')
-              when 'runtime_other'
-                ssh(hostname, "mkdir -p /var/lib/openshift/.settings; touch /var/lib/openshift/.settings/v1_cartridge_format; echo 'Rails.cache.clear' | /var/www/openshift/broker/script/rails console development && service rhc-broker restart")
-                test_queues[0] << build_cucumber_command("Extended Runtime Other Group 1", ['@runtime_extended_other1'], nil, nil, 'openshift-test/tests')
-                test_queues[1] << build_cucumber_command("Extended Runtime Other Group 2", ['@runtime_extended_other2'], nil, nil, 'openshift-test/tests')
-                test_queues[2] << build_cucumber_command("Extended Runtime Other Group 3", ['@runtime_extended_other3'], nil, nil, 'openshift-test/tests')
               when 'site'
                 test_queues[0] << {:title => "Site Extended", :command => "cd openshift-test/site; rake test:extended", :options => {}}
               when 'rhc'
@@ -570,7 +565,6 @@ service openshift-port-proxy restart
                   singleton_queue << build_cucumber_command("Runtime singletons", ["@singleton"], nil, nil, 'openshift-test/tests')
                 when 'site'
                 when 'rhc'
-                when 'runtime_other'
                 else
                   puts "Not supported for extended: #{extended_test}"
                   exit 1

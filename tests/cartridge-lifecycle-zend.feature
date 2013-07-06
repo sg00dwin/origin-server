@@ -1,4 +1,3 @@
-@runtime_extended_other1
 @runtime
 @runtime_extended
 @runtime_extended1
@@ -39,7 +38,7 @@ Feature: Cartridge Lifecycle Zend Verification Tests
   Scenarios: Application Starting Scenarios
     |      type     |
     |   zend-5.6     |
-    
+
   Scenario Outline: Application Restarting
     Given an existing <type> application
     When the application is restarted
@@ -48,7 +47,7 @@ Feature: Cartridge Lifecycle Zend Verification Tests
   Scenarios: Application Restart Scenarios
     |      type     |
     |   zend-5.6     |
-    
+
   Scenario Outline: Application Tidy
     Given an existing <type> application
     When I tidy the application
@@ -57,14 +56,7 @@ Feature: Cartridge Lifecycle Zend Verification Tests
   Scenarios: Application Tidy Scenarios
     |      type     |
     |   zend-5.6     |
-    
-  Scenario Outline: Application Snapshot
-    Given an existing <type> application, verify it can be snapshotted and restored
 
-  Scenarios: Application Snapshot Scenarios
-    |      type     |
-    |   zend-5.6     |
-    
   Scenario Outline: Application Destroying
     Given an existing <type> application
     When the application is destroyed
