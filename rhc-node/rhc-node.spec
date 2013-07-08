@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.11.4
+Version: 1.11.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -245,6 +245,10 @@ fi
 
 
 %changelog
+* Mon Jul 08 2013 Adam Miller <admiller@redhat.com> 1.11.5-1
+- Revamp the cgroups and pam scripts to leverage the system setup for better
+  performance and simplify the code. (rmillner@redhat.com)
+
 * Fri Jul 05 2013 Adam Miller <admiller@redhat.com> 1.11.4-1
 - rhc-node needs to depend on rubygem-openshift-origin-container-selinux
   (admiller@redhat.com)
