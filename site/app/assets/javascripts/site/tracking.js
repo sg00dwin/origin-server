@@ -167,7 +167,7 @@ var _gaq = _gaq || [];
 
 			var pixel = new Image;
 			var pixel_src = '//www.googleadservices.com/pagead/conversion/997127018/?value=0&label=SomnCJaDrwQQ6ua72wM&guid=ON';
-			pixel_src += "&url=" + url.substring(0, 256);
+			pixel_src += "&url=" + encodeURIComponent(url.substring(0, 256));
 			pixel.src = pixel_src;
 			pixel.onload = function() {
 				document.location = url;
@@ -185,7 +185,7 @@ var _gaq = _gaq || [];
 			
 			var pixel = new Image;
 			var pixel_src = '//www.googleadservices.com/pagead/conversion/997127018/?value=0&label=SomnCJaDrwQQ6ua72wM&guid=ON';
-			pixel_src += "&url=" + url.substring(0, 256);
+			pixel_src += "&url=" + encodeURIComponent(url.substring(0, 256));
 			pixel.src = pixel_src;
 			pixel.onload = function() {
 				document.location = url;
@@ -227,11 +227,15 @@ var _gaq = _gaq || [];
 })();
 
 // DemandBase
+var demandbase = function(response){
+	return;
+};
+
 (function() {
-  var myKey = "223190404d28f4fcabacfadefef244ea33868fb1";
-  var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true;
-  s.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + "api.demandbase.com/api/v2/ip.json?key="+myKey+"&page="+document.location.href+"&page_title="+document.title+"&referrer="+document.referrer;
-  var p = document.getElementsByTagName('script')[0]; p.parentNode.insertBefore(s, p);
+	var myKey = "223190404d28f4fcabacfadefef244ea33868fb1";
+	var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true;
+	s.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + "api.demandbase.com/api/v2/ip.json?key="+myKey+"&callback=demandbase&page="+ encodeURIComponent(document.location.href) + "&page_title=" + encodeURIComponent(document.title) +"&referrer=" + encodeURIComponent(document.referrer);
+	var p = document.getElementsByTagName('script')[0]; p.parentNode.insertBefore(s, p);
 })();
 
 // KissInsights
