@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.11.2
+Version: 1.11.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -196,6 +196,15 @@ fi
 %{sitedir}/public
 
 %changelog
+* Mon Jul 08 2013 Adam Miller <admiller@redhat.com> 1.11.3-1
+- Added callback to demandbase json call, added URI encoding
+  (spurtell@redhat.com)
+- Tracking timeout reduction, setTimeout functions instead of string concat
+  (spurtell@redhat.com)
+- javascript image src reformatting (spurtell@redhat.com)
+- Added Demandbase code, updated enterprise/origin outbound link tracking
+  (spurtell@redhat.com)
+
 * Tue Jul 02 2013 Adam Miller <admiller@redhat.com> 1.11.2-1
 - Merge pull request #1689 from sg00dwin/701dev
   (dmcphers+openshiftbot@redhat.com)
