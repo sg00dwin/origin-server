@@ -719,20 +719,20 @@ sed -i '/^PASS_MIN_DAYS/c\PASS_MIN_DAYS   1' -i /etc/login.defs
 
 # Create Iptables rules to block UDP in DEVENV - start commented out
 cat > /root/BLOCK_UDP_IPTABLES.txt << EOF
-#-A OUTPUT -o eth0 -p udp -m recent --dport 53 -d 10.35.53.83 --rcheck --rttl --hitcount 20 --seconds 2 -j LOG --log-prefix "UDP:FLOOD_USER_10_35_53_83:"
-#-A OUTPUT -o eth0 -p udp -m recent --dport 53 -d 10.35.53.83 --rcheck --rttl --hitcount 20 --seconds 2 -j DROP
-#-A OUTPUT -o eth0 -p udp -m recent --dport 53 -d 10.35.53.83 --set -j ACCEPT
-#-A OUTPUT -o eth0 -p udp -m recent --dport 53 -d 172.16.0.23 --rcheck --rttl --hitcount 20 --seconds 2 -j LOG --log-prefix "UDP:FLOOD_USER_172_16_0_23:"
-#-A OUTPUT -o eth0 -p udp -m recent --dport 53 -d 172.16.0.23 --rcheck --rttl --hitcount 20 --seconds 2 -j DROP
-#-A OUTPUT -o eth0 -p udp -m recent --dport 53 -d 172.16.0.23 --set -j ACCEPT
-#-A OUTPUT -o eth0 -p udp -m recent --dport 5353 -d 224.0.0.251 --rcheck --rttl --hitcount 20 --seconds 2 -j LOG --log-prefix "UDP:FLOOD_224_0_0_251:"
-#-A OUTPUT -o eth0 -p udp -m recent --dport 5353 -d 224.0.0.251 --rcheck --rttl --hitcount 20 --seconds 2 -j DROP
-#-A OUTPUT -o eth0 -p udp -m recent --dport 5353 -d 224.0.0.251 --set -j ACCEPT
-#-A OUTPUT -o eth0 -p udp -m recent --dport 953 -d 127.0.0.1 --rcheck --rttl --hitcount 20 --seconds 2 -j LOG --log-prefix "UDP:FLOOD_127_0_0_1_953:"
-#-A OUTPUT -o eth0 -p udp -m recent --dport 953 -d 127.0.0.1 --rcheck --rttl --hitcount 20 --seconds 2 -j DROP
-#-A OUTPUT -o eth0 -p udp -m recent --dport 953 -d 127.0.0.1 --set -j ACCEPT
-#-A OUTPUT -o eth0 -p udp -m recent --set -j LOG --log-prefix "UDP:DROPPED_ALL:"
-#-A OUTPUT -o eth0 -p udp -m recent --set -j DROP
+-A OUTPUT -o eth0 -p udp -m recent --dport 53 -d 10.35.53.83 --update --rttl --hitcount 20 --seconds 2 -j LOG --log-prefix "UDP:FLOOD_USER_10_35_53_83:"
+-A OUTPUT -o eth0 -p udp -m recent --dport 53 -d 10.35.53.83 --update --rttl --hitcount 20 --seconds 2 -j DROP
+-A OUTPUT -o eth0 -p udp -m recent --dport 53 -d 10.35.53.83 --set -j ACCEPT
+-A OUTPUT -o eth0 -p udp -m recent --dport 53 -d 172.16.0.23 --update --rttl --hitcount 20 --seconds 2 -j LOG --log-prefix "UDP:FLOOD_USER_172_16_0_23:"
+-A OUTPUT -o eth0 -p udp -m recent --dport 53 -d 172.16.0.23 --update --rttl --hitcount 20 --seconds 2 -j DROP
+-A OUTPUT -o eth0 -p udp -m recent --dport 53 -d 172.16.0.23 --set -j ACCEPT
+-A OUTPUT -o eth0 -p udp -m recent --dport 5353 -d 224.0.0.251 --update --rttl --hitcount 20 --seconds 2 -j LOG --log-prefix "UDP:FLOOD_224_0_0_251:"
+-A OUTPUT -o eth0 -p udp -m recent --dport 5353 -d 224.0.0.251 --update --rttl --hitcount 20 --seconds 2 -j DROP
+-A OUTPUT -o eth0 -p udp -m recent --dport 5353 -d 224.0.0.251 --set -j ACCEPT
+-A OUTPUT -o eth0 -p udp -m recent --dport 953 -d 127.0.0.1 --update --rttl --hitcount 20 --seconds 2 -j LOG --log-prefix "UDP:FLOOD_127_0_0_1_953:"
+-A OUTPUT -o eth0 -p udp -m recent --dport 953 -d 127.0.0.1 --update --rttl --hitcount 20 --seconds 2 -j DROP
+-A OUTPUT -o eth0 -p udp -m recent --dport 953 -d 127.0.0.1 --set -j ACCEPT
+-A OUTPUT -o eth0 -p udp -m recent --set -j LOG --log-prefix "UDP:DROPPED_ALL:"
+-A OUTPUT -o eth0 -p udp -m recent --set -j DROP
 EOF
 
 # Append Iptables rules into original file
@@ -745,6 +745,9 @@ sed "/NEW -j rhc-app-table/ {
 
 # Move the new iptables into the correct spot
 mv -f /root/IPTABLES_NEW.txt /etc/sysconfig/iptables
+
+# Clean up BLOCK_UDP_IPTABLES.txt file
+rm -f /root/BLOCK_UDP_IPTABLES.txt
 
 %files
 %defattr(-,root,root,-)
