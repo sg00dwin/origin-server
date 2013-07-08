@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.11.3
+Version: 1.11.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -32,6 +32,7 @@ Requires:      ruby193-rubygem-systemu
 Requires:      openshift-origin-msg-node-mcollective
 Requires:      openshift-origin-port-proxy
 Requires:      openshift-origin-node-proxy
+Requires:      rubygem-openshift-origin-container-selinux
 Requires:      quota
 Requires:      lsof
 Requires:      wget
@@ -131,6 +132,7 @@ if [ ! -e /cgroup/all/openshift/cgroup.event_control ]
 then
     # mount all desired cgroups under a single root
     perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
+    echo "group /openshift { cpu { cpu.shares = 1024; } }" >> /etc/cgconfig.conf
     /sbin/restorecon /etc/cgconfig.conf || :
     # only restart if it's on
     /sbin/chkconfig cgconfig && /sbin/service cgconfig restart >/dev/null 2>&1 || :
@@ -243,6 +245,10 @@ fi
 
 
 %changelog
+* Fri Jul 05 2013 Adam Miller <admiller@redhat.com> 1.11.4-1
+- rhc-node needs to depend on rubygem-openshift-origin-container-selinux
+  (admiller@redhat.com)
+
 * Tue Jul 02 2013 Adam Miller <admiller@redhat.com> 1.11.3-1
 - Merge pull request #1682 from kraman/libvirt-f19-2
   (dmcphers+openshiftbot@redhat.com)
