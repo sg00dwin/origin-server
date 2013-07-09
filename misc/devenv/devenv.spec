@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.10.4
+Version: 1.10.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -766,6 +766,9 @@ rm -f /root/BLOCK_UDP_IPTABLES.txt
 /etc/openshift/development
 
 %changelog
+* Tue Jul 09 2013 Adam Miller <admiller@redhat.com> 1.10.5-1
+- Security - Enable UDP blocking and logging in iptables (tkramer@redhat.com)
+
 * Fri Jul 05 2013 Adam Miller <admiller@redhat.com> 1.10.4-1
 - Merge pull request #1701 from tkramer-
   rh/dev/tkramer/security/IPTables_UDP_Block (dmcphers+openshiftbot@redhat.com)
