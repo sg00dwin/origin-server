@@ -1188,3 +1188,8 @@ table.version-list {
 .page-videos .creator, .page-videos .divider {
     display: none;
 }
+
+// Alerts in the community overflow behind the user profile block
+.community .alert {
+  overflow: auto;
+}

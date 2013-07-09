@@ -57,7 +57,7 @@ function _openshift_partner_program_apply_info() {
     '#value' => '<h2>' . t('Submit Integration') . '</h2>',
   );
   $form['instructions'] = array(
-    '#value' => '<h3>' . t('Welcome back!  Your application to become an OpenShift by Red Hat Partner is almost complete.  Please complete the following fields and submit your Quickstart or Cartridge here for approval.  Upon approval you will receive your Partner notification and access to the self-service partner portal where you can upload your logo.  Should we hae any questions we will use your contact information below to reach out to you.') . '</h3>',
+    '#value' => '<h3>' . t('Welcome back!  Your application to become an OpenShift by Red Hat Partner is almost complete.  Please complete the following fields and submit your Quickstart or Cartridge here for approval.  Upon approval you will receive your Partner notification and access to the self-service partner portal where you can upload your logo.  Should we have any questions we will use your contact information below to reach out to you.') . '</h3>',
   );
   $form['name']['first'] = array(
     '#type' => 'textfield',

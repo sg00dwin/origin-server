@@ -458,7 +458,7 @@ function openshift_partner_program_init() {
   $path = $_REQUEST['q'];
   if (!strncmp($path, 'partner/portal', strlen('partner/portal'))) {
     profile_load_profile($user);
-    if ($user->profile_user_state != 'Active partner') {
+    if ($user->profile_user_state != 'Active partner' && !_openshift_partner_program_user_admin_access()) {
       drupal_access_denied();
     }
   }
