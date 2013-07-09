@@ -15,14 +15,21 @@ function openshift_partner_program_install() {
     mkdir($filepath, 0777);
     chmod($filepath, 0777);
   }
-  if (!file_exists($filepath)) {
+  if (!file_exists($filepath . '/logos')) {
     // Create subdir for logos.
     mkdir($filepath . '/logos', 0777);
     chmod($filepath . '/logos', 0777);
   }
+  if (!file_exists($filepath . '/cartridges')) {
+    // Create subdir for logos.
+    mkdir($filepath . '/cartridges', 0777);
+    chmod($filepath . '/cartridges', 0777);
+  }
   drupal_install_schema('openshift_partner_program');
   _openshift_partner_program_add_profile_fields();
   _openshift_partner_program_install_vocabulary();
+  _openshift_partner_program_install_roles();
+  _openshift_partner_program_install_fields();
 }
 
 /**
@@ -81,7 +88,7 @@ function _openshift_partner_program_add_profile_fields() {
   $result = db_query("SELECT * FROM {profile_fields} WHERE title = '%s'", 'user_state');
   $exists = db_fetch_array($result);
   if (!$exists) {
-    db_query("INSERT INTO {profile_fields} (title, name, explanation, category, page, type, weight, required, register, visibility, autocomplete, options) VALUES ('user_state', 'profile_user_state', 'New partners must still sign the partner agreements, active partners have already signed the agreement.', 'Partner Program', '', 'selection', 0, 0, 0, 2, 0, 'Not a partner\r\nNew partner\r\nActive partner')");
+    db_query("INSERT INTO {profile_fields} (title, name, explanation, category, page, type, weight, required, register, visibility, autocomplete, options) VALUES ('user_state', 'profile_user_state', 'New partners must still sign the partner agreements, active partners have already signed the agreement.', 'Partner Program', '', 'selection', 0, 0, 0, 2, 0, 'Not a partner\r\nMore info required\r\nNew partner\r\nActive partner')");
   }
 
   $result = db_query("SELECT * FROM {profile_fields} WHERE title = '%s'", 'Partner Level');
@@ -114,10 +121,128 @@ function openshift_partner_program_update_6004() {
 }
 
 /**
+ * Adds roles for partner admins.
+ */
+function _openshift_partner_program_install_roles() {
+  $role_exists = in_array('partner program admin', user_roles());
+  if (!$role_exists) {
+    require_once drupal_get_path('module', 'user') . "/user.admin.inc";
+    $form_id = "user_admin_new_role";
+    $form_values = array();
+    $form_values["name"] = "partner program admin";
+    $form_values["op"] = t('Add role');
+    $form_state = array();
+    $form_state["values"] = $form_values;
+    drupal_execute($form_id, $form_state);
+  }
+}
+
+/**
+ * Adds logo field to partner node.
+ */
+function _openshift_partner_program_install_fields() {
+  $field = array(
+    'field_name' => 'field_logo',
+    'type_name' => 'partner',
+    'display_settings' =>
+    array(
+      'label' =>
+      array(
+        'format' => 'above',
+        'exclude' => 0,
+      ),
+      5 =>
+      array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'teaser' =>
+      array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' =>
+      array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      4 =>
+      array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      2 =>
+      array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      3 =>
+      array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' =>
+      array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'text',
+    'required' => '0',
+    'multiple' => '0',
+    'db_storage' => '1',
+    'module' => 'text',
+    'active' => '1',
+    'locked' => '0',
+    'columns' =>
+    array(
+      'value' =>
+      array(
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => FALSE,
+        'sortable' => TRUE,
+        'views' => TRUE,
+      ),
+    ),
+    'text_processing' => '0',
+    'max_length' => '',
+    'allowed_values' => '',
+    'allowed_values_php' => '',
+    'widget' =>
+    array(
+      'rows' => 5,
+      'size' => '120',
+      'default_value' =>
+      array(
+        0 =>
+        array(
+          'value' => '',
+          '_error_element' => 'default_value_widget][field_logo][0][value',
+        ),
+      ),
+      'default_value_php' => NULL,
+      'label' => 'Logo',
+      'weight' => 0,
+      'description' => '',
+      'type' => 'text_textfield',
+      'module' => 'text',
+    ),
+  );
+  module_load_include('inc', 'content', 'includes/content.crud');
+  $field['type_name'] = 'partner';
+
+  if (!content_fields($field['field_name'], $field['type_name'])) {
+    content_field_instance_create($field);
+  }
+}
+
+/**
  * Adds vocabulary for partners.
  */
 function _openshift_partner_program_install_vocabulary() {
-  $vocab = taxonomy_get_vocabularies('Partner');
+  $vocab = reset(taxonomy_get_vocabularies('partner'));
   if (!$vocab) {
     $vocab = array(
       'name' => 'Partner Program',
@@ -179,6 +304,5 @@ function _openshift_partner_program_install_vocabulary() {
       );
       taxonomy_save_term($tag);
     }
-
   }
 }

@@ -6,6 +6,15 @@
  */
 
 /**
+ * Implementation of hook_views_api().
+ */
+function openshift_partner_program_views_api() {
+  return array(
+    'api' => 2.0,
+  );
+}
+
+/**
  * Implements hook_theme().
  */
 function openshift_partner_program_theme($existing, $type, $theme, $path) {
@@ -21,6 +30,37 @@ function openshift_partner_program_theme($existing, $type, $theme, $path) {
  * Implements hook_menu().
  */
 function openshift_partner_program_menu() {
+  $items['admin/settings/partner'] = array(
+    'title' => 'Administer Partner Program',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('_openshift_partner_program_admin'),
+    'access callback' => '_openshift_partner_program_user_admin_access',
+    'file' => 'openshift_partner_program.admin.inc',
+  );
+  $items['partner/admin/edit/user/%'] = array(
+    'title' => 'Administer Partner Program User',
+    'type' => MENU_LOCAL_TASK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('_openshift_partner_program_user_admin', 4),
+    'access callback' => '_openshift_partner_program_user_admin_access',
+    'file' => 'openshift_partner_program.admin.inc',
+  );
+  $items['partner/apply'] = array(
+    'title' => 'Apply To Be A Partner',
+    'type' => MENU_LOCAL_TASK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('_openshift_partner_program_apply'),
+    'access callback' => '_openshift_partner_program_apply_access',
+    'file' => 'openshift_partner_program.page.inc',
+  );
+  $items['partner/apply/info'] = array(
+    'title' => 'Apply To Be A Partner - Upload Info',
+    'type' => MENU_LOCAL_TASK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('_openshift_partner_program_apply_info'),
+    'access callback' => '_openshift_partner_program_apply_access',
+    'file' => 'openshift_partner_program.page.inc',
+  );
   $items['partner/tc'] = array(
     'title' => 'Terms and Conditions',
     'type' => MENU_LOCAL_TASK,
@@ -96,6 +136,27 @@ function openshift_partner_program_user($op, &$edit, &$account, $category = NULL
 }
 
 /**
+ * Access to apply to the partner program form.
+ *
+ * If the user is a New Partner or Active Partner, they
+ * get redirected to the appropriate partner page.
+ *
+ * @return bool
+ *   TRUE iff the user is non anonymous.
+ */
+function _openshift_partner_program_apply_access() {
+  global $user;
+  profile_load_profile($user);
+  if ($user->profile_user_state == 'New partner') {
+    drupal_goto('partner/tc');
+  }
+  elseif ($user->profile_user_state == 'Active partner') {
+    drupal_goto('partner/portal');
+  }
+  return $user->uid > 0;
+}
+
+/**
  * Access to the partner agreement.
  *
  * @return bool
@@ -134,10 +195,82 @@ function _openshift_partner_program_portal_upgrade_access() {
 }
 
 /**
+ * Is the current user a partner program admin.
+ *
+ * @return bool
+ *   TRUE iff user has partner program admin role.
+ */
+function _openshift_partner_program_user_admin_access() {
+  global $user;
+  return in_array('partner program admin', $user->roles) ||
+    in_array('administrator', $user->roles);
+}
+
+/**
  * Implements hook_mail().
  */
 function openshift_partner_program_mail($key, &$message, $params) {
   switch ($key) {
+    case 'openshift_partner_program_more_info_required':
+      $message['subject'] = t('Additional information is needed for your application to the OpenShift by Red Hat Partner Program');
+      $message['body'][] = t('Dear ') . $params['customer_name'];
+      $message['body'][] = t('Thank you for your interest in becoming an OpenShift by Red Hat partner.  We have some additional questions before we can proceed with our partnership.');
+      $message['body'][] = t('One of our OpenShift by Red Hat Partner Team members will be reaching out with questions.');
+      $message['body'][] = t('We look forward to working with you and feel free to let us know if you have any questions.');
+      $message['body'][] = t('Regards,');
+      $message['body'][] = t('Your OpenShift by Red Hat Partner Team');
+      break;
+
+    case 'openshift_partner_program_new_partner':
+      $message['subject'] = t('Welcome to the OpenShift by Red Hat Partner Program');
+      $message['body'][] = t('Dear ') . $params['customer_name'];
+      $message['body'][] = t('Thank you for your interest in becoming an OpenShift by Red Hat partner and we would like to invite you to join the OpenShift by Red Hat Partner program as a ') . $params['partner_level'] . '.';
+      $message['body'][] = t('There is one step left in becoming a partner. Login to the partner portal and accept the Partnership Agreement to complete the partnership application. To login:');
+      $message['body'][] = t('Visit: http://www.openshift.com/user');
+      $message['body'][] = t('Again welcome! Should you have any questions please feel free to email us at openshift-partners@redhat.com');
+      $message['body'][] = t('Regards,');
+      $message['body'][] = t('Your OpenShift by Red Hat Partner Team');
+      break;
+
+    case 'openshift_partner_program_apply_staff':
+      $message['subject'] = $params['customer'] . t(' has begun an application to become a partner');
+      $message['body'][] = $params['customer'] . t(' has begun the application process to become an OpenShift by Red Hat partner.');
+      $message['body'][] = t('They have been sent the following:');
+      $message['body'][] = t('Partner Benefit Guide');
+      $message['body'][] = t('Quickstart Technical Guide');
+      $message['body'][] = t('Cartridge Technical Guide');
+      $message['body'][] = t('Link to submit Quickstarts');
+      $message['body'][] = t('Please keep an eye out on the alias in case they have any questions.');
+      $message['body'][] = t('Thanks.');
+      break;
+
+    case 'openshift_partner_program_apply_user':
+      $message['subject'] = t('Thank you and Next Steps to become a Red Hat Openshift Partner');
+      $message['body'][] = t('Thank you for your interest in becoming an OpenShift by Red Hat partner.');
+      $message['body'][] = t('Please review the Partner Benefits documents to decide which partner level is right for you.');
+      $message['body'][] = t('To become an OpenShift by Red Hat Ready Partner you must submit an OpenShift Quickstart.  View the Quickstart technical guide to get started now.');
+      $message['body'][] = t('To become an OpenShift by Red Hat Advanced Partner you must submit an OpenShift Cartridge.  View the Cartridge technical guide to get started now.');
+      $message['body'][] = t('If you have your Quickstart or Cartridge completed please click here to submit now. http://www.openshift.com/partner/apply/info');
+      $message['body'][] = t('We look forward to having you onboard as an OpenShift by Red Hat partner.  Feel free to reach out to us at openshift-partners@redhat.com');
+      $message['body'][] = t('Regards,');
+      $message['body'][] = t('Your OpenShift by Red Hat Partner Team');
+      break;
+
+    case 'openshift_partner_program_apply_info':
+      $message['subject'] = $params['first'] . ' ' . $params['last'] . t(' has submitted a request for assistance');
+      $message['body'][] = t('OpenShift Partner Team-');
+      $message['body'][] = t('Please log in and review and approve or request more information within 48 hours for:');
+      foreach ($params as $k => $value) {
+        $message['body'][] = "$k : $value";
+      }
+      $message['body'][] = t('You must verify that:');
+      $message['body'][] = t('Their Quickstart / Cartridge is acceptable');
+      $message['body'][] = t('That they have answered NO to both legal questions and have NOT selected any country in the form.  These are legal requirements and by accepting them as a partner you have verified that they are legally cleared to join.  If they answered YES and/or selected any country, you must reach out to legal to get permission to add them to the program.');
+      $message['body'][] = t('If they successfully completed their Quickstart and are legally cleared, please approve and assign them as a Red Hat OpenShift Ready Partner');
+      $message['body'][] = t('If they successfully completed their Cartridge and are legally cleared, please approve and assign them as a Red Hat OpenShift Advanced Partner');
+      $message['body'][] = t('Thanks.');
+      break;
+
     case 'openshift_partner_program_request_assistance':
       $message['subject'] = $params['company_name'] . t(' has submitted a request for assistance');
       foreach ($params as $k => $value) {
@@ -184,9 +317,15 @@ function openshift_partner_program_partner_info($uid = 0) {
   if ($uid == 0) {
     $uid = $user->uid;
   }
-  $result = db_query("SELECT * FROM {openshift_partner_program_partners} WHERE uid = %d", $uid);
-  $result_arr = db_fetch_array($result);
-  return $result_arr;
+  $node = node_load(array('uid' => $uid, 'type' => 'partner'));
+  $result = array();
+  if ($node) {
+    $result['uid'] = $uid;
+    $result['company'] = $node->title;
+    $result['company_description'] = $node->body;
+    $result['logo'] = $node->picture;
+  }
+  return $result;
 }
 
 /**
@@ -247,7 +386,7 @@ function openshift_partner_program_partner_info_upsert_node($uid, $company, $com
   $node->status = 1;
   $node->title = check_plain($company);
   $node->body = check_plain($company_description);
-  $node->picture = check_plain($logo);
+  $node->field_logo[0]['value'] = check_plain($logo);
 
   // Wipe out previous terms if any.
   $node->taxonomy = NULL;
@@ -297,4 +436,31 @@ function openshift_partner_program_partners_list() {
     }
   }
   return $augmented_result;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Partner program and user state can only be set in the admin interface.
+ * Removing from the profile.
+ */
+function openshift_partner_program_form_user_profile_form_alter(&$form, &$form_state) {
+  unset($form['Partner Program']);
+}
+
+/**
+ * Implements hook_init().
+ *
+ * Restricts partner/portal paths to Active partner users.
+ */
+function openshift_partner_program_init() {
+  global $user;
+  $path = $_REQUEST['q'];
+  if (!strncmp($path, 'partner/portal', strlen('partner/portal'))) {
+    profile_load_profile($user);
+    if ($user->profile_user_state != 'Active partner' && !_openshift_partner_program_user_admin_access()) {
+      drupal_access_denied();
+    }
+  }
+
 }
