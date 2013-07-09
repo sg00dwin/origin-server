@@ -49,6 +49,10 @@ function redhat_frontpage_menu() {
   return $items;
 }
 
+function redhat_frontpage_menu_alter(&$items) {
+  unset($items['userpoints']);
+}
+
 function redhat_frontpage_settings() {
   $form = array();
 
