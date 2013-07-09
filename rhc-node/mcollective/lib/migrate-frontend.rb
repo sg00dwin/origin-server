@@ -5,7 +5,7 @@ require 'openshift-origin-node'
 require 'openshift-origin-common'
 
 module OpenShiftMigration
-  module FrontendHttpServerMigration
+  module DEPRECATED_FrontendHttpServerMigration
 
     def self.migrate(container_uuid, container_name, namespace)
       output = ""
