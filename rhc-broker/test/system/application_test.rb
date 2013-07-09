@@ -35,7 +35,7 @@ class ApplicationTest < ActionDispatch::IntegrationTest
     assert_equal(body["messages"][0]["exit_code"], 127)
 
     # create domain
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => ns}, @headers)
     assert_response :created
 
     # query application list after domain creation - with no applications
@@ -82,7 +82,7 @@ class ApplicationTest < ActionDispatch::IntegrationTest
     assert_equal(body["messages"][0]["exit_code"], 127)
 
     # create domain
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => ns}, @headers)
     assert_response :created
 
     # create an application - without specifying app name
@@ -139,7 +139,7 @@ class ApplicationTest < ActionDispatch::IntegrationTest
     ns = "ns#{@random}"
 
     # create domain
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => ns}, @headers)
     assert_response :created
 
     # create application #1
@@ -183,7 +183,7 @@ class ApplicationTest < ActionDispatch::IntegrationTest
     assert_equal(body["messages"][0]["exit_code"], 127)
 
     # create the domain for the user
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => ns}, @headers)
     assert_response :created
 
     # delete the application - without creating the application

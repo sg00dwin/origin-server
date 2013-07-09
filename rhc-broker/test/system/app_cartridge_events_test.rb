@@ -34,7 +34,7 @@ class AppCartridgeEventsTest < ActionDispatch::IntegrationTest
     ns = "ns#{@random}"
 
     # create the domain for the user
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => ns}, @headers)
     assert_response :created
 
     # stop application cartridge - without creating application
@@ -74,7 +74,7 @@ class AppCartridgeEventsTest < ActionDispatch::IntegrationTest
     ns = "ns#{@random}"
 
     # create domain
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => ns}, @headers)
     assert_response :created
 
     # create application

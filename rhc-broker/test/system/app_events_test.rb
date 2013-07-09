@@ -31,7 +31,7 @@ class AppEventsTest < ActionDispatch::IntegrationTest
     ns = "ns#{@random}"
 
     # create domain
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => ns}, @headers)
     assert_response :created
 
     # stop application - without creating an application
@@ -67,7 +67,7 @@ class AppEventsTest < ActionDispatch::IntegrationTest
     ns = "ns#{@random}"
 
     # create domain
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => ns}, @headers)
     assert_response :created
 
     # create application
@@ -133,7 +133,7 @@ class AppEventsTest < ActionDispatch::IntegrationTest
     ns = "ns#{@random}"
 
     # create domain
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => ns}, @headers)
     assert_response :created
 
     # create application
@@ -237,7 +237,7 @@ class AppEventsTest < ActionDispatch::IntegrationTest
     ns = "ns#{@random}"
 
     # create domain
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => ns}, @headers)
     assert_response :created
 
     # create non-scalable application
