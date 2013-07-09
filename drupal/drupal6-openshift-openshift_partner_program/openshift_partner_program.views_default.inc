@@ -395,7 +395,7 @@ function openshift_partner_program_views_default_views() {
   $handler->override_option('access', array(
     'type' => 'role',
     'role' => array(
-      28 => 28,
+      27 => 27,
     ),
   ));
   $handler->override_option('cache', array(
