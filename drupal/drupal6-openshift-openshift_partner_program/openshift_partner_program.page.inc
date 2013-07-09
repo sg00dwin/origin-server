@@ -39,9 +39,8 @@ function _openshift_partner_program_apply_submit($form, &$form_state) {
   drupal_set_message(t('Learn more about OpenShift at www.openshift.com'));
 
   $params = array();
-  drupal_mail('openshift_partner_program', 'openshift_partner_program_apply_user', $user->mail, 0, $params);
-
   $params['customer'] = $user->name;
+  drupal_mail('openshift_partner_program', 'openshift_partner_program_apply_user', $user->mail, 0, $params);
   drupal_mail('openshift_partner_program', 'openshift_partner_program_apply_staff', 'openshift-partners@redhat.com', 0, $params);
 
   drupal_goto('user');
@@ -239,7 +238,7 @@ function _openshift_partner_program_tc_submit($form, &$form_state) {
   if ($params['customer_name'] == ' ') {
     $params['customer_name'] = $user->profile_display_name;
   }
-  if ($params['customer_name'] == ' ') {
+  if ($params['customer_name'] == ' ' || !$params['customer_name']) {
     $params['customer_name'] = $user->name;
   }
   watchdog('openshift_partner_program', '@user has accepted the partner agreement', array('@user' => $user->name), WATCHDOG_NOTICE);
