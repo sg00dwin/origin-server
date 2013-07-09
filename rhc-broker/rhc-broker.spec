@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.11.4
+Version: 1.11.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -153,6 +153,9 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Tue Jul 09 2013 Adam Miller <admiller@redhat.com> 1.11.5-1
+- Fixing incorrect rpm spec requirement in rhc-broker (kraman@gmail.com)
+
 * Fri Jul 05 2013 Adam Miller <admiller@redhat.com> 1.11.4-1
 - Bug 980708 - Add DEFAULT_GEAR_CAPABILITIES field to broker-dev.conf
   (rpenta@redhat.com)
