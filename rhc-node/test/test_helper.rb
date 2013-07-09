@@ -36,7 +36,7 @@ module OpenShift
     def before_setup
       log_config = mock()
       log_config.stubs(:get).with("PLATFORM_LOG_CLASS").returns("StdoutLogger")
-      OpenShift::NodeLogger.stubs(:load_config).returns(log_config)
+      OpenShift::Runtime::NodeLogger.stubs(:load_config).returns(log_config)
 
       super
     end

@@ -43,10 +43,10 @@ uuids.each do |uuid|
   with_track_errors do
     $stdout.puts("Fixing gear: #{uuid} ...")
 
-    frontend = OpenShift::FrontendHttpServer.new(uuid)
+    frontend = OpenShift::Runtime::FrontendHttpServer.new(OpenShift::Runtime::ApplicationContainer.from_uuid(uuid))
     frontend.create
 
-    gear = OpenShift::ApplicationContainer.from_uuid(uuid)
+    gear = OpenShift::Runtime::ApplicationContainer.from_uuid(uuid)
     gear.cartridge_model.each_cartridge do |cart|
       if gear.cartridge_model.respond_to?(:connect_frontend)
         gear.cartridge_model.connect_frontend(cart)
