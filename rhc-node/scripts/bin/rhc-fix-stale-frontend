@@ -24,7 +24,7 @@ if fqdns.empty?
    exit(0)
 end
 
-OpenShift::GearDB.open(OpenShift::GearDB::WRCREAT) do |d|
+OpenShift::Runtime::GearDB.open(OpenShift::GearDB::WRCREAT) do |d|
   fqdns.map! do |fqdn|
     begin
       d[fqdn]["fqdn"]
@@ -50,35 +50,35 @@ end
 
 with_track_errors do
   $stdout.puts("Deleting from ApacheDBNodes...")
-  OpenShift::ApacheDBNodes.open(OpenShift::ApacheDBNodes::WRCREAT) do |d|
+  OpenShift::Runtime::ApacheDBNodes.open(OpenShift::Runtime::ApacheDBNodes::WRCREAT) do |d|
     d.delete_if { |k, v| fqdns.include?(k.split('/')[0]) }
   end
 end
 
 with_track_errors do
   $stdout.puts("Deleting from ApacheDBAliases...")
-  OpenShift::ApacheDBAliases.open(OpenShift::ApacheDBAliases::WRCREAT) do |d| 
+  OpenShift::Runtime::ApacheDBAliases.open(OpenShift::Runtime::ApacheDBAliases::WRCREAT) do |d|
     d.delete_if { |k, v| fqdns.include?(v) }
   end
 end
 
 with_track_errors do
   $stdout.puts("Deleting from ApacheDBIdler...")
-  OpenShift::ApacheDBIdler.open(OpenShift::ApacheDBIdler::WRCREAT) do |d|
+  OpenShift::Runtime::ApacheDBIdler.open(OpenShift::Runtime::ApacheDBIdler::WRCREAT) do |d|
     d.delete_if { |k, v| fqdns.include?(k) }
   end
 end
 
 with_track_errors do
   $stdout.puts("Deleting from ApacheDBSTS...")
-  OpenShift::ApacheDBSTS.open(OpenShift::ApacheDBSTS::WRCREAT) do |d|
+  OpenShift::Runtime::ApacheDBSTS.open(OpenShift::Runtime::ApacheDBSTS::WRCREAT) do |d|
     d.delete_if { |k, v| fqdns.include?(k) }
   end
 end
 
 with_track_errors do
   $stdout.puts("Deleting from NodeJSDBRoutes...")
-  OpenShift::NodeJSDBRoutes.open(OpenShift::NodeJSDBRoutes::WRCREAT) do |d|
+  OpenShift::Runtime::NodeJSDBRoutes.open(OpenShift::Runtime::NodeJSDBRoutes::WRCREAT) do |d|
     d.delete_if { |k, v| fqdns.include?(k) }
     d.delete_if { |k, v| fqdns.include?(v["alias"]) }
   end
@@ -86,7 +86,7 @@ end
 
 with_track_errors do
   $stdout.puts("Deleting from GearDB...")
-  OpenShift::GearDB.open(OpenShift::GearDB::WRCREAT) do |d|
+  OpenShift::Runtime::GearDB.open(OpenShift::GearDB::WRCREAT) do |d|
     d.delete_if { |k, v| fqdns.include?(v["fqdn"]) }
   end
 end
