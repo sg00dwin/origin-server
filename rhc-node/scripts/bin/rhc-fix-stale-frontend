@@ -24,7 +24,7 @@ if fqdns.empty?
    exit(0)
 end
 
-OpenShift::Runtime::GearDB.open(OpenShift::GearDB::WRCREAT) do |d|
+OpenShift::Runtime::GearDB.open(OpenShift::Runtime::GearDB::WRCREAT) do |d|
   fqdns.map! do |fqdn|
     begin
       d[fqdn]["fqdn"]
@@ -86,7 +86,7 @@ end
 
 with_track_errors do
   $stdout.puts("Deleting from GearDB...")
-  OpenShift::Runtime::GearDB.open(OpenShift::GearDB::WRCREAT) do |d|
+  OpenShift::Runtime::GearDB.open(OpenShift::Runtime::GearDB::WRCREAT) do |d|
     d.delete_if { |k, v| fqdns.include?(v["fqdn"]) }
   end
 end
