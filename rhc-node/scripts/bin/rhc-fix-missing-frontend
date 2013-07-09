@@ -43,7 +43,7 @@ uuids.each do |uuid|
   with_track_errors do
     $stdout.puts("Fixing gear: #{uuid} ...")
 
-    gear = OpenShift::ApplicationContainer.from_uuid(uuid)
+    gear = OpenShift::Runtime::ApplicationContainer.from_uuid(uuid)
 
     frontend = OpenShift::Runtime::FrontendHttpServer.new(gear)
     frontend.create
