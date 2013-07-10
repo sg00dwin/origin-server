@@ -1,0 +1,55 @@
+#!/usr/bin/env oo-ruby
+require 'rubygems'
+$:.unshift('/var/www/openshift/broker')
+require 'config/environment'
+
+#####################
+# Fixer script for Bug# 979182 : This will fix max file limit for all gears with additional storage.
+#####################
+
+verbose = false
+verbose = true if ARGV.include? "--verbose"
+total_count = failure_count = 0
+
+db = OpenShift::DataStore.db(:primary)
+app_collection = db.collection('applications')
+query = { "group_overrides.additional_filesystem_gb" => { "$ne" => nil } }
+selection = {:fields => [], :timeout => false}
+
+app_collection.find(query, selection) do |cursor|
+  cursor.each do |app|
+    begin
+      total_count += 1
+      print "Migrating app #{app['_id']}... " if verbose
+      app_obj = Application.find_by(_id: Moped::BSON::ObjectId(app['_id'].to_s))
+      Application.run_in_application_lock(app_obj) do 
+        app_obj.reload
+        app_obj.group_instances.each do |gi|
+          addtl_fs_gb = gi.addtl_fs_gb
+          next if addtl_fs_gb == 0
+          handle = RemoteJob.create_parallel_job
+          gi.gears.each do |gear|
+            gear.set_addtl_fs_gb(addtl_fs_gb, handle)
+          end
+          RemoteJob.execute_parallel_jobs(handle)
+          RemoteJob.get_parallel_run_results(handle) do |tag, gear_id, output, status|
+            raise Exception.new "Failed to fix max file limit for gear #{gear_id}" if status != 0
+          end
+        end
+      end
+      puts "Done" if verbose
+    rescue Exception=>e
+      failure_count += 1
+      puts "Exception (#{e.message}) while migrating app_id #{app['_id']}"
+      puts e.backtrace.inspect
+    end
+  end
+end
+
+print "Summary:: "
+if failure_count == 0
+  print "SUCCESS"
+else
+  print "FAILED"
+end
+puts " (total: #{total_count}, failed: #{failure_count})"
