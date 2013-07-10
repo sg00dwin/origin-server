@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.11.5
+Version: 1.11.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -153,6 +153,11 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Wed Jul 10 2013 Adam Miller <admiller@redhat.com> 1.11.6-1
+- Merge pull request #1715 from kraman/bugfix
+  (dmcphers+openshiftbot@redhat.com)
+- Fix DNS zone used in broker extended tests (kraman@gmail.com)
+
 * Tue Jul 09 2013 Adam Miller <admiller@redhat.com> 1.11.5-1
 - Fixing incorrect rpm spec requirement in rhc-broker (kraman@gmail.com)
 
