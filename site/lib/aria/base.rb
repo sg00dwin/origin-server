@@ -73,8 +73,8 @@ module Aria
     def self.from_account_details(details)
       new(from_acct_details(details).tap{ |h| rename_to_load(h) }, persisted?(details))
     end
-    def to_aria_attributes(action='save')
-      @attributes.inject({}) do |h,(k,v)|
+    def to_aria_attributes(action='save', attributes=@attributes)
+      attributes.inject({}) do |h,(k,v)|
         if self.class.supplemental?(k)
           (h[:supplemental] ||= {})[k] = v
         elsif self.class.no_prefix.include?(k)

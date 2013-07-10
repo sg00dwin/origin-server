@@ -38,6 +38,7 @@ module Aria
     :get_acct_invoice_history,
     :get_acct_trans_history,
     :get_acct_statement_history,
+    :get_acct_tax_exempt_status,
     :get_payments_on_invoice,
     :get_statement_for_invoice,
     :get_invoice_details,

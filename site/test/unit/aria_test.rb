@@ -311,6 +311,51 @@ class AriaUnitTest < ActiveSupport::TestCase
     assert user.errors.empty?
   end
 
+  {
+    :create => {
+      nil           => {},
+      ""            => {'taxpayer_id' => '',           'tax_exemption_level' => Rails.configuration.tax_level_non_exempt},
+      " "           => {'taxpayer_id' => ' ',          'tax_exemption_level' => Rails.configuration.tax_level_non_exempt},
+      "IE6388047V"  => {'taxpayer_id' => 'IE6388047V', 'tax_exemption_level' => Rails.configuration.tax_level_fully_exempt}
+    },
+    :update => {
+      nil           => {},
+      ""            => {'taxpayer_id' => ' ',          'tax_exemption_level' => Rails.configuration.tax_level_non_exempt},
+      " "           => {'taxpayer_id' => ' ',          'tax_exemption_level' => Rails.configuration.tax_level_non_exempt},
+      "IE6388047V"  => {'taxpayer_id' => 'IE6388047V', 'tax_exemption_level' => Rails.configuration.tax_level_fully_exempt}
+    }
+  }.each_pair do |operation, expectations|
+    expectations.each_pair do |taxpayer_id, expected_params|
+      test "should set tax_exemption_level on #{operation} for taxpayer_id of #{taxpayer_id.inspect}" do
+        user = TestUser.new
+        user.expects(:acct_no).returns('1').at_least_once
+
+        Valvat.any_instance.expects(:exists?).returns(true) if (taxpayer_id || "").strip.present?
+
+        billing_info = Aria::BillingInfo.test
+        billing_info.vies_country = 'IE'
+        billing_info.taxpayer_id = taxpayer_id unless taxpayer_id.nil?
+
+        matcher = lambda do |*args|
+          params = args.last
+          actual_params = params.slice(*expected_params.keys)
+          assert_equal expected_params, actual_params
+        end
+
+        case operation
+        when :create
+          user.expects(:random_password).returns('passw0rd').at_least_once
+          user.expects(:login).returns('foo').at_least_once
+          Aria::Client.any_instance.expects(:create_acct_complete).with(&matcher)
+          assert user.create_account( :billing_info => billing_info )
+        when :update
+          Aria::Client.any_instance.expects(:update_acct_complete).with(&matcher)
+          assert user.update_account( :billing_info => billing_info )
+        end
+      end
+    end
+  end
+
   test 'should enable creation of ContactInfo from FullUser' do
     full_user = Streamline::FullUser.test
     assert contact_info = Aria::ContactInfo.from_full_user(full_user)
@@ -471,6 +516,50 @@ class AriaUnitTest < ActiveSupport::TestCase
     assert !user.update_account(:billing_info => billing_info)
     assert user.errors.empty?
     assert !billing_info.errors.empty?
+  end
+
+  test 'validates VAT number' do
+    user = TestUser.new
+    billing_info = Aria::BillingInfo.test
+
+    # taxpayer_id should be ignored unless we are in a VIES-validateable country
+    billing_info.taxpayer_id = "ABC"
+    billing_info.vies_country = nil
+    assert billing_info.valid?
+    assert_equal nil, billing_info.to_aria_attributes['taxpayer_id']
+
+    # should not make network calls if the country is invalid
+    billing_info.taxpayer_id = "DE345789003"
+    billing_info.vies_country = "IE"
+    assert !billing_info.valid?
+    assert billing_info.errors[:taxpayer_id].first =~ /not a valid IE VAT number/
+
+    # should not make network calls if the format is invalid
+    billing_info.taxpayer_id = "IE123"
+    billing_info.vies_country = "IE"
+    assert !billing_info.valid?
+    assert billing_info.errors[:taxpayer_id].first =~ /not a valid IE VAT number/
+
+    # remote validation failure
+    Valvat.any_instance.expects(:exists?).returns(false)
+    billing_info.taxpayer_id = "IE6388047X"
+    billing_info.vies_country = "IE"
+    assert !billing_info.valid?
+    assert billing_info.errors[:taxpayer_id].first =~ /not a valid IE VAT number/
+
+    # remote validation lookup unavailable
+    Valvat.any_instance.expects(:exists?).returns(nil)
+    billing_info.taxpayer_id = "IE6388047X"
+    billing_info.vies_country = "IE"
+    assert !billing_info.valid?
+    assert billing_info.errors[:taxpayer_id].first =~ /unavailable/
+
+    # remote validation success
+    Valvat.any_instance.expects(:exists?).returns(true)
+    billing_info.taxpayer_id = "IE6388047X"
+    billing_info.vies_country = "IE"
+    assert billing_info.valid?
+    assert billing_info.errors.empty?
   end
 
   test 'payment_method is only persisted when account_details pay_method is 1' do

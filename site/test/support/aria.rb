@@ -2,8 +2,8 @@ class ActiveSupport::TestCase
   def with_account_holder
     @@account_holder ||= begin
       Aria::UserContext.new(WebUser.new({
-        :email_address=> "openshift_test_account_perm_2",
-        :rhlogin=>       "openshift_test_account_perm_2",
+        :email_address=> "openshift_test_account_perm_3",
+        :rhlogin=>       "openshift_test_account_perm_3",
         :ticket => '1'
       })).tap do |u|
         begin
@@ -32,14 +32,14 @@ class ActiveSupport::TestCase
     User.find(:one, :as => u).tap{ |a| a.plan_id = :silver; assert a.save }
   end
 
-  def create_usage_record(user, usage_type, usage_amount, bulk=false)
+  def create_usage_record(user, usage_type, usage_amount, bulk=false, date=Aria::DateTime.today)
     id = new_uuid
     if bulk
-      Aria.bulk_record_usage(:acct_no => user.acct_no, :usage_type => usage_type, :usage_units => usage_amount, :client_record_id => id)
+      Aria.bulk_record_usage(:acct_no => user.acct_no, :usage_type => usage_type, :usage_units => usage_amount, :client_record_id => id, :usage_date => "#{date} 12:00:00")
     else
-      Aria.record_usage(user.acct_no, usage_type, usage_amount, {:client_record_id => id})
+      Aria.record_usage(user.acct_no, usage_type, usage_amount, {:client_record_id => id, :usage_date => "#{date} 12:00:00"})
     end
-    assert records = Aria.get_usage_history(user.acct_no, :date_range_start => Aria::DateTime.today, :date_range_end => Aria::DateTime.today, :specified_usage_type_no => usage_type)
+    assert records = Aria.get_usage_history(user.acct_no, :date_range_start => date, :date_range_end => date, :specified_usage_type_no => usage_type)
     assert record = records.find {|r| r.client_record_id == id }
     record
   end

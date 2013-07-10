@@ -1,5 +1,23 @@
 module Aria
   class BillingInfo < Base
+
+    class VatNumberValidator < ::ActiveModel::EachValidator
+      def validate_each(record, attribute, value)
+        vat = Valvat(value)
+        iso_country_code = vat.iso_country_code || "EU"
+        is_valid = true
+
+        if options[:match_country]
+          iso_country_code = (record.send(options[:match_country]) || "").upcase
+          is_valid = iso_country_code == vat.iso_country_code
+        end
+
+        is_valid = is_valid && vat.valid? && vat.exists?
+        record.errors.add(attribute, "VAT number validation is currently unavailable") if is_valid == nil
+        record.errors.add(attribute, "#{value} is not a valid #{iso_country_code} VAT number") if is_valid == false
+      end
+    end
+
     attr_aria :address1,
               :address2,
               :address3,
@@ -10,7 +28,8 @@ module Aria
               :first_name,
               :middle_initial,
               :last_name,
-              :email
+              :email,
+              :taxpayer_id
     # Rails 3.0 requires all define_attribute_method calls to be together
 
     # Aria makes us explicitly unset values on update
@@ -48,6 +67,8 @@ module Aria
 
     validates_inclusion_of :country, :in => Rails.configuration.allowed_countries.map(&:to_s), :message => "Unsupported country %{value}"
 
+    validates :taxpayer_id, :vat_number => {:match_country => :vies_country}, :if => :vies_country, :allow_blank => true
+
     account_prefix :from => 'billing_',
                    :to => 'bill_',
                    :rename_to_save => {
@@ -58,16 +79,24 @@ module Aria
                    :rename_to_update => {
                      'bill_zip' => 'bill_postal_cd',
                    },
-                   :no_prefix => []
+                   :no_prefix => ['taxpayer_id']
 
     #def tax_exempt?
     #  tax_exempt.present? and tax_exempt.to_i > 0
     #end
 
+    def to_aria_attributes(action='save', attributes=@attributes)
+      # Only allow saving taxpayer_id through the UI if we can validate it
+      if vies_country.blank? and attributes.key?('taxpayer_id')
+        attributes = attributes.dup
+        attributes.delete('taxpayer_id')
+      end
+      super(action, attributes)
+    end
+
     class << self
       def rename_to_save(hash)
         super(hash)
-
         (region_set_key, region_clear_key) = @@region_save_map[hash['bill_country']]
         hash[region_set_key] = hash.delete('bill_region')
       end
@@ -81,6 +110,10 @@ module Aria
 
         # Explicitly nil empty string fields within Aria
         @@nullable.each {|n| hash[n.to_s] = "~" if hash[n.to_s] == "" }
+
+        # Special case for blanking taxpayer_id
+        # Add to @@nullable once Aria ticket 15013-40073 is fixed
+        hash['taxpayer_id'] = " " if hash['taxpayer_id'] == ""
       end
 
       def rename_to_load(hash)
@@ -118,6 +151,13 @@ module Aria
 
     def to_key
       []
+    end
+
+    def vies_country= (vies_country)
+      @vies_country = vies_country
+    end
+    def vies_country
+      @vies_country
     end
 
     protected

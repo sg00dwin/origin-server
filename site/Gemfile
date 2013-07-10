@@ -16,6 +16,8 @@ gem 'dalli'
 
 gem 'countries'
 
+gem 'valvat'
+
 gem 'pry' if ENV['PRY']
 
 # Do not include these gems while testing or compiling assets
