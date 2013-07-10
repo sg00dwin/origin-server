@@ -1,0 +1,124 @@
+#!/usr/bin/env oo-ruby
+require 'rubygems'
+$:.unshift('/var/www/openshift/broker')
+require 'config/environment'
+
+#####################
+# This migrate script will migrate all env vars and ssh keys in all apps and domains 
+#####################
+
+$rhdomain = Rails.configuration.openshift[:domain_suffix]
+
+if ARGV.include? "--verbose"
+  $verbose = true
+else
+  $verbose = false
+end
+
+def mongo_connect
+  $db = OpenShift::DataStore.db(:primary)
+end
+
+def get_domain(domain_id)
+  ret_d = nil
+  $dom.find({ "_id" => domain_id }, { :fields => ["namespace", "env_vars"] }) do |cursor|
+    cursor.each do |d|
+      ret_d = d
+      break
+    end
+  end
+  ret_d
+end
+
+def fix_domain(d, domain_id, new_env_vars)
+  env_attrs = d["env_vars"].dup
+  return if env_attrs.find { |env| env["key"]=="JENKINS_URL" }
+  env_attrs << new_env_vars
+  env_attrs.flatten!
+  env_attrs.uniq!
+  $dom.update( {"_id" => domain_id}, { "$set" => { env_vars: env_attrs }})
+end
+
+def migrate_apps
+  $coll = $db.collection('applications')
+  $dom = $db.collection('domains')
+  query = { "component_instances.cartridge_name" => "jenkins-1.4" }
+  selection = {:fields => ["component_instances.cartridge_name",
+                         "component_instances.component_properties",
+                         "component_instances._id",
+                         "name",
+                         "domain_id"], :timeout => false}
+
+  total = 0
+  fixed_total = 0
+  $coll.find(query, selection) do |cursor|
+    cursor.each do |app|
+      print "Migrating app #{app.inspect}.. " if $verbose
+      begin
+        print "."
+        component_id = nil
+        d = get_domain(app["domain_id"])
+        if d.nil?
+          puts "Domain not found for app #{app['_id']}!"
+          next
+        end
+        comp_count=-1
+        app["component_instances"].each do |comp|
+          comp_count += 1
+          if comp["cartridge_name"]=="jenkins-1.4"
+            component_id = comp["_id"]
+            if component_id.nil?
+              puts "ERROR : jenkins cartridge not found in app #{app['_id'].to_s}"
+              next
+            end
+            if comp["component_properties"].is_a?(Hash) and comp["component_properties"].has_key?("username") and comp["component_properties"].has_key?("password")
+              # do nothing, this portion was fixed already in migrate-2.0.29
+            else
+              jenk_app = Application.find_by({"_id" => app["_id"].to_s})
+              gear = nil
+              jenk_app.group_instances.each { |gi|
+                gi.gears.each { |g|
+                  if g.uuid==jenk_app.uuid
+                    gear = g
+                    break
+                  end
+                }
+              }
+              if gear
+                env_hash = gear.get_proxy.get_gear_envs(gear.uuid)
+                if env_hash.has_key?("JENKINS_USERNAME") and env_hash.has_key?("JENKINS_PASSWORD")
+                  env_vars = []
+                  env_vars << { "key" => "JENKINS_USERNAME", "value" => env_hash["JENKINS_USERNAME"], "component_id" => component_id }
+                  env_vars << { "key" => "JENKINS_PASSWORD", "value" => env_hash["JENKINS_PASSWORD"], "component_id" => component_id }
+                  url = "https://#{app['name']}-#{d['namespace']}.#{$rhdomain}/"
+                  env_vars << { "key" => "JENKINS_URL", "value" => url, "component_id" => component_id }
+                  fix_domain(d, app["domain_id"], env_vars)
+                  app_update = { "$set" => { "component_instances.#{comp_count}.component_properties" => { "username" => env_hash["JENKINS_USERNAME"],
+                                                                                                            "password" => env_hash["JENKINS_PASSWORD"] } } }
+                  $coll.update({"_id"=>app["_id"], "component_instances.#{comp_count}._id" => component_id}, app_update)
+                  fixed_total += 1
+                else
+                  puts "The gear for app #{app['_id']} does not have JENKINS env variables"
+                end
+              else
+                puts "Could not find gear for app #{app['_id'].to_s}"
+              end
+            end
+          end
+        end
+        total +=1
+      rescue Exception=>e
+        puts
+        puts "Exception (#{e.message}) while migrating app #{app.inspect}"
+        print e.backtrace
+      end
+    end
+  end
+  puts
+  puts "Mongo migrated #{fixed_total}/#{total} domains with jenkins applications"
+end
+
+puts "Starting migration"
+mongo_connect
+migrate_apps
+puts "Done!"
