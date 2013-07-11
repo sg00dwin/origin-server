@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.11.2
+Version: 1.11.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -24,6 +24,7 @@ Requires:       %{?scl:%scl_prefix}rubygem-passenger-native-libs
 Requires:       rubygem(openshift-origin-console)
 Requires:       %{?scl:%scl_prefix}rubygem(recaptcha)
 Requires:       %{?scl:%scl_prefix}rubygem(wddx)
+Requires:       %{?scl:%scl_prefix}rubygem(valvat)
 Requires:       %{?scl:%scl_prefix}rubygem(sinatra)
 Requires:       %{?scl:%scl_prefix}rubygem(sqlite3)
 Requires:       %{?scl:%scl_prefix}rubygem(httparty)
@@ -75,6 +76,7 @@ BuildRequires:  %{?scl:%scl_prefix}rubygem(haml)
 BuildRequires:  rubygem(openshift-origin-console)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(recaptcha)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(wddx)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(valvat)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(sinatra)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(sqlite3)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(httparty)
@@ -196,6 +198,31 @@ fi
 %{sitedir}/public
 
 %changelog
+* Wed Jul 10 2013 Adam Miller <admiller@redhat.com> 1.11.4-1
+- Merge pull request #1720 from liggitt/bug_980953_adwords_script
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 980953 - Refactor google conversion into single location
+  (jliggitt@redhat.com)
+- Update spec file (jliggitt@redhat.com)
+- Add valvat gem, list of aria countries (jliggitt@redhat.com)
+- Merge pull request #1717 from sg00dwin/708dev
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1713 from jwforres/partner_portal_phase_2
+  (dmcphers+openshiftbot@redhat.com)
+- Fix for Bug 976705 giving specific height and width along with max-height to
+  svg and parent container (sgoodwin@redhat.com)
+- Fixes to the partner portal (jforrest@redhat.com)
+- Hide unrated usage until it is assigned a rate (jliggitt@redhat.com)
+
+* Mon Jul 08 2013 Adam Miller <admiller@redhat.com> 1.11.3-1
+- Added callback to demandbase json call, added URI encoding
+  (spurtell@redhat.com)
+- Tracking timeout reduction, setTimeout functions instead of string concat
+  (spurtell@redhat.com)
+- javascript image src reformatting (spurtell@redhat.com)
+- Added Demandbase code, updated enterprise/origin outbound link tracking
+  (spurtell@redhat.com)
+
 * Tue Jul 02 2013 Adam Miller <admiller@redhat.com> 1.11.2-1
 - Merge pull request #1689 from sg00dwin/701dev
   (dmcphers+openshiftbot@redhat.com)

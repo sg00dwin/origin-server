@@ -10,7 +10,7 @@ require 'openshift-origin-common'
 
 gears = {}
 
-OpenShift::ApplicationContainer.all.each do |gear|
+OpenShift::Runtime::ApplicationContainer.all.each do |gear|
   begin
     env = OpenShift::Runtime::Utils::Environ.for_gear(gear.user.homedir)
     fqdn = env['OPENSHIFT_GEAR_DNS'].downcase
@@ -23,7 +23,7 @@ OpenShift::ApplicationContainer.all.each do |gear|
 end
 
 begin
-  OpenShift::GearDB.open(OpenShift::GearDB::WRCREAT) do |d|
+  OpenShift::Runtime::GearDB.open(OpenShift::Runtime::GearDB::WRCREAT) do |d|
     gears.each do |uuid, dbent|
       d.store(uuid, dbent)
     end

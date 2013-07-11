@@ -5,7 +5,7 @@
 %global modname partner_program
 
 Name: drupal%{drupal_release}-openshift-%{modname}
-Version: 0.1.1
+Version: 0.1.2
 Release: 1%{?dist}
 Summary: OpenShift Partner Program Drupal Content
 Group: Applications/Publishing
@@ -41,6 +41,15 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Jul 10 2013 Adam Miller <admiller@redhat.com> 0.1.2-1
+- phase2 partner portal bug fix - bitbucket commit
+  1e3f30ae746632e61e69266012dc388227ac4eef (jforrest@redhat.com)
+- Fix admin user view to use the partner admin role id in PROD
+  (jforrest@redhat.com)
+- Fixes to the partner portal (jforrest@redhat.com)
+- Partner portal phase2 bitbucket commit
+  219d48b380922510669af33d95547638cef4e071 (jforrest@redhat.com)
+
 * Tue Jun 25 2013 Adam Miller <admiller@redhat.com> 0.1.1-1
 - bump_minor_versions for sprint 30 (admiller@redhat.com)
 

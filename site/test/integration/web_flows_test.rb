@@ -111,6 +111,41 @@ class WebFlowsTest < ActionDispatch::IntegrationTest
     assert has_css?('.icon-loading'), "Form submission did not trigger"
   end
 
+  test 'vat number dynamic display' do
+    with_logged_in_console_user
+
+    visit edit_account_plan_upgrade_path(:silver)
+
+    # On load, only US stuff is showing
+    assert has_css?('h5.tax_nonvat')
+    assert has_css?('p.tax_nonvat')
+    assert has_no_css?('h5.tax_vat')
+    assert has_no_css?('p.tax_vat')
+    assert has_no_css?('.tax_vat input')
+
+    # Simulate changing the value to Ireland
+    page.execute_script("$('select[autocomplete=country]').val('IE').trigger('change')")
+
+    # After changing to Ireland, VAT stuff is showing
+    assert has_css?('h5.tax_vat')
+    assert has_css?('p.tax_vat')
+    assert has_css?('.tax_vat input')
+    assert has_no_css?('h5.tax_nonvat')
+    assert has_no_css?('p.tax_nonvat')
+
+    find('.tax_vat input').set('IE')
+
+    # Submit empty form using DOM method to bypass Javascript validation
+    page.execute_script("$('form')[0].submit()")
+
+    # Reloading the form on an EU country keeps VAT stuff showing, with an error on the VAT input
+    assert has_css?('h5.tax_vat')
+    assert has_css?('p.tax_vat')
+    assert has_css?('.tax_vat.error input')
+    assert has_no_css?('h5.tax_nonvat')
+    assert has_no_css?('p.tax_nonvat')
+  end
+
   test 'help page displays' do
     with_logged_in_console_user
 

@@ -41,7 +41,7 @@ Broker::Application.configure do
   # OpenShift Configuration Below this point #
   ############################################
   config.dns = {
-    :zone => "rhcloud.com",
+    :zone => "dev.rhcloud.com",
     :dynect_customer_name => "redhat",
     :dynect_user_name => "dev-rhcloud-user",
     :dynect_password => "vo8zaijoN7Aecoo",

@@ -1,7 +1,7 @@
 $ = jQuery
 
 $ ->
-  $.fn.addressForm = ->
+  $.fn.addressForm = (opts) ->
     billing_selector_for = (name) ->
       billing_el('select',name)
 
@@ -73,6 +73,15 @@ $ ->
       region_label.find('ul li.state').html(subdivision)
       region_label.find('ul li.zip').html(postal_code)
       billing_input_for('zip').attr('placeholder',postal_code)
+
+      # Show/hide VAT row
+      if (opts.vatCountries)
+        if opts.vatCountries.indexOf(code) >= 0
+          $('.tax_nonvat').hide()
+          $('.tax_vat').show()
+        else
+          $('.tax_vat').hide().find('input').val('')
+          $('.tax_nonvat').show()
 
     # Update the form based on the current value
     country_select.trigger 'change', {first_run: true}

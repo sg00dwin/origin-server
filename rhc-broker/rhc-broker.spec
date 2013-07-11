@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.11.4
+Version: 1.11.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -24,7 +24,6 @@ Requires:  rubygem-passenger-native-libs
 Requires:  ruby193-rubygem-rails
 Requires:  ruby193-rubygem-xml-simple
 Requires:  rubygem-openshift-origin-controller
-Requires:  rubygem-openshift-origin-container-selinux
 Requires:  ruby193-rubygem-bson_ext
 Requires:  ruby193-rubygem-rest-client
 Requires:  rubygem-openshift-origin-auth-streamline
@@ -154,6 +153,14 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Wed Jul 10 2013 Adam Miller <admiller@redhat.com> 1.11.6-1
+- Merge pull request #1715 from kraman/bugfix
+  (dmcphers+openshiftbot@redhat.com)
+- Fix DNS zone used in broker extended tests (kraman@gmail.com)
+
+* Tue Jul 09 2013 Adam Miller <admiller@redhat.com> 1.11.5-1
+- Fixing incorrect rpm spec requirement in rhc-broker (kraman@gmail.com)
+
 * Fri Jul 05 2013 Adam Miller <admiller@redhat.com> 1.11.4-1
 - Bug 980708 - Add DEFAULT_GEAR_CAPABILITIES field to broker-dev.conf
   (rpenta@redhat.com)

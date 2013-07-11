@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/zend
 
 Name:    openshift-origin-cartridge-zend
-Version: 0.4.2
+Version: 0.4.3
 Release: 1%{?dist}
 Summary: Zend Server cartridge
 Group:   Development/Languages
@@ -66,6 +66,9 @@ sh %{cartridgedir}/versions/5.6/rpm/zend_configure_filesystem.sh
 
 
 %changelog
+* Wed Jul 10 2013 Adam Miller <admiller@redhat.com> 0.4.3-1
+- Bug 968252: Clean up old marker README files (ironcladlou@gmail.com)
+
 * Tue Jul 02 2013 Adam Miller <admiller@redhat.com> 0.4.2-1
 - Bug 976921: Move cart installation to %%posttrans (ironcladlou@gmail.com)
 - remove v2 folder from cart install (dmcphers@redhat.com)

@@ -42,6 +42,10 @@ module Aria
                    },
                    :no_prefix => []
 
+    def vies_country
+      return country if country.present? and Rails.configuration.vies_countries.include?(country.to_sym)
+    end
+
     class << self
       def rename_to_save(hash)
         super(hash)

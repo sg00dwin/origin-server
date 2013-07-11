@@ -6,10 +6,178 @@
  */
 
 /**
+ * Callback function for the partner apply page.
+ */
+function _openshift_partner_program_apply() {
+  drupal_set_title(t('Openshift Partner Program'));
+  $form['subtitle'] = array(
+    '#value' => '<h3>' . t('APPLY TO BE A PARTNER') . '</h3>',
+  );
+  $form['instructions'] = array(
+    '#value' => '<p>' . t('Welcome!  We are glad to see your interest in the Red Hat OpenShift Partner Program.  Joining the Partner Program takes just a few easy steps and you can begin by clicking Apply Now.') . '</p>',
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Apply Now'),
+  );
+  return $form;
+}
+
+/**
+ * Submit function for the partner apply page.
+ *
+ * @param mixed $form
+ *   The form.
+ *
+ * @param mixed $form_state
+ *   The form state.
+ */
+function _openshift_partner_program_apply_submit($form, &$form_state) {
+  global $user;
+  drupal_set_message(t('We have received your application and you will receive an email shortly with details on the next steps in the application process.  Instructions how to build a quickstart or cartridge and how to submit to become an OpenShift by Red Hat partner will be provided in your email.'));
+  drupal_set_message(t('Already have your quickstart or cartridge complete?  Submit it now !here.', array('!here' => l(t('here'), 'partner/apply/info'))));
+  drupal_set_message(t('Learn more about OpenShift at www.openshift.com'));
+
+  $params = array();
+  $params['customer'] = $user->name;
+  drupal_mail('openshift_partner_program', 'openshift_partner_program_apply_user', $user->mail, 0, $params);
+  drupal_mail('openshift_partner_program', 'openshift_partner_program_apply_staff', 'openshift-partners@redhat.com', 0, $params);
+
+  drupal_goto('user');
+}
+
+/**
+ * Callback function for the partner apply info page.
+ */
+function _openshift_partner_program_apply_info() {
+  drupal_set_title(t('Openshift Partner Program'));
+  $form['#attributes'] = array('enctype' => "multipart/form-data");
+  $form['subtitle'] = array(
+    '#value' => '<h2>' . t('Submit Integration') . '</h2>',
+  );
+  $form['instructions'] = array(
+    '#value' => '<h3>' . t('Welcome back!  Your application to become an OpenShift by Red Hat Partner is almost complete.  Please complete the following fields and submit your Quickstart or Cartridge here for approval.  Upon approval you will receive your Partner notification and access to the self-service partner portal where you can upload your logo.  Should we have any questions we will use your contact information below to reach out to you.') . '</h3>',
+  );
+  $form['name']['first'] = array(
+    '#type' => 'textfield',
+    '#title' => t('First Name'),
+    '#required' => TRUE,
+  );
+  $form['name']['last'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Last Name'),
+    '#required' => TRUE,
+  );
+  $form['name']['company'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Company'),
+    '#required' => TRUE,
+  );
+  $form['contact']['phone'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Phone'),
+    '#required' => TRUE,
+  );
+  $form['description'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Insert details here'),
+    '#required' => FALSE,
+  );
+  $form['file'] = array(
+    '#type' => 'file',
+    '#title' => t('Upload Documentation'),
+  );
+  $form['questions']['preamble'] = array(
+    '#value' => t('Please complete the following questions in preparation for the partner agreement') . '<br/>' .
+    t("With respect to any officer, director, agent or holder of five (5) percent or more of your firm's ownership interest:") . '<br/>',
+  );
+  $form['questions']['government'] = array(
+    '#type' => 'radios',
+    '#title' => t('Do they act in any government position or capacity (including political parties and international organizations)?'),
+    '#options' => array(
+      'yes' => t('Yes'),
+      'no' => t('No'),
+    ),
+  );
+  $form['questions']['crime'] = array(
+    '#type' => 'radios',
+    '#title' => t('Have they or your firm (including any affiliates) been charged with, investigated for, or convicted of an economic or other serious crime, including for alleged bribery or other corrupt activities within the past five (5) years?'),
+    '#options' => array(
+      'yes' => t('Yes'),
+      'no' => t('No'),
+    ),
+  );
+  $form['questions']['detailpreamble'] = array(
+    '#value' => '</p>' . t('If you answered "Yes" to questions (i) or (ii) above, please describe the underlying facts and circumstances in reasonable detail below:') . '</p>',
+  );
+  $form['questions']['details'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Insert details here'),
+    '#required' => FALSE,
+  );
+  $form['countries'] = array(
+    '#type' => 'select',
+    '#multiple' => TRUE,
+    '#options' => _openshift_partner_program_get_countries(),
+    '#title' => t('Please select all countries of operation'),
+    '#size' => 25,
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );
+  return $form;
+}
+
+/**
+ * Submit function for the partner apply info page.
+ *
+ * @param mixed $form
+ *   The form.
+ *
+ * @param mixed $form_state
+ *   The form state.
+ */
+function _openshift_partner_program_apply_info_submit($form, &$form_state) {
+  $filename = '';
+  if (count($_FILES)) {
+    $file = file_save_upload('file', array(), file_directory_path() . '/partner/cartridges', FILE_EXISTS_RENAME);
+    $filename = $file->destination;
+  }
+  $params['first'] = $form_state['values']['first'];
+  $params['last'] = $form_state['values']['last'];
+  $params['company'] = $form_state['values']['company'];
+  $params['phone'] = $form_state['values']['phone'];
+  $params['description'] = $form_state['values']['description'];
+  $params['file'] = $filename;
+  $params['government'] = $form_state['values']['government'];
+  $params['crime'] = $form_state['values']['crime'];
+  $params['details'] = $form_state['values']['details'];
+
+  $countries = $form_state['values']['countries'];
+  $bad_countries = array();
+  foreach ($countries as $key => $country) {
+    if (!is_numeric($key)) {
+      $bad_countries[$key] = $country;
+    }
+  }
+
+  $params['countries'] = implode(',', $bad_countries);
+
+  drupal_mail('openshift_partner_program', 'openshift_partner_program_apply_info', 'openshift-partners@redhat.com', 0, $params);
+
+  drupal_set_message(t('Thank you for submitting your Quickstart or Cartridge.  We will respond with your OpenShift by Red Hat Partner login or with questions within two business days.'));
+  drupal_set_message(t('Check out our upcoming events and webinars at www.openshift.com'));
+  drupal_goto('user');
+
+}
+
+/**
  * Callback function for the partner agreement page.
  */
 function _openshift_partner_program_tc() {
   drupal_set_title(t('Openshift Partner Program'));
+  $openshift_partner_program_agreement = '';
   require 'includes/openshift_partner_program_agreement.inc';
   drupal_add_css(drupal_get_path('module', 'openshift_partner_program') . '/css/openshift_partner_program.css', 'module', 'all', FALSE);
   $form['tc'] = array(
@@ -70,7 +238,7 @@ function _openshift_partner_program_tc_submit($form, &$form_state) {
   if ($params['customer_name'] == ' ') {
     $params['customer_name'] = $user->profile_display_name;
   }
-  if ($params['customer_name'] == ' ') {
+  if ($params['customer_name'] == ' ' || !$params['customer_name']) {
     $params['customer_name'] = $user->name;
   }
   watchdog('openshift_partner_program', '@user has accepted the partner agreement', array('@user' => $user->name), WATCHDOG_NOTICE);
@@ -328,7 +496,6 @@ function _openshift_partner_program_portal_request_assistance_submit($form, &$fo
  * Callback function for partner program company info upload.
  */
 function _openshift_partner_program_portal_company_info() {
-  global $user;
   $info = openshift_partner_program_partner_info();
   $company = ($info) ? $info['company'] : '';
   $company_description = ($info) ? $info['company_description'] : '';
@@ -402,6 +569,387 @@ function _openshift_partner_program_portal_company_info_submit($form, &$form_sta
   }
 
   drupal_goto('partner/portal');
+}
+
+/**
+ * Returns the possible countries of operation.
+ *
+ * @return mixed
+ *   The countries of operation.
+ */
+function _openshift_partner_program_get_countries() {
+  $result['Afghanistan'] = '';
+  $result['Albania'] = '';
+  $result['Algeria'] = '';
+  $result['Angola'] = '';
+  $result['Argentina'] = '';
+  $result['Armenia'] = '';
+  $result['Azerbaijan'] = '';
+  $result['Bangladesh'] = '';
+  $result['Belarus'] = '';
+  $result['Benin'] = '';
+  $result['Bolivia'] = '';
+  $result['Bosnia and Herzegovina'] = '';
+  $result['Brazil'] = '';
+  $result['Bulgaria'] = '';
+  $result['Burkina Faso'] = '';
+  $result['Burundi'] = '';
+  $result['Cambodia'] = '';
+  $result['Cameroon'] = '';
+  $result['Central African Republic'] = '';
+  $result['Chad'] = '';
+  $result['China'] = '';
+  $result['Colombia'] = '';
+  $result['Comoros'] = '';
+  $result['Congo Republic'] = '';
+  $result["Cote d'Ivoire"] = '';
+  $result['Croatia'] = '';
+  $result['Democratic Republic of the Congo'] = '';
+  $result['Djibouti'] = '';
+  $result['Dominican Republic'] = '';
+  $result['Ecuador'] = '';
+  $result['Egypt'] = '';
+  $result['El Salvador'] = '';
+  $result['Equatorial Guinea'] = '';
+  $result['Eritrea'] = '';
+  $result['Ethiopia'] = '';
+  $result['Gabon'] = '';
+  $result['Gambia'] = '';
+  $result['Ghana'] = '';
+  $result['Greece'] = '';
+  $result['Guatemala'] = '';
+  $result['Guinea'] = '';
+  $result['Guinea-Bissau'] = '';
+  $result['Guyana'] = '';
+  $result['Haiti'] = '';
+  $result['Honduras'] = '';
+  $result['India'] = '';
+  $result['Indonesia'] = '';
+  $result['Iran'] = '';
+  $result['Iraq'] = '';
+  $result['Italy'] = '';
+  $result['Jamaica'] = '';
+  $result['Kazakhstan'] = '';
+  $result['Kenya'] = '';
+  $result['Korea (North)'] = '';
+  $result['Kosovo'] = '';
+  $result['Kuwait'] = '';
+  $result['Kyrgyzstan'] = '';
+  $result['Laos'] = '';
+  $result['Lebanon'] = '';
+  $result['Lesotho'] = '';
+  $result['Liberia'] = '';
+  $result['Libya'] = '';
+  $result['Macedonia'] = '';
+  $result['Madagascar'] = '';
+  $result['Malawi'] = '';
+  $result['Mali'] = '';
+  $result['Mauritania'] = '';
+  $result['Mexico'] = '';
+  $result['Moldova'] = '';
+  $result['Mongolia'] = '';
+  $result['Montenegro'] = '';
+  $result['Morocco'] = '';
+  $result['Mozambique'] = '';
+  $result['Myanmar'] = '';
+  $result['Nepal'] = '';
+  $result['Nicaragua'] = '';
+  $result['Niger'] = '';
+  $result['Nigeria'] = '';
+  $result['Oman'] = '';
+  $result['Pakistan'] = '';
+  $result['Panama'] = '';
+  $result['Papua New Guinea'] = '';
+  $result['Paraguay'] = '';
+  $result['Peru'] = '';
+  $result['Philippines'] = '';
+  $result['Romania'] = '';
+  $result['Russia'] = '';
+  $result['Sao Tome and Principe'] = '';
+  $result['Saudi Arabia'] = '';
+  $result['Senegal'] = '';
+  $result['Serbia'] = '';
+  $result['Sierra Leone'] = '';
+  $result['Slovakia'] = '';
+  $result['Somalia'] = '';
+  $result['South Africa'] = '';
+  $result['Sri Lanka'] = '';
+  $result['Sudan'] = '';
+  $result['Suriname'] = '';
+  $result['Swaziland'] = '';
+  $result['Syria'] = '';
+  $result['Tajikistan'] = '';
+  $result['Tanzania'] = '';
+  $result['Thailand'] = '';
+  $result['Timor-Leste'] = '';
+  $result['Togo'] = '';
+  $result['Trinidad and Tobago'] = '';
+  $result['Tunisia'] = '';
+  $result['Turkmenistan'] = '';
+  $result['Uganda'] = '';
+  $result['Ukraine'] = '';
+  $result['Uzbekistan'] = '';
+  $result['Venezuela'] = '';
+  $result['Vietnam'] = '';
+  $result['Yemen'] = '';
+  $result['Zambia'] = '';
+  $result['Zimbabwe'] = '';
+
+  $countries = array();
+  foreach ($result as $key => $value) {
+    $countries[$key] = t($key);
+  }
+
+  $safe_countries['United States'] = '';
+  $safe_countries['Canada'] = '';
+  $safe_countries['Afghanistan'] = '';
+  $safe_countries['Aland Islands'] = '';
+  $safe_countries['Albania'] = '';
+  $safe_countries['Algeria'] = '';
+  $safe_countries['American Samoa'] = '';
+  $safe_countries['Andorra'] = '';
+  $safe_countries['Angola'] = '';
+  $safe_countries['Anguilla'] = '';
+  $safe_countries['Antarctica'] = '';
+  $safe_countries['Antigua/Barbuda'] = '';
+  $safe_countries['Argentina'] = '';
+  $safe_countries['Armenia'] = '';
+  $safe_countries['Aruba'] = '';
+  $safe_countries['Austria'] = '';
+  $safe_countries['Australia'] = '';
+  $safe_countries['Azerbaijan'] = '';
+  $safe_countries['Bahamas'] = '';
+  $safe_countries['Bahrain'] = '';
+  $safe_countries['Bangladesh'] = '';
+  $safe_countries['Barbados'] = '';
+  $safe_countries['Belarus'] = '';
+  $safe_countries['Belgium'] = '';
+  $safe_countries['Belize'] = '';
+  $safe_countries['Benin'] = '';
+  $safe_countries['Bermuda'] = '';
+  $safe_countries['Bhutan'] = '';
+  $safe_countries['Bolivia'] = '';
+  $safe_countries['Bosnia/Herzegovina'] = '';
+  $safe_countries['Botswana'] = '';
+  $safe_countries['Bouvet Island'] = '';
+  $safe_countries['Brazil'] = '';
+  $safe_countries['Brunei Darussalam'] = '';
+  $safe_countries['Bulgaria'] = '';
+  $safe_countries['Burkina Faso'] = '';
+  $safe_countries['Burundi'] = '';
+  $safe_countries['Cambodia'] = '';
+  $safe_countries['Cameroon'] = '';
+  $safe_countries['Cape Verde'] = '';
+  $safe_countries['Cayman Islands'] = '';
+  $safe_countries['Central African Republic'] = '';
+  $safe_countries['Chad'] = '';
+  $safe_countries['Chile'] = '';
+  $safe_countries['China'] = '';
+  $safe_countries['Christmas Island'] = '';
+  $safe_countries['Cocos (Keeling) Islands'] = '';
+  $safe_countries['Colombia'] = '';
+  $safe_countries['Comoros'] = '';
+  $safe_countries['Cook Islands'] = '';
+  $safe_countries['Costa Rica'] = '';
+  $safe_countries['Cote d\'Ivoire'] = '';
+  $safe_countries['Croatia'] = '';
+  $safe_countries['Cuba'] = '';
+  $safe_countries['Cyprus'] = '';
+  $safe_countries['Czech Republic'] = '';
+  $safe_countries['Denmark'] = '';
+  $safe_countries['Djibouti'] = '';
+  $safe_countries['Dominica'] = '';
+  $safe_countries['Dominican Republic'] = '';
+  $safe_countries['Ecuador'] = '';
+  $safe_countries['Egypt'] = '';
+  $safe_countries['El Salvador'] = '';
+  $safe_countries['Equatorial Guinea'] = '';
+  $safe_countries['Eritrea'] = '';
+  $safe_countries['Estonia'] = '';
+  $safe_countries['Ethiopia'] = '';
+  $safe_countries['Falkland Islands(Malvinas)'] = '';
+  $safe_countries['Faroe Islands'] = '';
+  $safe_countries['Fiji'] = '';
+  $safe_countries['Finland'] = '';
+  $safe_countries['France'] = '';
+  $safe_countries['French Guiana'] = '';
+  $safe_countries['French Polynesia'] = '';
+  $safe_countries['French Southern Territories'] = '';
+  $safe_countries['Gabon'] = '';
+  $safe_countries['Gambia'] = '';
+  $safe_countries['Georgia'] = '';
+  $safe_countries['Germany'] = '';
+  $safe_countries['Ghana'] = '';
+  $safe_countries['Gibraltar'] = '';
+  $safe_countries['Greece'] = '';
+  $safe_countries['Greenland'] = '';
+  $safe_countries['Grenada'] = '';
+  $safe_countries['Guadeloupe'] = '';
+  $safe_countries['Guam'] = '';
+  $safe_countries['Guatemala'] = '';
+  $safe_countries['Guernsey'] = '';
+  $safe_countries['Guinea'] = '';
+  $safe_countries['Guinea-Bissau'] = '';
+  $safe_countries['Guyana'] = '';
+  $safe_countries['Haiti'] = '';
+  $safe_countries['Heard Island/Mcdonald Islands'] = '';
+  $safe_countries['Honduras'] = '';
+  $safe_countries['Hong Kong'] = '';
+  $safe_countries['Hungary'] = '';
+  $safe_countries['Iceland'] = '';
+  $safe_countries['India'] = '';
+  $safe_countries['Indonesia'] = '';
+  $safe_countries['Iran'] = '';
+  $safe_countries['Iraq'] = '';
+  $safe_countries['Ireland'] = '';
+  $safe_countries['Isle Of Man'] = '';
+  $safe_countries['Israel'] = '';
+  $safe_countries['Italy'] = '';
+  $safe_countries['Jamaica'] = '';
+  $safe_countries['Japan'] = '';
+  $safe_countries['Jersey'] = '';
+  $safe_countries['Jordan'] = '';
+  $safe_countries['Kazakhstan'] = '';
+  $safe_countries['Kenya'] = '';
+  $safe_countries['Kiribati'] = '';
+  $safe_countries['Kuwait'] = '';
+  $safe_countries['Kyrgyzstan'] = '';
+  $safe_countries['Lao'] = '';
+  $safe_countries['Latvia'] = '';
+  $safe_countries['Lebanon'] = '';
+  $safe_countries['Lesotho'] = '';
+  $safe_countries['Liberia'] = '';
+  $safe_countries['Libyan Arab Jamahiriya'] = '';
+  $safe_countries['Liechtenstein'] = '';
+  $safe_countries['Lithuania'] = '';
+  $safe_countries['Luxembourg'] = '';
+  $safe_countries['Macao'] = '';
+  $safe_countries['Macedonia'] = '';
+  $safe_countries['Madagascar'] = '';
+  $safe_countries['Malawi'] = '';
+  $safe_countries['Malaysia'] = '';
+  $safe_countries['Maldives'] = '';
+  $safe_countries['Mali'] = '';
+  $safe_countries['Malta'] = '';
+  $safe_countries['Marshall Islands'] = '';
+  $safe_countries['Martinique'] = '';
+  $safe_countries['Mauritania'] = '';
+  $safe_countries['Mauritius'] = '';
+  $safe_countries['Mayotte'] = '';
+  $safe_countries['Mexico'] = '';
+  $safe_countries['Micronesia'] = '';
+  $safe_countries['Moldova'] = '';
+  $safe_countries['Monaco'] = '';
+  $safe_countries['Mongolia'] = '';
+  $safe_countries['Montenegro'] = '';
+  $safe_countries['Montserrat'] = '';
+  $safe_countries['Morocco'] = '';
+  $safe_countries['Mozambique'] = '';
+  $safe_countries['Myanmar'] = '';
+  $safe_countries['Namibia'] = '';
+  $safe_countries['Nauru'] = '';
+  $safe_countries['Nepal'] = '';
+  $safe_countries['Netherlands'] = '';
+  $safe_countries['Netherlands Antilles'] = '';
+  $safe_countries['New Caledonia'] = '';
+  $safe_countries['New Zealand'] = '';
+  $safe_countries['Nicaragua'] = '';
+  $safe_countries['Niger'] = '';
+  $safe_countries['Nigeria'] = '';
+  $safe_countries['Niue'] = '';
+  $safe_countries['Norfolk Island'] = '';
+  $safe_countries['North Korea'] = '';
+  $safe_countries['Northern Mariana Islands'] = '';
+  $safe_countries['Norway'] = '';
+  $safe_countries['Oman'] = '';
+  $safe_countries['Pakistan'] = '';
+  $safe_countries['Palau'] = '';
+  $safe_countries['Palestine'] = '';
+  $safe_countries['Panama'] = '';
+  $safe_countries['Papua New Guinea'] = '';
+  $safe_countries['Paraguay'] = '';
+  $safe_countries['Peru'] = '';
+  $safe_countries['Philippines'] = '';
+  $safe_countries['Pitcairn'] = '';
+  $safe_countries['Poland'] = '';
+  $safe_countries['Portugal'] = '';
+  $safe_countries['Puerto Rico'] = '';
+  $safe_countries['Qatar'] = '';
+  $safe_countries['Réunion'] = '';
+  $safe_countries['Romania'] = '';
+  $safe_countries['Russian Federation'] = '';
+  $safe_countries['Rwanda'] = '';
+  $safe_countries['St. Barthélemy'] = '';
+  $safe_countries['St. Helena'] = '';
+  $safe_countries['St. Kitts/Nevis'] = '';
+  $safe_countries['St. Lucia'] = '';
+  $safe_countries['St. Martin'] = '';
+  $safe_countries['St. Pierre/Miquelon'] = '';
+  $safe_countries['St. Vincent/The Grenadines'] = '';
+  $safe_countries['Samoa'] = '';
+  $safe_countries['San Marino'] = '';
+  $safe_countries['Sao Tome/Principe'] = '';
+  $safe_countries['Saudi Arabia'] = '';
+  $safe_countries['Senegal'] = '';
+  $safe_countries['Serbia'] = '';
+  $safe_countries['Seychelles'] = '';
+  $safe_countries['Sierra Leone'] = '';
+  $safe_countries['Singapore'] = '';
+  $safe_countries['Slovakia'] = '';
+  $safe_countries['Slovenia'] = '';
+  $safe_countries['Solomon Islands'] = '';
+  $safe_countries['Somalia'] = '';
+  $safe_countries['South Africa'] = '';
+  $safe_countries['South Georgia/Sandwich Islands'] = '';
+  $safe_countries['South Korea'] = '';
+  $safe_countries['Spain'] = '';
+  $safe_countries['Sri Lanka'] = '';
+  $safe_countries['Sudan'] = '';
+  $safe_countries['Suriname'] = '';
+  $safe_countries['Svalbard/Jan Mayen'] = '';
+  $safe_countries['Swaziland'] = '';
+  $safe_countries['Sweden'] = '';
+  $safe_countries['Switzerland'] = '';
+  $safe_countries['Syrian Arab Republic'] = '';
+  $safe_countries['Taiwan'] = '';
+  $safe_countries['Tajikistan'] = '';
+  $safe_countries['Tanzania'] = '';
+  $safe_countries['Thailand'] = '';
+  $safe_countries['Timor-Leste'] = '';
+  $safe_countries['Togo'] = '';
+  $safe_countries['Tokelau'] = '';
+  $safe_countries['Tonga'] = '';
+  $safe_countries['Tunisia'] = '';
+  $safe_countries['Turkey'] = '';
+  $safe_countries['Turkmenistan'] = '';
+  $safe_countries['Turks/Caicos Islands'] = '';
+  $safe_countries['Tuvalu'] = '';
+  $safe_countries['Uganda'] = '';
+  $safe_countries['Ukraine'] = '';
+  $safe_countries['United Arab Emirates'] = '';
+  $safe_countries['United Kingdom'] = '';
+  $safe_countries['United States Minor Islands'] = '';
+  $safe_countries['Uruguay'] = '';
+  $safe_countries['Uzbekistan'] = '';
+  $safe_countries['Vanuatu'] = '';
+  $safe_countries['Vatican City State'] = '';
+  $safe_countries['Venezuela'] = '';
+  $safe_countries['Viet Nam'] = '';
+  $safe_countries['Virgin Islands, British'] = '';
+  $safe_countries['Virgin Islands, U.S.'] = '';
+  $safe_countries['Wallis/Futuna'] = '';
+  $safe_countries['Western Sahara'] = '';
+  $safe_countries['Yemen'] = '';
+  $safe_countries['Zambia'] = '';
+  $safe_countries['Zimbabwe'] = '';
+
+  foreach ($safe_countries as $key => $value) {
+    if (!in_array($key, $countries)) {
+      $countries[] = $key;
+    }
+  }
+  asort($countries);
+  return $countries;
 }
 
 /**

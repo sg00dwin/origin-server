@@ -108,6 +108,8 @@ module Account
         @evar8 = params[:promo_code]
       end
 
+      @google_conversion_label = "3qfsCMjw0gIQqKqa4AM"
+
       render :create
     end
 

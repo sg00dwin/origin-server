@@ -5,7 +5,7 @@ require 'openshift-origin-node'
 require 'openshift-origin-common'
 
 module OpenShiftMigration
-  module FrontendHttpServerMigration
+  module DEPRECATED_FrontendHttpServerMigration
 
     def self.migrate(container_uuid, container_name, namespace)
       output = ""
@@ -27,7 +27,7 @@ module OpenShiftMigration
         begin
 
           # Create the front-end
-          frontend = OpenShift::FrontendHttpServer.new(container_uuid, container_name, namespace)
+          frontend = ::OpenShift::Runtime::FrontendHttpServer.new(OpenShift::Runtime::ApplicationContainer.from_uuid(container_uuid))
           frontend.create
 
           # Idle
@@ -64,7 +64,7 @@ module OpenShiftMigration
             server_alias = fn.sub(/^.*\/server_alias-(.*)\.conf$/, '\\1')
             begin
               frontend.add_alias(server_alias)
-            rescue OpenShift::FrontendHttpServerNameException
+            rescue OpenShift::Runtime::FrontendHttpServerNameException
               output << "WARNING: Alias was invalid and cannot be added: #{server_alias} #{container_uuid}"
             end
           end

@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.11.4
+Version: 1.11.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -245,6 +245,21 @@ fi
 
 
 %changelog
+* Wed Jul 10 2013 Adam Miller <admiller@redhat.com> 1.11.7-1
+- Merge pull request #1716 from rmillner/refixes
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 981114 - additional name fixes. (rmillner@redhat.com)
+
+* Tue Jul 09 2013 Adam Miller <admiller@redhat.com> 1.11.6-1
+- Misc bugs Bug 981114 - Move to Runtime module missed these classes. Bug
+  982403 - catch up to newer calling convention for FrontendHttpServer
+  (kraman@gmail.com)
+- Missed Runtime package fixes (kraman@gmail.com)
+
+* Mon Jul 08 2013 Adam Miller <admiller@redhat.com> 1.11.5-1
+- Revamp the cgroups and pam scripts to leverage the system setup for better
+  performance and simplify the code. (rmillner@redhat.com)
+
 * Fri Jul 05 2013 Adam Miller <admiller@redhat.com> 1.11.4-1
 - rhc-node needs to depend on rubygem-openshift-origin-container-selinux
   (admiller@redhat.com)

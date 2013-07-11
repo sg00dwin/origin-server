@@ -96,12 +96,12 @@ module Aria
     end
 
     def tax_exempt
-      # replace with call to get_tax_acct_status
-      #@tax_exempt ||= (Aria.get_supp_field_value(acct_no, :tax_exempt) || 0).to_i
+      @tax_exempt ||= (Aria.cached.get_acct_tax_exempt_status(acct_no).exemption_level || Rails.configuration.tax_level_non_exempt).to_i
+    rescue AccountDoesNotExist
+      Rails.configuration.tax_level_non_exempt.to_i
     end
     def tax_exempt?
-      # tax_exempt > 0
-      false
+      tax_exempt == Rails.configuration.tax_level_fully_exempt.to_i
     end
 
     def test_user?
@@ -165,7 +165,7 @@ module Aria
           else
             current_start = aria_datetime(current_period_start_date)
             current_end   = aria_datetime(current_period_end_date)
-            
+
             usage_bill_from = current_start
             usage_bill_thru = current_end
 
@@ -323,6 +323,9 @@ module Aria
       # user has a pre-existing RHN account, then fall back to the billing country
       params['functional_acct_groups'] = params['seq_func_group_no'] = Aria::User.functional_acct_group_no(params['country'],params['bill_country'])
 
+      # Set tax exemption level
+      params['tax_exemption_level'] = Aria::User.tax_exemption_level(params['taxpayer_id']) unless params['taxpayer_id'].nil?
+
       begin
         Aria.create_acct_complete(params)
         true
@@ -348,6 +351,9 @@ module Aria
         validates &= v.valid? if v.respond_to? :valid?
       end
       return false unless validates
+
+      # Set tax exemption level
+      params['tax_exemption_level'] = Aria::User.tax_exemption_level(params['taxpayer_id']) unless params['taxpayer_id'].nil?
 
       Aria.update_acct_complete(acct_no, params)
       clear_cache!
@@ -421,6 +427,14 @@ module Aria
       def self.functional_acct_group_no(country, bill_country)
         country_code = country.blank? ? bill_country : country
         Rails.configuration.functional_group_no_by_country[country_code]
+      end
+
+      def self.tax_exemption_level(taxpayer_id)
+        if (taxpayer_id || "").strip.present?
+          Rails.configuration.tax_level_fully_exempt
+        else
+          Rails.configuration.tax_level_non_exempt
+        end
       end
 
       def aria_datetime(s)
