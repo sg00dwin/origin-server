@@ -24,7 +24,7 @@ $do = og_comment_perms_do();
   <?php endif; ?>
     
   <?php if ($links): ?>
-    <p class="links clearfix"><?php print $links; ?></p>
+    <p class="links clearfix"><?php print $links; ?><?php if(!$logged_in){ ?> or vote<?php }?></p>
   <?php endif; ?>
 
   <?php print openshift_social_sharing($node_url); ?>      
