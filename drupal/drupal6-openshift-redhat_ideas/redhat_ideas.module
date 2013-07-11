@@ -15,7 +15,7 @@ function redhat_ideas_menu() {
 
 function redhat_ideas_page() {
   global $base_url;
-  if (user_is_logged_in()) {
+  if (user_is_logged_in()) { 
       $content .= '<p>Vote on features or <a href="/node/add/idea">submit a new one</a> to the OpenShift team!</p>';
   } else {
       $content .= '<p><a href="/user/login?destination=ideas">Login to vote on features</a> or <a href="/node/add/idea">submit a new one</a> to the OpenShift team!</p>';
