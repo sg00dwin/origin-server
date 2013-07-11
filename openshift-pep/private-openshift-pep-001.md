@@ -1,7 +1,7 @@
 PEP: 1  
 Title: User Dunning and Forced Downgrades  
 Status: draft  
-Author: Dan McPherson <dmcphers@redhat.com>, Lili Nader lnader@redhat.com   
+Author: Dan McPherson <dmcphers@redhat.com>, Lili Nader <lnader@redhat.com>, Rob Millner <rmillner@redhat.com>    
 Arch Priority: high  
 Complexity: 40  
 Affected Components: web, api, runtime, cartridges, broker, admin_tools, cli  
