@@ -182,6 +182,16 @@ fi
 if [ -n &quot;$DEV_TOOLS_PULL_ID&quot; ]
 then
   test_pull_requests --merge_pull_request $DEV_TOOLS_PULL_ID --repo $DEV_TOOLS_REPO
+fi
+
+if [ $BRANCH != &quot;stage&quot; ]
+then
+  PARAMS=&quot;token=libra1&amp;INSTALL_FROM_SOURCE=true&amp;YUM_REPO=${YUM_REPO}&amp;BRANCH=${BRANCH}&amp;DEV_TOOLS_REPO=${DEV_TOOLS_REPO}&amp;DEV_TOOLS_EXT_REPO=${DEV_TOOLS_EXT_REPO}&quot;
+  if [ $DEV_TOOLS_EXT_REPO == &quot;enterprise&quot; ]
+  then
+    PARAMS=&quot;${PARAMS}&amp;IMAGE_BASE_NAME=enterprise&quot;
+  fi
+  curl -kL &quot;https://ci.dev.openshift.redhat.com/jenkins/job/create_ami/buildWithParameters?${PARAMS}&quot; || true
 fi</command>
     </hudson.tasks.Shell>
   </builders>

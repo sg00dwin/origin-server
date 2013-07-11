@@ -37,6 +37,11 @@
           <description></description>
           <defaultValue>devenv</defaultValue>
         </hudson.model.StringParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>SKIP_SETUP</name>
+          <description></description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -45,6 +50,7 @@
   <disabled>true</disabled>
   <blockBuildWhenDownstreamBuilding>true</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <authToken>libra1</authToken>
   <triggers class="vector">
     <hudson.triggers.TimerTrigger>
       <spec>@weekly</spec>

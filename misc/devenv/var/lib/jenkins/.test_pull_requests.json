@@ -36,7 +36,6 @@
       "test_prefix": "Online Test Results:",
       "allow_multiple": true,
       "branches": { "*": {"jenkins_job_name": "test_pull_requests_generic",
-                          "downstream_job_name": "create_ami",
                           "build_token": "libra1",
                           "addtl_jenkins_params": {"hosted": {"DEV_TOOLS_EXT_REPO": "li",
                                                               "DEV_TOOLS_REPO": "origin-dev-tools",
@@ -82,7 +81,6 @@
       "trello_card_refs": ["origin_broker", "online_broker", "origin_runtime", "online_runtime", "origin_ui", "online_ui", "enterprise", "enterprise_broker", "enterprise_runtime", "enterprise_ui", "documentation"]
       "allow_multiple": false,
       "branches": { "*": {"jenkins_job_name": "merge_pull_requests_generic",
-                              "downstream_job_name": "create_ami",
                               "image_base_name": "devenv-*",
                               "build_token": "libra1",
                               "addtl_jenkins_params": {"hosted": {"DEV_TOOLS_EXT_REPO": "li",
