@@ -749,6 +749,26 @@ mv -f /root/IPTABLES_NEW.txt /etc/sysconfig/iptables
 # Clean up BLOCK_UDP_IPTABLES.txt file
 rm -f /root/BLOCK_UDP_IPTABLES.txt
 
+# BZ982813 Core dump limis
+echo "* hard core 0" >> /etc/security/limits.conf
+echo " " >> /etc/sysctl.conf
+echo "# BZ982813 limit core dump size" >> /etc/sysctl.conf
+echo "fs.suid_dumpable = 0" >> /etc/sysctl.conf
+
+# BZ982824 Hardend umask for csh and bash
+sed -i '/^    umask 002/c\    umask 077' -i /etc/csh.cshrc
+sed -i '/^       umask 002/c\       umask 077' -i /etc/bashrc
+
+# BZ982827 Remove Sending ICMP Redirects - This is off already in stg/prod/int
+echo " " >> /etc/sysctl.conf
+echo "# BZ982827 Remove Sending ICMP Redirects" >> /etc/sysctl.conf
+echo "net.ipv4.conf.default.send_redirects = 0" >> /etc/sysctl.conf
+
+# BZ982832 Source validation on reverse path - This is in stg/prod/int already
+echo " " >> /etc/sysctl.conf
+echo "# BZ982832 Source validation on reverse path" >> /etc/sysctl.conf
+echo "net.ipv4.conf.all.rp_filter = 0" >> /etc/sysctl.conf
+
 %files
 %defattr(-,root,root,-)
 %attr(0660,-,-) %{_var}/log/openshift/broker/mcollective-client.log
