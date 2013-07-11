@@ -1,5 +1,4 @@
 class CloudUserObserver < ActiveModel::Observer
-  include UtilHelper
   observe CloudUser
 
   def before_cloud_user_create(user)

@@ -1,6 +1,4 @@
 class CloudUser
-  include UtilHelper
-  #alias :initialize_old :initialize
   #
   # Capability keys that should be preserved when a user's plan changes.
   #
