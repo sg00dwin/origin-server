@@ -5,7 +5,7 @@
 %global modname             redhat_ideas
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.6.3
+Version: 1.6.4
 Release: 1%{?dist}
 Summary: Openshift Red Hat Ideas Custom Module for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,14 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Fri Jul 12 2013 Adam Miller <admiller@redhat.com> 1.6.4-1
+- bump version, something with the drupal packages keeps messing up the tags
+  (admiller@redhat.com)
+- Correct favicon.ico in root added both b/c I don't know which location is
+  /root but since they are in two places ... (sgoodwin@redhat.com)
+- Fix bug 980095 - include link to login to vote on /ideas
+  (sgoodwin@redhat.com)
+
 * Fri Jul 12 2013 Adam Miller <admiller@redhat.com>
 - Correct favicon.ico in root added both b/c I don't know which location is
   /root but since they are in two places ... (sgoodwin@redhat.com)
