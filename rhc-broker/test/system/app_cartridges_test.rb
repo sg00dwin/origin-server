@@ -138,7 +138,14 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
     body = JSON.parse(@response.body)
     assert_equal(body["data"]["name"], "mysql-5.1")
     assert_equal(body["data"]["type"], "embedded")
-
+    messages = body["messages"]
+    has_result_from_node = false
+    messages.each do |message|
+      has_result_from_node= true if message["severity"] == "result"
+      assert(message["field"] == "result", "Message field: #{message["field"]} should be equal to result for API versions 1.5 or earlier") if body["api_version"] <= 1.5 and message["severity"] == "result"
+    end
+    assert(has_result_from_node, "Missing result message from node")
+    
     # query the non-scalable application to verify the properties of the embedded cartridge
     request_via_redirect(:get, APP_URL_FORMAT % [ns, "appnoscale"], {}, @headers)
     assert_response :ok
