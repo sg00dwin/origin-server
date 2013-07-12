@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/zend
 
 Name:    openshift-origin-cartridge-zend
-Version: 0.4.3
+Version: 0.5.0
 Release: 1%{?dist}
 Summary: Zend Server cartridge
 Group:   Development/Languages

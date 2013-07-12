@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.11.7
+Version: 1.12.0
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
