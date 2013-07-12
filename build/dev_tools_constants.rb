@@ -13,7 +13,7 @@ ZONE = 'us-east-1d'
 DEVENV_NAME = 'devenv'
 
 IMAGES = {DEVENV_NAME => {:branches => ['stage']},
-          'enterprise' => {:branches => ['enterprise-1.0']},
+          'enterprise' => {:branches => ['enterprise-1.0', 'enterprise-1.1', 'enterprise-1.2', 'enterprise-1.2.z']},
           'oso' => {:branches => []}}
 
 DEVENV_AMI_WILDCARDS = {}
