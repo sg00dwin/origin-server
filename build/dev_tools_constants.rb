@@ -36,7 +36,7 @@ VERIFIER_REGEXS = {/^(devenv).*_(\d+)$/ => {:multiple => true},
                    /^(enterprise).*_(\d+)$/ => {:multiple => true},
                    /^((test|merge)_pull_requests).*_(\d+)$/ => {:multiple => true, :max_run_time => (60*60*2)},
                    /^(fork_ami)_.*_(\d+)$/ => {:multiple => true}}
-TERMINATE_REGEX = /terminate|teminate|termiante|terminatr|terninate/
+TERMINATE_REGEX = /terminate|teminate|termiante|terminatr|terninate/i
 VERIFIED_TAG = "qe-ready"
 
 # Specify the source location of the SSH key
