@@ -767,7 +767,7 @@ echo "net.ipv4.conf.default.send_redirects = 0" >> /etc/sysctl.conf
 # BZ982832 Source validation on reverse path - This is in stg/prod/int already
 echo " " >> /etc/sysctl.conf
 echo "# BZ982832 Source validation on reverse path" >> /etc/sysctl.conf
-echo "net.ipv4.conf.all.rp_filter = 0" >> /etc/sysctl.conf
+echo "net.ipv4.conf.all.rp_filter = 1" >> /etc/sysctl.conf
 
 %files
 %defattr(-,root,root,-)
