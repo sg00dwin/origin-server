@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.10.5
+Version: 1.10.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -786,6 +786,13 @@ echo "net.ipv4.conf.all.rp_filter = 1" >> /etc/sysctl.conf
 /etc/openshift/development
 
 %changelog
+* Fri Jul 12 2013 Adam Miller <admiller@redhat.com> 1.10.6-1
+- Security - Fix BZ982832 should have been a 1 (tkramer@redhat.com)
+- Changes to improve enterprise jobs (jdetiber@redhat.com)
+- Security - BZ982824 Default Umask settings bashrc csh.cshrc BZ982813 limit
+  core dump size BZ982827 Remove Sending ICMP Redirects BZ982832 Source
+  validation on reverse path (tkramer@redhat.com)
+
 * Tue Jul 09 2013 Adam Miller <admiller@redhat.com> 1.10.5-1
 - Security - Enable UDP blocking and logging in iptables (tkramer@redhat.com)
 
