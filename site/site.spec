@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.11.4
+Version: 1.11.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -198,6 +198,12 @@ fi
 %{sitedir}/public
 
 %changelog
+* Fri Jul 12 2013 Adam Miller <admiller@redhat.com> 1.11.5-1
+- Merge branch 'master' of github.com:openshift/li into 708dev
+  (sgoodwin@redhat.com)
+- Correct favicon.ico in root added both b/c I don't know which location is
+  /root but since they are in two places ... (sgoodwin@redhat.com)
+
 * Wed Jul 10 2013 Adam Miller <admiller@redhat.com> 1.11.4-1
 - Merge pull request #1720 from liggitt/bug_980953_adwords_script
   (dmcphers+openshiftbot@redhat.com)
