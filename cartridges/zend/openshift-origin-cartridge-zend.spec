@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/zend
 
 Name:    openshift-origin-cartridge-zend
-Version: 0.5.0
+Version: 0.5.1
 Release: 1%{?dist}
 Summary: Zend Server cartridge
 Group:   Development/Languages
@@ -66,6 +66,9 @@ sh %{cartridgedir}/versions/5.6/rpm/zend_configure_filesystem.sh
 
 
 %changelog
+* Fri Jul 12 2013 Adam Miller <admiller@redhat.com> 0.5.1-1
+- bump_minor_versions for sprint 31 (admiller@redhat.com)
+
 * Wed Jul 10 2013 Adam Miller <admiller@redhat.com> 0.4.3-1
 - Bug 968252: Clean up old marker README files (ironcladlou@gmail.com)
 
