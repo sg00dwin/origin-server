@@ -5,7 +5,7 @@
 %global modname             redhat_ideas
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.7.0
+Version: 1.7.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Ideas Custom Module for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Fri Jul 12 2013 Adam Miller <admiller@redhat.com> 1.7.1-1
+- bump_minor_versions for sprint 31 (admiller@redhat.com)
+
 * Fri Jul 12 2013 Adam Miller <admiller@redhat.com> 1.6.4-1
 - bump version, something with the drupal packages keeps messing up the tags
   (admiller@redhat.com)
