@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.11.0
+Version: 1.11.1
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -786,6 +786,9 @@ echo "net.ipv4.conf.all.rp_filter = 1" >> /etc/sysctl.conf
 /etc/openshift/development
 
 %changelog
+* Fri Jul 12 2013 Adam Miller <admiller@redhat.com> 1.11.1-1
+- bump_minor_versions for sprint 31 (admiller@redhat.com)
+
 * Fri Jul 12 2013 Adam Miller <admiller@redhat.com> 1.10.6-1
 - Security - Fix BZ982832 should have been a 1 (tkramer@redhat.com)
 - Changes to improve enterprise jobs (jdetiber@redhat.com)
