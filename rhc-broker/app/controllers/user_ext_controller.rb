@@ -9,11 +9,8 @@ class UserExtController < UserController
 
   # PUT /user
   def update 
-    begin
-      @cloud_user.update_plan(params[:plan_id])
-    rescue Exception => e
-      return render_exception(e)
-    end
+    @cloud_user.update_plan(params[:plan_id])
+
     render_success(:ok, "account", get_rest_user(@cloud_user), "Plan successfully changed")
   end
 end
