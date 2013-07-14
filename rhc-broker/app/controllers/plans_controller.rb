@@ -19,8 +19,4 @@ class PlansController < BaseController
     end
     render_error(:not_found, "Plan not found.", 150)
   end
-  
-  def set_log_tag
-    @log_tag = get_log_tag_prepend + "PLAN"
-  end
 end
