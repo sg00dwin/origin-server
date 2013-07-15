@@ -231,7 +231,7 @@ MSG
         end
         user = nil
         OpenShift::AriaEvent::PLAN_STATE_UPDATE_RETRIES.times do 
-          user = CloudUser.with(consistency: :strong).where(filter).find_and_modify(update, {:new => true})
+          user = CloudUser.where(filter).find_and_modify(update, {:new => true})
           break if user
           sleep OpenShift::AriaEvent::PLAN_STATE_UPDATE_RETRY_TIME
         end
