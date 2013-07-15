@@ -146,6 +146,20 @@ class WebFlowsTest < ActionDispatch::IntegrationTest
     assert has_no_css?('p.tax_nonvat')
   end
 
+  test 'currency dynamic display' do
+    with_logged_in_console_user
+
+    visit edit_account_plan_upgrade_path(:silver)
+
+    assert find('.billing-currency-code', :text => 'USD')
+
+    page.execute_script("$('select[autocomplete=country]').val('IE').trigger('change')")
+    assert find('.billing-currency-code', :text => 'EUR')
+
+    page.execute_script("$('select[autocomplete=country]').val('CA').trigger('change')")
+    assert find('.billing-currency-code', :text => 'CAD')
+  end
+
   test 'help page displays' do
     with_logged_in_console_user
 

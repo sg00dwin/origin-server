@@ -38,7 +38,9 @@ $ ->
     # Store the region optgroups, this gets destroyed when we detach on change
     groups = region_select.html()
 
-    country_select.on 'change', (ev) ->
+    country_select.on('keypress', (ev) ->
+      $(this).trigger("change")
+    ).on('change', (ev) ->
       args = arguments[1] || {}
 
       # Find the selected country
@@ -49,6 +51,7 @@ $ ->
       # Get options for the country
       subdivision = selected.attr('data-subdivision')
       postal_code = selected.attr('data-postal_code')
+      currency    = selected.attr('data-currency')
 
       # Replace the groups with our stored versions
       region_select.html(groups)
@@ -82,6 +85,12 @@ $ ->
         else
           $('.tax_vat').hide().find('input').val('')
           $('.tax_nonvat').show()
+
+      if (opts.showCurrency && currency)
+        $('.billing-currency').show().find('.billing-currency-code').text(currency)
+      else
+        $('.billing-currency').hide()
+    )
 
     # Update the form based on the current value
     country_select.trigger 'change', {first_run: true}

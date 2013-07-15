@@ -128,6 +128,9 @@ class AccountUpgradesController < ConsoleController
 
       # Validate first before promoting, so we don't lock bad values in streamline
       render :edit and return unless @billing_info.valid? and @contact_info.valid? and @full_user.promote(user)
+
+      # Set fixed now that our full user is persisted
+      @show_vat = @contact_info.vies_country.present?
     end
 
     current_user_changed!
