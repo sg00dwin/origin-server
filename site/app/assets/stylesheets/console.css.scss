@@ -18,19 +18,19 @@ Color palette
 
 @import "override-variables";
 @import "variables";
-@import "bootstrap/variables";
-@import "bootstrap/mixins";
+@import "twitter/variables";
+@import "twitter/mixins";
 @import "mixins";
 @import "console/mixins";
 
 @import "console/base";
 @import "console/navbar";
-@import "bootstrap/navs";
+@import "twitter/navs";
 @import "console/help";
 @import "console/breadcrumbs";
 @import "console/ribbon";
 @import "console/buttons";
-@import "bootstrap/dropdowns";
+@import "twitter/dropdowns";
 @import "console/dropdowns";
 @import "console/tile";
 @import "console/application";
