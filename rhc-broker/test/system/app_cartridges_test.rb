@@ -5,24 +5,24 @@ require 'mocha'
 
 class AppCartridgesTest < ActionDispatch::IntegrationTest
 
-  DOMAIN_COLLECTION_URL = "/rest/domains"
-  APP_COLLECTION_URL_FORMAT = "/rest/domains/%s/applications"
-  APP_URL_FORMAT = "/rest/domains/%s/applications/%s"
-  APP_EVENTS_URL_FORMAT = "/rest/domains/%s/applications/%s/events"
-  APP_CARTRIDGES_URL_FORMAT = "/rest/domains/%s/applications/%s/cartridges"
-  APP_CARTRIDGE_URL_FORMAT = "/rest/domains/%s/applications/%s/cartridges/%s"
-  USER_URL = "/rest/user"
-  
+  DOMAIN_COLLECTION_URL = "/broker/rest/domains"
+  APP_COLLECTION_URL_FORMAT = "/broker/rest/domains/%s/applications"
+  APP_URL_FORMAT = "/broker/rest/domains/%s/applications/%s"
+  APP_EVENTS_URL_FORMAT = "/broker/rest/domains/%s/applications/%s/events"
+  APP_CARTRIDGES_URL_FORMAT = "/broker/rest/domains/%s/applications/%s/cartridges"
+  APP_CARTRIDGE_URL_FORMAT = "/broker/rest/domains/%s/applications/%s/cartridges/%s"
+  USER_URL = "/broker/rest/user"
+
   def setup
     @random = rand(1000000000)
     @login = "user#{@random}"
     @headers = {}
     @headers["HTTP_AUTHORIZATION"] = "Basic " + Base64.encode64("#{@login}:password")
     @headers["HTTP_ACCEPT"] = "application/json"
-    
+
     https!
   end
-  
+
   def teardown
     # delete the domain
     request_via_redirect(:delete, DOMAIN_COLLECTION_URL + "/ns#{@random}", {:force => true}, @headers)
@@ -74,7 +74,7 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
     assert_response :ok
     body = JSON.parse(@response.body)
     assert_equal(body["data"].length, 2)
-    
+
     if body["data"][0]["name"] == "php-5.3"
       php_index = 0
       mysql_index = 1
@@ -84,7 +84,7 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
     else
       assert(false, "The cartridge list includes a cartridge other than php-5.3 and mysql-5.1")
     end
-    
+
     assert_equal(body["data"][php_index]["name"], "php-5.3")
     assert_equal(body["data"][php_index]["type"], "standalone")
     assert_equal(body["data"][mysql_index]["name"], "mysql-5.1")
@@ -96,7 +96,7 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
     body = JSON.parse(@response.body)
     assert_equal(body["data"]["name"], "mysql-5.1")
     assert_equal(body["data"]["type"], "embedded")
-    
+
     check_mysql_properties(body["data"])
   end
 
@@ -208,7 +208,7 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
 
   def test_app_cartridge_delete
     ns = "ns#{@random}"
-    
+
     # create the domain for the user
     request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns}, @headers)
     assert_response :created
@@ -243,9 +243,9 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
     request_via_redirect(:delete, APP_CARTRIDGE_URL_FORMAT % [ns, "app1", "mysql-5.1"], {}, @headers)
     assert_response :ok
   end
-  
-  private 
-  
+
+  private
+
   def check_embedded_mysql_properties(app_data)
     # add steps here to check for embedded cartridge properties in the application rest response
     assert(app_data["embedded"].key?("mysql-5.1"), "mysql-5.1 not embedded within application")
@@ -262,7 +262,7 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
     # add steps here to check for cartridge properties in the cartridge rest response
     expected_properties = ["username", "password", "database_name", "connection_url"]
     property_attributes = ["name", "value", "type", "description"]
-    
+
     assert_equal(cart_data["properties"].length, expected_properties.length)
     cart_data["properties"].each do |property|
       property_attributes.each do |attribute|

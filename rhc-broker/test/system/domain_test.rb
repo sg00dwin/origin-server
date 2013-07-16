@@ -5,15 +5,15 @@ require 'mocha'
 
 class DomainTest < ActionDispatch::IntegrationTest
 
-  DOMAIN_COLLECTION_URL = "/rest/domains"
-  
+  DOMAIN_COLLECTION_URL = "/broker/rest/domains"
+
   def setup
     @random = rand(1000000000)
     @login = "user#{@random}"
     @headers = {}
     @headers["HTTP_AUTHORIZATION"] = "Basic " + Base64.encode64("#{@login}:password")
     @headers["HTTP_ACCEPT"] = "application/json"
-    
+
     https!
   end
 
@@ -190,11 +190,11 @@ class DomainTest < ActionDispatch::IntegrationTest
     # update domain name
     request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:id => new_ns, :nolinks => true}, @headers)
     assert_response :unprocessable_entity
-    
+
     # create an application under the user's domain
     request_via_redirect(:delete, DOMAIN_COLLECTION_URL + "/#{ns}/applications/app1", {:nolinks => true}, @headers)
     assert_response :ok
-    
+
         # update domain name
     request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:id => new_ns, :nolinks => true}, @headers)
     assert_response :ok
@@ -209,7 +209,7 @@ class DomainTest < ActionDispatch::IntegrationTest
   def test_domain_delete
     ns = "ns#{@random}"
     new_ns = "newns#{@random}"
-    
+
     # create the domain for the user
     request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns, :nolinks => true}, @headers)
     assert_response :created
@@ -239,11 +239,11 @@ class DomainTest < ActionDispatch::IntegrationTest
     request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns, :nolinks => true}, @headers)
     assert_response :created
   end
-  
+
   def test_domain_delete_with_application
     ns = "ns#{@random}"
     new_ns = "newns#{@random}"
-    
+
     # create the domain for the user
     request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns, :nolinks => true}, @headers)
     assert_response :created

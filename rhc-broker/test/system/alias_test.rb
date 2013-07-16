@@ -3,92 +3,92 @@ require 'test_helper'
 require 'openshift-origin-controller'
 
 class AliasTest < ActionDispatch::IntegrationTest
-  
-  DOMAIN_COLLECTION_URL = "/rest/domains"
-  APP_COLLECTION_URL_FORMAT = "/rest/domains/%s/applications"
-  APP_URL_FORMAT = "/rest/domains/%s/applications/%s"
-  APP_ALIAS_COLLECTION_URL_FORMAT = "/rest/domains/%s/applications/%s/aliases"
-  APP_ALIAS_URL_FORMAT = "/rest/domains/%s/applications/%s/aliases/%s"
-  
+
+  DOMAIN_COLLECTION_URL = "/broker/rest/domains"
+  APP_COLLECTION_URL_FORMAT = "/broker/rest/domains/%s/applications"
+  APP_URL_FORMAT = "/broker/rest/domains/%s/applications/%s"
+  APP_ALIAS_COLLECTION_URL_FORMAT = "/broker/rest/domains/%s/applications/%s/aliases"
+  APP_ALIAS_URL_FORMAT = "/broker/rest/domains/%s/applications/%s/aliases/%s"
+
   def setup
     @random = rand(1000000000)
-    @login = "user#{@random}"    
+    @login = "user#{@random}"
     @user = CloudUser.new(login: @login)
     @user.save
     Lock.create_lock(@user)
     @headers = {}
     @headers["HTTP_AUTHORIZATION"] = "Basic " + Base64.encode64("#{@login}:password")
     @headers["HTTP_ACCEPT"] = "application/json"
-    
+
     ssl_certificate_data
-    
+
     https!
   end
-  
+
   def teardown
     # delete the domain
     request_via_redirect(:delete, DOMAIN_COLLECTION_URL + "/ns#{@random}", {:force => true}, @headers)
   end
-  
+
   test "create alias for user without capability" do
-    
+
     @ns = "ns#{@random}"
     @app = "app#{@random}"
     @as = "as.#{@random}"
-    
+
     #create domain
     request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => @ns}, @headers)
     assert_response :created
-    
+
     # create an application under the user's domain
     request_via_redirect(:post, APP_COLLECTION_URL_FORMAT % [@ns], {:name => @app, :cartridge => "php-5.3"}, @headers)
     assert_response :created
-    
+
     #create alias with certificate
     request_via_redirect(:post, APP_ALIAS_COLLECTION_URL_FORMAT % [@ns, @app], {:id => @as, :ssl_certificate => @ssl_certificate, :private_key => @private_key, :pass_phrase => @pass_phrase}, @headers)
     assert_response :forbidden
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 175)
-    
+
     #create alias with no certificate
     request_via_redirect(:post, APP_ALIAS_COLLECTION_URL_FORMAT % [@ns, @app], {:id => @as}, @headers)
     assert_response :created
     body = JSON.parse(@response.body)
     assert_equal(body["data"]["id"], @as)
-    assert_equal(body["data"]["has_private_ssl_certificate"], false) 
-    
+    assert_equal(body["data"]["has_private_ssl_certificate"], false)
+
     #change certificate to alias
     request_via_redirect(:put, APP_ALIAS_URL_FORMAT % [@ns, @app, @as], {:ssl_certificate => @ssl_certificate, :private_key => @private_key, :pass_phrase => @pass_phrase}, @headers)
     assert_response :forbidden
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 175)
-    
+
   end
-  
+
   #In the interest of time instead of testing index, show, create, update and destroy individually
   # we have lumped them together
   test "alias lifecycle" do
     @ns = "ns#{@random}"
     @app = "app#{@random}"
     @as = "as#{@random}.foo.com"
-    
+
     @user.capabilities["private_ssl_certificates"] = true
     @user.save
-    
+
     #create domain
     request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => @ns}, @headers)
     assert_response :created
-    
+
     # create an application under the user's domain
     request_via_redirect(:post, APP_COLLECTION_URL_FORMAT % [@ns], {:name => @app, :cartridge => "php-5.3"}, @headers)
     assert_response :created
-    
+
     # query alias list
     request_via_redirect(:get, APP_ALIAS_COLLECTION_URL_FORMAT % [@ns, @app], {}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
     assert_equal(body["data"].length, 0)
-    
+
     # query non-existent alias
     request_via_redirect(:get, APP_ALIAS_URL_FORMAT % [@ns, @app, @as], {}, @headers)
     assert_response :not_found
@@ -100,120 +100,120 @@ class AliasTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 105)
-    
+
     request_via_redirect(:post, APP_ALIAS_COLLECTION_URL_FORMAT % [@ns, @app], {:id => ""}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 105)
-    
+
     #try adding certificate without private key
     request_via_redirect(:post, APP_ALIAS_COLLECTION_URL_FORMAT % [@ns, @app], {:id => @as, :ssl_certificate => @ssl_certificate}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
-    assert_equal(body["messages"][0]["exit_code"], 172)  
-    assert_equal(body["messages"][0]["field"], "private_key")  
-    
+    assert_equal(body["messages"][0]["exit_code"], 172)
+    assert_equal(body["messages"][0]["field"], "private_key")
+
     #try adding certificate with bad private key
     request_via_redirect(:post, APP_ALIAS_COLLECTION_URL_FORMAT % [@ns, @app], {:id => @as, :ssl_certificate => @ssl_certificate, :private_key => "ABCD"}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
-    assert_equal(body["messages"][0]["exit_code"], 172)  
+    assert_equal(body["messages"][0]["exit_code"], 172)
     assert_equal(body["messages"][0]["field"], "private_key")
-    
+
     #try adding certificate with wrong private key
     request_via_redirect(:post, APP_ALIAS_COLLECTION_URL_FORMAT % [@ns, @app], {:id => @as, :ssl_certificate => @ssl_certificate, :private_key => @wrong_private_key, :pass_phrase => @pass_phrase}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
-    assert_equal(body["messages"][0]["exit_code"], 172)  
+    assert_equal(body["messages"][0]["exit_code"], 172)
     assert_equal(body["messages"][0]["field"], "private_key")
-    
+
     #try adding certificate with wrong certificate
     request_via_redirect(:post, APP_ALIAS_COLLECTION_URL_FORMAT % [@ns, @app], {:id => @as, :ssl_certificate => "ABCDEF", :private_key => @private_key, :pass_phrase => @pass_phrase}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
-    assert_equal(body["messages"][0]["exit_code"], 174)  
+    assert_equal(body["messages"][0]["exit_code"], 174)
     assert_equal(body["messages"][0]["field"], "ssl_certificate")
-    
+
     #create alias with no certificate
     request_via_redirect(:post, APP_ALIAS_COLLECTION_URL_FORMAT % [@ns, @app], {:id => @as}, @headers)
     assert_response :created
     body = JSON.parse(@response.body)
     assert_equal(body["data"]["id"], @as)
-    assert_equal(body["data"]["has_private_ssl_certificate"], false) 
-    
+    assert_equal(body["data"]["has_private_ssl_certificate"], false)
+
     #get created alias
     request_via_redirect(:get, APP_ALIAS_URL_FORMAT % [@ns, @app, @as], {}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
     assert_equal(body["data"]["id"], @as)
     assert_equal(body["data"]["has_private_ssl_certificate"], false)
-    
+
     #add certificate to alias
     request_via_redirect(:put, APP_ALIAS_URL_FORMAT % [@ns, @app, @as], {:ssl_certificate => @ssl_certificate, :private_key => @private_key, :pass_phrase => @pass_phrase}, @headers)
-    assert_response :ok 
+    assert_response :ok
     body = JSON.parse(@response.body)
     assert_equal(body["data"]["id"], @as)
-    assert_equal(body["data"]["has_private_ssl_certificate"], true) 
-    
+    assert_equal(body["data"]["has_private_ssl_certificate"], true)
+
     #delete alias
     request_via_redirect(:delete, APP_ALIAS_URL_FORMAT % [@ns, @app, @as], {}, @headers)
-    assert_response :ok 
-  
+    assert_response :ok
+
     #create alias with certificate
     request_via_redirect(:post, APP_ALIAS_COLLECTION_URL_FORMAT % [@ns, @app], {:id => @as, :ssl_certificate => @ssl_certificate, :private_key => @private_key, :pass_phrase => @pass_phrase}, @headers)
     assert_response :created
     body = JSON.parse(@response.body)
     assert_equal(body["data"]["id"], @as)
-    assert_equal(body["data"]["has_private_ssl_certificate"], true) 
-    
+    assert_equal(body["data"]["has_private_ssl_certificate"], true)
+
     request_via_redirect(:get, APP_ALIAS_URL_FORMAT % [@ns, @app, @as], {}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
     assert_equal(body["data"]["id"], @as)
-    assert_equal(body["data"]["has_private_ssl_certificate"], true) 
-    
+    assert_equal(body["data"]["has_private_ssl_certificate"], true)
+
     #change certificate to alias
     request_via_redirect(:put, APP_ALIAS_URL_FORMAT % [@ns, @app, @as], {:ssl_certificate => @ssl_certificate, :private_key => @private_key, :pass_phrase => @pass_phrase}, @headers)
-    assert_response :ok 
+    assert_response :ok
     body = JSON.parse(@response.body)
-    
+
     assert_equal(body["data"]["id"], @as)
-    assert_equal(body["data"]["has_private_ssl_certificate"], true) 
-    
+    assert_equal(body["data"]["has_private_ssl_certificate"], true)
+
     #remove certificate to alias
     request_via_redirect(:put, APP_ALIAS_URL_FORMAT % [@ns, @app, @as], {}, @headers)
-    assert_response :ok 
+    assert_response :ok
     body = JSON.parse(@response.body)
-    
+
     assert_equal(body["data"]["id"], @as)
-    assert_equal(body["data"]["has_private_ssl_certificate"], false) 
-    
+    assert_equal(body["data"]["has_private_ssl_certificate"], false)
+
     #try to create an existing alias
     request_via_redirect(:post, APP_ALIAS_COLLECTION_URL_FORMAT % [@ns, @app], {:id => @as}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 140)
-    
+
     #delete alias
     request_via_redirect(:delete, APP_ALIAS_URL_FORMAT % [@ns, @app, @as], {}, @headers)
-    assert_response :ok 
-    
+    assert_response :ok
+
     #try to update a non-existent alias
     request_via_redirect(:put, APP_ALIAS_URL_FORMAT % [@ns, @app, @as], {:ssl_certificate => @ssl_certificate, :private_key => @private_key, :pass_phrase => @pass_phrase}, @headers)
     assert_response :not_found
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 173)
-    
+
     #try to delete a non-existent alias
     request_via_redirect(:delete, APP_ALIAS_URL_FORMAT % [@ns, @app, @as], {}, @headers)
     assert_response :not_found
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 173)
-    
+
   end
-  
+
   def ssl_certificate_data
-    
+
     @ssl_certificate = "-----BEGIN CERTIFICATE-----
 MIIDoDCCAogCCQDzF8AJCHnrbjANBgkqhkiG9w0BAQUFADCBkTELMAkGA1UEBhMC
 VVMxCzAJBgNVBAgMAkNBMRIwEAYDVQQHDAlTdW5ueXZhbGUxDzANBgNVBAoMBnJl
@@ -284,5 +284,5 @@ JhSD/puB03m/ZrORvTpFnzyV5ZzliyxsXZL8Wwrcrb/zr0/aAEUTLlQdqTTi5iRX
 iGRJ3A==
 -----END CERTIFICATE-----"
   end
-    
+
 end

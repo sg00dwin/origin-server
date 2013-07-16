@@ -5,10 +5,10 @@ require 'mocha'
 
 class ApplicationTest < ActionDispatch::IntegrationTest
 
-  DOMAIN_COLLECTION_URL = "/rest/domains"
-  APP_COLLECTION_URL_FORMAT = "/rest/domains/%s/applications"
-  APP_URL_FORMAT = "/rest/domains/%s/applications/%s"
-  APP_EVENTS_URL_FORMAT = "/rest/domains/%s/applications/%s/events"
+  DOMAIN_COLLECTION_URL = "/broker/rest/domains"
+  APP_COLLECTION_URL_FORMAT = "/broker/rest/domains/%s/applications"
+  APP_URL_FORMAT = "/broker/rest/domains/%s/applications/%s"
+  APP_EVENTS_URL_FORMAT = "/broker/rest/domains/%s/applications/%s/events"
 
   def setup
     @random = rand(1000000000)
@@ -16,10 +16,10 @@ class ApplicationTest < ActionDispatch::IntegrationTest
     @headers = {}
     @headers["HTTP_AUTHORIZATION"] = "Basic " + Base64.encode64("#{@login}:password")
     @headers["HTTP_ACCEPT"] = "application/json"
-    
+
     https!
   end
-  
+
   def teardown
     # delete the domain
     request_via_redirect(:delete, DOMAIN_COLLECTION_URL + "/ns#{@random}", {:force => true}, @headers)
@@ -166,7 +166,7 @@ class ApplicationTest < ActionDispatch::IntegrationTest
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 104)
 
-    # query application list 
+    # query application list
     request_via_redirect(:get, APP_COLLECTION_URL_FORMAT % [ns], {}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
@@ -175,7 +175,7 @@ class ApplicationTest < ActionDispatch::IntegrationTest
 
   def test_app_delete
     ns = "ns#{@random}"
-    
+
     # delete the application - without creating the domain
     request_via_redirect(:delete, APP_URL_FORMAT % [ns, "app1"], {}, @headers)
     assert_response :not_found
@@ -206,5 +206,5 @@ class ApplicationTest < ActionDispatch::IntegrationTest
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 101)
   end
-  
+
 end
