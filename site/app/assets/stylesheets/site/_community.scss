@@ -900,10 +900,11 @@ html.js fieldset.collapsible .fieldset-wrapper {
   font-weight: bold;
   height: 56px; 
   margin-right: 15px;
-  margin-bottom: 15px;
+  margin-bottom: 50px;
   text-align: center;
   @include text-shadow(1px 1px 6px #EEEEEE, 0 0 0 #DDDDDD);
-  width: 56px; 
+  width: 56px;
+  clear: left;
 
   span {
     display: block;
@@ -934,6 +935,12 @@ html.js fieldset.collapsible .fieldset-wrapper {
   }
   .views-field-group-location span {
     font-size: 15px; // events special case
+  }
+  .views-field-group-location {
+    margin-bottom: 10px;
+    + .event-date + .title {
+      margin-top: 50px;
+    }
   }
 }
 
