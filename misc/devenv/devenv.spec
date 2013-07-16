@@ -356,6 +356,10 @@ then
   semanage port -a -t memcache_port_t -p udp 11212
 fi
 
+# The JBoss websocket port should be available
+semanage port -a -t http_cache_port_t -p tcp 8676 &>/dev/null || :
+
+
 # Add policy for developement environment
 cd %{policydir} ; make -f ../devel/Makefile
 semodule -l | grep -q dhcpnamedforward || semodule -i dhcpnamedforward.pp
