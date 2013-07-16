@@ -718,7 +718,7 @@ rm -rf /tmp/phantomjs
 
 # Change login.defs file to match BZ970877
 sed -i '/^PASS_MIN_LEN/c\PASS_MIN_LEN    14' -i /etc/login.defs
-sed -i '/^PASS_MAX_DAYS/c\PASS_MAX_DAYS   60' -i /etc/login.defs
+sed -i '/^PASS_MAX_DAYS/c\PASS_MAX_DAYS   180' -i /etc/login.defs
 sed -i '/^PASS_MIN_DAYS/c\PASS_MIN_DAYS   1' -i /etc/login.defs
 
 # Create Iptables rules to block UDP in DEVENV - start commented out
