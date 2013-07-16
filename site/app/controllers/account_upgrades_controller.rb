@@ -114,9 +114,7 @@ class AccountUpgradesController < ConsoleController
       )
 
       # Validate first before promoting, so we don't lock bad values in streamline
-      render :edit and return unless @billing_info.valid? and @contact_info.valid?
-
-      render :edit and return unless @full_user.promote(user)
+      render :edit and return unless @billing_info.valid? and @contact_info.valid? and @full_user.promote(user)
     end
 
     current_user_changed!

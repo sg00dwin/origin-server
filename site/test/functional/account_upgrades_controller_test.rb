@@ -19,6 +19,7 @@ class AccountUpgradesControllerTest < ActionController::TestCase
   end
 
   with_aria
+  with_clean_cache
 
   test "should show an unchanged plan when the current plan matches the new one" do
     user = with_user(full)
@@ -37,6 +38,9 @@ class AccountUpgradesControllerTest < ActionController::TestCase
     # Try to save a valid IE VAT with a DE address
     Aria::UserContext.any_instance.expects(:create_account).never
     Streamline::FullUser.any_instance.expects(:promote).never
+
+    # Country mismatch should prevent ever hitting remote VAT validation
+    Valvat.any_instance.expects(:exists?).never
 
     put :update,
       :plan_id => 'silver',
@@ -74,6 +78,9 @@ class AccountUpgradesControllerTest < ActionController::TestCase
 
   test "should validate vat and upgrade streamline" do
     with_confirmed_user
+
+    # Remote VAT validation should only happen once
+    Valvat.any_instance.expects(:exists?).once.returns(true)
 
     put :update,
       :plan_id => 'silver',

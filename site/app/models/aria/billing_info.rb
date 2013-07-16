@@ -12,7 +12,10 @@ module Aria
           is_valid = iso_country_code == vat.iso_country_code
         end
 
-        is_valid = is_valid && vat.valid? && vat.exists?
+        cache_key = "vat_exists_#{value}"
+
+        is_valid = is_valid && vat.valid? && (Rails.cache.read(cache_key) || vat.exists?)
+        Rails.cache.write(cache_key, true) if is_valid
         record.errors.add(attribute, "VAT number validation is currently unavailable") if is_valid == nil
         record.errors.add(attribute, "#{value} is not a valid #{iso_country_code} VAT number") if is_valid == false
       end
