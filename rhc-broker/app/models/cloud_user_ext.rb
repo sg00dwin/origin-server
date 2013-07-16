@@ -146,7 +146,7 @@ class CloudUser
     cur_time = Time.now.utc
     filter = {:_id => self._id, :pending_plan_id => nil, :pending_plan_uptime => nil, "$or" => [{:plan_state => nil}, {:plan_state => PLAN_STATES['active']}]}
     update = {"$set" => {:pending_plan_id => plan_id, :pending_plan_uptime => cur_time, :plan_state => CloudUser::PLAN_STATES['pending']}}
-    user = CloudUser.with(consistency: :strong).where(filter).find_and_modify(update, {:new => true})
+    user = CloudUser.where(filter).find_and_modify(update, {:new => true})
 
     # Only rhc-admin-ctl-plan script skips the lock to fix user plans
     raise OpenShift::UserException.new("Plan change is not allowed at this time for this account. "\
@@ -156,7 +156,7 @@ class CloudUser
     old_capabilities = nil
     plan_upgrade = nil
     begin
-      self.with(consistency: :strong).reload
+      self.reload
 
       #check if subaccount user
       raise OpenShift::UserException.new("Plan change not allowed for subaccount user", 157) unless self.parent_user_id.nil?
