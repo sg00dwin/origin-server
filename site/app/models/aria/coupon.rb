@@ -2,20 +2,26 @@ module Aria
   class Coupon < Base
     define_attribute_method :coupon_code
 
+    def messages
+      @messages ||= []
+    end
+
     def blank?
       coupon_code.blank?
     end
 
-    # Applies a coupon named "external<COUPON CODE>" to the user's account
-    # Returns a success message if the coupon was already applied, or is successfully applied
+    # Applies a coupon named "external<coupon_code>" to the user's account
+    # Returns true if the coupon was already applied, or is successfully applied. Result messages are available in the coupon.messages array
     # Returns false with errors attached to the coupon_code field if the coupon wasn't applied
-    def save(aria_user)
+    def apply_to_acct(user_or_acct_no)
       begin
-        success = Aria.apply_coupon_to_acct(aria_user.acct_no, "external#{coupon_code}".downcase).user_success_msg
-        success = "Coupon was successfully applied" if success.blank?
-        success
+        messages.clear
+        acct_no = user_or_acct_no.respond_to?(:acct_no) ? user_or_acct_no.acct_no : user_or_acct_no
+        messages.push(Aria.apply_coupon_to_acct(acct_no, "external#{coupon_code}".downcase).user_success_msg.presence).compact!
+        true
       rescue Aria::CouponExists => e
-        "The coupon was already applied to your account"
+        messages.push("The coupon was already applied to your account")
+        true
       rescue Aria::CouponDoesNotExist
         errors.add(:coupon_code, "Invalid coupon code")
         false
