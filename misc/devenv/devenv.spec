@@ -356,6 +356,10 @@ then
   semanage port -a -t memcache_port_t -p udp 11212
 fi
 
+# The JBoss websocket port should be available
+semanage port -a -t http_cache_port_t -p tcp 8676 &>/dev/null || :
+
+
 # Add policy for developement environment
 cd %{policydir} ; make -f ../devel/Makefile
 semodule -l | grep -q dhcpnamedforward || semodule -i dhcpnamedforward.pp
@@ -714,7 +718,7 @@ rm -rf /tmp/phantomjs
 
 # Change login.defs file to match BZ970877
 sed -i '/^PASS_MIN_LEN/c\PASS_MIN_LEN    14' -i /etc/login.defs
-sed -i '/^PASS_MAX_DAYS/c\PASS_MAX_DAYS   60' -i /etc/login.defs
+sed -i '/^PASS_MAX_DAYS/c\PASS_MAX_DAYS   180' -i /etc/login.defs
 sed -i '/^PASS_MIN_DAYS/c\PASS_MIN_DAYS   1' -i /etc/login.defs
 
 # Create Iptables rules to block UDP in DEVENV - start commented out

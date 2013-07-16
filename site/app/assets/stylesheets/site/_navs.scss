@@ -104,9 +104,9 @@
   padding-top: 9px;
   padding-bottom: 9px;
   border: 1px solid transparent;
-  @include border-radius(4px 4px 0 0);
+  @include border-radius(0);
   &:hover {
-    border-color: $grayLighter $grayLighter #ddd;
+    border-color: $grayLighter;
   }
 }
 // Active state, and it's :hover to override normal :hover
@@ -419,6 +419,16 @@
   .nav-collapse.collapse {
     height: auto !important;
     overflow: visible !important;
+  }
+}
+@media (max-width: 480px) {
+  .nav-tabs > li {
+    margin-bottom: 0; 
+    &.active > a,
+    > a,
+    > a:hover {
+      border-width: 0;
+    }
   }
 }
 

@@ -19,6 +19,7 @@ class AccountUpgradesControllerTest < ActionController::TestCase
   end
 
   with_aria
+  with_clean_cache
 
   test "should show an unchanged plan when the current plan matches the new one" do
     user = with_user(full)
@@ -30,6 +31,94 @@ class AccountUpgradesControllerTest < ActionController::TestCase
     assert_not_nil assigns[:billing_info]
     assert_template :unchanged
   end
+
+  test "should validate vat before upgrading streamline" do
+    with_confirmed_user
+
+    # Try to save a valid IE VAT with a DE address
+    Aria::UserContext.any_instance.expects(:create_account).never
+    Streamline::FullUser.any_instance.expects(:promote).never
+
+    # Country mismatch should prevent ever hitting remote VAT validation
+    Valvat.any_instance.expects(:exists?).never
+
+    put :update,
+      :plan_id => 'silver',
+      :streamline_full_user => {
+        :streamline_full_user => {
+          :first_name => 'Bob',
+          :last_name => 'Smith',
+          :email_subscribe => false,
+          :phone_number => '9191110000',
+          :greeting => 'Mr.',
+          :title => 'Engineer',
+          :company => 'Red Hat Test',
+          :password => 'aoeuaoeu',
+          :password_confirmation => 'aoeuaoeu',
+        },
+        :aria_billing_info => {
+          :first_name => 'Bob',
+          :last_name => 'Smith',
+          :city => 'Lund',
+          :region => 'Scania',
+          :country => 'DE',
+          :address1 => '10 Adelgatan',
+          :zip => '223309',
+          :taxpayer_id => 'IE6388047V',
+        }
+      }
+
+    # Make sure we got the right error
+    assert_response :success
+    assert_template :edit
+    assert full_user = assigns[:full_user]
+    assert billing_info = assigns[:billing_info]
+    assert_equal 1, billing_info.errors[:taxpayer_id].length, billing_info.errors.inspect
+  end
+
+  test "should validate vat and upgrade streamline" do
+    with_confirmed_user
+
+    # Remote VAT validation should only happen once
+    Valvat.any_instance.expects(:exists?).once.returns(true)
+
+    put :update,
+      :plan_id => 'silver',
+      :streamline_full_user => {
+        :streamline_full_user => {
+          :first_name => 'Bob',
+          :last_name => 'Smith',
+          :email_subscribe => false,
+          :phone_number => '9191110000',
+          :greeting => 'Mr.',
+          :title => 'Engineer',
+          :company => 'Red Hat Test',
+          :password => 'aoeuaoeu',
+          :password_confirmation => 'aoeuaoeu',
+        },
+        :aria_billing_info => {
+          :first_name => 'Bob',
+          :last_name => 'Smith',
+          :city => 'Lund',
+          :region => 'Scania',
+          :country => 'IE',
+          :address1 => '10 Adelgatan',
+          :zip => '223309',
+          :taxpayer_id => 'IE6388047V',
+        }
+      }
+
+    aria_user = Aria::UserContext.new(@user)
+    assert aria_user.has_valid_account?
+    assert aria_user.has_complete_account?
+    assert aria_user.billing_info.persisted?
+    assert_equal 'eur', aria_user.currency_cd
+    assert_equal 'IE6388047V', aria_user.account_details.taxpayer_id
+    assert aria_user.tax_exempt?
+
+    assert_equal :full, session[:streamline_type]
+    assert_redirected_to account_plan_upgrade_payment_method_path
+  end  
 
   test "should upgrade a full user in streamline" do
     with_confirmed_user

@@ -1,5 +1,8 @@
 
 <style type="text/css">
+.column-content.column-content-page:before {
+    background-image: none;
+}
 #tabs {
   display: none;
 }

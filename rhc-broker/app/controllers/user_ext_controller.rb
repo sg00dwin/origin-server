@@ -1,4 +1,5 @@
 class UserExtController < UserController
+  action_log_tag_resource :user
 
   # GET /user
   def show
