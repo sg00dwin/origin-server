@@ -206,7 +206,7 @@ MSG
     def self.mark_acct_status(h)
       begin
         login = get_login(h)
-        raise Exception.new "Unable to find 'RHLogin' field for the event: #{h}" if login.nil?
+        raise Exception.new "Unable to find 'RHLogin' field for the event: #{h}" if login.to_s.empty?
         if h['status_cd'] < "0"
           filter = {:login => login, :pending_plan_id => nil, :plan_state => {"$ne" => CloudUser::PLAN_STATES['pending']}}
           new_plan_state = CloudUser::PLAN_STATES['canceled']

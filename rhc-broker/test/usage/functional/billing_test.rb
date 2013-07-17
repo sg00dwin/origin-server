@@ -12,7 +12,7 @@ class BillingTest < ActiveSupport::TestCase
 
   test "get account no from user id" do
     api = OpenShift::BillingService.instance
-    acct_no = api.create_fake_acct(@user_id, :free)
+    acct_no = api.create_fake_acct(@user.login, :free)
     assert_not_nil(acct_no, "account number is nil")
     acct_no_from_id = api.get_acct_no_from_user_id(@user_id)
     assert_equal(acct_no, acct_no_from_id, "Account no #{acct_no_from_id} expected #{acct_no}")
@@ -20,7 +20,7 @@ class BillingTest < ActiveSupport::TestCase
   
   test "get account info" do
     api = OpenShift::BillingService.instance
-    acct_no = api.create_fake_acct(@user_id, :free)
+    acct_no = api.create_fake_acct(@user.login, :free)
     acct_info = api.get_acct_details_all(acct_no)
     assert_equal(acct_info["status_cd"], "1", "Account status #{acct_info["status_cd"]} expected 1")
     assert_equal(acct_info["userid"], @user_id, "Account userid #{acct_info["userid"]} expected #{@user_id}")
@@ -28,7 +28,7 @@ class BillingTest < ActiveSupport::TestCase
   
   test "get plans" do
     api = OpenShift::BillingService.instance
-    acct_no = api.create_fake_acct(@user_id, :free)
+    acct_no = api.create_fake_acct(@user.login, :free)
     plans = api.get_acct_plans_all(acct_no)
     assert(plans.length == 1)
     current_plan = plans[0]
@@ -38,7 +38,7 @@ class BillingTest < ActiveSupport::TestCase
   
   test "update account status" do
     api = OpenShift::BillingService.instance
-    acct_no = api.create_fake_acct(@user_id, :free)
+    acct_no = api.create_fake_acct(@user.login, :free)
     acct_info = api.get_acct_details_all(acct_no)
     assert_equal(acct_info["status_cd"], "1", "Account status #{acct_info["status_cd"]} expected 1")
     api.update_acct_status(acct_no, 0)
@@ -48,7 +48,7 @@ class BillingTest < ActiveSupport::TestCase
   
   test "update master plan" do
     api = OpenShift::BillingService.instance
-    acct_no = api.create_fake_acct(@user_id, :free)
+    acct_no = api.create_fake_acct(@user.login, :free)
     plans = api.get_acct_plans_all(acct_no)
     assert(plans.length == 1)
     current_plan = plans[0]
@@ -64,7 +64,7 @@ class BillingTest < ActiveSupport::TestCase
   
 test "update master plan and then revert to previous" do
     api = OpenShift::BillingService.instance
-    acct_no = api.create_fake_acct(@user_id, :free)
+    acct_no = api.create_fake_acct(@user.login, :free)
 
     plans = api.get_acct_plans_all(acct_no)
     queued = api.get_queued_service_plans(acct_no)
@@ -105,7 +105,7 @@ test "update master plan and then revert to previous" do
   
   test "update master plan to same plan" do
     api = OpenShift::BillingService.instance
-    acct_no = api.create_fake_acct(@user_id, :silver)
+    acct_no = api.create_fake_acct(@user.login, :silver)
     plans = api.get_acct_plans_all(acct_no)
     queued = api.get_queued_service_plans(acct_no)
     assert(plans.length == 1)
