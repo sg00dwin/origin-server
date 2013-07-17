@@ -3,7 +3,7 @@ require 'test_helper'
 require 'mocha'
 
 class BillingEventsTest < ActionDispatch::IntegrationTest
-  BILLING_EVENTS_URL = "/billing/rest/events"
+  BILLING_EVENTS_URL = "/broker/billing/rest/events"
   def setup
     @unauthenticated_headers = {}
     @unauthenticated_headers["HTTP_ACCEPT"] = "application/json"
