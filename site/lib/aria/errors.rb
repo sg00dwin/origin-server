@@ -26,6 +26,8 @@ module Aria
     1010 => (MissingRequiredParameter = Class.new(Error)),
     1011 => (InvalidSession = Class.new(Error)),
     5011 => (AccountExists = Class.new(Error)),
+    15003 => (CouponExists = Class.new(Error)),
+    15001 => (CouponDoesNotExist = Class.new(Error))
   }
 
   # The Aria account has no RHLogin, which means it was not properly created

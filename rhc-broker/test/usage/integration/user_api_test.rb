@@ -5,7 +5,7 @@ require 'mocha'
 
 class UserApiTest < ActionDispatch::IntegrationTest
 
-  USER_COLLECTION_URL = "/rest/user"
+  USER_COLLECTION_URL = "/broker/rest/user"
 
   def setup
     @random = gen_uuid[0..9]
@@ -15,12 +15,12 @@ class UserApiTest < ActionDispatch::IntegrationTest
     @headers["HTTP_ACCEPT"] = "application/json"
     https!
   end
-  
+
   def teardown
     cloud_user = CloudUser.find_by(login: @login)
     cloud_user.force_delete unless cloud_user.nil?
   end
-  
+
   def test_user_show
     request_via_redirect(:get, USER_COLLECTION_URL, {}, @headers)
     assert_response :ok
@@ -34,7 +34,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     assert_equal(user["capabilities"].has_key?("max_tracked_addtl_storage_per_gear"), false)
     user = CloudUser.find_by(login: @login)
   end
-  
+
   def test_user_upgrade
     api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
@@ -86,7 +86,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     current_plan = plans[0]
     assert_equal(current_plan["new_plan"], "Free", "Current plan name #{current_plan["new_plan"]} expected Free")
   end
- 
+
   def test_user_downgrade_with_too_many_gears
     user = CloudUser.new(login: @login)
     Lock.create_lock(user)
@@ -97,7 +97,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 153)
   end
-  
+
   def test_user_downgrade_with_large_gears
     user = CloudUser.new(login: @login)
     Lock.create_lock(user)
@@ -106,17 +106,17 @@ class UserApiTest < ActionDispatch::IntegrationTest
     user.set_capabilities(user_capabilities)
     user.save!
     #create app with large gears
-    request_via_redirect(:post, "/rest/domains", {:id=> @login[0..15]}, @headers)
+    request_via_redirect(:post, "/broker/rest/domains", {:id=> @login[0..15]}, @headers)
     assert_response :created
     body = JSON.parse(@response.body)
     domain_id = body["data"]["id"]
-    request_via_redirect(:post, "/rest/domains/#{domain_id}/applications", {:name => "app", :cartridge => "php-5.3", :gear_profile => "medium"}, @headers)
+    request_via_redirect(:post, "/broker/rest/domains/#{domain_id}/applications", {:name => "app", :cartridge => "php-5.3", :gear_profile => "medium"}, @headers)
     assert_response :created
     body = JSON.parse(@response.body)
     app = body["data"]
     gear_profile = app["gear_profile"]
     assert_equal(gear_profile, "medium")
-      
+
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :free}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
@@ -130,21 +130,21 @@ class UserApiTest < ActionDispatch::IntegrationTest
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :silver}, @headers)
     assert_response :ok
     #create app and add additional storage to the gear group
-    request_via_redirect(:post, "/rest/domains", {:id=> @login[0..15]}, @headers)
+    request_via_redirect(:post, "/broker/rest/domains", {:id=> @login[0..15]}, @headers)
     assert_response :created
     body = JSON.parse(@response.body)
     domain_id = body["data"]["id"]
-    request_via_redirect(:post, "/rest/domains/#{domain_id}/applications", {:name => "app", :cartridge => "php-5.3"}, @headers)
+    request_via_redirect(:post, "/broker/rest/domains/#{domain_id}/applications", {:name => "app", :cartridge => "php-5.3"}, @headers)
     assert_response :created
-    request_via_redirect(:put, "/rest/domains/#{domain_id}/applications/app/cartridges/php-5.3", {:additional_gear_storage => 1}, @headers)
+    request_via_redirect(:put, "/broker/rest/domains/#{domain_id}/applications/app/cartridges/php-5.3", {:additional_gear_storage => 1}, @headers)
     assert_response :ok
- 
+
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :free}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 159)
   end
-  
+
   def test_user_downgrade_with_certificates
     api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
@@ -154,16 +154,16 @@ class UserApiTest < ActionDispatch::IntegrationTest
     body = JSON.parse(@response.body)
     assert_equal(body["data"]["capabilities"]["private_ssl_certificates"], true)
     #create app and add certificate
-    request_via_redirect(:post, "/rest/domains", {:id=> @login[0..15]}, @headers)
+    request_via_redirect(:post, "/broker/rest/domains", {:id=> @login[0..15]}, @headers)
     assert_response :created
     body = JSON.parse(@response.body)
     domain_id = body["data"]["id"]
-    request_via_redirect(:post, "/rest/domains/#{domain_id}/applications", {:name => "app", :cartridge => "php-5.3"}, @headers)
+    request_via_redirect(:post, "/broker/rest/domains/#{domain_id}/applications", {:name => "app", :cartridge => "php-5.3"}, @headers)
     assert_response :created
     ssl_certificate_data
-    request_via_redirect(:post, "/rest/domains/#{domain_id}/applications/app/aliases", {:id => "as.#{@login[0..15]}", :ssl_certificate => @ssl_certificate, :private_key => @private_key, :pass_phrase => @pass_phrase}, @headers)
+    request_via_redirect(:post, "/broker/rest/domains/#{domain_id}/applications/app/aliases", {:id => "as.#{@login[0..15]}", :ssl_certificate => @ssl_certificate, :private_key => @private_key, :pass_phrase => @pass_phrase}, @headers)
     assert_response :created
- 
+
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :free}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
@@ -188,14 +188,14 @@ class UserApiTest < ActionDispatch::IntegrationTest
     plans = api.get_queued_service_plans(acct_no)
     assert(plans == nil)
   end
-  
+
   def test_billing_account_not_found
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :silver}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 155)
   end
-  
+
   def test_invalid_plan_id
     api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
@@ -247,7 +247,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     plans = api.get_queued_service_plans(acct_no)
     assert(plans == nil)
   end
- 
+
   def test_plan_upgrade_mega_to_free_recovery
     api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
@@ -286,7 +286,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     current_plan = plans[0]
     assert_equal(current_plan["new_plan"], "Free", "Current plan name #{current_plan["new_plan"]} expected Free")
   end
- 
+
   def test_plan_upgrade_noplan_to_mega_recovery_success
     api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
@@ -369,11 +369,11 @@ class UserApiTest < ActionDispatch::IntegrationTest
     user_capabilities["gear_sizes"].push("c9")
     user.set_capabilities(user_capabilities)
     user.save!
-    request_via_redirect(:post, "/rest/domains", {:id=> @login[0..15]}, @headers)
+    request_via_redirect(:post, "/broker/rest/domains", {:id=> @login[0..15]}, @headers)
     assert_response :created
     body = JSON.parse(@response.body)
     domain_id = body["data"]["id"]
-    request_via_redirect(:post, "/rest/domains/#{domain_id}/applications", {:name => "app", :cartridge => "php-5.3", :gear_profile => "c9"}, @headers)
+    request_via_redirect(:post, "/broker/rest/domains/#{domain_id}/applications", {:name => "app", :cartridge => "php-5.3", :gear_profile => "c9"}, @headers)
     assert_response :created
 
     `rhc-admin-ctl-plan --fix --login #{@login}`
@@ -383,7 +383,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     assert_equal(user.plan_id, "free")
     assert_equal(user_capabilities["gear_sizes"].sort, ["c9", "small"])
   end
- 
+
   def test_user_queued_plans
     api = OpenShift::BillingService.instance
     user_id = Digest::MD5::hexdigest(@login)
@@ -398,7 +398,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     queued_plans = api.get_queued_service_plans(acct_no)
     assert_equal(queued_plans, nil)
 
-    2.times do 
+    2.times do
       request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :free}, @headers)
       assert_response :ok
       body = JSON.parse(@response.body)
@@ -409,7 +409,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
       queued_plans = api.get_queued_service_plans(acct_no)
       assert_equal(queued_plans[0]["new_plan"], "Free")
     end
-    2.times do 
+    2.times do
       request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :silver}, @headers)
       assert_response :ok
       body = JSON.parse(@response.body)
@@ -421,7 +421,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
       assert_equal(queued_plans, nil)
     end
   end
- 
+
   def ssl_certificate_data
     @ssl_certificate = "-----BEGIN CERTIFICATE-----
 MIIDoDCCAogCCQDzF8AJCHnrbjANBgkqhkiG9w0BAQUFADCBkTELMAkGA1UEBhMC

@@ -84,6 +84,64 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     assert_redirected_to login_path(:then => account_plan_upgrade_path('silver'))
   end
 
+  test 'coupon applies and discounts' do
+    omit_if_aria_is_unavailable
+
+    Rails.configuration.expects(:aria_direct_post_name).at_least_once.returns(nil)
+
+    user = new_streamline_user
+    omit_on_register unless user.register('/email_confirm')
+    assert user.confirm_email
+    post '/login', {:web_user => {:rhlogin => user.email_address, :password => user.password}}
+
+    put '/account/plans/silver/upgrade/edit', :streamline_full_user => user_params
+    assert_redirected_to '/account/plans/silver/upgrade/payment_method'
+
+    get '/account/plans/silver/upgrade/payment_method/new'
+    assert_response :success
+
+    res = submit_form('form#payment_method', credit_card_params)
+    assert Net::HTTPRedirection === res, res.inspect
+    redirect = res['Location']
+    assert redirect.starts_with?(direct_create_account_plan_upgrade_payment_method_url('silver')), redirect
+
+    get redirect
+    assert_redirected_to '/account/plans/silver/upgrade'
+
+    # Do some direct checking here just to validate
+    aria_user = Aria::UserContext.new(WebUser.new(:rhlogin => user.rhlogin))
+    assert aria_user.has_valid_payment_method?
+    assert aria_user.update_account :test_acct_ind => 0
+
+    get '/account/plans/silver/upgrade/new'
+    assert_response :success
+    assert_select '#coupon-field-container'
+    assert assigns(:coupon)
+
+    post '/account/plans/silver/upgrade', {:plan_id => 'silver', :user => {:aria_coupon => {:coupon_code => 'bogus'}}}
+    assert_response :success
+    assert_template :new
+    assert assigns(:coupon)
+    assert_equal ['Invalid coupon code'], assigns(:coupon).errors[:coupon_code]
+    assert_equal 'free', User.find(:one, :as => user).plan_id
+
+    # Coupon code "externaltest" with external message containing "test coupon" must exist in Aria test env
+    post '/account/plans/silver/upgrade', {:plan_id => 'silver', :user => {:aria_coupon => {:coupon_code => 'test2'}}}
+    assert_response :success
+    assert_template :upgraded, "Did not upgrade with test2 coupon. Make sure the test coupon (externaltest2) exists in the Aria test environment."
+    assert flash[:info] =~ /test coupon/, "Expected a success message for the coupon"
+    assert_equal 'silver', User.find(:one, :as => user).plan_id
+
+    aria_user.clear_cache!
+    assert_equal [], aria_user.unpaid_invoices
+    assert invoice = aria_user.invoices.first
+    assert invoice.line_items.find {|li| li.description =~ /test2/ }, "Could not find a discount line item from the test2 coupon" if invoice.debit > 0
+    assert_equal invoice.debit, invoice.credit, "The invoice should have credits to match the charges"
+    assert_equal [], invoice.payments, "There should be no payments needed, because of the test2 coupon"
+
+    aria_user.clear_cache!
+  end
+
   test 'direct post collects outstanding payment' do
     omit_if_aria_is_unavailable
 
