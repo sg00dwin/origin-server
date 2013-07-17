@@ -105,6 +105,10 @@ module Aria
       end
     end
 
+    def apply_coupon_to_acct(acct_no, coupon_code)
+      super({:acct_no => acct_no, :coupon_code => coupon_code})
+    end
+
     def get_usage_history(acct_no, opts)
       opts = opts.dup
       opts[:acct_no] = acct_no

@@ -23,6 +23,8 @@ class AccountUpgradesController < ConsoleController
     @user = User.find :one, :as => current_user
     @current_plan = @user.plan
 
+    @coupon = Aria::Coupon.new
+
     render :unchanged and return if @plan == @current_plan
     render :downgrade and return if @plan.basic?
     render :change and return unless @current_plan.basic?
@@ -37,9 +39,20 @@ class AccountUpgradesController < ConsoleController
 
     @user.plan_id = params[:plan_id]
 
+    user_params = params[:user]
+    @coupon = user_params ? Aria::Coupon.new(user_params[:aria_coupon]) : Aria::Coupon.new
+
     unless @payment_method.persisted? and @billing_info.persisted?
       @user.errors[:base] = "You must provide a method of payment and billing address for this account."
       render :new and return
+    end
+
+    if @coupon.present?
+      if @coupon.apply_to_acct(current_aria_user)
+        flash.now[:info] = @coupon.messages.first.presence || "The coupon was successfully applied"
+      else
+        render :new and return
+      end
     end
 
     if @user.save
