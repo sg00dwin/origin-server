@@ -176,6 +176,8 @@ class Watchman
     Syslog.warning('Fork from process leader failed') if (pid = fork) == -1
     exit unless pid.nil?
 
+    File.open("/var/run/#{File.basename($0)}.pid", 'w') {|f| f.puts(Process.pid)}
+
     Dir.chdir '/'
     File.umask 0000
 
@@ -183,7 +185,6 @@ class Watchman
     STDOUT.reopen '/dev/null', 'a'
     STDERR.reopen STDOUT
 
-    File.open("/var/run/#{File.basename($0)}.pid", 'w') {|f| f.puts(Process.pid)}
   end
 end
 
