@@ -1,4 +1,4 @@
-- existing_account = current_aria_user && current_aria_user.has_account? && current_aria_user.has_valid_payment_method?
+- existing_account = current_aria_user && current_aria_user.has_account?
 - tax_exempt = current_aria_user && current_aria_user.has_account? && current_aria_user.tax_exempt?
 %section.row
   .span8
@@ -20,6 +20,14 @@
       - if show_vat
         = b.input :taxpayer_id, :label => "VAT Number", :input_html => { :class => 'input-medium'}, :wrapper_html => { :class => 'tax_vat' }
 
+      - if not existing_account
+        .controls.billing-currency{:style => "display:none"}
+          %p.help-block
+            Your account will be billed in
+            = succeed '.' do
+              %span.billing-currency-code
+            This cannot be changed once your account is created.
+
   %aside.span4
     %h5 Your contact information is safe
     %p
@@ -32,7 +40,7 @@
       We plan on expanding availability in the future.
       Please contact us at #{link_to_account_mailto} if you are interested in subscribing from another country.
 
-    - if existing_account
+    - if existing_account && current_aria_user.has_valid_payment_method?
       %h5 Already Have A Payment Method Registered?
       %p
         Please make sure this address matches the address on file with your credit card company.
@@ -50,7 +58,7 @@
         %h5.tax_vat Have a VAT Number?
         %p.tax_vat
           Provide your VAT Number in the indicated field. We will validate it against the VIES database and your 0% VAT rate will be reflected in your OpenShift Online statements.
-          -if existing_account
+          -if existing_account && current_aria_user.has_valid_payment_method?
             If you have already been charged for VAT, contact #{link_to "Customer Service", contact_customer_support_url, :class => 'external'} for a refund of previously paid taxes.
 
 - content_for :stylesheets do
@@ -62,6 +70,7 @@
     :javascript
       $(document).ready(function() {
         $('form.plan_upgrade.billing').addressForm({
-          vatCountries: #{show_vat == :dynamic ? "['#{Rails.configuration.vies_countries.join("','")}']" : "null"}
+          vatCountries: #{show_vat == :dynamic ? "['#{Rails.configuration.vies_countries.join("','")}']" : "null"},
+          showCurrency: #{existing_account == false}
         });
       })

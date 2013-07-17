@@ -6,14 +6,17 @@ require 'countries'
 class Country
   attr_accessor :subdivision_name
   attr_accessor :postal_code_name
+
+  def currency
+    Rails.configuration.currency_cd_by_country[alpha2].upcase
+  end
 end
 
 module CountryHelper
   def countries_for_select
     CountryHelper.countries.map do |country|
-      currency = country.currency.code
       data = {
-        :currency => (CountryHelper.currencies.include?(currency) ? currency.downcase : 'usd'),
+        :currency    => country.currency,
         :subdivision => country.subdivision_name,
         :postal_code => country.postal_code_name
       }.delete_if{|_,v| v.nil?}
@@ -36,18 +39,9 @@ module CountryHelper
     end
   end
 
-  def currencies_for_select
-    currencies = CountryHelper.currencies
-    [['Select a currency', nil, {:disabled => true, :selected => 'selected'}]] | currencies.zip(currencies.map(&:downcase))
-  end
-
   class << self
     def countries
       @@countries ||= preferred_sort(config.allowed_countries, config.preferred_countries, :alpha2, :name)
-    end
-
-    def currencies
-      @@currencies ||= config.allowed_currencies
     end
 
     def subdivisions
@@ -56,7 +50,7 @@ module CountryHelper
 
     def config
       @@config ||= OpenStruct.new(YAML.load_file(File.join(Rails.root, 'config', 'countries.yml'))).tap do |c|
-          [:allowed_currencies, :allowed_countries, :preferred_countries].each do |x|
+          [:allowed_countries, :preferred_countries].each do |x|
             c.send("#{x}=",Rails.configuration.send(x).map{|y| y.to_s.upcase })
           end
           # Loop through all of the allowed countries and set additional info from our countries.yml
