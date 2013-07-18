@@ -4567,6 +4567,38 @@ return $value;',
       'validate_argument_php' => '',
     ),
   ));
+  $handler->override_option('filters', array(
+    'type' => array(
+      'operator' => 'in',
+      'value' => array(
+        'blog' => 'blog',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'type',
+      'table' => 'node',
+      'field' => 'type',
+      'relationship' => 'none',
+    ),
+    'status' => array(
+      'operator' => '=',
+      'value' => '1',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status',
+      'table' => 'node',
+      'field' => 'status',
+      'relationship' => 'none',
+    ),
+  ));
   $handler->override_option('cache', array(
     'type' => 'time',
     'results_lifespan' => '3600',
@@ -4585,7 +4617,7 @@ return $value;',
     'hide_empty' => 0,
   ));
   $handler->override_option('block_description', '');
-  $handler->override_option('block_caching', '8');
+  $handler->override_option('block_caching', '4');
   $handler = $view->new_display('block', 'What\'s New?', 'block_3');
   $handler->override_option('relationships', array());
   $handler->override_option('fields', array(
