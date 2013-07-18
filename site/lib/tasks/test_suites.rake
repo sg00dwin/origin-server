@@ -107,18 +107,12 @@ namespace :test do
       ])
     end
 
-    Rake::TestTask.new :restapi_integration => ['test:prepare'] do |t|
-      t.libs << 'test'
-      covered.concat(t.test_files = FileList[
-        'test/integration/rest_api/**_test.rb',
-      ])
-    end
-
     Rake::TestTask.new :external_integration => ['test:prepare'] do |t|
       t.libs << 'test'
       covered.concat(t.test_files = FileList[
         # Aria and some Streamline
         'test/integration/aria_test.rb',
+        'test/integration/rest_api/custom_cart_test.rb',
         'test/functional/account_controller_test.rb',
         'test/functional/extended_dashboard_controller_test.rb',
         'test/functional/bills_controller_test.rb',
@@ -138,6 +132,13 @@ namespace :test do
         # External community links
         'test/integration/help_link_test.rb',
       ])
+    end
+
+    Rake::TestTask.new :restapi_integration => ['test:prepare'] do |t|
+      t.libs << 'test'
+      covered.concat(t.test_files = FileList[
+        'test/integration/rest_api/**_test.rb',
+      ] - covered)
     end
 
     Rake::TestTask.new :base => ['test:prepare'] do |t|
