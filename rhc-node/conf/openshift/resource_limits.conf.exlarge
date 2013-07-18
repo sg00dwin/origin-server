@@ -46,7 +46,7 @@ limits_nproc=4285        # max number of processes
 # cpu_rt_period_us=100000
 # cpu_rt_runtime_us=950000
 cpu_shares=128
-cpu_cfs_quota_us=30000
+cpu_cfs_quota_us=100000
 #
 # memory
 # 1024 * 1024 * 1024 * 4 = 4294967296 = 4G
