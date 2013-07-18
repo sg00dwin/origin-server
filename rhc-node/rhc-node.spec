@@ -116,7 +116,6 @@ echo "/usr/bin/oo-trap-user" >> /etc/shells
 /sbin/chkconfig --add openshift-tc || :
 /sbin/chkconfig --add libra-avc-cache-threshold || :
 /sbin/chkconfig --add libra-watchman || :
-/sbin/chkconfig --add openshift-cgroups || :
 
 #/sbin/service mcollective restart > /dev/null 2>&1 || :
 /sbin/restorecon /etc/init.d/libra || :
@@ -136,8 +135,6 @@ then
     /sbin/restorecon /etc/cgconfig.conf || :
     # only restart if it's on
     /sbin/chkconfig cgconfig && /sbin/service cgconfig restart >/dev/null 2>&1 || :
-    # only enable if cgconfig is
-    chkconfig cgconfig && /sbin/service openshift-cgroups start > /dev/null 2>&1 || :
 fi
 
 # Only bounce tc if its not already initialized
@@ -175,12 +172,10 @@ chmod o+w /tmp
 %preun
 if [ "$1" -eq "0" ]; then
     /sbin/service openshift-tc stop > /dev/null 2>&1 || :
-    /sbin/service openshift-cgroups stop > /dev/null 2>&1 || :
     /sbin/service libra-watchman stop > /dev/null 2>&1 || :
     /sbin/chkconfig --del libra-avc-cache-threshold || :
     /sbin/chkconfig --del openshift-tc || :
     /sbin/chkconfig --del libra-data || :
-    /sbin/chkconfig --del openshift-cgroups || :
     /sbin/chkconfig --del libra-watchman || :
     sed -i -e '\:/usr/bin/oo-trap-user:d' /etc/shells
 fi
