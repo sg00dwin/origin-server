@@ -5,7 +5,7 @@ require 'mocha'
 
 class PlansApiTest < ActionDispatch::IntegrationTest
 
-  PLANS_COLLECTION_URL = "/rest/plans"
+  PLANS_COLLECTION_URL = "/broker/rest/plans"
   def setup
     @random = gen_uuid[0..9]
     @login = "test_user#{@random}"
@@ -19,7 +19,7 @@ class PlansApiTest < ActionDispatch::IntegrationTest
     # (these are permitted)
     @unauthenticated_headers = {}
     @unauthenticated_headers["HTTP_ACCEPT"] = "application/json"
-    
+
     https!
   end
 
