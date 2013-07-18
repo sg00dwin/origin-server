@@ -13,10 +13,7 @@ class BillingController < BaseController
       aria_config = Rails.application.config.billing[:config]
       if (params[:auth_key] == aria_config[:auth_key]) and
          (params[:client_no].to_i == aria_config[:client_no])
-        ipaddr_low = IPAddr.new(aria_config[:event_remote_ipaddr_begin]).to_i
-        ipaddr_high = IPAddr.new(aria_config[:event_remote_ipaddr_end]).to_i
-        ipaddr_remote = IPAddr.new(request.remote_ip).to_i
-        valid_ip = ((ipaddr_low..ipaddr_high) === ipaddr_remote)
+        valid_ip = check_ip_validity(request.remote_ip)
       end
     rescue Exception => e
       Rails.logger.error e
@@ -25,5 +22,35 @@ class BillingController < BaseController
       request_http_basic_authentication
       return
     end
+  end
+
+  private
+
+  def check_ip_validity(remote_ip_str)
+    aria_config = Rails.application.config.billing[:config]
+    ip_remote = IPAddr.new(remote_ip_str).to_i
+
+    ip_ranges = Rails.cache.fetch("aria_valid_ips", :expires_in => 1.hour) do
+      ip_ranges = []
+      aria_config[:event_remote_ipaddrs].split(',').each do |ir|
+        ip_range = []
+        ir.split(':').each { |ip| ip_range << IPAddr.new(ip.strip).to_i }
+        ip_ranges << ip_range
+      end
+      ip_ranges
+    end
+
+    valid = false
+    ip_ranges.each do |ip_range|
+      if ip_range.size == 2
+        valid = ((ip_range[0]..ip_range[1]) === ip_remote)
+      elsif ip_range.size == 1
+        valid = (ip_range[0] == ip_remote)
+      else
+        raise Exception.new "Invalid event_remote_ipaddrs aria configuration: #{aria_config[:event_remote_ipaddrs]}"
+      end
+      return true if valid
+    end
+    return false
   end
 end

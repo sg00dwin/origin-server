@@ -22,7 +22,8 @@ module OpenShift
     end
    
     # NOTE: This method is only used for *Testing*
-    def create_fake_acct(user_id, plan_name=nil)
+    def create_fake_acct(login, plan_name=nil)
+      user_id = Digest::MD5::hexdigest(login)
       {
         'userid' => user_id,
         'password' => "nopass786",
@@ -30,7 +31,7 @@ module OpenShift
         'master_plan_units' => 1,
         'status_cd' => 1,
         'supp_field_names' => "RHLogin",
-        'supp_field_values' => "#{user_id}",
+        'supp_field_values' => "#{login}",
         'first_name' => "Fname",
         'last_name' => "Lname",
         'company_name' => "Cname Inc",

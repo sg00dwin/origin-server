@@ -37,8 +37,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
 
   def test_user_upgrade
     api = OpenShift::BillingService.instance
-    user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :free)
+    acct_no = api.create_fake_acct(@login, :free)
     api.update_acct_status(acct_no, 1)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :silver}, @headers)
     assert_response :ok
@@ -64,8 +63,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
 
   def test_user_downgrade
     api = OpenShift::BillingService.instance
-    user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :silver)
+    acct_no = api.create_fake_acct(@login, :silver)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :free}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
@@ -125,8 +123,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
 
   def test_user_downgrade_with_additional_storage
     api = OpenShift::BillingService.instance
-    user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :free)
+    acct_no = api.create_fake_acct(@login, :free)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :silver}, @headers)
     assert_response :ok
     #create app and add additional storage to the gear group
@@ -147,8 +144,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
 
   def test_user_downgrade_with_certificates
     api = OpenShift::BillingService.instance
-    user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :free)
+    acct_no = api.create_fake_acct(@login, :free)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :silver}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
@@ -172,8 +168,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
 
   def test_user_upgrade_with_inactive_user
     api = OpenShift::BillingService.instance
-    user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :free)
+    acct_no = api.create_fake_acct(@login, :free)
     api.update_acct_status(acct_no, 0)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :silver}, @headers)
     assert_response :unprocessable_entity
@@ -198,8 +193,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
 
   def test_invalid_plan_id
     api = OpenShift::BillingService.instance
-    user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :free)
+    acct_no = api.create_fake_acct(@login, :free)
     api.update_acct_status(acct_no, 1)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :bogusplan}, @headers)
     assert_response :unprocessable_entity
@@ -209,8 +203,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
 
   def test_plan_upgrade_free_to_mega_recovery
     api = OpenShift::BillingService.instance
-    user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :free)
+    acct_no = api.create_fake_acct(@login, :free)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :free}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
@@ -250,8 +243,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
 
   def test_plan_upgrade_mega_to_free_recovery
     api = OpenShift::BillingService.instance
-    user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :silver)
+    acct_no = api.create_fake_acct(@login, :silver)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :silver}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
@@ -289,8 +281,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
 
   def test_plan_upgrade_noplan_to_mega_recovery_success
     api = OpenShift::BillingService.instance
-    user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :free)
+    acct_no = api.create_fake_acct(@login, :free)
     request_via_redirect(:get, USER_COLLECTION_URL, {}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
@@ -331,8 +322,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
 
   def test_fix_user_plan_capabilities_success
     api = OpenShift::BillingService.instance
-    user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :free)
+    acct_no = api.create_fake_acct(@login, :free)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :free}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
@@ -354,8 +344,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
 
   def test_fix_user_plan_capabilities_failure
     api = OpenShift::BillingService.instance
-    user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :free)
+    acct_no = api.create_fake_acct(@login, :free)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :free}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
@@ -386,8 +375,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
 
   def test_user_queued_plans
     api = OpenShift::BillingService.instance
-    user_id = Digest::MD5::hexdigest(@login)
-    acct_no = api.create_fake_acct(user_id, :free)
+    acct_no = api.create_fake_acct(@login, :free)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :silver}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)

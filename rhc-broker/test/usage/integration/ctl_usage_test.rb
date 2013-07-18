@@ -25,7 +25,6 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     @districts_enabled = Rails.configuration.msg_broker[:districts][:enabled] 
     Rails.configuration.msg_broker[:districts][:enabled] = false
     @billing_api = OpenShift::BillingService.instance
-    @billing_user_id = Digest::MD5::hexdigest(@login)
   end
   
   def teardown
@@ -49,7 +48,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     ensure
       Rails.configuration.msg_broker[:districts][:enabled] = @districts_enabled
     end
-    acct_no = @billing_api.create_fake_acct(@billing_user_id, :silver)
+    acct_no = @billing_api.create_fake_acct(@login, :silver)
     cu = CloudUser.find_by(_id: @user_id)
     cu.usage_account_id = acct_no
     cu.save!
@@ -193,7 +192,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     ensure
       Rails.configuration.msg_broker[:districts][:enabled] = @districts_enabled
     end
-    acct_no = @billing_api.create_fake_acct(@billing_user_id, :silver)
+    acct_no = @billing_api.create_fake_acct(@login, :silver)
     cu = CloudUser.find_by(_id: @user_id)
     cu.usage_account_id = acct_no
     cu.save!
