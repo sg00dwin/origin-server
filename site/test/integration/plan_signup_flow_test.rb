@@ -126,18 +126,18 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     assert_equal 'free', User.find(:one, :as => user).plan_id
 
     # Coupon code "externaltest" with external message containing "test coupon" must exist in Aria test env
-    post '/account/plans/silver/upgrade', {:plan_id => 'silver', :user => {:aria_coupon => {:coupon_code => 'test2'}}}
+    post '/account/plans/silver/upgrade', {:plan_id => 'silver', :user => {:aria_coupon => {:coupon_code => 'test'}}}
     assert_response :success
-    assert_template :upgraded, "Did not upgrade with test2 coupon. Make sure the test coupon (externaltest2) exists in the Aria test environment."
+    assert_template :upgraded, "Did not upgrade with test coupon. Make sure the test coupon (external-test) exists in the Aria test environment."
     assert flash[:info] =~ /test coupon/, "Expected a success message for the coupon"
     assert_equal 'silver', User.find(:one, :as => user).plan_id
 
     aria_user.clear_cache!
     assert_equal [], aria_user.unpaid_invoices
     assert invoice = aria_user.invoices.first
-    assert invoice.line_items.find {|li| li.description =~ /test2/ }, "Could not find a discount line item from the test2 coupon" if invoice.debit > 0
+    assert invoice.line_items.find {|li| li.description =~ /test external description/ }, "Could not find a discount line item from the test coupon" if invoice.debit > 0
     assert_equal invoice.debit, invoice.credit, "The invoice should have credits to match the charges"
-    assert_equal [], invoice.payments, "There should be no payments needed, because of the test2 coupon"
+    assert_equal [], invoice.payments, "There should be no payments needed, because of the test coupon"
 
     aria_user.clear_cache!
   end

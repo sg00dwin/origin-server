@@ -466,43 +466,43 @@ class AriaUnitTest < ActiveSupport::TestCase
   end
 
   test 'coupon save' do
-    stub_aria(:apply_coupon_to_acct, { :acct_no => '1', :coupon_code => 'externalmycoupon' }).to_return(resp(ok_wddx({ :user_success_msg => nil })))
+    stub_aria(:apply_coupon_to_acct, { :acct_no => '1', :coupon_code => 'external-mycoupon' }).to_return(resp(ok_wddx({ :user_success_msg => nil })))
     assert coupon = Aria::Coupon.new(:coupon_code => 'mycoupon')
     assert coupon.apply_to_acct(1)
-    assert_equal [], coupon.messages
+    assert_equal ["The coupon was successfully applied."], coupon.messages
     assert_equal [], coupon.errors[:coupon_code]
 
-    stub_aria(:apply_coupon_to_acct, { :acct_no => '2', :coupon_code => 'externalmycoupon' }).to_return(resp(ok_wddx({ :user_success_msg => "" })))
+    stub_aria(:apply_coupon_to_acct, { :acct_no => '2', :coupon_code => 'external-mycoupon' }).to_return(resp(ok_wddx({ :user_success_msg => "" })))
     assert coupon = Aria::Coupon.new(:coupon_code => 'mycoupon')
     assert coupon.apply_to_acct(2)
-    assert_equal [], coupon.messages
+    assert_equal ["The coupon was successfully applied."], coupon.messages
     assert_equal [], coupon.errors[:coupon_code]
 
-    stub_aria(:apply_coupon_to_acct, { :acct_no => '3', :coupon_code => 'externalmycoupon' }).to_return(resp(ok_wddx({ :user_success_msg => "Custom success message" })))
+    stub_aria(:apply_coupon_to_acct, { :acct_no => '3', :coupon_code => 'external-mycoupon' }).to_return(resp(ok_wddx({ :user_success_msg => "Custom success message" })))
     assert coupon = Aria::Coupon.new(:coupon_code => 'mycoupon')
     assert coupon.apply_to_acct(3)
-    assert_equal ["Custom success message"], coupon.messages
+    assert_equal ["The coupon was successfully applied.", "Custom success message"], coupon.messages
     assert_equal [], coupon.errors[:coupon_code]
 
-    stub_aria(:apply_coupon_to_acct, { :acct_no => '4', :coupon_code => 'externalmycoupon' }).to_return(resp(ok_wddx({ :user_success_msg => "Custom success message" })))
+    stub_aria(:apply_coupon_to_acct, { :acct_no => '4', :coupon_code => 'external-mycoupon' }).to_return(resp(ok_wddx({ :user_success_msg => "Custom success message" })))
     assert coupon = Aria::Coupon.new(:coupon_code => 'MYCOUPON')
     assert coupon.apply_to_acct(4)
-    assert_equal ["Custom success message"], coupon.messages
+    assert_equal ["The coupon was successfully applied.", "Custom success message"], coupon.messages
     assert_equal [], coupon.errors[:coupon_code]
 
-    stub_aria(:apply_coupon_to_acct, { :acct_no => '5', :coupon_code => 'externalmycoupon' }).to_return(resp(error_wddx(15003,'Coupon already applied')))
+    stub_aria(:apply_coupon_to_acct, { :acct_no => '5', :coupon_code => 'external-mycoupon' }).to_return(resp(error_wddx(15003,'Coupon already applied')))
     assert coupon = Aria::Coupon.new(:coupon_code => 'mycoupon')
     assert coupon.apply_to_acct(5)
-    assert_equal ["The coupon was already applied to your account"], coupon.messages
+    assert_equal ["The coupon was already applied to your account."], coupon.messages
     assert_equal [], coupon.errors[:coupon_code]
 
-    stub_aria(:apply_coupon_to_acct, { :acct_no => '6', :coupon_code => 'externalmycoupon' }).to_return(resp(error_wddx(15001,'Coupon does not exist')))
+    stub_aria(:apply_coupon_to_acct, { :acct_no => '6', :coupon_code => 'external-mycoupon' }).to_return(resp(error_wddx(15001,'Coupon does not exist')))
     assert coupon = Aria::Coupon.new(:coupon_code => 'mycoupon')
     assert_equal false, coupon.apply_to_acct(6)
     assert_equal [], coupon.messages
     assert_equal ["Invalid coupon code"], coupon.errors[:coupon_code]
 
-    stub_aria(:apply_coupon_to_acct, { :acct_no => '7', :coupon_code => 'externalmycoupon' }).to_return(resp(error_wddx(1000,'Unknown')))
+    stub_aria(:apply_coupon_to_acct, { :acct_no => '7', :coupon_code => 'external-mycoupon' }).to_return(resp(error_wddx(1000,'Unknown')))
     assert coupon = Aria::Coupon.new(:coupon_code => 'mycoupon')
     assert_equal false, coupon.apply_to_acct(7)
     assert_equal [], coupon.messages
@@ -511,10 +511,10 @@ class AriaUnitTest < ActiveSupport::TestCase
     # Test passing a user object
     u = TestUser.new
     u.expects(:acct_no).once.returns('8')
-    stub_aria(:apply_coupon_to_acct, { :acct_no => '8', :coupon_code => 'externalmycoupon' }).to_return(resp(ok_wddx({ :user_success_msg => nil })))
+    stub_aria(:apply_coupon_to_acct, { :acct_no => '8', :coupon_code => 'external-mycoupon' }).to_return(resp(ok_wddx({ :user_success_msg => nil })))
     assert coupon = Aria::Coupon.new(:coupon_code => 'mycoupon')
     assert coupon.apply_to_acct(u)
-    assert_equal [], coupon.messages
+    assert_equal ["The coupon was successfully applied."], coupon.messages
     assert_equal [], coupon.errors[:coupon_code]
   end
 

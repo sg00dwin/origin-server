@@ -16,10 +16,12 @@ module Aria
     def apply_to_acct(user_or_acct_no)
       messages.clear
       acct_no = user_or_acct_no.respond_to?(:acct_no) ? user_or_acct_no.acct_no : user_or_acct_no
-      messages.push(Aria.apply_coupon_to_acct(acct_no, "external#{coupon_code}".downcase).user_success_msg.presence).compact!
+      coupon_message = Aria.apply_coupon_to_acct(acct_no, "external-#{coupon_code}".downcase).user_success_msg
+      messages.push("The coupon was successfully applied.")
+      messages.push(coupon_message) if coupon_message.present?
       true
     rescue Aria::CouponExists => e
-      messages.push("The coupon was already applied to your account")
+      messages.push("The coupon was already applied to your account.")
       true
     rescue Aria::CouponDoesNotExist
       errors.add(:coupon_code, "Invalid coupon code")
