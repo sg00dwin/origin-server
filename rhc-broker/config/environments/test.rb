@@ -8,7 +8,7 @@ Broker::Application.configure do
   config.cache_classes = true
 
   # Disable Rails's static asset server (Apache or nginx will already do this)
-  config.serve_static_assets = false
+  #config.serve_static_assets = false
 
   # Log error messages when you accidentally call methods on nil
   config.whiny_nils = true
@@ -33,7 +33,7 @@ Broker::Application.configure do
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
-  
+
   # Set the log level
   config.log_level = :debug
 

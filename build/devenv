@@ -34,6 +34,7 @@ module Online
         6163 => 6163,   #mcollective
         11211 => 11211, #memcached1
         11212 => 11212, #memcached2
+        #27017 => 27017, #mongodb
       }
       say "Your local machine will now think '#{options.localhost}' is the hostname of your devenv."
       cmd = "sudo -E ssh -F #{File.expand_path('~/.ssh/config')} #{ports.map{ |k,v| "-L #{k}:#{options.localhost}:#{v}"}.join(' ')} #{hostname} -l root -i misc/libra.pem"
