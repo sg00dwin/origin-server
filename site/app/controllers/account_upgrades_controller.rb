@@ -49,7 +49,7 @@ class AccountUpgradesController < ConsoleController
 
     if @coupon.present?
       if @coupon.apply_to_acct(current_aria_user)
-        flash.now[:info] = @coupon.messages.first.presence || "The coupon was successfully applied"
+        flash.now[:info] =  @coupon.messages.join(" ").presence || "The coupon was successfully applied."
       else
         render :new and return
       end
