@@ -99,9 +99,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   def test_user_downgrade_with_large_gears
     user = CloudUser.new(login: @login)
     Lock.create_lock(user)
-    user_capabilities = user.get_capabilities
-    user_capabilities['gear_sizes'] = ["small", "medium"]
-    user.set_capabilities(user_capabilities)
+    user.capabilities['gear_sizes'] = ["small", "medium"]
     user.save!
     #create app with large gears
     request_via_redirect(:post, "/broker/rest/domains", {:id=> @login[0..15]}, @headers)
@@ -225,13 +223,13 @@ class UserApiTest < ActionDispatch::IntegrationTest
     `rhc-admin-ctl-plan --fix --login #{@login}`
 
     user = CloudUser.find_by(login: @login)
-    user_capabilities = user.get_capabilities
+    caps = user.capabilities
     assert_equal(user.plan_id, "silver")
     assert_not_equal(user.usage_account_id, nil)
     assert_equal(user.max_gears, 16)
-    assert_equal(user_capabilities["gear_sizes"].sort, ["medium", "small"])
-    assert_equal(user_capabilities["max_untracked_addtl_storage_per_gear"], 5)
-    assert_equal(user_capabilities["max_tracked_addtl_storage_per_gear"], 0)
+    assert_equal(caps["gear_sizes"].sort, ["medium", "small"])
+    assert_equal(caps["max_untracked_addtl_storage_per_gear"], 5)
+    assert_equal(caps["max_tracked_addtl_storage_per_gear"], 0)
     assert_equal(user.pending_plan_id, nil)
     assert_equal(user.pending_plan_uptime, nil)
     plans = api.get_acct_plans_all(acct_no)
@@ -264,11 +262,11 @@ class UserApiTest < ActionDispatch::IntegrationTest
     `rhc-admin-ctl-plan --fix --login #{@login}`
 
     user = CloudUser.find_by(login: @login)
-    user_capabilities = user.get_capabilities
+    caps = user.capabilities
     assert_equal(user.plan_id, "free")
     assert_not_equal(user.usage_account_id, nil)
     assert_equal(user.max_gears, 3)
-    assert_equal(user_capabilities["gear_sizes"], ["small"])
+    assert_equal(caps["gear_sizes"], ["small"])
     assert_equal(user["capabilities"].has_key?("max_untracked_addtl_storage_per_gear"), false)
     assert_equal(user["capabilities"].has_key?("max_tracked_addtl_storage_per_gear"), false)
     assert_equal(user.pending_plan_id, nil)
@@ -304,13 +302,13 @@ class UserApiTest < ActionDispatch::IntegrationTest
     `rhc-admin-ctl-plan --fix --login #{@login}`
 
     user = CloudUser.find_by(login: @login)
-    user_capabilities = user.get_capabilities
+    caps = user.capabilities
     assert_equal(user.plan_id, "silver")
     assert_not_equal(user.usage_account_id, nil)
     assert_equal(user.max_gears, 16)
-    assert_equal(user_capabilities["gear_sizes"].sort, ["medium", "small"])
-    assert_equal(user_capabilities["max_untracked_addtl_storage_per_gear"], 5)
-    assert_equal(user_capabilities["max_tracked_addtl_storage_per_gear"], 0)
+    assert_equal(caps["gear_sizes"].sort, ["medium", "small"])
+    assert_equal(caps["max_untracked_addtl_storage_per_gear"], 5)
+    assert_equal(caps["max_tracked_addtl_storage_per_gear"], 0)
     assert_equal(user.pending_plan_id, nil)
     assert_equal(user.pending_plan_uptime, nil)
     plans = api.get_acct_plans_all(acct_no)
@@ -353,10 +351,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
 
     #simulate user with valid plan but has inconsistent capabilities that can't be fixed
     user = CloudUser.find_by(login: @login)
-    user_capabilities = user.get_capabilities
-    user.capabilities_will_change!
-    user_capabilities["gear_sizes"].push("c9")
-    user.set_capabilities(user_capabilities)
+    user.capabilities["gear_sizes"].push("c9")
     user.save!
     request_via_redirect(:post, "/broker/rest/domains", {:id=> @login[0..15]}, @headers)
     assert_response :created
@@ -368,9 +363,9 @@ class UserApiTest < ActionDispatch::IntegrationTest
     `rhc-admin-ctl-plan --fix --login #{@login}`
 
     user = CloudUser.find_by(login: @login)
-    user_capabilities = user.get_capabilities
+    caps = user.capabilities
     assert_equal(user.plan_id, "free")
-    assert_equal(user_capabilities["gear_sizes"].sort, ["c9", "small"])
+    assert_equal(caps["gear_sizes"].sort, ["c9", "small"])
   end
 
   def test_user_queued_plans
