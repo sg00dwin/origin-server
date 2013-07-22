@@ -42,7 +42,8 @@ module Account
         else
           logger.debug "Checking captcha"
           # Verify the captcha
-          unless (valid = valid?({:request => request, :params => params}))
+          unless valid?({:request => request, :params => params})
+            valid = false
             logger.debug "Captcha check failed"
             @captcha_status = "Failed"
             @user.errors[:captcha] = "Incorrect captcha submitted"
@@ -63,6 +64,7 @@ module Account
         respond_to do |format|
           format.js { render :json => @user.errors and return }
           format.html { render 'new', :layout => 'simple' and return }
+          format.any { render :text => @user.errors.messages.values.join("\n") and return }
         end
       end
 
