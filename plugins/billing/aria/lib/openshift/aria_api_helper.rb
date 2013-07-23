@@ -20,7 +20,14 @@ module OpenShift
     def self.instance(access_info=nil)
       OpenShift::AriaApiHelper.new(access_info)
     end
-   
+  
+    def base_params
+      {
+        'client_no' => @client_no,
+        'auth_key' => @auth_key
+      }
+    end
+ 
     # NOTE: This method is only used for *Testing*
     def create_fake_acct(login, plan_name=nil)
       user_id = Digest::MD5::hexdigest(login)
@@ -50,8 +57,6 @@ module OpenShift
         'bill_postal_cd' => 88888,
         'bill_country' => "US",
         'bill_email' => "billtest@wontwork.com",
-        'client_no' => @client_no,
-        'auth_key' => @auth_key,
         'rest_call' => "create_acct_complete"
       }
     end
@@ -60,10 +65,7 @@ module OpenShift
     def update_acct_contact(acct_no)
       {
         'account_no' => acct_no,
-        'last_name' => "New Lname",
-        'client_no' => @client_no,
-        'auth_key' => @auth_key,
-        'rest_call' => "update_acct_contact"
+        'last_name' => "New Lname"
       }
     end
 
@@ -76,37 +78,25 @@ module OpenShift
       # -3 = Terminated, etc.
       {
         'account_no' => acct_no,
-        'status_cd' => status_cd,
-        'client_no' => @client_no,
-        'auth_key' => @auth_key,
-        'rest_call' => "update_acct_status"
+        'status_cd' => status_cd
       }
     end
 
     def userid_exists(user_id)
       {
-        'user_id' => user_id,
-        'client_no' => @client_no,
-        'auth_key' => @auth_key,
-        'rest_call' => "userid_exists"
+        'user_id' => user_id
       }
     end
 
     def get_user_id_from_acct_no(acct_no)
       {
-        'acct_no' => acct_no,
-        'client_no' => @client_no,
-        'auth_key' => @auth_key,
-        'rest_call' => "get_user_id_from_acct_no"
+        'acct_no' => acct_no
       }
     end
 
     def get_acct_no_from_user_id(user_id)
       {
-        'user_id' => user_id,
-        'client_no' => @client_no,
-        'auth_key' => @auth_key,
-        'rest_call' => "get_acct_no_from_user_id"
+        'user_id' => user_id
       }
     end
 
@@ -116,7 +106,7 @@ module OpenShift
          app_name.nil? or sync_time.nil? or sync_identifier.nil? or usage_date.nil?
         raise OpenShift::AriaException.new "Invalid input: One of the arg has nil"
       end 
-      args = {
+      {
         'acct_no' => acct_no,
         'usage_type' => usage_type,
         'usage_units' => usage_unit,
@@ -124,12 +114,8 @@ module OpenShift
         'qualifier_1' => gear_id,
         'qualifier_2' => app_name,
         'qualifier_3' => sync_time.to_i,
-        'qualifier_4' => sync_identifier.to_i,
-        'client_no' => @client_no,
-        'auth_key' => @auth_key,
-        'rest_call' => "record_usage"
+        'qualifier_4' => sync_identifier.to_i
       }
-      args
     end
 
     def bulk_record_usage(acct_nos, usage_types, usage_units, gear_ids, app_names,
@@ -147,7 +133,7 @@ module OpenShift
       sync_times = []
       sync_time = sync_time.to_i
       len.times { sync_times << sync_time }
-      args = {
+      {
         'acct_no' => acct_nos.join('|'),
         'usage_type' => usage_types.join('|'),
         'usage_units' => usage_units.join('|'),
@@ -155,12 +141,8 @@ module OpenShift
         'qualifier_1' => gear_ids.join('|'),
         'qualifier_2' => app_names.join('|'),
         'qualifier_3' => sync_times.join('|'),
-        'qualifier_4' => sync_identifiers.join('|'),
-        'client_no' => @client_no,
-        'auth_key' => @auth_key,
-        'rest_call' => "bulk_record_usage"
+        'qualifier_4' => sync_identifiers.join('|')
       }
-      args
     end
 
     def get_usage_history(acct_no, specified_usage_type_no=nil,
@@ -170,28 +152,19 @@ module OpenShift
         'acct_no' => acct_no,
         'specified_usage_type_no' => specified_usage_type_no,
         'date_range_start' => date_range_start,
-        'date_range_end' => date_range_end,
-        'client_no' => @client_no,
-        'auth_key' => @auth_key,
-        'rest_call' => "get_usage_history"
+        'date_range_end' => date_range_end
       }
     end
 
     def get_acct_plans_all(acct_no)
       {
-        'acct_no' => acct_no,
-        'client_no' => @client_no,
-        'auth_key' => @auth_key,
-        'rest_call' => "get_acct_plans_all"
+        'acct_no' => acct_no
       }
     end
     
     def get_acct_details_all(acct_no)
       {
-        'acct_no' => acct_no,
-        'client_no' => @client_no,
-        'auth_key' => @auth_key,
-        'rest_call' => "get_acct_details_all"
+        'acct_no' => acct_no
       }
     end
 
@@ -206,95 +179,31 @@ module OpenShift
         'acct_no' => acct_no,
         'master_plan_no' => get_plan_no(plan_name),
         'num_plan_units' => num_plan_units,
-        'assignment_directive' => assignment_directive,
-        'client_no' => @client_no,
-        'auth_key' => @auth_key,
-        'rest_call' => "update_master_plan"
+        'assignment_directive' => assignment_directive
       }
     end
  
     def write_acct_comment(acct_no, comment)
       {
         'acct_no' => acct_no,
-        'client_no' => @client_no,
-        'auth_key' => @auth_key,
-        'comment' => comment,
-        'rest_call' => "write_acct_comment"
+        'comment' => comment
       }
     end
  
     def get_queued_service_plans(acct_no)
       {
-        'account_number' => acct_no,
-        'client_no' => @client_no,
-        'auth_key' => @auth_key,
-        'rest_call' => "get_queued_service_plans"
+        'account_number' => acct_no
       }
     end
 
     def cancel_queued_service_plan(acct_no)
       {
-        'account_number' => acct_no,
-        'client_no' => @client_no,
-        'auth_key' => @auth_key,
-        'rest_call' => "cancel_queued_service_plan"
+        'account_number' => acct_no
       }
     end
 
-    def assign_supp_plan(acct_no, supp_plan_name, 
-                         num_plan_units=1, assignment_directive=2)
-      {
-        'acct_no' => acct_no,
-        'supp_plan_no' => get_supp_plan_id(supp_plan_name),
-        'num_plan_units' => num_plan_units,
-        'assignment_directive' => assignment_directive,
-        'client_no' => @client_no,
-        'auth_key' => @auth_key,
-        'rest_call' => "assign_supp_plan"
-      }
-    end
-
-    def modify_supp_plan(acct_no, supp_plan_name,
-                         num_plan_units=1, assignment_directive=2)
-      {
-        'acct_no' => acct_no,
-        'supp_plan_no' => get_supp_plan_id(supp_plan_name),
-        'num_plan_units' => num_plan_units,
-        'assignment_directive' => assignment_directive,
-        'client_no' => @client_no,
-        'auth_key' => @auth_key,
-        'rest_call' => "modify_supp_plan"
-      }
-    end
-
-    def cancel_supp_plan(acct_no, supp_plan_name, assignment_directive=2)
-      {
-        'acct_no' => acct_no,
-        'supp_plan_no' => get_supp_plan_id(supp_plan_name),
-        'assignment_directive' => assignment_directive,
-        'client_no' => @client_no,
-        'auth_key' => @auth_key,
-        'rest_call' => "cancel_supp_plan"
-      }
-    end
-
-    def update_acct_supp_fields(acct_no, field_name, field_value)
-      {
-        'account_no' => acct_no,
-        'field_name' => field_name,
-        'value_text' => field_value,
-        'client_no' => @client_no,
-        'auth_key' => @auth_key,
-        'rest_call' => "update_acct_supp_fields"
-      }
-    end
-
-    def get_virtual_datetime()
-      {
-        'client_no' => @client_no,
-        'auth_key' => @auth_key,
-        'rest_call' => "get_virtual_datetime"
-      }
+    def get_virtual_datetime
+      {}
     end
 
     private
@@ -321,11 +230,49 @@ module OpenShift
       plan_id
     end
 
+=begin
     def get_supp_plan_id(supp_plan_name)
       unless @supp_plans.include?(supp_plan_name)
         raise OpenShift::AriaException.new "Invalid Billing Supplemental Plan name: #{supp_plan_name}"
       end
       @supp_plans[supp_plan_name][:plan_no]
     end
+
+    def assign_supp_plan(acct_no, supp_plan_name, 
+                         num_plan_units=1, assignment_directive=2)
+      {
+        'acct_no' => acct_no,
+        'supp_plan_no' => get_supp_plan_id(supp_plan_name),
+        'num_plan_units' => num_plan_units,
+        'assignment_directive' => assignment_directive
+      }
+    end
+
+    def modify_supp_plan(acct_no, supp_plan_name,
+                         num_plan_units=1, assignment_directive=2)
+      {
+        'acct_no' => acct_no,
+        'supp_plan_no' => get_supp_plan_id(supp_plan_name),
+        'num_plan_units' => num_plan_units,
+        'assignment_directive' => assignment_directive
+      }
+    end
+
+    def cancel_supp_plan(acct_no, supp_plan_name, assignment_directive=2)
+      {
+        'acct_no' => acct_no,
+        'supp_plan_no' => get_supp_plan_id(supp_plan_name),
+        'assignment_directive' => assignment_directive
+      }
+    end
+
+    def update_acct_supp_fields(acct_no, field_name, field_value)
+      {
+        'account_no' => acct_no,
+        'field_name' => field_name,
+        'value_text' => field_value
+      }
+    end
+=end
   end
 end

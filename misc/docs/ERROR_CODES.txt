@@ -76,6 +76,7 @@ User errors:
 182: User does not have 'gear_sizes' capability provided by current plan
 183: User does not have 'max_untracked_addtl_storage_per_gear' capability provided by current plan
 184: User does not have 'max_tracked_addtl_storage_per_gear' capability provided by current plan
+185: Cartridge 'X' can not be added with out cartridge 'Y'.
 210: Can not override existing location for git repo
 211: Parent directory for git repo does not exist
 212: Could not find libra_id_rsa
