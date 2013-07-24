@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.10.1
+Version: 1.10.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,19 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Wed Jul 24 2013 Adam Miller <admiller@redhat.com> 1.10.2-1
+- Aria Plugin changes: Use 'post' instead of 'get' for any aria apis + cleanup.
+  (rpenta@redhat.com)
+- Fix create_fake_acct method and corresponding tests (rpenta@redhat.com)
+- Aria plugin: support multiple aria ip address ranges for event callbacks
+  (rpenta@redhat.com)
+- <billing/nurture> rebase app from /broker => / (lmeyer@redhat.com)
+- Merge pull request #1731 from smarterclayton/strong_consistency_is_default
+  (dmcphers+openshiftbot@redhat.com)
+- Strong consistency is the default for mongoid (ccoleman@redhat.com)
+- Make set_log_tag lazy, so that all controllers have a default behavior
+  (ccoleman@redhat.com)
+
 * Fri Jul 12 2013 Adam Miller <admiller@redhat.com> 1.10.1-1
 - bump_minor_versions for sprint 31 (admiller@redhat.com)
 
