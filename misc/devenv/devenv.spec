@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.11.1
+Version: 1.11.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -791,6 +791,18 @@ echo "net.ipv4.conf.all.rp_filter = 1" >> /etc/sysctl.conf
 /etc/openshift/development
 
 %changelog
+* Wed Jul 24 2013 Adam Miller <admiller@redhat.com> 1.11.2-1
+- <devenv> install, load, and proxy the admin console (lmeyer@redhat.com)
+- Add containerization plugin setting to node.conf.libra (pmorie@gmail.com)
+- Merge pull request #1733 from sosiouxme/admin-console-broker
+  (dmcphers+openshiftbot@redhat.com)
+- <broker> modify /broker routing out of passenger into routes.rb
+  (lmeyer@redhat.com)
+- Security update max password days to 180 about six months
+  (tkramer@redhat.com)
+- Bug 984748 - Add jboss websocket port to allowed list of ports.
+  (rmillner@redhat.com)
+
 * Fri Jul 12 2013 Adam Miller <admiller@redhat.com> 1.11.1-1
 - bump_minor_versions for sprint 31 (admiller@redhat.com)
 
