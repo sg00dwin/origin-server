@@ -39,21 +39,21 @@ class DomainTest < ActionDispatch::IntegrationTest
     assert_equal(body["data"].length, 0)
 
     # create domain
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns, :nolinks => true}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => ns, :nolinks => true}, @headers)
     assert_response :created
 
     # test fetching domain by name
     request_via_redirect(:get, DOMAIN_COLLECTION_URL + "/#{ns}", {:nolinks => true}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
-    assert_equal(body["data"]["id"], ns)
+    assert_equal(body["data"]["name"], ns)
 
     # test getting domain list
     request_via_redirect(:get, DOMAIN_COLLECTION_URL, {:nolinks => true}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
     assert_equal(body["data"].length, 1)
-    assert_equal(body["data"][0]["id"], ns)
+    assert_equal(body["data"][0]["name"], ns)
   end
 
   def test_domain_create_validation
@@ -64,25 +64,25 @@ class DomainTest < ActionDispatch::IntegrationTest
     assert_equal(body["messages"][0]["exit_code"], 106)
 
     # domain name too short
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => "", :nolinks => true}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => "", :nolinks => true}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 106)
 
     # domain name too long
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => "ns123456789012345", :nolinks => true}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => "ns123456789012345", :nolinks => true}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 106)
 
     # domain name not alphanumeric
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => "domain_#{rand(5)}", :nolinks => true}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => "domain_#{rand(5)}", :nolinks => true}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 106)
 
     # domain name not allowed
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => "openshift", :nolinks => true}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => "openshift", :nolinks => true}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 106)
@@ -93,17 +93,17 @@ class DomainTest < ActionDispatch::IntegrationTest
     new_ns = "newns#{@random}"
 
     # domain should get created
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns, :nolinks => true}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => ns, :nolinks => true}, @headers)
     assert_response :created
 
     # domain creation should fail because namespace is not available
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns, :nolinks => true}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => ns, :nolinks => true}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 103)
 
     # domain creation should fail because user already has a domain
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => new_ns, :nolinks => true}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => new_ns, :nolinks => true}, @headers)
     assert_response :conflict
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 103)
@@ -114,11 +114,11 @@ class DomainTest < ActionDispatch::IntegrationTest
     new_ns = "newns#{@random}"
 
     # user does not have a domain yet
-    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:id => new_ns, :nolinks => true}, @headers)
+    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:name => new_ns, :nolinks => true}, @headers)
     assert_response :not_found
 
     # create the initial domain for the user
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns, :nolinks => true}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => ns, :nolinks => true}, @headers)
     assert_response :created
 
     # new domain name not specified
@@ -128,31 +128,31 @@ class DomainTest < ActionDispatch::IntegrationTest
     assert_equal(body["messages"][0]["exit_code"], 106)
 
     # new domain name too short
-    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:id => ""}, @headers)
+    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:name => ""}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 106)
 
     # new domain name too long
-    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:id => "ns123456789012345"}, @headers)
+    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:name => "ns123456789012345"}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 106)
 
     # new domain name not alphanumeric
-    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:id => "domain_#{rand(5)}"}, @headers)
+    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:name => "domain_#{rand(5)}"}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 106)
 
     # domain name not allowed
-    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:id => "openshift"}, @headers)
+    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:name => "openshift"}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 106)
 
     # try to update to the domain with the same name
-    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:id => ns}, @headers)
+    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:name => ns}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 103)
@@ -161,18 +161,18 @@ class DomainTest < ActionDispatch::IntegrationTest
     @new_headers = {}
     @new_headers["HTTP_AUTHORIZATION"] = "Basic " + Base64.encode64("new#{@login}:password")
     @new_headers["HTTP_ACCEPT"] = "application/json"
-    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:id => new_ns}, @new_headers)
+    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:name => new_ns}, @new_headers)
     assert_response :not_found
 
     # valid domain update case
-    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:id => new_ns, :nolinks => true}, @headers)
+    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:name => new_ns, :nolinks => true}, @headers)
     assert_response :ok
 
     # test fetching domain by name
     request_via_redirect(:get, DOMAIN_COLLECTION_URL + "/#{new_ns}", {:nolinks => true}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
-    assert_equal(body["data"]["id"], new_ns)
+    assert_equal(body["data"]["name"], new_ns)
   end
 
   def test_domain_update_with_application
@@ -180,7 +180,7 @@ class DomainTest < ActionDispatch::IntegrationTest
     new_ns = "newns#{@random}"
 
     # create the domain for the user
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns, :nolinks => true}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => ns, :nolinks => true}, @headers)
     assert_response :created
 
     # create an application under the user's domain
@@ -188,7 +188,7 @@ class DomainTest < ActionDispatch::IntegrationTest
     assert_response :created
 
     # update domain name
-    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:id => new_ns, :nolinks => true}, @headers)
+    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:name => new_ns, :nolinks => true}, @headers)
     assert_response :unprocessable_entity
 
     # create an application under the user's domain
@@ -196,14 +196,14 @@ class DomainTest < ActionDispatch::IntegrationTest
     assert_response :ok
 
         # update domain name
-    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:id => new_ns, :nolinks => true}, @headers)
+    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:name => new_ns, :nolinks => true}, @headers)
     assert_response :ok
 
     # test fetching domain by name
     request_via_redirect(:get, DOMAIN_COLLECTION_URL + "/#{new_ns}", {:nolinks => true}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
-    assert_equal(body["data"]["id"], new_ns)
+    assert_equal(body["data"]["name"], new_ns)
   end
 
   def test_domain_delete
@@ -211,7 +211,7 @@ class DomainTest < ActionDispatch::IntegrationTest
     new_ns = "newns#{@random}"
 
     # create the domain for the user
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns, :nolinks => true}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => ns, :nolinks => true}, @headers)
     assert_response :created
 
     # delete a non-existant domain
@@ -236,7 +236,7 @@ class DomainTest < ActionDispatch::IntegrationTest
     assert_equal(body["messages"][0]["exit_code"], 127)
 
     # recreate the domain with the same namespace - checking namespace availability
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns, :nolinks => true}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => ns, :nolinks => true}, @headers)
     assert_response :created
   end
 
@@ -245,7 +245,7 @@ class DomainTest < ActionDispatch::IntegrationTest
     new_ns = "newns#{@random}"
 
     # create the domain for the user
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => ns, :nolinks => true}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => ns, :nolinks => true}, @headers)
     assert_response :created
 
     # create an application under the user's domain

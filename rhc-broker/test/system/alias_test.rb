@@ -37,7 +37,7 @@ class AliasTest < ActionDispatch::IntegrationTest
     @as = "as.#{@random}"
 
     #create domain
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => @ns}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => @ns}, @headers)
     assert_response :created
 
     # create an application under the user's domain
@@ -76,7 +76,7 @@ class AliasTest < ActionDispatch::IntegrationTest
     @user.save
 
     #create domain
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => @ns}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:name => @ns}, @headers)
     assert_response :created
 
     # create an application under the user's domain
