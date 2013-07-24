@@ -5,7 +5,7 @@
 %global modname             blogs
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.17.1
+Version: 1.17.2
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Blog Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,10 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Jul 24 2013 Adam Miller <admiller@redhat.com> 1.17.2-1
+- Fix caching for posts by author - should be per page, not global
+  (ccoleman@redhat.com)
+
 * Tue Jun 25 2013 Adam Miller <admiller@redhat.com> 1.17.1-1
 - bump_minor_versions for sprint 30 (admiller@redhat.com)
 
