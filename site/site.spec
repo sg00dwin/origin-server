@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.12.1
+Version: 1.12.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -198,6 +198,38 @@ fi
 %{sitedir}/public
 
 %changelog
+* Wed Jul 24 2013 Adam Miller <admiller@redhat.com> 1.12.2-1
+- Stop allowing invalid signups, add tests to make sure we don't register
+  invalid users (jliggitt@redhat.com)
+- Use hyphens in coupon codes. Always include success message, in addition to
+  coupon message. (jliggitt@redhat.com)
+- Merge pull request #1742 from smarterclayton/custom_cart_test
+  (dmcphers+openshiftbot@redhat.com)
+- Test custom cart creation (ccoleman@redhat.com)
+- Add currency display during account creation (jliggitt@redhat.com)
+- Merge pull request #1743 from liggitt/coupons
+  (dmcphers+openshiftbot@redhat.com)
+- Code review #2, remove extraneous begin (jliggitt@redhat.com)
+- Code review updates. Rename to apply_to_acct, take a user or acct_no, return
+  true/false (jliggitt@redhat.com)
+- Add self-service coupons (jliggitt@redhat.com)
+- Merge pull request #1740 from
+  liggitt/bug_984850_validate_vat_before_upgrading
+  (dmcphers+openshiftbot@redhat.com)
+- Cache remote vat validation result (jliggitt@redhat.com)
+- Merge pull request #1738 from liggitt/bug_984864_tracking_typo
+  (dmcphers+openshiftbot@redhat.com)
+- Fix bug 984850 - validate VAT before upgrading streamline
+  (jliggitt@redhat.com)
+- Fix bug 984864 - Hide google marketing comment (jliggitt@redhat.com)
+- Change set: (sgoodwin@redhat.com)
+- Merge pull request #1686 from jtharris/features/Card_46_dl_model
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1678 from jtharris/features/Card_46_product_controller
+  (dmcphers+openshiftbot@redhat.com)
+- Download model tests. (jharris@redhat.com)
+- Additional product controller tests. (jharris@redhat.com)
+
 * Fri Jul 12 2013 Adam Miller <admiller@redhat.com> 1.12.1-1
 - bump_minor_versions for sprint 31 (admiller@redhat.com)
 

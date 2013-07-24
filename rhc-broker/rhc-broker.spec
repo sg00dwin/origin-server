@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.12.1
+Version: 1.12.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -153,6 +153,39 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Wed Jul 24 2013 Adam Miller <admiller@redhat.com> 1.12.2-1
+- Merge pull request #1758 from danmcp/master
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 987676 and Bug 984103 (dmcphers@redhat.com)
+- online_broker_25 (lnader@redhat.com)
+- <devenv> install, load, and proxy the admin console (lmeyer@redhat.com)
+- Merge pull request #1747 from pravisankar/dev/ravi/aria-handle-ipaddrs
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1746 from sosiouxme/fix-extended-tests
+  (dmcphers+openshiftbot@redhat.com)
+- Fix create_fake_acct method and corresponding tests (rpenta@redhat.com)
+- <extended tests> fix oversights re /broker URI change (lmeyer@redhat.com)
+- Merge remote-tracking branch 'origin/master' into
+  handle_global_exceptions_properly (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into
+  handle_global_exceptions_properly (ccoleman@redhat.com)
+- <broker> fix tests against broker base URI change (lmeyer@redhat.com)
+- <billing/nurture> rebase app from /broker => / (lmeyer@redhat.com)
+- <broker> modify /broker routing out of passenger into routes.rb
+  (lmeyer@redhat.com)
+- Merge pull request #1731 from smarterclayton/strong_consistency_is_default
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1730 from smarterclayton/action_log_should_be_lazy
+  (dmcphers+openshiftbot@redhat.com)
+- Strong consistency is the default for mongoid (ccoleman@redhat.com)
+- Merge pull request #1722 from smarterclayton/use_deep_dup
+  (dmcphers+openshiftbot@redhat.com)
+- Make set_log_tag lazy, so that all controllers have a default behavior
+  (ccoleman@redhat.com)
+- Generic exceptions should always be handled with rescue_from
+  (ccoleman@redhat.com)
+- Remove UtilHelper (ccoleman@redhat.com)
+
 * Fri Jul 12 2013 Adam Miller <admiller@redhat.com> 1.12.1-1
 - bump_minor_versions for sprint 31 (admiller@redhat.com)
 
