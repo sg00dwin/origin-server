@@ -75,10 +75,6 @@ Subscribes:
 Scaling:
   Min: 1
   Max: 1
-Group-Overrides:
-  - components:
-    - zend-5.6
-
 Endpoints:
   - Private-IP-Name:   IP
     Private-Port-Name: PORT

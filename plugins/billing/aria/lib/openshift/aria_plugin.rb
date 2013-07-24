@@ -336,45 +336,45 @@ module OpenShift
 
     # NOTE: This method is only used for *Testing*
     def create_fake_acct(*args)
-      result = get_response(@ah.create_fake_acct(*args), __method__)
+      result = get_response(true, *args)
       result.acct_no
     end
 
     # NOTE: This method is only used for *Testing*
     def update_acct_contact(*args)
-      get_response_status(@ah.update_acct_contact(*args), __method__)
+      get_response(false, *args)
     end
 
     def update_acct_status(*args)
-      get_response_status(@ah.update_acct_status(*args), __method__)
+      get_response(false, *args)
     end
 
     def userid_exists(*args)
-      get_response_status(@ah.userid_exists(*args), __method__)
+      get_response(false, *args)
     end
 
     def get_user_id_from_acct_no(*args)
-      result = get_response(@ah.get_user_id_from_acct_no(*args), __method__)
+      result = get_response(true, *args)
       result.user_id
     end
 
     def get_acct_no_from_user_id(*args)
-      result = get_response(@ah.get_acct_no_from_user_id(*args), __method__)
+      result = get_response(true, *args)
       result.acct_no
     end
 
     def record_usage(*args) 
-      get_response_status(@ah.record_usage(*args), __method__)
+      get_response(false, *args)
     end
 
     def bulk_record_usage(*args) 
-      get_response_status(@ah.bulk_record_usage(*args), __method__)
+      get_response(false, *args)
     end
 
     def get_usage_history(*args)
       usage_history = []
       begin
-        result = get_response(@ah.get_usage_history(*args), __method__)
+        result = get_response(true, *args)
         usage_history = result.data["usage_history_records"]
       rescue OpenShift::AriaErrorCodeException => e
         return usage_history if e.error_code.to_s == "1008"
@@ -386,18 +386,18 @@ module OpenShift
     end
 
     def get_acct_plans_all(*args)
-      result = get_response(@ah.get_acct_plans_all(*args), __method__)
+      result = get_response(true, *args)
       result.data["all_acct_plans"]
     end
     
     def get_acct_details_all(*args)
-      result = get_response(@ah.get_acct_details_all(*args), __method__)   
+      result = get_response(true, *args)   
       result.data
     end
 
     def update_master_plan(acct_no, plan_name, is_upgrade=false, num_plan_units=1)
       begin
-        result = get_response(@ah.update_master_plan(acct_no, plan_name, is_upgrade, num_plan_units), __method__)
+        result = get_response(true, acct_no, plan_name, is_upgrade, num_plan_units)
         if result.data["collection_error_code"] > 0
           Rails.logger.error "update_master_plan() failed for acct:#{acct_no}, plan:#{plan_name} with collection_error_message: "\
                              "#{result.data["collection_error_msg"]}, proc_merch_comments: #{result.data["proc_merch_comments"]}"
@@ -413,41 +413,25 @@ module OpenShift
     end
  
     def write_acct_comment(*args)
-      get_response_status(@ah.write_acct_comment(*args), __method__)
+      get_response(false, *args)
     end
  
     def get_queued_service_plans(*args)
-      result = get_response(@ah.get_queued_service_plans(*args), __method__)
+      result = get_response(true, *args)
       result.data['queued_plans']
     end
 
     def cancel_queued_service_plan(*args)
-      get_response(@ah.cancel_queued_service_plan(*args), __method__)
-    end
-
-    def assign_supp_plan(*args)
-      get_response_status(@ah.assign_supp_plan(*args), __method__)
-    end
-
-    def modify_supp_plan(*args)
-      get_response_status(@ah.modify_supp_plan(*args), __method__)
-    end
-
-    def cancel_supp_plan(*args)
-      get_response_status(@ah.cancel_supp_plan(*args), __method__)
-    end
-
-    def update_acct_supp_fields(*args)
-      get_response_status(@ah.update_acct_supp_fields(*args), __method__)
+      get_response(true, *args)
     end
 
     def get_virtual_datetime_offset
       return 0 if Rails.env.production?
-      @virtual_datetime_offset ||= get_virtual_datetime().current_offset_hours
+      @virtual_datetime_offset ||= get_virtual_datetime.current_offset_hours
     end
 
-    def get_virtual_datetime(*args)
-      get_response(@ah.get_virtual_datetime(*args), __method__)
+    def get_virtual_datetime
+      get_response(true)
     end
 
     private
@@ -460,39 +444,17 @@ module OpenShift
       end
     end
 
-    def send(request)
-      begin
-        return request.execute
-      rescue RestClient::RequestTimeout, RestClient::ServerBrokeConnection, RestClient::SSLCertificateNotVerified => e
-        raise OpenShift::AriaException.new "Failed to access resource: #{e.message}"
-      rescue RestClient::ExceptionWithResponse => e
-        raise OpenShift::AriaException.new "Exception: #{e.response}, #{e.message}"
-      rescue Exception => e
-        raise OpenShift::AriaException.new "Failed to access resource: #{e.message}"
-      end
-      return nil
-    end
-
-    def convert_to_get_params(hash)
-      raise OpenShift::AriaException.new "Param input is NOT a hash" unless hash.kind_of?(Hash)
-      param_str = ""
-      hash.each do |k, v|
-        param_str += "&" if param_str != ""
-        v = URI.escape(v.to_s, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
-        param_str += "#{k}=#{v}"
-      end
-      param_str
-    end
-
-    def get_response(hash, method_name, ret_output=true)
-      end_point = @url + '?' + convert_to_get_params(hash)
-      Rails.logger.debug "Aria Billing api request: #{end_point}"
-      request = RestClient::Request.new(:url => end_point, :method => :get)
-      wddx_response = send(request)
+    def get_response(ret_output, *args)
+      calling_method = caller[0][/`.*'/][1..-2]
+      options = @ah.send(calling_method.to_sym, *args)
+      options.merge!(@ah.base_params)
+      options.merge!({'rest_call' => calling_method.to_s}) unless options['rest_call']
+      Rails.logger.debug "Aria Billing api request: #{options}"
+      wddx_response = RestClient.post @url, options
       response = WDDX.load(wddx_response)
       Rails.logger.debug "Aria Billing api response: #{response.inspect}"
       if response.error_code != 0 && ret_output
-        raise OpenShift::AriaErrorCodeException.new("#{method_name} failed with error message: #{response.error_msg}", response.error_code)
+        raise OpenShift::AriaErrorCodeException.new("#{calling_method} failed with error message: #{response.error_msg}", response.error_code)
       end
       if ret_output
         return response
@@ -501,8 +463,22 @@ module OpenShift
       end
     end
 
-    def get_response_status(hash, method_name)
-      get_response(hash, method_name, false)
+=begin
+    def assign_supp_plan(*args)
+      get_response(false, *args)
     end
+
+    def modify_supp_plan(*args)
+      get_response(false, *args)
+    end
+
+    def cancel_supp_plan(*args)
+      get_response(false, *args)
+    end
+
+    def update_acct_supp_fields(*args)
+      get_response(false, *args)
+    end
+=end
   end
 end

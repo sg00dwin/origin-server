@@ -41,14 +41,29 @@ class AccountControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  test "should get invalid email address domain" do
-    Rails.application.config.expects(:prohibited_email_domains).returns(['example.ir'])
-    form = get_post_form
-    form[:email_address]='test@example.ir'
-    post(:create, {:web_user => form})
-    assert assigns(:user)
-    assert assigns(:user).errors[:email_address].length > 0
-    assert_response :success
+  [['text/html',        /^\</       ],
+   ['text/javascript',  /^\{/       ],
+   ['text/plain',       /^OpenShift/]].each do |(mime_type, matcher)|
+    test "should get invalid email address domain for mime type #{mime_type}" do
+      # Simulate entering a correct captcha
+      @controller.stubs(:skip_captcha?).returns(false)
+      @controller.stubs(:valid?).returns(true)
+
+      # A failure should prevent calling register
+      WebUser::Mock.any_instance.expects(:register).never
+
+      # Simulate a content-type
+      @request.accept = mime_type
+
+      Rails.application.config.expects(:prohibited_email_domains).returns(['example.ir'])
+      form = get_post_form
+      form[:email_address]='test@example.ir'
+      post(:create, {:web_user => form})
+      assert assigns(:user)
+      assert assigns(:user).errors[:email_address].length > 0
+      assert_response :success
+      assert response.body =~ matcher, "Response did not match what we expected for #{mime_type}, but was #{response.body}"
+    end
   end
 
   test "should get missing fields" do
