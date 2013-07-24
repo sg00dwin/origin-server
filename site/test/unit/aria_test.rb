@@ -10,9 +10,9 @@ require 'aria'
 #
 class AriaUnitTest < ActiveSupport::TestCase
   uses_http_mock
-  setup { WebMock.disable_net_connect! }
+  setup { WebMock.enable!; WebMock.disable_net_connect! }
   setup{ Rails.cache.clear }
-  teardown { WebMock.allow_net_connect! }
+  teardown { WebMock.allow_net_connect!; WebMock.disable! }
 
   def query_for(method, query=nil)
     config = Rails.application.config

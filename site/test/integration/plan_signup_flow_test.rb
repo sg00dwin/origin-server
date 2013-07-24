@@ -6,7 +6,6 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
 
   def setup
     omit_if_aria_is_unavailable
-    WebMock.allow_net_connect!
     https!
     open_session
   end
