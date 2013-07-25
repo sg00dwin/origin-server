@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.11.2
+Version: 1.11.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -790,6 +790,11 @@ echo "net.ipv4.conf.all.rp_filter = 1" >> /etc/sysctl.conf
 /etc/openshift/development
 
 %changelog
+* Thu Jul 25 2013 Adam Miller <admiller@redhat.com> 1.11.3-1
+- removing passenger repo (dmcphers@redhat.com)
+- remove admin console from devenv.spec for now, needs fixing
+  (admiller@redhat.com)
+
 * Wed Jul 24 2013 Adam Miller <admiller@redhat.com> 1.11.2-1
 - <devenv> install, load, and proxy the admin console (lmeyer@redhat.com)
 - Add containerization plugin setting to node.conf.libra (pmorie@gmail.com)
