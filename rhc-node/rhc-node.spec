@@ -131,7 +131,7 @@ if [ ! -e /cgroup/all/openshift/cgroup.event_control ]
 then
     # mount all desired cgroups under a single root
     perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
-    echo "group /openshift { cpu { cpu.shares = 1024; } }" >> /etc/cgconfig.conf
+    echo "group /openshift { cpu {} cpuacct {} memory {} net_cls {} freezer {} }" >> /etc/cgconfig.conf
     /sbin/restorecon /etc/cgconfig.conf || :
     # only restart if it's on
     /sbin/chkconfig cgconfig && /sbin/service cgconfig restart >/dev/null 2>&1 || :
