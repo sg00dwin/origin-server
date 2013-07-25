@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.12.2
+Version: 1.12.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -153,6 +153,13 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Thu Jul 25 2013 Adam Miller <admiller@redhat.com> 1.12.3-1
+- Merge pull request #1759 from jwforres/card_57_admin_console_styling
+  (dmcphers+openshiftbot@redhat.com)
+- make everything shell safe (dmcphers@redhat.com)
+- Card 57 - provide simple visual branding to the admin console
+  (jforrest@redhat.com)
+
 * Wed Jul 24 2013 Adam Miller <admiller@redhat.com> 1.12.2-1
 - Merge pull request #1758 from danmcp/master
   (dmcphers+openshiftbot@redhat.com)
