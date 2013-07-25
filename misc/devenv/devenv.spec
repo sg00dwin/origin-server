@@ -20,6 +20,7 @@ Requires:  rhc
 Requires:  rhc-node
 Requires:  rhc-site
 Requires:  rhc-broker
+Requires:  rubygem-openshift-origin-admin-console
 Requires:  openshift-origin-cartridge-mock
 Requires:  openshift-origin-cartridge-mock-plugin
 Requires:  openshift-origin-cartridge-jbosseap
