@@ -109,7 +109,7 @@
                   <p class="pull-right smaller"><a href="<?php print redhat_sso_change_password_url(); ?>">Forgot your password?</a></p>
                 </div>
                 <div class="column-2">
-                  <h2>Need an account? <a href="<?php print redhat_sso_register_url(); ?>">Create one</a></h2>
+                  <h2>Need an account? <a href="<?php print redhat_sso_register_url_with_redirect(); ?>">Create one</a></h2>
                   <ul class="spaced-items">
                     <li>Code and deploy to the cloud in minutes.</li>
                     <li>No-Lock-In. Built on open technologies.</li>
