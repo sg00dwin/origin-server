@@ -36,10 +36,7 @@ class Watchman
 
     @incidents = {}
 
-    @throttler = ::OpenShift::Runtime::Utils::Cgroups::Throttler.new(
-      intervals: [10.seconds],
-      #delay: 5.seconds,
-    )
+    @throttler = ::OpenShift::Runtime::Utils::Cgroups::Throttler.new
 
     Syslog.open(File.basename($0), Syslog::LOG_PID, Syslog::LOG_DAEMON) unless Syslog.opened?
     Syslog.info("Starting rhc-watchman => delay: #{period}s, exception threshold: #{retries}")
@@ -101,7 +98,7 @@ class Watchman
       }
 
       @throttler.uuids = app_env.keys
-      results = @throttler.throttle(period: 10, usage: 10)
+      results = @throttler.throttle(period: @throttler.interval, usage: @throttler.threshold)
       unless results.empty?
         results.each do |action, uuids|
           uuids.each do |uuid, vals|
