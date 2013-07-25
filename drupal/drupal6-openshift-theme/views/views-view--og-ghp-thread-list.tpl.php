@@ -70,7 +70,7 @@ New Thread</a></div>
 <?php elseif ($do->perm == 'join'): ?>
 <div><?php print t('You need to !join this group before you can post a new thread.', array('!join this group' => l(t('join this group'), 'og/subscribe/'. $do->group->nid))); ?></div>
 <?php elseif (!$user->uid): ?>
-<div><?php print t('!Login to post a new thread', array('!Login to post a new thread' => l(t('Login to post a new thread'), 'user', array('attributes' => array('class' => 'btn'))))); ?></div>
+<div><?php print t('!Login to post a new thread', array('!Login to post a new thread' => l(t('Login to post a new thread'), 'user/login', array('query' => array('destination' => 'forums/openshift'), 'attributes' => array('class' => 'btn'))))); ?></div>
 <?php endif; ?></div>
 <!--div class="forum-header-right"> Place holder for Pager </div-->
 </div>
