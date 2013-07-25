@@ -78,7 +78,7 @@ function redhat_sso_register_url() {
 
 function redhat_sso_register_url_with_redirect() {
   global $base_root;
-  return redhat_sso_register_url() . '?then=' . $base_root . request_uri();
+  return redhat_sso_register_url() . "?" . drupal_query_string_encode(array('then' => $base_root . request_uri()));
 }
 
 function redhat_sso_logout_url() {
