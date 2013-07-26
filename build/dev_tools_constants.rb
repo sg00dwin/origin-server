@@ -81,7 +81,6 @@ IGNORE_PACKAGES = ['bind-local',
                    'rubygem-openshift-origin-dns-route53',
                    'avahi-cname-manager',
                    'rubygem-openshift-origin-dns-avahi',
-                   'rubygem-openshift-origin-admin-console',
                    'rubygem-openshift-origin-container-libvirt']
 $amz_options = {:key_name => KEY_PAIR, :instance_type => TYPE}
 
