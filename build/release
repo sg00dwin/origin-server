@@ -221,9 +221,18 @@ class Release < Thor
             # they are built against the correct set of dependencies instead of
             # last PROD package set
             if CHAIN_BUILD_SETS.flatten.uniq.include?(build_info[0])
-              tito_cmd = "tito release brew-dirty < #{options.temp_dir}/answerfile"
+              if GEM_SOURCE0_PACKAGES.include?(build_info[0])
+                tito_cmd = "tito release brew-gem-dirty < #{options.temp_dir}/answerfile"
+              else
+                tito_cmd = "tito release brew-dirty < #{options.temp_dir}/answerfile"
+              end
             else
-              tito_cmd = "tito release brew < #{options.temp_dir}/answerfile"
+              if GEM_SOURCE0_PACKAGES.include?(build_info[0])
+                tito_cmd = "tito release brew-gem < #{options.temp_dir}/answerfile"
+              else
+                tito_cmd = "tito release brew < #{options.temp_dir}/answerfile"
+              end
+
             end
 
             # Build the RPM in brew
