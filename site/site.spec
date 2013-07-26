@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.12.2
+Version: 1.12.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -198,6 +198,15 @@ fi
 %{sitedir}/public
 
 %changelog
+* Fri Jul 26 2013 Adam Miller <admiller@redhat.com> 1.12.3-1
+- Merge pull request #1765 from
+  jwforres/community_login_redirect_with_account_create
+  (dmcphers+openshiftbot@redhat.com)
+- Add redirect then param testcases (jforrest@redhat.com)
+- Encode then param for app create redirect (jforrest@redhat.com)
+- Create account from drupal redirects back to drupal after email confirm
+  (jforrest@redhat.com)
+
 * Wed Jul 24 2013 Adam Miller <admiller@redhat.com> 1.12.2-1
 - Stop allowing invalid signups, add tests to make sure we don't register
   invalid users (jliggitt@redhat.com)

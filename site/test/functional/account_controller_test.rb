@@ -80,6 +80,27 @@ class AccountControllerTest < ActionController::TestCase
     assert_redirected_to complete_account_path
   end
 
+  test "should allow redirect to community pages" do
+    post(:create, {:web_user => get_post_form, :then => community_url + "user"})
+    assert assigns(:user).errors.empty?
+    assert assigns(:redirect).match(community_url).present?
+  end
+
+  test "should strip hostname on redirect to non community pages" do
+    post(:create, {:web_user => get_post_form, :then => "http://fake.server.com/user"})
+    assert assigns(:user).errors.empty?
+    assert assigns(:redirect).match("fake.server.com").nil?
+  end
+
+  test "should encode redirect then parameter on confirmation url" do
+    WebUser::Mock.any_instance.expects(:register).with() { |confirmation_url, promo_code| 
+      assert confirmation_url.match("user%3Fparam%3Dvalue").present?
+      true
+    }
+    post(:create, {:web_user => get_post_form, :then => "/user?param=value"})
+    assert assigns(:user).errors.empty?
+  end
+
   test "should get promo code redirect on post" do
     WebUser::Mock.any_instance.expects(:register).with(anything, 'a_code').returns(true)
     post(:create, {:web_user => get_post_form.merge!(:promo_code => 'a_code')})

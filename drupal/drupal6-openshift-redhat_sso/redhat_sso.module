@@ -75,6 +75,12 @@ function redhat_sso_change_password_url() {
 function redhat_sso_register_url() {
   return redhat_sso_server_url() . variable_get('redhat_sso_register_uri', '/app/account/new');
 }
+
+function redhat_sso_register_url_with_redirect() {
+  global $base_root;
+  return redhat_sso_register_url() . "?" . drupal_query_string_encode(array('then' => $base_root . request_uri()));
+}
+
 function redhat_sso_logout_url() {
   global $base_url;
   return redhat_sso_server_url() . variable_get('redhat_sso_logout_uri', '/app/logout') . '?then='.$base_url;
