@@ -72,7 +72,7 @@ module Account
                                 :controller => 'email_confirm',
                                 :only_path => false,
                                 :protocol => 'https',
-                                :then => CGI::escape(@redirect))
+                                :then => @redirect)
 
       @user.register(confirmationUrl, @user.promo_code)
 
