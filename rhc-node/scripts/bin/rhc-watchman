@@ -98,14 +98,7 @@ class Watchman
       }
 
       @throttler.uuids = app_env.keys
-      results = @throttler.throttle(period: @throttler.interval, usage: @throttler.threshold)
-      unless results.empty?
-        results.each do |action, uuids|
-          uuids.each do |uuid, vals|
-            Syslog.info "Throttler #{action}: #{uuid} (#{vals})"
-          end
-        end
-      end
+      @throttler.throttle(period: @throttler.interval, usage: @throttler.threshold)
     rescue Exception => e
       @retries -= 1
       Syslog.warning("watchman caught #{e.inspect}: #{e.message}. Retries left: #{@retries}")
