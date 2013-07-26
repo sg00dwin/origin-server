@@ -47,7 +47,12 @@ class ApplicationController < ActionController::Base
       uri.path = nil if uri.path[0] != '/'
       uri.query = nil if uri.query == '?'
       return nil unless uri.path.present? || uri.query.present?
-      scheme, host, port = uri.scheme, uri.host, uri.port if request.host == uri.host && uri.port == 8118 && ['http', 'https'].include?(uri.scheme)
+      community_uri = URI.parse(community_url).normalize
+      if (request.host == uri.host && uri.port == 8118 && ['http', 'https'].include?(uri.scheme)) ||
+          (community_uri.host == uri.host && community_uri.port == uri.port && ['http', 'https'].include?(uri.scheme))
+        scheme, host, port = uri.scheme, uri.host, uri.port 
+        port = nil if port == 443 || port == 80
+      end
       URI::Generic.build([scheme, nil, host, port, nil, uri.path, nil, uri.query.presence, nil]).to_s
     rescue
       nil
