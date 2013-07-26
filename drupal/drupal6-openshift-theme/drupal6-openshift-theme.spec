@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.20.2
+Version: 3.20.3
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,15 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Jul 26 2013 Adam Miller <admiller@redhat.com> 3.20.3-1
+- Merge pull request #1765 from
+  jwforres/community_login_redirect_with_account_create
+  (dmcphers+openshiftbot@redhat.com)
+- Redirect back to forums/openshift after Log in to post a new thread
+  (jforrest@redhat.com)
+- Create account from drupal redirects back to drupal after email confirm
+  (jforrest@redhat.com)
+
 * Wed Jul 24 2013 Adam Miller <admiller@redhat.com> 3.20.2-1
 - Change set: (sgoodwin@redhat.com)
 
