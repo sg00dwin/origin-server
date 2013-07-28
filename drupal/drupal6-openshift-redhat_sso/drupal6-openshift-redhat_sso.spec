@@ -5,7 +5,7 @@
 %global modname             redhat_sso
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.8.1
+Version: 1.8.2
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom SSO Module for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,11 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Fri Jul 26 2013 Adam Miller <admiller@redhat.com> 1.8.2-1
+- Encode then param for app create redirect (jforrest@redhat.com)
+- Create account from drupal redirects back to drupal after email confirm
+  (jforrest@redhat.com)
+
 * Tue Jun 25 2013 Adam Miller <admiller@redhat.com> 1.8.1-1
 - bump_minor_versions for sprint 30 (admiller@redhat.com)
 

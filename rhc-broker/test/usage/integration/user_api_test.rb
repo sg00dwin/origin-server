@@ -102,10 +102,10 @@ class UserApiTest < ActionDispatch::IntegrationTest
     user.capabilities['gear_sizes'] = ["small", "medium"]
     user.save!
     #create app with large gears
-    request_via_redirect(:post, "/broker/rest/domains", {:id=> @login[0..15]}, @headers)
+    request_via_redirect(:post, "/broker/rest/domains", {:name=> @login[0..15]}, @headers)
     assert_response :created
     body = JSON.parse(@response.body)
-    domain_id = body["data"]["id"]
+    domain_id = body["data"]["name"]
     request_via_redirect(:post, "/broker/rest/domains/#{domain_id}/applications", {:name => "app", :cartridge => "php-5.3", :gear_profile => "medium"}, @headers)
     assert_response :created
     body = JSON.parse(@response.body)
@@ -125,10 +125,10 @@ class UserApiTest < ActionDispatch::IntegrationTest
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :silver}, @headers)
     assert_response :ok
     #create app and add additional storage to the gear group
-    request_via_redirect(:post, "/broker/rest/domains", {:id=> @login[0..15]}, @headers)
+    request_via_redirect(:post, "/broker/rest/domains", {:name=> @login[0..15]}, @headers)
     assert_response :created
     body = JSON.parse(@response.body)
-    domain_id = body["data"]["id"]
+    domain_id = body["data"]["name"]
     request_via_redirect(:post, "/broker/rest/domains/#{domain_id}/applications", {:name => "app", :cartridge => "php-5.3"}, @headers)
     assert_response :created
     request_via_redirect(:put, "/broker/rest/domains/#{domain_id}/applications/app/cartridges/php-5.3", {:additional_gear_storage => 1}, @headers)
@@ -148,10 +148,10 @@ class UserApiTest < ActionDispatch::IntegrationTest
     body = JSON.parse(@response.body)
     assert_equal(body["data"]["capabilities"]["private_ssl_certificates"], true)
     #create app and add certificate
-    request_via_redirect(:post, "/broker/rest/domains", {:id=> @login[0..15]}, @headers)
+    request_via_redirect(:post, "/broker/rest/domains", {:name=> @login[0..15]}, @headers)
     assert_response :created
     body = JSON.parse(@response.body)
-    domain_id = body["data"]["id"]
+    domain_id = body["data"]["name"]
     request_via_redirect(:post, "/broker/rest/domains/#{domain_id}/applications", {:name => "app", :cartridge => "php-5.3"}, @headers)
     assert_response :created
     ssl_certificate_data
@@ -353,10 +353,10 @@ class UserApiTest < ActionDispatch::IntegrationTest
     user = CloudUser.find_by(login: @login)
     user.capabilities["gear_sizes"].push("c9")
     user.save!
-    request_via_redirect(:post, "/broker/rest/domains", {:id=> @login[0..15]}, @headers)
+    request_via_redirect(:post, "/broker/rest/domains", {:name=> @login[0..15]}, @headers)
     assert_response :created
     body = JSON.parse(@response.body)
-    domain_id = body["data"]["id"]
+    domain_id = body["data"]["name"]
     request_via_redirect(:post, "/broker/rest/domains/#{domain_id}/applications", {:name => "app", :cartridge => "php-5.3", :gear_profile => "c9"}, @headers)
     assert_response :created
 

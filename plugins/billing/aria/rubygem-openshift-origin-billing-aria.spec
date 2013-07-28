@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.10.2
+Version: 1.10.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,12 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Fri Jul 26 2013 Adam Miller <admiller@redhat.com> 1.10.3-1
+- Merge pull request #1761 from pravisankar/dev/ravi/aria-fixes
+  (dmcphers+openshiftbot@redhat.com)
+- Aria plugin changes: get_response() cleanup as per the feedback
+  (rpenta@redhat.com)
+
 * Wed Jul 24 2013 Adam Miller <admiller@redhat.com> 1.10.2-1
 - Aria Plugin changes: Use 'post' instead of 'get' for any aria apis + cleanup.
   (rpenta@redhat.com)

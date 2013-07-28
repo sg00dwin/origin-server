@@ -336,45 +336,45 @@ module OpenShift
 
     # NOTE: This method is only used for *Testing*
     def create_fake_acct(*args)
-      result = get_response(true, *args)
+      result = get_response(__method__, *args)
       result.acct_no
     end
 
     # NOTE: This method is only used for *Testing*
     def update_acct_contact(*args)
-      get_response(false, *args)
+      get_response_status(__method__, *args)
     end
 
     def update_acct_status(*args)
-      get_response(false, *args)
+      get_response_status(__method__, *args)
     end
 
     def userid_exists(*args)
-      get_response(false, *args)
+      get_response_status(__method__, *args)
     end
 
     def get_user_id_from_acct_no(*args)
-      result = get_response(true, *args)
+      result = get_response(__method__, *args)
       result.user_id
     end
 
     def get_acct_no_from_user_id(*args)
-      result = get_response(true, *args)
+      result = get_response(__method__, *args)
       result.acct_no
     end
 
     def record_usage(*args) 
-      get_response(false, *args)
+      get_response_status(__method__, *args)
     end
 
     def bulk_record_usage(*args) 
-      get_response(false, *args)
+      get_response_status(__method__, *args)
     end
 
     def get_usage_history(*args)
       usage_history = []
       begin
-        result = get_response(true, *args)
+        result = get_response(__method__, *args)
         usage_history = result.data["usage_history_records"]
       rescue OpenShift::AriaErrorCodeException => e
         return usage_history if e.error_code.to_s == "1008"
@@ -386,18 +386,18 @@ module OpenShift
     end
 
     def get_acct_plans_all(*args)
-      result = get_response(true, *args)
+      result = get_response(__method__, *args)
       result.data["all_acct_plans"]
     end
     
     def get_acct_details_all(*args)
-      result = get_response(true, *args)   
+      result = get_response(__method__, *args) 
       result.data
     end
 
     def update_master_plan(acct_no, plan_name, is_upgrade=false, num_plan_units=1)
       begin
-        result = get_response(true, acct_no, plan_name, is_upgrade, num_plan_units)
+        result = get_response(__method__, acct_no, plan_name, is_upgrade, num_plan_units)
         if result.data["collection_error_code"] > 0
           Rails.logger.error "update_master_plan() failed for acct:#{acct_no}, plan:#{plan_name} with collection_error_message: "\
                              "#{result.data["collection_error_msg"]}, proc_merch_comments: #{result.data["proc_merch_comments"]}"
@@ -413,16 +413,16 @@ module OpenShift
     end
  
     def write_acct_comment(*args)
-      get_response(false, *args)
+      get_response_status(__method__, *args)
     end
  
     def get_queued_service_plans(*args)
-      result = get_response(true, *args)
+      result = get_response(__method__, *args)
       result.data['queued_plans']
     end
 
     def cancel_queued_service_plan(*args)
-      get_response(true, *args)
+      get_response(__method__, *args)
     end
 
     def get_virtual_datetime_offset
@@ -431,7 +431,7 @@ module OpenShift
     end
 
     def get_virtual_datetime
-      get_response(true)
+      get_response(__method__)
     end
 
     private
@@ -444,17 +444,28 @@ module OpenShift
       end
     end
 
-    def get_response(ret_output, *args)
-      calling_method = caller[0][/`.*'/][1..-2]
-      options = @ah.send(calling_method.to_sym, *args)
+    def get_response(method_name, *args)
+      execute(get_options(method_name, *args), true)
+    end
+
+    def get_response_status(method_name, *args)
+      execute(get_options(method_name, *args), false)
+    end
+
+    def get_options(method_name, *args)
+      options = @ah.send(method_name.to_sym, *args)
       options.merge!(@ah.base_params)
-      options.merge!({'rest_call' => calling_method.to_s}) unless options['rest_call']
+      options.merge!({'rest_call' => method_name.to_s}) unless options['rest_call']
+      options
+    end
+
+    def execute(options, ret_output=true)
       Rails.logger.debug "Aria Billing api request: #{options}"
       wddx_response = RestClient.post @url, options
       response = WDDX.load(wddx_response)
       Rails.logger.debug "Aria Billing api response: #{response.inspect}"
       if response.error_code != 0 && ret_output
-        raise OpenShift::AriaErrorCodeException.new("#{calling_method} failed with error message: #{response.error_msg}", response.error_code)
+        raise OpenShift::AriaErrorCodeException.new("#{options['rest_call']} failed with error message: #{response.error_msg}", response.error_code)
       end
       if ret_output
         return response

@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.11.2
+Version: 1.11.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -20,6 +20,7 @@ Requires:  rhc
 Requires:  rhc-node
 Requires:  rhc-site
 Requires:  rhc-broker
+Requires:  rubygem-openshift-origin-admin-console
 Requires:  openshift-origin-cartridge-mock
 Requires:  openshift-origin-cartridge-mock-plugin
 Requires:  openshift-origin-cartridge-jbosseap
@@ -790,6 +791,14 @@ echo "net.ipv4.conf.all.rp_filter = 1" >> /etc/sysctl.conf
 /etc/openshift/development
 
 %changelog
+* Fri Jul 26 2013 Adam Miller <admiller@redhat.com> 1.11.4-1
+- <admin-console> re-add to build now that it should work (lmeyer@redhat.com)
+
+* Thu Jul 25 2013 Adam Miller <admiller@redhat.com> 1.11.3-1
+- removing passenger repo (dmcphers@redhat.com)
+- remove admin console from devenv.spec for now, needs fixing
+  (admiller@redhat.com)
+
 * Wed Jul 24 2013 Adam Miller <admiller@redhat.com> 1.11.2-1
 - <devenv> install, load, and proxy the admin console (lmeyer@redhat.com)
 - Add containerization plugin setting to node.conf.libra (pmorie@gmail.com)
