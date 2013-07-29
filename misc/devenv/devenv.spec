@@ -448,11 +448,9 @@ chkconfig httpd on
 # CGroup services
 service cgconfig start
 service cgred start
-service openshift-cgroups start
 service openshift-tc start
 chkconfig cgconfig on
 chkconfig cgred on
-chkconfig openshift-cgroups on
 chkconfig openshift-tc on
 
 # DHCP/DNS Service initialization

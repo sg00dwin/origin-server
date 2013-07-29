@@ -1,5 +1,11 @@
 #
-# Limit resources for a new Libra guest user on a node
+# Limit resources for a new OpenShift guest user on a node
+#
+# NOTE: If you change these values, please run the following commands:
+#       service mcollective restart
+#       oo-cgroup-enable --with-all-containers
+#       oo-pam-enable --with-all-containers
+#       oo-admin-ctl-tc restart
 #
 # Standard Profile
 #
@@ -12,7 +18,14 @@ quota_files=40000
 # 1GB.  1 block = 1024byte
 quota_blocks=1048576
 
-# For no over commitment, should be memory_limit_in_bytes / (Total System Memory - 1G)
+# Gear usage limits:
+# "apps" accounting used outdated logic ("git repos" not "gears"). It is being
+# replaced with "gears" accounting. Logic for max_active_gears falls back to
+# use max{_active,}_apps if not set, and vice versa. Gears usage/capacity/limits
+# are counted according to actual gears regardless.
+#
+# max_active_gears is used for limiting/guiding gear placement.
+# For no over-commit, should be (Total System Memory - 1G) / memory_limit_in_bytes
 max_active_gears=100
 
 # PAM - resource limits
@@ -26,7 +39,7 @@ max_active_gears=100
 # limits_rss=unlimited          # max resident set size (KB)
 # limits_stack=unlimited        # max stack size (KB)
 # limits_cpu=unlimited          # max CPU time (MIN)
-limits_nproc=250        # max number of processes
+limits_nproc=250                # max number of processes
 # limits_as=unlimited           # address space limit (KB)
 # limits_maxlogins=unlimited    # max number of logins for this user
 # limits_maxsyslogins=unlimited # max number of logins on the system
@@ -38,34 +51,71 @@ limits_nproc=250        # max number of processes
 # limits_rtprio=19 # max realtime priority
 
 #
-# cgroups - more resource limits
+# Apache bandwidth limit
 #
+apache_bandwidth="all 500000"
+apache_maxconnection="all 20"
+apache_bandwidtherror="510"
 #
-# cpu
-# cpu_rt_period_us=100000
-# cpu_rt_runtime_us=950000
+# Apache rotatelogs tuning
+rotatelogs_interval=86400
+rotatelogs_format="-%Y%m%d-%H%M%S-%Z"
+
+# Traffic control.  used by /etc/init.d/openshift-tc
+tc_max_bandwidth=800   # mbit/sec - Total bandwidth allowed for Libra
+tc_user_share=2    # mbit/sec - one user is allotted...
+
+#
+# Cgroups resource management
+#
+# Names and values may be implementation specific. These values will
+# be the defaults for a gear.
+#
+# cpu cpu_rt_period_us=100000 cpu_rt_runtime_us=950000
 cpu_shares=128
-cpu_cfs_quota_us=30000
+cpu_cfs_quota_us=100000
 #
 # memory
-# 1024 * 1024 * 512 = 536870912 = 512MB
-memory_limit_in_bytes=536870912
+memory_limit_in_bytes=536870912       # 512MB
 memory_memsw_limit_in_bytes=641728512 # 512M + 100M (100M swap)
 # memory_soft_limit_in_bytes=-1
 # memory_swappiness=60
 
 #
-# Apache bandwidth limit
-# 
-apache_bandwidth="all 500000"
-apache_maxconnection="all 20"
-apache_bandwidtherror="510"
+# Cgroup templates
+#
+# Templates are applied to a gear under certain circumstances and then
+# typically reverted back to the default.  It is a good idea to have a
+# default value for every value modified in a template to allow its
+# default value to be restored.
+#
+# The frozen and thawed templates are an exception to this rule.
+#
+# The set of required templates are: cg_template_throttled,
+# cg_template_frozen, cg_template_thawed.
 #
 
-# Traffic control.  used by /etc/init.d/openshift-tc
-tc_max_libra=800   # mbit/sec - Total bandwidth allowed for Libra
-tc_user_share=2    # mbit/sec - one user is allotted...
+# Throttle template
+#
+# This is used to reign in a poorly behaving gear.
+[cg_template_throttled]
+  cpu_shares=128
+  cpu_cfs_quota_us=30000
+  apply_period=10
+  apply_threshold=10
 
-# Apache rotatelogs tuning
-rotatelogs_interval=86400
-rotatelogs_format="-%Y%m%d-%H%M%S-%Z"
+# Freeze and Thaw templates
+#
+# These are used during gear destroy to lock a cgroup from chainging.
+[cg_template_frozen]
+  freezer_state="FROZEN"
+
+[cg_template_thawed]
+  freezer_state="THAWED"
+
+# Boosted template
+#
+# This template is deprecated
+[cg_template_boosted]
+  cpu_shares=256
+  cpu_cfs_quota_us=100000

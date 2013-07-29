@@ -8,6 +8,10 @@ require 'pathname'
 require 'date'
 require 'syslog'
 require 'openshift-origin-node/utils/environ'
+require 'openshift-origin-node/utils/cgroups'
+require 'openshift-origin-node/utils/cgroups/throttler'
+# This allows us to declare throttler intervals in a natural format
+require 'active_support/core_ext/numeric/time'
 
 ##
 # Monitor syslog files for messages from cgroups killing off applications 
@@ -31,6 +35,8 @@ class Watchman
     daemon() if daemon
 
     @incidents = {}
+
+    @throttler = ::OpenShift::Runtime::Utils::Cgroups::Throttler.new
 
     Syslog.open(File.basename($0), Syslog::LOG_PID, Syslog::LOG_DAEMON) unless Syslog.opened?
     Syslog.info("Starting rhc-watchman => delay: #{period}s, exception threshold: #{retries}")
@@ -90,6 +96,9 @@ class Watchman
           process_server_log(uuid, app_env)
         end
       }
+
+      @throttler.uuids = app_env.keys
+      @throttler.throttle(period: @throttler.interval, usage: @throttler.threshold)
     rescue Exception => e
       @retries -= 1
       Syslog.warning("watchman caught #{e.inspect}: #{e.message}. Retries left: #{@retries}")
@@ -193,3 +202,4 @@ if __FILE__ == $0
   Watchman.new().run
 end
 
+# vim: ft=ruby

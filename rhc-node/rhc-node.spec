@@ -87,7 +87,6 @@ mkdir -p %{buildroot}/%{_sysconfdir}/security/
 mkdir -p %{buildroot}%{_var}/lib/openshift
 mkdir -p %{buildroot}%{_var}/run/openshift
 mkdir -p %{buildroot}%{_var}/lib/openshift/.httpd.d
-mkdir -p %{buildroot}%{_var}/lib/openshift/.tc_user_dir
 mkdir -p %{buildroot}/%{_sysconfdir}/httpd/conf.d/
 mkdir -p %{buildroot}/lib64/security/
 mkdir -p %{buildroot}/sandbox
@@ -113,10 +112,8 @@ echo "/usr/bin/oo-trap-user" >> /etc/shells
 
 /sbin/chkconfig --add openshift-gears || :
 /sbin/chkconfig --add libra-data || :
-/sbin/chkconfig --add openshift-tc || :
 /sbin/chkconfig --add libra-avc-cache-threshold || :
 /sbin/chkconfig --add libra-watchman || :
-/sbin/chkconfig --add openshift-cgroups || :
 
 #/sbin/service mcollective restart > /dev/null 2>&1 || :
 /sbin/restorecon /etc/init.d/libra || :
@@ -132,20 +129,10 @@ if [ ! -e /cgroup/all/openshift/cgroup.event_control ]
 then
     # mount all desired cgroups under a single root
     perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
-    echo "group /openshift { cpu { cpu.shares = 1024; } }" >> /etc/cgconfig.conf
+    echo "group /openshift { cpu {} cpuacct {} memory {} net_cls {} freezer {} }" >> /etc/cgconfig.conf
     /sbin/restorecon /etc/cgconfig.conf || :
     # only restart if it's on
     /sbin/chkconfig cgconfig && /sbin/service cgconfig restart >/dev/null 2>&1 || :
-    # only enable if cgconfig is
-    chkconfig cgconfig && /sbin/service openshift-cgroups start > /dev/null 2>&1 || :
-fi
-
-# Only bounce tc if its not already initialized
-# CAVEAT: if the policy is changed, must run these by hand (release ticket)
-if ! ( tc qdisc show | grep -q 'qdisc htb 1: dev' )
-then
-    # only enable if cgconfig is
-    chkconfig cgconfig && /sbin/service openshift-tc start > /dev/null 2>&1 || :
 fi
 
 /sbin/chkconfig oddjobd on
@@ -174,13 +161,9 @@ chmod o+w /tmp
 
 %preun
 if [ "$1" -eq "0" ]; then
-    /sbin/service openshift-tc stop > /dev/null 2>&1 || :
-    /sbin/service openshift-cgroups stop > /dev/null 2>&1 || :
     /sbin/service libra-watchman stop > /dev/null 2>&1 || :
     /sbin/chkconfig --del libra-avc-cache-threshold || :
-    /sbin/chkconfig --del openshift-tc || :
     /sbin/chkconfig --del libra-data || :
-    /sbin/chkconfig --del openshift-cgroups || :
     /sbin/chkconfig --del libra-watchman || :
     sed -i -e '\:/usr/bin/oo-trap-user:d' /etc/shells
 fi
@@ -218,7 +201,6 @@ fi
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
 %dir %attr(0751,root,root) %{_var}/lib/openshift
 %dir %attr(0750,root,apache) %{_var}/lib/openshift/.httpd.d
-%dir %attr(0750,root,root) %{_var}/lib/openshift/.tc_user_dir
 %dir %attr(0700,root,root) %{_var}/run/openshift
 #%dir %attr(0755,root,root) %{_libexecdir}/openshift/cartridges/abstract-httpd/
 #%attr(0750,-,-) %{_libexecdir}/openshift/cartridges/abstract-httpd/info/hooks/
