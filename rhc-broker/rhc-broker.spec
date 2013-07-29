@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.12.4
+Version: 1.12.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -153,6 +153,19 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Mon Jul 29 2013 Adam Miller <admiller@redhat.com> 1.12.5-1
+- Merge pull request #1753 from smarterclayton/changes_for_membership
+  (dmcphers+openshiftbot@redhat.com)
+- changing dynect user (dmcphers@redhat.com)
+- Merge remote-tracking branch 'origin/master' into changes_for_membership
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into changes_for_membership
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into changes_for_membership
+  (ccoleman@redhat.com)
+- Make capabilities behave more like a regular model object
+  (ccoleman@redhat.com)
+
 * Fri Jul 26 2013 Adam Miller <admiller@redhat.com> 1.12.4-1
 - Revert "Card 57 - provide simple visual branding to the admin console"
   (lmeyer@redhat.com)
