@@ -260,7 +260,7 @@ function openshift_partner_program_mail($key, &$message, $params) {
       break;
 
     case 'openshift_partner_program_apply_user':
-      $message['subject'] = t('Thank you and Next Steps to become a Red Hat Openshift Partner');
+      $message['subject'] = t('Thank you and Next Steps to become a Red Hat OpenShift Partner');
       $message['body'][] = t('Thank you for your interest in becoming an OpenShift by Red Hat partner.');
       $message['body'][] = t('To become an OpenShift by Red Hat Ready Partner you must submit an OpenShift QuickStart.  View the Quickstart technical guide to <a href="https://www.openshift.com/developers/get-involved/creating-quickstarts">get started now.</a>');
       $message['body'][] = t('To become an OpenShift by Red Hat Advanced Partner you must submit an OpenShift Cartridge.  View the Cartridge technical guide to <a href="https://www.openshift.com/developers/cartridge-authors-guide">get started now.</a>');

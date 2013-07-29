@@ -9,7 +9,7 @@
  * Callback function for the partner apply page.
  */
 function _openshift_partner_program_apply() {
-  drupal_set_title(t('Openshift Partner Program'));
+  drupal_set_title(t('OpenShift Partner Program'));
   $form['subtitle'] = array(
     '#value' => '<h3>' . t('APPLY TO BE A PARTNER') . '</h3>',
   );
@@ -50,7 +50,7 @@ function _openshift_partner_program_apply_submit($form, &$form_state) {
  * Callback function for the partner apply info page.
  */
 function _openshift_partner_program_apply_info() {
-  drupal_set_title(t('Openshift Partner Program'));
+  drupal_set_title(t('OpenShift Partner Program'));
   $form['#attributes'] = array('enctype' => "multipart/form-data");
   $form['subtitle'] = array(
     '#value' => '<h2>' . t('Submit Integration') . '</h2>',
@@ -179,12 +179,12 @@ function _openshift_partner_program_apply_info_submit($form, &$form_state) {
  * Callback function for the partner agreement page.
  */
 function _openshift_partner_program_tc() {
-  drupal_set_title(t('Openshift Partner Program'));
+  drupal_set_title(t('OpenShift Partner Program'));
   $openshift_partner_program_agreement = '';
   require 'includes/openshift_partner_program_agreement.inc';
   drupal_add_css(drupal_get_path('module', 'openshift_partner_program') . '/css/openshift_partner_program.css', 'module', 'all', FALSE);
   $form['tc'] = array(
-    '#prefix' => '<p>' . t('Please sign the partner agreement to complete your application to the Openshift by Red Hat Partner Program.') . '</p>',
+    '#prefix' => '<p>' . t('Please sign the partner agreement to complete your application to the OpenShift by Red Hat Partner Program.') . '</p>',
     '#type' => 'textarea',
     '#disabled' => TRUE,
     '#rows' => 20,
@@ -262,7 +262,7 @@ function _openshift_partner_program_portal($content = NULL) {
   global $user;
   profile_load_profile($user);
   drupal_add_css(drupal_get_path('module', 'openshift_partner_program') . '/css/openshift_partner_program.css', 'module', 'all', FALSE);
-  drupal_set_title(t('Openshift Partner Program Portal'));
+  drupal_set_title(t('OpenShift Partner Program Portal'));
   $partner_level = $user->profile_partner_level;
   $result = theme('openshift_partner_program_portal', array('partner_level' => $partner_level));
   return $result;
@@ -272,7 +272,7 @@ function _openshift_partner_program_portal($content = NULL) {
  * Validate function for partner program upgrade request.
  */
 function _openshift_partner_program_portal_upgrade() {
-  drupal_set_title(t('Openshift Partner Program'));
+  drupal_set_title(t('OpenShift Partner Program'));
   $form['#attributes'] = array('enctype' => "multipart/form-data");
   $form['subtitle'] = array(
     '#value' => '<h2>' . t('UPGRADE PARTNER LEVEL') . '</h2>',
@@ -318,7 +318,7 @@ function _openshift_partner_program_portal_upgrade_submit($form, &$form_state) {
 function _openshift_partner_program_portal_customer_story() {
   global $user;
   profile_load_profile($user);
-  drupal_set_title(t('Openshift Partner Program'));
+  drupal_set_title(t('OpenShift Partner Program'));
   $form['#attributes'] = array('enctype' => "multipart/form-data");
   $form['subtitle'] = array(
     '#value' => '<h2>' . t('SUBMIT CUSTOMER SUCCESS STORY') . '</h2>',
@@ -409,7 +409,7 @@ function _openshift_partner_program_portal_customer_story_submit($form, &$form_s
 function _openshift_partner_program_portal_request_assistance() {
   global $user;
   profile_load_profile($user);
-  drupal_set_title(t('Openshift Partner Program'));
+  drupal_set_title(t('OpenShift Partner Program'));
   $form['#attributes'] = array('enctype' => "multipart/form-data");
   $form['subtitle'] = array(
     '#value' => '<h2>' . t('REQUEST ASSISTANCE') . '</h2>',
@@ -504,7 +504,7 @@ function _openshift_partner_program_portal_company_info() {
   $company = ($info) ? $info['company'] : '';
   $company_description = ($info) ? $info['company_description'] : '';
 
-  drupal_set_title(t('Openshift Partner Program'));
+  drupal_set_title(t('OpenShift Partner Program'));
   $form['#attributes'] = array('enctype' => "multipart/form-data");
   $form['subtitle'] = array(
     '#value' => '<h2>' . t('UPLOAD COMPANY INFO') . '</h2>',
@@ -526,8 +526,7 @@ function _openshift_partner_program_portal_company_info() {
   );
   $form['logo'] = array(
     '#type' => 'file',
-    '#title' => t('Upload logo'),
-    '#access' => !node_load(array('uid' => $user->uid, 'type' => 'partner')),
+    '#title' => t('Upload logo *'),
   );
   $form['expertise_tags'] = array(
     '#type' => 'select',
@@ -572,7 +571,7 @@ function _openshift_partner_program_portal_company_info_submit($form, &$form_sta
     drupal_set_message(t('Company info has been saved.'));
   }
   elseif ($result) {
-    drupal_set_message(t('Failed to save company logo.'), 'error');
+    drupal_set_message(t('No company logo was uploaded.  If you have not uploaded a company logo in the past please upload one now.  Verify your logo has been uploaded at !here', array('!here' => l(t('www.openshift.com/partners'), 'partners'))), 'warning');
   }
   else {
     drupal_set_message(t('Failed to save company info.'), 'error');
