@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.11.4
+Version: 1.11.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -789,6 +789,10 @@ echo "net.ipv4.conf.all.rp_filter = 1" >> /etc/sysctl.conf
 /etc/openshift/development
 
 %changelog
+* Mon Jul 29 2013 Adam Miller <admiller@redhat.com> 1.11.5-1
+- Separate out libcgroup based functionality and add configurable templates.
+  (rmillner@redhat.com)
+
 * Fri Jul 26 2013 Adam Miller <admiller@redhat.com> 1.11.4-1
 - <admin-console> re-add to build now that it should work (lmeyer@redhat.com)
 
