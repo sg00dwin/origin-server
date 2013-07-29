@@ -183,6 +183,15 @@ function _openshift_partner_program_tc_access() {
 function _openshift_partner_program_portal_access() {
   global $user;
   profile_load_profile($user);
+  if (isset($user->profile_user_state) && $user->profile_user_state == 'New partner') {
+    drupal_goto('partner/tc');
+  }
+  elseif ($user->uid == 0) {
+    drupal_goto('user');
+  }
+  elseif ($user->uid > 0 && !($user->profile_user_state == 'New partner' || $user->profile_user_state == 'Active partner')) {
+    drupal_goto('partner/apply');
+  }
   return isset($user->profile_user_state) && $user->profile_user_state == 'Active partner';
 }
 
@@ -253,8 +262,8 @@ function openshift_partner_program_mail($key, &$message, $params) {
     case 'openshift_partner_program_apply_user':
       $message['subject'] = t('Thank you and Next Steps to become a Red Hat Openshift Partner');
       $message['body'][] = t('Thank you for your interest in becoming an OpenShift by Red Hat partner.');
-      $message['body'][] = t('To become an OpenShift by Red Hat Ready Partner you must submit an OpenShift QuickStart.  View the Quickstart technical guide to <a href="http://www.openshift.com">get started now.</a>');
-      $message['body'][] = t('To become an OpenShift by Red Hat Advanced Partner you must submit an OpenShift Cartridge.  View the Cartridge technical guide to <a href="http://www.openshift.com">get started now.</a>');
+      $message['body'][] = t('To become an OpenShift by Red Hat Ready Partner you must submit an OpenShift QuickStart.  View the Quickstart technical guide to <a href="https://www.openshift.com/developers/get-involved/creating-quickstarts">get started now.</a>');
+      $message['body'][] = t('To become an OpenShift by Red Hat Advanced Partner you must submit an OpenShift Cartridge.  View the Cartridge technical guide to <a href="https://www.openshift.com/developers/cartridge-authors-guide">get started now.</a>');
       $message['body'][] = t('If you have your QuickStart or Cartridge completed please click here to submit now. http://www.openshift.com/partner/apply/info');
       $message['body'][] = t('We look forward to having you onboard as an OpenShift by Red Hat partner.  Feel free to reach out to us at openshift-partners@redhat.com');
       $message['body'][] = t('Regards,');
@@ -386,10 +395,10 @@ function openshift_partner_program_partner_info_upsert_node($uid, $company, $com
   if (!$node) {
     // No node found.  Need to create.
     $node = new stdClass();
+    $node->type = 'partner';
+    $node->uid = check_plain($uid);
+    $node->status = 1;
   }
-  $node->type = 'partner';
-  $node->uid = check_plain($uid);
-  $node->status = 1;
   $node->title = check_plain($company);
   $node->body = check_plain($company_description);
   $node->field_logo[0]['value'] = check_plain($logo);

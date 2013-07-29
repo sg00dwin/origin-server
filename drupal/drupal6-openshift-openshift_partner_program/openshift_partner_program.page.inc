@@ -499,6 +499,7 @@ function _openshift_partner_program_portal_request_assistance_submit($form, &$fo
  * Callback function for partner program company info upload.
  */
 function _openshift_partner_program_portal_company_info() {
+  global $user;
   $info = openshift_partner_program_partner_info();
   $company = ($info) ? $info['company'] : '';
   $company_description = ($info) ? $info['company_description'] : '';
@@ -526,6 +527,7 @@ function _openshift_partner_program_portal_company_info() {
   $form['logo'] = array(
     '#type' => 'file',
     '#title' => t('Upload logo'),
+    '#access' => !node_load(array('uid' => $user->uid, 'type' => 'partner')),
   );
   $form['expertise_tags'] = array(
     '#type' => 'select',
