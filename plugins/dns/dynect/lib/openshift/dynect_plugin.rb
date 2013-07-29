@@ -113,14 +113,17 @@ module OpenShift
         #http.set_debug_output $stderr
         http.use_ssl = true
         begin
-          logger.debug "DEBUG: DYNECT Login with path: #{url.path}"
+          logger.debug "DYNECT Login with path: #{url.path}"
           resp = http.post(url.path, JSON.generate(session_data), headers)
           data = resp.body
           case resp
           when Net::HTTPSuccess
             raise_dns_exception(nil, resp, data) unless dyn_success?(data)
             result = JSON.parse(data)
-            auth_token = result['data']['token']    
+            auth_token = result['data']['token']
+          when Net::HTTPClientError, Net::HTTPServerError
+            log_dns_response(resp)
+            raise OpenShift::DNSLoginException.new("Login failed: #{resp.class}", 145)
           else
             raise_dns_exception(nil, resp)
           end
@@ -133,22 +136,26 @@ module OpenShift
       return auth_token
     end
 
+    def log_dns_response(resp)
+      if resp
+        logger.debug "Response code: #{resp.code}"
+        logger.debug "Response body: #{resp.body}"
+      end
+    end
+
     def raise_dns_exception(e=nil, resp=nil, data=nil)
       if e
-        logger.debug "DEBUG: Exception caught from DNS request: #{e.message}"
-        logger.debug e.backtrace
+        logger.error "Exception caught from DNS request: #{e.message}"
+        logger.error e.backtrace
       end
-      if resp
-        logger.debug "DEBUG: Response code: #{resp.code}"
-        logger.debug "DEBUG: Response body: #{resp.body}"
-      end
+      log_dns_response(resp)
       if data
         data = JSON.parse(data)
         data['msgs'].each do |msg|
           raise OpenShift::DNSAlreadyExistsException.new("Namespace already in use. Please choose another.", 103) if msg['ERR_CD'] == "TARGET_EXISTS"
         end if data.kind_of?(Hash) and data['msgs']
       end
-      raise OpenShift::DNSException.new(145), "Error communicating with DNS system.  If the problem persists please contact Red Hat support."
+      raise OpenShift::DNSException.new("Error communicating with DNS system. If the problem persists please contact Red Hat support.", 145)
     end
 
     def delete_app_dns_entries(app_name, namespace, auth_token, retries=2)
@@ -172,11 +179,11 @@ module OpenShift
           break
         rescue  OpenShift::DNSException => e
           raise if i >= retries
-          logger.debug "DEBUG: Retrying #{method} after exception caught from DNS request: #{e.message}"
+          logger.debug "Retrying #{method} after exception caught from DNS request: #{e.message}"
           i += 1
         end
       end
-      logger.debug "DEBUG: Dynect Response Time (#{method}): #{Time.new - start_time}s  (Request ID: #{Thread.current[:user_action_log_uuid]})"
+      logger.debug "Dynect Response Time (#{method}): #{Time.new - start_time}s  (Request ID: #{Thread.current[:user_action_log_uuid]})"
     end
 
     def dyn_logout(auth_token, retries=0)
@@ -185,7 +192,7 @@ module OpenShift
     end
 
     def dyn_create_cname_record(application, namespace, public_hostname, auth_token, retries=0)
-      logger.debug "DEBUG: Public ip being configured '#{public_hostname}' to app '#{application}'"
+      logger.debug "Public ip being configured '#{public_hostname}' to app '#{application}'"
       fqdn = "#{application}-#{namespace}.#{@domain_suffix}"
       # Create the CNAME record
       path = "CNAMERecord/#{@zone}/#{fqdn}/"
@@ -194,7 +201,7 @@ module OpenShift
     end
 
     def dyn_modify_cname_record(application, namespace, public_hostname, auth_token, retries=0)
-      logger.debug "DEBUG: Public ip being modified '#{public_hostname}' to app '#{application}'"
+      logger.debug "Public ip being modified '#{public_hostname}' to app '#{application}'"
       fqdn = "#{application}-#{namespace}.#{@domain_suffix}"
       # MOdify the CNAME record
       path = "CNAMERecord/#{@zone}/#{fqdn}/"
@@ -241,14 +248,14 @@ module OpenShift
           begin
             logheaders = headers.clone
             logheaders["Auth-Token"]="[hidden]"
-            logger.debug "DEBUG: DYNECT handle temp redirect with path: #{url.path} and headers: #{logheaders.inspect} attempt: #{retries} sleep_time: #{sleep_time}"
+            logger.debug "DYNECT handle temp redirect with path: #{url.path} and headers: #{logheaders.inspect} attempt: #{retries} sleep_time: #{sleep_time}"
             resp = http.get(url.path, headers)
             data = resp.body
             case resp
             when Net::HTTPSuccess, Net::HTTPTemporaryRedirect
               data = JSON.parse(data)
               if data && data['status']
-                logger.debug "DEBUG: DYNECT Response data: #{data['data']}"
+                logger.debug "DYNECT Response data: #{data['data']}"
                 status = data['status']
                 if status == 'success'
                   success = true
@@ -256,12 +263,12 @@ module OpenShift
                   sleep sleep_time
                   sleep_time *= 2
                 else #if status == 'failure'
-                  logger.debug "DEBUG: DYNECT Response status: #{data['status']}"
+                  logger.debug "DYNECT Response status: #{data['status']}"
                   raise_dns_exception(nil, resp)
                 end
               end
             when Net::HTTPNotFound
-              raise DNSNotFoundException.new(145), "Error communicating with DNS system.  Job returned not found"
+              raise DNSNotFoundException.new("Error communicating with DNS system. Job returned not found", 145)
             else
               raise_dns_exception(nil, resp)
             end
@@ -293,14 +300,14 @@ module OpenShift
         begin
           logheaders = headers.clone
           logheaders["Auth-Token"]="[hidden]"
-          logger.debug "DEBUG: DYNECT has? with path: #{url.path} and headers: #{logheaders.inspect}"
+          logger.debug "DYNECT has? with path: #{url.path} and headers: #{logheaders.inspect}"
           resp = http.get(url.path, headers)
           data = resp.body
           case resp
           when Net::HTTPSuccess
             has = dyn_success?(data)
           when Net::HTTPNotFound
-            logger.debug "DEBUG: DYNECT returned 404 for: #{url.path}"
+            logger.error "DYNECT returned 404 for: #{url.path}"
           when Net::HTTPTemporaryRedirect
             begin
               handle_temp_redirect(resp, auth_token)
@@ -343,7 +350,7 @@ module OpenShift
         begin
           logheaders = headers.clone
           logheaders["Auth-Token"]="[hidden]"
-          logger.debug "DEBUG: DYNECT put/post with path: #{url.path} json data: #{json_data} and headers: #{logheaders.inspect}"
+          logger.debug "DYNECT put/post with path: #{url.path} json data: #{json_data} and headers: #{logheaders.inspect}"
           if put
             resp = http.put(url.path, json_data, headers)
           else
@@ -354,7 +361,7 @@ module OpenShift
           when Net::HTTPSuccess
             raise_dns_exception(nil, resp, data) unless dyn_success?(data)
           when Net::HTTPNotFound
-            raise DNSNotFoundException.new(145), "DNS entry not found"
+            raise OpenShift::DNSNotFoundException.new("DNS entry not found", 145)
           when Net::HTTPBadRequest
             if put
               raise_dns_exception(nil, resp)
@@ -364,7 +371,9 @@ module OpenShift
                 data['msgs'].each do |msg|
                   raise OpenShift::DNSAlreadyExistsException.new("fqdn already in use. Please choose another.", 103) if msg['INFO'] == "make: Cannot add a CNAME at a node with data"
                 end if data.kind_of?(Hash) and data['msgs']
+                logger.error "DYNECT Response: #{data}"
               end
+              raise_dns_exception(nil, resp, data)
             end
           when Net::HTTPTemporaryRedirect
             handle_temp_redirect(resp, auth_token)
@@ -381,14 +390,14 @@ module OpenShift
     end
 
     def dyn_success?(data)
-      logger.debug "DEBUG: DYNECT Response: #{data}"
+      logger.debug "DYNECT Response: #{data}"
       success = false
       if data
         data = JSON.parse(data)
         if data && data['status'] && data['status'] == 'failure'
-          logger.debug "DEBUG: DYNECT Response status: #{data['status']}"
+          logger.debug "DYNECT Response status: #{data['status']}"
         elsif data && data['status'] == 'success'
-          logger.debug "DEBUG: DYNECT Response data: #{data['data']}"
+          logger.debug "DYNECT Response data: #{data['data']}"
           #has = data['data'][0].length > 0
           success = true
         end
@@ -410,14 +419,14 @@ module OpenShift
         begin
           logheaders = headers.clone
           logheaders["Auth-Token"]="[hidden]"
-          logger.debug "DEBUG: DYNECT delete with path: #{url.path} and headers: #{logheaders.inspect}"
+          logger.debug "DYNECT delete with path: #{url.path} and headers: #{logheaders.inspect}"
           resp = http.delete(url.path, headers)
           data = resp.body
           case resp
           when Net::HTTPSuccess
             raise_dns_exception(nil, resp, data) unless dyn_success?(data)
           when Net::HTTPNotFound
-            logger.debug "DEBUG: DYNECT: Could not find #{url.path} to delete"
+            logger.error "DYNECT: Could not find #{url.path} to delete"
           when Net::HTTPTemporaryRedirect
             handle_temp_redirect(resp, auth_token)
           else
