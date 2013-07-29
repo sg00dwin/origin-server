@@ -16,7 +16,7 @@ Broker::Application.configure do
     config.dns = {} unless config.respond_to? :dns
     config.dns[:zone]                 = conf.get("ZONE", "rhcloud.com")
     config.dns[:dynect_customer_name] = conf.get("DYNECT_CUSTOMER_NAME", "redhat")
-    config.dns[:dynect_user_name]     = conf.get("DYNECT_USER_NAME", "dev-rhcloud-user")
+    config.dns[:dynect_user_name]     = conf.get("DYNECT_USER_NAME", "oo-dev-user")
     config.dns[:dynect_password]      = conf.get("DYNECT_PASSWORD", "")
     config.dns[:dynect_url]           = conf.get("DYNECT_URL", "https://api2.dynect.net")
   end
