@@ -2,6 +2,9 @@
 locked_files:
 - ~/.pearrc
 - configuration/
+- configuration/etc/
+- configuration/etc/conf.d/
+- configuration/etc/conf.d/*
 - metadata/
 - metadata/*
 - env/
@@ -9,6 +12,8 @@ locked_files:
 - conf/
 - bin/
 - bin/*
+- hooks/
+- hooks/*
 - gui/
 - doc/
 - include/

@@ -3,6 +3,10 @@ locked_files:
 - bin/
 - bin/*
 - etc/
+- etc/conf/config.php
+- etc/conf/php.ini
+- etc/conf.d
+- etc/conf.d/*
 - metadata/
 - metadata/*
 - env/
