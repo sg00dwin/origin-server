@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.12.2
+Version: 1.12.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -227,6 +227,18 @@ fi
 
 
 %changelog
+* Mon Jul 29 2013 Adam Miller <admiller@redhat.com> 1.12.3-1
+- Moved logging into throttler (fotios@redhat.com)
+- Add the systemd tc configuration on Origin. (rmillner@redhat.com)
+- Added throttler configuration to resource_limits.conf (fotios@redhat.com)
+- Origin on Fedora needs all subsystems listed for a group.
+  (rmillner@redhat.com)
+- Added throttler support (fotios@redhat.com)
+- Use new cpu quota defaults. (rmillner@redhat.com)
+- Separate out libcgroup based functionality and add configurable templates.
+  (rmillner@redhat.com)
+- Modified cpu.cfs_quota_us for new gears (fotios@redhat.com)
+
 * Wed Jul 24 2013 Adam Miller <admiller@redhat.com> 1.12.2-1
 - Fix pid file perms. (mrunalp@gmail.com)
 
