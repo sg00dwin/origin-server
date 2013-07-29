@@ -473,8 +473,14 @@ function openshift_partner_program_init() {
   $path = $_REQUEST['q'];
   if (!strncmp($path, 'partner/portal', strlen('partner/portal'))) {
     profile_load_profile($user);
-    if ($user->profile_user_state != 'Active partner' && !_openshift_partner_program_user_admin_access()) {
-      drupal_access_denied();
+    if ($user->uid == 0) {
+      drupal_goto('user');
+    }
+    elseif ($user->profile_user_state == 'New partner') {
+      drupal_goto('partner/tc');
+    }
+    elseif ($user->profile_user_state != 'Active partner') {
+      drupal_goto('partner/apply');
     }
   }
 
