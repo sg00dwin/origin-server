@@ -26,7 +26,7 @@ quota_blocks=1048576
 #
 # max_active_gears is used for limiting/guiding gear placement.
 # For no over-commit, should be (Total System Memory - 1G) / memory_limit_in_bytes
-max_active_gears=100
+max_active_gears=90
 
 # PAM - resource limits
 # limits_core
