@@ -2,7 +2,7 @@
 
 Summary:   Embedded RockMongo support
 Name:      openshift-origin-cartridge-rockmongo
-Version: 0.5.2
+Version: 0.5.3
 Release:   1%{?dist}
 Group:     Applications/Internet
 License:   ASL 2.0 and NBSD
@@ -46,6 +46,9 @@ Provides RockMongo V2 cartridge support
 %doc %{cartridgedir}/README.md
 
 %changelog
+* Mon Jul 29 2013 Adam Miller <admiller@redhat.com> 0.5.3-1
+- Bug 982738 (dmcphers@redhat.com)
+
 * Wed Jul 24 2013 Adam Miller <admiller@redhat.com> 0.5.2-1
 - Remove mongodb install check from rock-mongo bin/install. Now, its done by
   broker during configure order. (rpenta@redhat.com)
