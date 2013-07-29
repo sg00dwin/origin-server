@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/zend
 
 Name:    openshift-origin-cartridge-zend
-Version: 0.5.2
+Version: 0.5.3
 Release: 1%{?dist}
 Summary: Zend Server cartridge
 Group:   Development/Languages
@@ -66,6 +66,9 @@ sh %{cartridgedir}/versions/5.6/rpm/zend_configure_filesystem.sh
 
 
 %changelog
+* Mon Jul 29 2013 Adam Miller <admiller@redhat.com> 0.5.3-1
+- Bug 982738 (dmcphers@redhat.com)
+
 * Wed Jul 24 2013 Adam Miller <admiller@redhat.com> 0.5.2-1
 - Remove 'Group-Overrides' from zend cart manifest file, its a no-op.
   (rpenta@redhat.com)
