@@ -21,56 +21,56 @@ class CloudUser
 
   def match_plan_capabilities(plan_id)
     plan_info = get_plan_info(plan_id)
-    plan_capabilities = plan_info[:capabilities]
-    user_capabilities = self.get_capabilities
+    plan_caps = plan_info[:capabilities]
+    caps = self.capabilities.deep_dup
 
-    if plan_capabilities.has_key?("max_gears") && (plan_capabilities["max_gears"] != user_capabilities["max_gears"])
-      raise OpenShift::UserException.new("User #{self.login} has gear limit set to #{user_capabilities["max_gears"]} but '#{plan_id}' plan allows #{plan_capabilities["max_gears"]}.", 160)
+    if plan_caps.has_key?("max_gears") && (plan_caps["max_gears"] != caps["max_gears"])
+      raise OpenShift::UserException.new("User #{self.login} has gear limit set to #{caps["max_gears"]} but '#{plan_id}' plan allows #{plan_caps["max_gears"]}.", 160)
     end
 
-    if plan_capabilities.has_key?("gear_sizes")
-      if !user_capabilities.has_key?("gear_sizes")
+    if plan_caps.has_key?("gear_sizes")
+      if !caps.has_key?("gear_sizes")
         raise OpenShift::UserException.new("User #{self.login} does not have 'gear_sizes' capability provided by '#{plan_id}' plan", 182)
-      elsif plan_capabilities["gear_sizes"].sort != user_capabilities["gear_sizes"].sort
-        raise OpenShift::UserException.new("User #{self.login} can use gear sizes [#{user_capabilities["gear_sizes"].join(",")}] but '#{plan_id}' plan allows [#{plan_capabilities["gear_sizes"].join(",")}].", 161)
+      elsif plan_caps["gear_sizes"].sort != caps["gear_sizes"].sort
+        raise OpenShift::UserException.new("User #{self.login} can use gear sizes [#{caps["gear_sizes"].join(",")}] but '#{plan_id}' plan allows [#{plan_caps["gear_sizes"].join(",")}].", 161)
       end
     end
 
-    if plan_capabilities.has_key?("max_untracked_addtl_storage_per_gear")
-      if !user_capabilities.has_key?("max_untracked_addtl_storage_per_gear")
+    if plan_caps.has_key?("max_untracked_addtl_storage_per_gear")
+      if !caps.has_key?("max_untracked_addtl_storage_per_gear")
         raise OpenShift::UserException.new("User #{self.login} does not have 'max_untracked_addtl_storage_per_gear' capability provided by '#{plan_id}' plan", 183)
-      elsif plan_capabilities["max_untracked_addtl_storage_per_gear"] != user_capabilities["max_untracked_addtl_storage_per_gear"]
-        raise OpenShift::UserException.new("User #{self.login} has untracked additional file-system storage of #{user_capabilities["max_untracked_addtl_storage_per_gear"]} GB per gear but '#{plan_id}' plan allows #{plan_capabilities["max_untracked_addtl_storage_per_gear"]} GB.", 162)
+      elsif plan_caps["max_untracked_addtl_storage_per_gear"] != caps["max_untracked_addtl_storage_per_gear"]
+        raise OpenShift::UserException.new("User #{self.login} has untracked additional file-system storage of #{caps["max_untracked_addtl_storage_per_gear"]} GB per gear but '#{plan_id}' plan allows #{plan_caps["max_untracked_addtl_storage_per_gear"]} GB.", 162)
       end
     end
-    if plan_capabilities.has_key?("max_tracked_addtl_storage_per_gear")
-      if !user_capabilities.has_key?("max_tracked_addtl_storage_per_gear")
+    if plan_caps.has_key?("max_tracked_addtl_storage_per_gear")
+      if !caps.has_key?("max_tracked_addtl_storage_per_gear")
         raise OpenShift::UserException.new("User #{self.login} does not have 'max_tracked_addtl_storage_per_gear' capability provided by '#{plan_id}' plan", 184)
-      elsif plan_capabilities["max_tracked_addtl_storage_per_gear"] != user_capabilities["max_tracked_addtl_storage_per_gear"]
-        raise OpenShift::UserException.new("User #{self.login} has tracked additional file-system storage of #{user_capabilities["max_tracked_addtl_storage_per_gear"]} GB per gear but '#{plan_id}' plan allows #{plan_capabilities["max_tracked_addtl_storage_per_gear"]} GB.", 181)
+      elsif plan_caps["max_tracked_addtl_storage_per_gear"] != caps["max_tracked_addtl_storage_per_gear"]
+        raise OpenShift::UserException.new("User #{self.login} has tracked additional file-system storage of #{caps["max_tracked_addtl_storage_per_gear"]} GB per gear but '#{plan_id}' plan allows #{plan_caps["max_tracked_addtl_storage_per_gear"]} GB.", 181)
       end
     end
   end
 
   def check_plan_compatibility(plan_id)
     plan_info = get_plan_info(plan_id)
-    plan_capabilities = plan_info[:capabilities]
+    plan_caps = plan_info[:capabilities]
 
-    if plan_capabilities.has_key?("max_gears") && (plan_capabilities["max_gears"] < self.consumed_gears)
+    if plan_caps.has_key?("max_gears") && (plan_caps["max_gears"] < self.consumed_gears)
       raise OpenShift::UserException.new("User #{self.login} has more consumed gears(#{self.consumed_gears}) than the '#{plan_id}' plan allows.", 153)
     end
-    if plan_capabilities.has_key?("gear_sizes")
+    if plan_caps.has_key?("gear_sizes")
       self.domains.each do |domain|
         domain.applications.each do |app|
           app.group_instances.uniq.each do |ginst|
-            if !plan_capabilities["gear_sizes"].include?(ginst.gear_size)
+            if !plan_caps["gear_sizes"].include?(ginst.gear_size)
               raise OpenShift::UserException.new("User #{self.login}, application '#{app.name}' has '#{ginst.gear_size}' type gear that the '#{plan_id}' plan does not allow.", 154)
             end
           end if app.group_instances
         end if domain.applications
       end if self.domains
     end
-    addtl_storage = (plan_capabilities["max_untracked_addtl_storage_per_gear"] || 0) + (plan_capabilities["max_tracked_addtl_storage_per_gear"] || 0)
+    addtl_storage = (plan_caps["max_untracked_addtl_storage_per_gear"] || 0) + (plan_caps["max_tracked_addtl_storage_per_gear"] || 0)
     self.domains.each do |domain|
       domain.applications.each do |app|
         app.group_instances.uniq.each do |ginst|
@@ -82,7 +82,7 @@ class CloudUser
       end if domain.applications
     end if self.domains
        
-    allow_certs = (plan_capabilities.has_key?("private_ssl_certificates") and plan_capabilities["private_ssl_certificates"] == true)
+    allow_certs = (plan_caps.has_key?("private_ssl_certificates") and plan_caps["private_ssl_certificates"] == true)
 
     self.domains.each do |domain|
       domain.applications.each do |app|
@@ -98,20 +98,21 @@ class CloudUser
 
   def assign_plan(plan_id, persist=false)
     plan_info = get_plan_info(plan_id)
-    cap = (self.get_capabilities || {}).
+    self.capabilities = self.capabilities.
       slice(*PRESERVE_CAPABILITIES_ON_PLAN_CHANGE).
       reverse_merge!(plan_info[:capabilities])
 
     self.plan_id = plan_id
-    self.capabilities_will_change!
-    self.set_capabilities(cap)
     self.save! if persist
   end
 
   alias_method :original_default_capabilities, :default_capabilities
   def default_capabilities
-    cap = original_default_capabilities
-    cap.merge!(get_plan_info(plan_id)[:capabilities]) if plan_id rescue cap
+    if plan_id
+      original_default_capabilities.merge!((get_plan_info(plan_id)[:capabilities] rescue {}))
+    else
+      original_default_capabilities
+    end
   end
 
   def get_billing_account_no
@@ -174,7 +175,7 @@ class CloudUser
       raise OpenShift::UserException.new("Billing account status not active", 152) if account["status_cd"].to_i <= 0 and plan_id != default_plan_id
 
       old_plan_id = self.plan_id
-      old_capabilities = self.get_capabilities
+      old_capabilities = self.capabilities.dup
       #to minimize the window where the user can create gears without being on silver plan
       self.assign_plan(default_plan_id) if old_plan_id && (old_plan_id != default_plan_id)
       self.save!
@@ -205,10 +206,7 @@ class CloudUser
       self.pending_plan_uptime = nil
       self.plan_state = CloudUser::PLAN_STATES['active']
       self.plan_id = old_plan_id if old_plan_id
-      if old_capabilities
-        self.capabilities_will_change!
-        self.set_capabilities(old_capabilities)
-      end
+      self.capabilities = old_capabilities if old_capabilities
       self.save!
     end
 

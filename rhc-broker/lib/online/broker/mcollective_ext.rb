@@ -34,7 +34,7 @@ module OpenShift
     def self.valid_gear_sizes_impl(user)
       capability_gear_sizes = []
      
-      capabilities = user.get_capabilities 
+      capabilities = user.capabilities 
       capability_gear_sizes = capabilities['gear_sizes'] if capabilities.has_key?('gear_sizes')
 
       if user.auth_method == :broker_auth

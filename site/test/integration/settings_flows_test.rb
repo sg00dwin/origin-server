@@ -3,7 +3,6 @@ require File.expand_path('../../test_helper', __FILE__)
 class SettingsFlowsTest < ActionDispatch::IntegrationTest
 
   def setup
-    WebMock.allow_net_connect!
     https!
     open_session
   end

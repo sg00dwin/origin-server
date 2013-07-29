@@ -6,7 +6,7 @@ require File.expand_path("../../config/environment.rb",  __FILE__)
 require 'minitest/autorun'
 require "rails/test_help"
 require 'webmock/minitest'
-WebMock.allow_net_connect!
+WebMock.disable!
 
 Rails.backtrace_cleaner.remove_silencers!
 

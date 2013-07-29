@@ -13,10 +13,8 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     cu = CloudUser.new(login: @login)
     @user_id = cu._id
     cu.plan_id = "silver"
-    user_capabilities = cu.get_capabilities
-    user_capabilities['max_untracked_addtl_storage_per_gear'] = 5
-    user_capabilities['max_tracked_addtl_storage_per_gear'] = 5
-    cu.set_capabilities(user_capabilities)
+    cu.capabilities['max_untracked_addtl_storage_per_gear'] = 5
+    cu.capabilities['max_tracked_addtl_storage_per_gear'] = 5
     cu.save!
     Lock.create_lock(cu)
     
