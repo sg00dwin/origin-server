@@ -14,7 +14,7 @@ node_profile=c9
 #
 # Quotas: File system limits
 #
-quota_files=40000
+quota_files=100000
 # 1GB.  1 block = 1024byte
 quota_blocks=1048576
 
