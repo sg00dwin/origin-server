@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.12.3
+Version: 1.12.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -198,6 +198,23 @@ fi
 %{sitedir}/public
 
 %changelog
+* Mon Jul 29 2013 Adam Miller <admiller@redhat.com> 1.12.4-1
+- Merge pull request #1753 from smarterclayton/changes_for_membership
+  (dmcphers+openshiftbot@redhat.com)
+- Merge remote-tracking branch 'origin/master' into changes_for_membership
+  (ccoleman@redhat.com)
+- Merge branch 'master' of github.com:openshift/li into 0726dev
+  (sgoodwin@redhat.com)
+- Fix Bug 987576 - Call out share icons - larger font - implement design by
+  edirsh from email thread Re-prioritizing "social sharing buttons" 02/07/2013
+  (sgoodwin@redhat.com)
+- Merge remote-tracking branch 'origin/master' into changes_for_membership
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into changes_for_membership
+  (ccoleman@redhat.com)
+- WebMock causes errors in Net::HTTP::Persistent, disable except when needed
+  (ccoleman@redhat.com)
+
 * Fri Jul 26 2013 Adam Miller <admiller@redhat.com> 1.12.3-1
 - Merge pull request #1765 from
   jwforres/community_login_redirect_with_account_create
