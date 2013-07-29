@@ -42,7 +42,7 @@ module OpenShift
       end
       login
     end
-    
+
     def logger
       if defined?(Rails.logger)
         Rails.logger
@@ -50,7 +50,7 @@ module OpenShift
         logger = Logger.new(@@log_file)
       end
     end
-    
+
     def register_application(app_name, namespace, public_hostname)
       login
       begin
@@ -60,12 +60,12 @@ module OpenShift
         modify_app_dns_entries(app_name, namespace, public_hostname, @auth_token, @@dyn_retries)
       end
     end
-    
+
     def deregister_application(app_name, namespace)
       login
       delete_app_dns_entries(app_name, namespace, @auth_token, @@dyn_retries)    
     end
-    
+
     def modify_application(app_name, namespace, public_hostname)
       login
       begin
@@ -75,18 +75,18 @@ module OpenShift
         create_app_dns_entries(app_name, namespace, public_hostname, @auth_token, @@dyn_retries)
       end
     end
-    
+
     def publish
       dyn_publish(@auth_token, @@dyn_retries)
     end
-    
+
     def close
       dyn_logout(@auth_token, @@dyn_retries)
       @auth_token = nil
     end
-    
+
     private
-    
+
     def login
       if @auth_token
         return @auth_token
@@ -132,7 +132,7 @@ module OpenShift
       end
       return auth_token
     end
-  
+
     def raise_dns_exception(e=nil, resp=nil, data=nil)
       if e
         logger.debug "DEBUG: Exception caught from DNS request: #{e.message}"
@@ -150,15 +150,15 @@ module OpenShift
       end
       raise OpenShift::DNSException.new(145), "Error communicating with DNS system.  If the problem persists please contact Red Hat support."
     end
-    
+
     def delete_app_dns_entries(app_name, namespace, auth_token, retries=2)
       dyn_delete_cname_record(app_name, namespace, auth_token, retries)
     end
-  
+
     def create_app_dns_entries(app_name, namespace, public_hostname, auth_token, retries=2)
       dyn_create_cname_record(app_name, namespace, public_hostname, auth_token, retries)
     end
-    
+
     def modify_app_dns_entries(app_name, namespace, public_hostname, auth_token, retries=2)
       dyn_modify_cname_record(app_name, namespace, public_hostname, auth_token, retries)
     end
@@ -178,12 +178,12 @@ module OpenShift
       end
       logger.debug "DEBUG: Dynect Response Time (#{method}): #{Time.new - start_time}s  (Request ID: #{Thread.current[:user_action_log_uuid]})"
     end
-  
+
     def dyn_logout(auth_token, retries=0)
       # Logout
       dyn_delete("Session/", auth_token, retries)
     end
-    
+
     def dyn_create_cname_record(application, namespace, public_hostname, auth_token, retries=0)
       logger.debug "DEBUG: Public ip being configured '#{public_hostname}' to app '#{application}'"
       fqdn = "#{application}-#{namespace}.#{@domain_suffix}"
@@ -201,28 +201,28 @@ module OpenShift
       record_data = { :rdata => { :cname => public_hostname }, :ttl => "60" }
       dyn_put(path, record_data, auth_token, retries)
     end
-    
+
     def dyn_delete_cname_record(application, namespace, auth_token, retries=0)
       fqdn = "#{application}-#{namespace}.#{@domain_suffix}"
       # Delete the A record
       path = "CNAMERecord/#{@zone}/#{fqdn}/"
       dyn_delete(path, auth_token, retries)
     end
-    
+
     def dyn_delete_sshfp_record(application, namespace, auth_token, retries=0)
       fqdn = "#{application}-#{namespace}.#{@domain_suffix}"
       # Delete the SSHFP record
       path = "SSHFPRecord/#{@zone}/#{fqdn}/"
       dyn_delete(path, auth_token, retries)
     end
-  
+
     def dyn_publish(auth_token, retries=0)
       # Publish the changes
       path = "Zone/#{@zone}/"
       publish_data = { "publish" => "true" }
       dyn_put(path, publish_data, auth_token, retries)
     end
-    
+
     def handle_temp_redirect(resp, auth_token)
       if resp.body =~ /^\/REST\//
         headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
@@ -278,7 +278,7 @@ module OpenShift
         raise_dns_exception(nil, resp)
       end
     end
-  
+
     def dyn_has?(path, auth_token, retries=2)
       headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
       url = URI.parse("#{@end_point}/REST/#{path}")
@@ -319,15 +319,15 @@ module OpenShift
       end
       return has
     end
-  
+
     def dyn_put(path, put_data, auth_token, retries=0)
       return dyn_put_post(path, put_data, auth_token, true, retries)
     end
-  
+
     def dyn_post(path, post_data, auth_token, retries=0)
       return dyn_put_post(path, post_data, auth_token, false, retries)
     end
-  
+
     def dyn_put_post(path, post_data, auth_token, put=false, retries=0)
       url = URI.parse("#{@end_point}/REST/#{path}")
       headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
@@ -379,7 +379,7 @@ module OpenShift
       end
       return resp, data
     end
-    
+
     def dyn_success?(data)
       logger.debug "DEBUG: DYNECT Response: #{data}"
       success = false
@@ -395,7 +395,7 @@ module OpenShift
       end
       success
     end
-  
+
     def dyn_delete(path, auth_token, retries=0)
       headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
       url = URI.parse("#{@end_point}/REST/#{path}")
