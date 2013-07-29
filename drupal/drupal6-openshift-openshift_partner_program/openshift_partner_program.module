@@ -165,6 +165,12 @@ function _openshift_partner_program_apply_access() {
 function _openshift_partner_program_tc_access() {
   global $user;
   profile_load_profile($user);
+  if (isset($user->profile_user_state) && $user->profile_user_state == 'Active partner') {
+    drupal_goto('partner/portal');
+  }
+  elseif ($user->uid == 0) {
+    drupal_goto('user');
+  }
   return isset($user->profile_user_state) && $user->profile_user_state == 'New partner';
 }
 
@@ -224,9 +230,9 @@ function openshift_partner_program_mail($key, &$message, $params) {
     case 'openshift_partner_program_new_partner':
       $message['subject'] = t('Welcome to the OpenShift by Red Hat Partner Program');
       $message['body'][] = t('Dear ') . $params['customer_name'];
-      $message['body'][] = t('Thank you for your interest in becoming an OpenShift by Red Hat partner and we would like to invite you to join the OpenShift by Red Hat Partner program as a ') . $params['partner_level'] . '.';
-      $message['body'][] = t('There is one step left in becoming a partner. Login to the partner portal and accept the Partnership Agreement to complete the partnership application. To login:');
-      $message['body'][] = t('Visit: http://www.openshift.com/user');
+      $message['body'][] = t('Thank you for your interest in becoming an OpenShift by Red Hat partner and we would like to invite you to join the OpenShift by Red Hat Partner program as a Ready Partner.');
+      $message['body'][] = t('There is one step left in becoming a partner. Login to the partner portal and accept the Partnership Agreement to complete the partnership application.');
+      $message['body'][] = t('Visit: http://www.openshift.com/partner/tc');
       $message['body'][] = t('Again welcome! Should you have any questions please feel free to email us at openshift-partners@redhat.com');
       $message['body'][] = t('Regards,');
       $message['body'][] = t('Your OpenShift by Red Hat Partner Team');
@@ -237,9 +243,9 @@ function openshift_partner_program_mail($key, &$message, $params) {
       $message['body'][] = $params['customer'] . t(' has begun the application process to become an OpenShift by Red Hat partner.');
       $message['body'][] = t('They have been sent the following:');
       $message['body'][] = t('Partner Benefit Guide');
-      $message['body'][] = t('Quickstart Technical Guide');
+      $message['body'][] = t('QuickStart Technical Guide');
       $message['body'][] = t('Cartridge Technical Guide');
-      $message['body'][] = t('Link to submit Quickstarts');
+      $message['body'][] = t('Link to submit QuickStarts');
       $message['body'][] = t('Please keep an eye out on the alias in case they have any questions.');
       $message['body'][] = t('Thanks.');
       break;
@@ -247,10 +253,9 @@ function openshift_partner_program_mail($key, &$message, $params) {
     case 'openshift_partner_program_apply_user':
       $message['subject'] = t('Thank you and Next Steps to become a Red Hat Openshift Partner');
       $message['body'][] = t('Thank you for your interest in becoming an OpenShift by Red Hat partner.');
-      $message['body'][] = t('Please review the Partner Benefits documents to decide which partner level is right for you.');
-      $message['body'][] = t('To become an OpenShift by Red Hat Ready Partner you must submit an OpenShift Quickstart.  View the Quickstart technical guide to get started now.');
-      $message['body'][] = t('To become an OpenShift by Red Hat Advanced Partner you must submit an OpenShift Cartridge.  View the Cartridge technical guide to get started now.');
-      $message['body'][] = t('If you have your Quickstart or Cartridge completed please click here to submit now. http://www.openshift.com/partner/apply/info');
+      $message['body'][] = t('To become an OpenShift by Red Hat Ready Partner you must submit an OpenShift QuickStart.  View the Quickstart technical guide to <a href="http://www.openshift.com">get started now.</a>');
+      $message['body'][] = t('To become an OpenShift by Red Hat Advanced Partner you must submit an OpenShift Cartridge.  View the Cartridge technical guide to <a href="http://www.openshift.com">get started now.</a>');
+      $message['body'][] = t('If you have your QuickStart or Cartridge completed please click here to submit now. http://www.openshift.com/partner/apply/info');
       $message['body'][] = t('We look forward to having you onboard as an OpenShift by Red Hat partner.  Feel free to reach out to us at openshift-partners@redhat.com');
       $message['body'][] = t('Regards,');
       $message['body'][] = t('Your OpenShift by Red Hat Partner Team');
@@ -264,11 +269,12 @@ function openshift_partner_program_mail($key, &$message, $params) {
         $message['body'][] = "$k : $value";
       }
       $message['body'][] = t('You must verify that:');
-      $message['body'][] = t('Their Quickstart / Cartridge is acceptable');
+      $message['body'][] = t('Their QuickStart / Cartridge is acceptable');
       $message['body'][] = t('That they have answered NO to both legal questions and have NOT selected any country in the form.  These are legal requirements and by accepting them as a partner you have verified that they are legally cleared to join.  If they answered YES and/or selected any country, you must reach out to legal to get permission to add them to the program.');
-      $message['body'][] = t('If they successfully completed their Quickstart and are legally cleared, please approve and assign them as a Red Hat OpenShift Ready Partner');
+      $message['body'][] = t('If they successfully completed their QuickStart and are legally cleared, please approve and assign them as a Red Hat OpenShift Ready Partner');
       $message['body'][] = t('If they successfully completed their Cartridge and are legally cleared, please approve and assign them as a Red Hat OpenShift Advanced Partner');
       $message['body'][] = t('Thanks.');
+      $message['body'][] = t('Admin page for user is: ') . $params['admin'];
       break;
 
     case 'openshift_partner_program_request_assistance':
