@@ -7,6 +7,8 @@ source $OPENSHIFT_CARTRIDGE_SDK_BASH
 client_result ""
 client_result "rockmongo-1.1 added successfully."
 client_result "URL: https://$OPENSHIFT_GEAR_DNS/rockmongo/"
+client_result "  username: $OPENSHIFT_MONGODB_DB_USERNAME"
+client_result "  password: $OPENSHIFT_MONGODB_DB_PASSWORD"
 
 cart_props "connection_url=https://$OPENSHIFT_GEAR_DNS/rockmongo/"
 
