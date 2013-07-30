@@ -33,7 +33,7 @@ When /^a scaled (.+) application is created$/ do |app_type|
     app_info = JSON.parse(json_string)
     assert_equal 'created', app_info['status'], "Could not create application: #{app_info['messages'][0]['text']}"
 
-    @app.uid = app_info['data']['uuid']
+    @app.uid = app_info['data']['id']
     run("echo '127.0.0.1 #{@app.name}-#{@app.namespace}.dev.rhcloud.com  # Added by cucumber' >> /etc/hosts")
     set_max_gears(8)
   }
