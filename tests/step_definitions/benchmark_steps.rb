@@ -55,7 +55,7 @@ def create_and_scale_app(app, ngears)
   $logger.debug("create json string: #{json_string}")
   app_info = JSON.parse(json_string)
   raise "Could not create application: #{app_info['messages'][0]['text']}" unless app_info['status'] == 'created'
-  app.uid = app_info['data']['uuid']
+  app.uid = app_info['data']['id']
 
   run("echo '127.0.0.1 #{app.name}-#{app.namespace}.dev.rhcloud.com  # Added by cucumber' >> /etc/hosts")
 
