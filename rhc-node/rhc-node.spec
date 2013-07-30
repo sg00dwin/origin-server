@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.12.3
+Version: 1.12.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -227,6 +227,11 @@ fi
 
 
 %changelog
+* Tue Jul 30 2013 Adam Miller <admiller@redhat.com> 1.12.4-1
+- Merge pull request #1772 from rmillner/misc_bugs
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 989691 - merge values in from production. (rmillner@redhat.com)
+
 * Mon Jul 29 2013 Adam Miller <admiller@redhat.com> 1.12.3-1
 - Moved logging into throttler (fotios@redhat.com)
 - Add the systemd tc configuration on Origin. (rmillner@redhat.com)
