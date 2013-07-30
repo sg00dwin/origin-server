@@ -528,6 +528,7 @@ service openshift-port-proxy restart
               test_queues[3] << {:title => "OpenShift Broker Units",       :command => "cd openshift-test/broker; rake test:units", :options => {}}
               test_queues[0] << {:title => "OpenShift Broker Integration", :command => "cd openshift-test/broker; rake test:integration", :options => {}}
               test_queues[2] << {:title => "OpenShift Broker Functional",  :command => "cd openshift-test/broker; rake test:functionals", :options => {}}
+              test_queues[1] << {:title => "OpenShift Admin Console Functional",  :command => "cd openshift-test/broker; rake test:admin_console_functionals", :options => {}}              
               test_queues[3] << build_cucumber_command("Broker Cucumber", ["@broker"], nil, nil, 'openshift-test/tests')
             end
 
