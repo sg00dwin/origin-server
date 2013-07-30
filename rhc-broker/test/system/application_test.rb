@@ -1,7 +1,7 @@
 ENV["TEST_NAME"] = "system_application_test"
 require 'test_helper'
 require 'openshift-origin-controller'
-require 'mocha'
+require 'mocha/setup'
 
 class ApplicationTest < ActionDispatch::IntegrationTest
 

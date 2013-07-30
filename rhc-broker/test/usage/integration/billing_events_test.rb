@@ -1,6 +1,6 @@
 ENV["TEST_NAME"] = "usage_integration_billing_events_test"
 require 'test_helper'
-require 'mocha'
+require 'mocha/setup'
 
 class BillingEventsTest < ActionDispatch::IntegrationTest
   BILLING_EVENTS_URL = "/broker/billing/rest/events"

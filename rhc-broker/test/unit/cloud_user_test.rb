@@ -1,6 +1,6 @@
 ENV["TEST_NAME"] = "unit_cloud_user_test"
 require 'test_helper'
-require 'mocha'
+require 'mocha/setup'
 
 module Rails
   def self.logger
