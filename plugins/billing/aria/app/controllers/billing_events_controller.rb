@@ -8,7 +8,7 @@ class BillingEventsController < BillingController
       aria_config = Rails.application.config.billing[:config]
       if aria_config[:enable_event_notification]
         event_list = params[:event_id]
-        if (event_list - OpenShift::AriaEvent::EVENTS.keys()).empty?
+        if event_list and (event_list - OpenShift::AriaEvent::EVENTS.keys()).empty?
           OpenShift::AriaEvent.handle_event(params)
           retval = "SUCCESS"
         else
