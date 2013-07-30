@@ -772,6 +772,13 @@ echo " " >> /etc/sysctl.conf
 echo "# BZ982832 Source validation on reverse path" >> /etc/sysctl.conf
 echo "net.ipv4.conf.all.rp_filter = 1" >> /etc/sysctl.conf
 
+# https://tcms.engineering.redhat.com/run/73826/#caserun_2985510 to match prod
+echo "net.ipv4.conf.all.secure_redirects = 0" >> /etc/sysctl.conf
+echo "net.ipv4.conf.all.accept_redirects = 0" >> /etc/sysctl.conf
+echo "net.ipv4.conf.default.accept_redirects = 0" >> /etc/sysctl.conf
+echo "net.ipv4.conf.all.log_martians = 1" >> /etc/sysctl.conf
+chmod 600 /var/log/boot.log
+
 %files
 %defattr(-,root,root,-)
 %attr(0660,-,-) %{_var}/log/openshift/broker/mcollective-client.log
