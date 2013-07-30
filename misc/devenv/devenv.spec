@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.11.5
+Version: 1.11.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -796,6 +796,9 @@ chmod 600 /var/log/boot.log
 /etc/openshift/development
 
 %changelog
+* Tue Jul 30 2013 Adam Miller <admiller@redhat.com> 1.11.6-1
+- Security - make devenvs look more like production (tkramer@redhat.com)
+
 * Mon Jul 29 2013 Adam Miller <admiller@redhat.com> 1.11.5-1
 - Separate out libcgroup based functionality and add configurable templates.
   (rmillner@redhat.com)
