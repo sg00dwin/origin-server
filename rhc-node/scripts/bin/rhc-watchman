@@ -21,6 +21,15 @@ class Watchman
   ##
   # monitor +message_file+ every +period+ seconds for cgroups kill messages
   def initialize(message_file = '/var/log/messages', period = 20, daemon=true, epoch = DateTime.now, libra_var_lib = '/var/lib/openshift', retries = 10)
+    config = OpenShift::Config.new(nil,{
+      'PLATFORM_LOG_FILE' => File.join(File::SEPARATOR, %w{var log openshift node cgroups.log}),
+      'PLATFORM_TRACE_LOG_FILE' => File.join(File::SEPARATOR, %w{var log openshift node cgroups-trace.log}),
+    })
+
+    logger = OpenShift::Runtime::NodeLogger::SplitTraceLogger.new(config, OpenShift::Runtime::NodeLogger.context)
+
+    OpenShift::Runtime::NodeLogger.set_logger(logger)
+
     @message_file = message_file
     @period_seconds = period
     @daemon = daemon
