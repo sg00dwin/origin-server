@@ -1,5 +1,5 @@
 require 'test_helper'
-require 'mocha'
+require 'mocha/setup'
 
 module Rails
   def self.logger

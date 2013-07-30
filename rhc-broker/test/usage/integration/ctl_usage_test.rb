@@ -1,7 +1,7 @@
 ENV["TEST_NAME"] = "usage_integration_cli_usage_test"
 require 'test_helper'
 require 'openshift-origin-controller'
-require 'mocha'
+require 'mocha/setup'
 
 class CtlUsageTest < ActionDispatch::IntegrationTest
 

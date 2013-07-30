@@ -1,7 +1,7 @@
 ENV["TEST_NAME"] = "usage_integration_plan_api_test"
 require 'test_helper'
 require 'openshift-origin-controller'
-require 'mocha'
+require 'mocha/setup'
 
 class PlansApiTest < ActionDispatch::IntegrationTest
 
