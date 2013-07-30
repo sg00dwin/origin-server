@@ -2,7 +2,7 @@ ENV["TEST_NAME"] = "system_app_events_test"
 require 'rubygems'
 require 'test_helper'
 require 'openshift-origin-controller'
-require 'mocha'
+require 'mocha/setup'
 
 class AppEventsTest < ActionDispatch::IntegrationTest
 

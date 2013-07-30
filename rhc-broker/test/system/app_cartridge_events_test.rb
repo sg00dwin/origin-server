@@ -1,7 +1,7 @@
 ENV["TEST_NAME"] = "system_app_cartridge_events_test"
 require 'test_helper'
 require 'openshift-origin-controller'
-require 'mocha'
+require 'mocha/setup'
 
 class AppCartridgeEventsTest < ActionDispatch::IntegrationTest
 
