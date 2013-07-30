@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.10.3
+Version: 1.10.4
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,9 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Tue Jul 30 2013 Adam Miller <admiller@redhat.com> 1.10.4-1
+- Bug 988697 - Fix billing events controller. (rpenta@redhat.com)
+
 * Fri Jul 26 2013 Adam Miller <admiller@redhat.com> 1.10.3-1
 - Merge pull request #1761 from pravisankar/dev/ravi/aria-fixes
   (dmcphers+openshiftbot@redhat.com)
