@@ -1,14 +1,16 @@
-#!/bin/bash -eu
+#!/bin/bash -e
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 # RockMongo cartridge. Source included in cartridge
 # RockMongo setup script
 
 client_result ""
-client_result "rockmongo-1.1 added successfully."
+if [ -n "$OPENSHIFT_MONGODB_DB_USERNAME" ]; then
+  client_result "Please make note of these MongoDB credentials again:"
+  client_result "  RockMongo User: $OPENSHIFT_MONGODB_DB_USERNAME"
+  client_result "  RockMongo Password: $OPENSHIFT_MONGODB_DB_PASSWORD"
+fi
 client_result "URL: https://$OPENSHIFT_GEAR_DNS/rockmongo/"
-client_result "  username: $OPENSHIFT_MONGODB_DB_USERNAME"
-client_result "  password: $OPENSHIFT_MONGODB_DB_PASSWORD"
 
 cart_props "connection_url=https://$OPENSHIFT_GEAR_DNS/rockmongo/"
 
