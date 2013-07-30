@@ -5,7 +5,7 @@
 %global modname partner_program
 
 Name: drupal%{drupal_release}-openshift-%{modname}
-Version: 0.2.1
+Version: 0.2.2
 Release: 1%{?dist}
 Summary: OpenShift Partner Program Drupal Content
 Group: Applications/Publishing
@@ -41,6 +41,17 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Tue Jul 30 2013 Adam Miller <admiller@redhat.com> 0.2.2-1
+- Partner portal fixes - review comments (jforrest@redhat.com)
+- Partner portal fixes - refix typo (jforrest@redhat.com)
+- Partner portal fixes - final cleanup (jforrest@redhat.com)
+- Partner portal fixes phase2 bitbucket commit
+  8a91b20d713f7621c794d81506835439ba253dbd (jforrest@redhat.com)
+- Partner portal fixes phase2 bitbucket commit
+  bf7f530ae7c81893ffa7cbec6abd00511b41d8e1 (jforrest@redhat.com)
+- Partner portal bug fixes - phase2 bitbucket commit
+  9352136c8798fa750ea6d1110ff8577df31cb0ed (jforrest@redhat.com)
+
 * Fri Jul 12 2013 Adam Miller <admiller@redhat.com> 0.2.1-1
 - bump_minor_versions for sprint 31 (admiller@redhat.com)
 
