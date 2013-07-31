@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.12.4
+Version: 1.12.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -227,6 +227,12 @@ fi
 
 
 %changelog
+* Wed Jul 31 2013 Adam Miller <admiller@redhat.com> 1.12.5-1
+- Merge pull request #1782 from fotioslindiakos/Bug989706
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 989706: Added new logger for watchman (fotios@redhat.com)
+- Reinstate boosting certain gear operations. (rmillner@redhat.com)
+
 * Tue Jul 30 2013 Adam Miller <admiller@redhat.com> 1.12.4-1
 - Merge pull request #1772 from rmillner/misc_bugs
   (dmcphers+openshiftbot@redhat.com)
