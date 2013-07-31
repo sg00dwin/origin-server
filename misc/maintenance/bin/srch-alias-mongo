@@ -24,14 +24,14 @@ def alias_searches(reqaliases)
       if hash["aliases"] != nil
 
         hash["aliases"].each do |server_alias|
-        
+
           # Would we have rejected this alias
           reqaliases.each do |rqalias|
             if server_alias == rqalias
               puts "#{server_alias}: #{id}: #{name}"
             end
           end
-                      
+
         end
       end
     end
