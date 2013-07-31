@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.12.6
+Version: 1.12.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -155,6 +155,9 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Wed Jul 31 2013 Adam Miller <admiller@redhat.com> 1.12.7-1
+- Formalize datastore migration (dmcphers@redhat.com)
+
 * Wed Jul 31 2013 Adam Miller <admiller@redhat.com> 1.12.6-1
 - Bug 956859 (dmcphers@redhat.com)
 
