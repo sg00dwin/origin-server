@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Dynect DNS service
 
 Name:           rubygem-%{gem_name}
-Version: 1.6.2
+Version: 1.6.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -80,6 +80,10 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-dns-dynect-dev.conf
 
 %changelog
+* Wed Jul 31 2013 Adam Miller <admiller@redhat.com> 1.6.3-1
+- Bug 984005 - Raise OpenShift::DNSLoginException when dns authorization failed
+  on the client/server side. (rpenta@redhat.com)
+
 * Mon Jul 29 2013 Adam Miller <admiller@redhat.com> 1.6.2-1
 - Bug 982738 (dmcphers@redhat.com)
 - changing dynect user (dmcphers@redhat.com)
