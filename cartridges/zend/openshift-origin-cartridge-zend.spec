@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/zend
 
 Name:    openshift-origin-cartridge-zend
-Version: 0.5.4
+Version: 0.5.5
 Release: 1%{?dist}
 Summary: Zend Server cartridge
 Group:   Development/Languages
@@ -63,6 +63,10 @@ sh %{cartridgedir}/versions/5.6/rpm/zend_configure_filesystem.sh
 
 
 %changelog
+* Thu Aug 01 2013 Adam Miller <admiller@redhat.com> 0.5.5-1
+- Bug 985514 - Update CartridgeRepository when mcollectived restarted
+  (jhonce@redhat.com)
+
 * Wed Jul 31 2013 Adam Miller <admiller@redhat.com> 0.5.4-1
 - Update cartridge versions for Sprint 31 (jhonce@redhat.com)
 
