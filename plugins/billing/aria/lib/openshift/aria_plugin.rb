@@ -157,7 +157,7 @@ module OpenShift
       return if user_srecs.empty?
 
       # Saving sync time before sending usage data to billing vendor
-      user_ids = user_srecs.map { |rec| rec['_id'] unless rec['no_update']}
+      user_ids = user_srecs.map { |rec| rec['_id'] unless rec['no_update']}.compact
       session.with(safe:true)[:usage_records].find({_id: {"$in" => user_ids}}).update_all({"$set" => {sync_time: sync_time}})
 
       # Prepare for bulk usage reporting
