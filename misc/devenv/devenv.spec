@@ -776,8 +776,12 @@ echo "net.ipv4.conf.all.rp_filter = 1" >> /etc/sysctl.conf
 echo "net.ipv4.conf.all.secure_redirects = 0" >> /etc/sysctl.conf
 echo "net.ipv4.conf.all.accept_redirects = 0" >> /etc/sysctl.conf
 echo "net.ipv4.conf.default.accept_redirects = 0" >> /etc/sysctl.conf
+echo "net.ipv4.conf.default.secure_redirects = 0" >> /etc/sysctl.conf
 echo "net.ipv4.conf.all.log_martians = 1" >> /etc/sysctl.conf
 chmod 600 /var/log/boot.log
+
+#BZ990497 used to be nobody:root when using ls -laH
+chown root:root /usr/lib/node_modules/express/bin/express
 
 %files
 %defattr(-,root,root,-)
