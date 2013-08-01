@@ -4,7 +4,8 @@ Display-Name: OpenShift Metrics 0.1
 Description: "An experimental cartridge that demonstrates retrieving real-time statistics from your application. May be removed or replaced in the future."
 Version: '0.1'
 License: GPLv2
-Cartridge-Version: 0.0.1
+Cartridge-Version: 0.0.2
+Compatible-Versions: [0.0.1]
 Cartridge-Vendor: redhat
 Website: "https://openshift.redhat.com/"
 Categories:
