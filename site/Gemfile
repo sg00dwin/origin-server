@@ -59,4 +59,5 @@ group :assets do
   gem 'angular-rails', '~> 0.0.12'
   gem 'uglifier',      '>= 1.2.6'
   gem 'therubyracer',  '>= 0.10'
+  gem 'sass-twitter-bootstrap',  '2.0.1'
 end
