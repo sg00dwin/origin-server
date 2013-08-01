@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/openshift/cartridges/metrics
 
 Name: openshift-origin-cartridge-metrics
-Version: 1.12.3
+Version: 1.13.0
 Release: 1%{?dist}
 Summary: Metrics cartridge
 
