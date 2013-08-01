@@ -51,9 +51,6 @@ Zend Server cartridge for openshift.
 %__cp -rf %{cartridgedir}/versions/5.6/configuration/shared-files/usr/local/zend/* /usr/local/zend/
 sh %{cartridgedir}/versions/5.6/rpm/zend_configure_filesystem.sh
 
-%posttrans
-%{_sbindir}/oo-admin-cartridge --action install --source %{cartridgedir}
-
 %files
 %defattr(-,root,root,-)
 %dir %{cartridgedir}
