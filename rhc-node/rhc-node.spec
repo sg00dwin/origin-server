@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.12.5
+Version: 1.12.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -227,6 +227,10 @@ fi
 
 
 %changelog
+* Fri Aug 02 2013 Adam Miller <admiller@redhat.com> 1.12.6-1
+- Bug 991483 - Set the exit value based on start, stop and status return.
+  (rmillner@redhat.com)
+
 * Wed Jul 31 2013 Adam Miller <admiller@redhat.com> 1.12.5-1
 - Merge pull request #1782 from fotioslindiakos/Bug989706
   (dmcphers+openshiftbot@redhat.com)
