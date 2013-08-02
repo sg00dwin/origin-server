@@ -19,15 +19,19 @@ if [ -f "$daemon_config" ]; then
     . $daemon_config
 fi
 
+RC=0
+
 start() {
     echo -n $"Starting Watchman Services: "
     daemon --pidfile $pidfile --check $daemon_name $daemon_file
+    RC=$?
     echo
 }
 
 stop() {
     echo -n $"Stopping Watchman Services: "
     killproc -p $pidfile $daemon_file
+    RC=$?
     echo
 }
 
@@ -40,6 +44,7 @@ case "$1" in
         ;;
   status)
         status -p $pidfile $daemon_file
+        RC=$?
         ;;
   restart)
         stop
@@ -51,4 +56,4 @@ case "$1" in
         ;;
 esac
 
-exit 0
+exit $RC
