@@ -1,6 +1,6 @@
 Given /^an accepted node$/ do
   accept_node = "/usr/sbin/oo-accept-node"
-  assert_file_exists accept_node
+  assert_file_exist accept_node
 
   num_tries = 10
   (1..num_tries).each do |i|
@@ -25,6 +25,6 @@ Given /^an accepted node$/ do
 end
 
 Given /^the libra client tools$/ do
-  assert_file_exists $client_config
-  assert_file_exists $rhc_script
+  assert_file_exist $client_config
+  assert_file_exist $rhc_script
 end
