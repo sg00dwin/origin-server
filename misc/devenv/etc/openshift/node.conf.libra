@@ -35,3 +35,5 @@ PLATFORM_TRACE_LOG_FILE=/var/log/openshift/node/platform-trace.log
 PLATFORM_TRACE_LOG_LEVEL=DEBUG
 
 CONTAINERIZATION_PLUGIN=openshift-origin-container-selinux
+QUOTA_WARNING_PERCENT=90.0
+
