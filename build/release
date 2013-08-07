@@ -817,6 +817,16 @@ class Release < Thor
         exit 1
       end
 
+      # Change the directory group permissions so others on the machine can do things.
+      puts "Fixing up permissions for the next guy"
+      permissions_cmd = "chgrp -R mock #{options.temp_dir}/#{mash_config}/* /var/tmp/mash/mash-#{mash_config}/.createrepo-cache"
+      puts permissions_cmd
+      run(permissions_cmd, :verbose => options.verbose?)
+      unless run(permissions_cmd, :verbose => options.verbose?)
+        puts "ERROR - changing permissions failed"
+        exit 1
+      end
+
       unless skip_gem
         # Build the gem locally since it's not stored centrally like RPMs in Brew
         puts "Building client gem..."
