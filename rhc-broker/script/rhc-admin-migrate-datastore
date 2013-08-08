@@ -1,36 +1,107 @@
 #!/usr/bin/env oo-ruby
 require 'getoptlong'
 
-VERSIONS = { '2.0.30' => {:compatible => true,
-                          :non_compatible => false} }
+VERSIONS = { '2.0.32' => {:compatible => false,
+                          :non_compatible => true} }
+
+CARTRIDGE_CHANGES = {"phpmyadmin-3.4" => "phpmyadmin-3", 
+                     "jbosseap-6.0" => "jbosseap-6", 
+                     "jenkins-1.4" => "jenkins-1", 
+                     "jenkins-client-1.4" => "jenkins-client-1", 
+                     "switchyard-0.6" => "switchyard-0"}
 
 def migrate(version, compatible=true)
   if version == VERSIONS.keys.first
     puts "Starting migration"
-    total = 0
-    fixed_total = 0
-    db = OpenShift::DataStore.db(:primary)
+    puts ""
     if compatible
-      applications = db.collection('applications')
-      #domains = db.collection('domains')
-      #cloud_users = db.collection('cloud_users')
-      query = { }
-      selection = {:fields => ["component_instances.cartridge_name",
-                               "component_instances.component_properties",
-                               "component_instances._id",
-                               "name",
-                               "domain_id"], :timeout => false}
-      applications.find(query, selection) do |cursor|
-        cursor.each do |app|
-          print "."
-          total += 1
-          fixed_total += 1
-        end
-      end
+      # ignore
     else
+      CARTRIDGE_CHANGES.each do |old_cart_name, new_cart_name|
+        puts "Updating cartridge #{old_cart_name} to #{new_cart_name}"
+        
+        print "Updating component instances for all applications...\t"
+        update_component_instances(old_cart_name, new_cart_name)
+        puts "Done."
+        
+        print "Updating group overrides for all applications...\t"
+        update_group_overrides(old_cart_name, new_cart_name)
+        puts "Done."
+
+        print "Verifying cartridge update for all applications...\t"
+        missed_update_count = verify_migration(old_cart_name)
+        puts (missed_update_count == 0 ? "Successful." : "Failed.")
+        puts ""
+      end
     end
-    puts "\nMigrated #{fixed_total}/#{total} applications"
   end
+end
+
+def update_component_instances(old_cart_name, new_cart_name)
+  begin
+    db = OpenShift::DataStore.db(:primary)
+
+    ci_index = 0
+    ci_search_count = 1
+    while ci_search_count > 0 do
+      filter = {"component_instances.#{ci_index}.component_name" => old_cart_name}
+      update_query = {"$set" => {"component_instances.#{ci_index}.cartridge_name" => new_cart_name,
+                                 "component_instances.#{ci_index}.component_name" => new_cart_name}}
+      db["applications"].update(filter, update_query, { :multi => true })
+
+      ci_index += 1
+      ci_search_count = db["applications"].find({"component_instances.#{ci_index}" => {"$exists" => true}}).count
+    end
+  rescue Exception => e
+    puts e.message
+    puts e.backtrace
+    exit 1
+  end
+end
+
+def update_group_overrides(old_cart_name, new_cart_name)
+  begin
+    db = OpenShift::DataStore.db(:primary)
+
+    # Update all the cartridge names in group_overrides
+    go_index = 0
+    go_search_count = 1
+    while go_search_count > 0 do
+      component_index = 0
+      component_search_count = 1
+      while component_search_count > 0
+        filter = {"group_overrides.#{go_index}.components.#{component_index}.cart" => old_cart_name}
+        update_query = {"$set" => {"group_overrides.#{go_index}.components.#{component_index}.cart" => new_cart_name,
+                                   "group_overrides.#{go_index}.components.#{component_index}.comp" => new_cart_name}}
+        db["applications"].update(filter, update_query, { :multi => true })
+        component_index += 1
+        component_search_count = db["applications"].find({"group_overrides.#{go_index}.components.#{component_index}" => {"$exists" => true}}).count
+      end
+      go_index += 1
+      go_search_count = db["applications"].find({"group_overrides.#{go_index}.components.0" => {"$exists" => true}}).count
+    end
+  rescue Exception => e
+    puts e.message
+    puts e.backtrace
+    exit 1
+  end
+end
+
+def verify_migration(old_cart_name)
+  missed_update_count = 0
+  begin
+    db = OpenShift::DataStore.db(:primary)
+	
+	missed_update_count += db["applications"].find({"component_instances.cartridge_name" => old_cart_name}).count
+	missed_update_count += db["applications"].find({"component_instances.component_name" => old_cart_name}).count
+	missed_update_count += db["applications"].find({"group_overrides.components.cart" => old_cart_name}).count
+	missed_update_count += db["applications"].find({"group_overrides.components.comp" => old_cart_name}).count
+  rescue Exception => e
+    puts e.message
+    puts e.backtrace
+    exit 1
+  end
+  return missed_update_count
 end
 
 
