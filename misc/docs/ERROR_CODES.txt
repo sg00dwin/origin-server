@@ -77,6 +77,14 @@ User errors:
 183: User does not have 'max_untracked_addtl_storage_per_gear' capability provided by current plan
 184: User does not have 'max_tracked_addtl_storage_per_gear' capability provided by current plan
 185: Cartridge 'X' can not be added with out cartridge 'Y'.
+186: Invalid environment variables: expected array of hashes.
+187: Invalid environment variable 'X'. Valid keys 'name'(required), 'value'.
+188: Invalid environment variable name 'X': specified multiple times.
+189: Environment name 'X' not found in application.
+190: Value not specified for environment variable 'X'.
+191: Specify parameters 'name'/'value' or 'environment_variables'.
+192: Environment name 'X' already exists in application.
+193: Environment variable deletion not allowed for this operation.
 210: Can not override existing location for git repo
 211: Parent directory for git repo does not exist
 212: Could not find libra_id_rsa
