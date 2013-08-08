@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/openshift/cartridges/metrics
 
 Name: openshift-origin-cartridge-metrics
-Version: 1.13.0
+Version: 1.13.1
 Release: 1%{?dist}
 Summary: Metrics cartridge
 
@@ -46,6 +46,13 @@ Provides metrics cartridge support
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Aug 08 2013 Adam Miller <admiller@redhat.com> 1.13.1-1
+- Merge pull request #1793 from jwhonce/bug/985514
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 985514 - Update CartridgeRepository when mcollectived restarted
+  (jhonce@redhat.com)
+- bump_minor_versions for sprint 32 (admiller@redhat.com)
+
 * Wed Jul 31 2013 Adam Miller <admiller@redhat.com> 1.12.3-1
 - Update cartridge versions for Sprint 31 (jhonce@redhat.com)
 
