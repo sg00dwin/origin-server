@@ -5,7 +5,7 @@
 %global modname partner_program
 
 Name: drupal%{drupal_release}-openshift-%{modname}
-Version: 0.3.0
+Version: 0.3.1
 Release: 1%{?dist}
 Summary: OpenShift Partner Program Drupal Content
 Group: Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Thu Aug 08 2013 Adam Miller <admiller@redhat.com> 0.3.1-1
+- bump_minor_versions for sprint 32 (admiller@redhat.com)
+
 * Tue Jul 30 2013 Adam Miller <admiller@redhat.com> 0.2.2-1
 - Partner portal fixes - review comments (jforrest@redhat.com)
 - Partner portal fixes - refix typo (jforrest@redhat.com)
