@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.13.0
+Version: 1.13.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -227,6 +227,13 @@ fi
 
 
 %changelog
+* Thu Aug 08 2013 Adam Miller <admiller@redhat.com> 1.13.1-1
+- Bug 991824: Make watchman logging configurable via node.conf
+  (ironcladlou@gmail.com)
+- Bug 991483 - Set the exit value based on start, stop and status return.
+  (rmillner@redhat.com)
+- bump_minor_versions for sprint 32 (admiller@redhat.com)
+
 * Wed Jul 31 2013 Adam Miller <admiller@redhat.com> 1.12.5-1
 - Merge pull request #1782 from fotioslindiakos/Bug989706
   (dmcphers+openshiftbot@redhat.com)
