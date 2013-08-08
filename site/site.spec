@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.13.0
+Version: 1.13.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -198,6 +198,11 @@ fi
 %{sitedir}/public
 
 %changelog
+* Thu Aug 08 2013 Adam Miller <admiller@redhat.com> 1.13.1-1
+- Card 57 - gemify bootstrap, use sass-twitter-bootstrap gem
+  (jforrest@redhat.com)
+- bump_minor_versions for sprint 32 (admiller@redhat.com)
+
 * Mon Jul 29 2013 Adam Miller <admiller@redhat.com> 1.12.4-1
 - Merge pull request #1753 from smarterclayton/changes_for_membership
   (dmcphers+openshiftbot@redhat.com)
