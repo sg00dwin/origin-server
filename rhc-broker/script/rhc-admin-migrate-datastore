@@ -4,11 +4,11 @@ require 'getoptlong'
 VERSIONS = { '2.0.32' => {:compatible => false,
                           :non_compatible => true} }
 
-CARTRIDGE_CHANGES = {"phpmyadmin-3.4" => "phpmyadmin-3", 
-                     "jbosseap-6.0" => "jbosseap-6", 
-                     "jenkins-1.4" => "jenkins-1", 
-                     "jenkins-client-1.4" => "jenkins-client-1", 
-                     "switchyard-0.6" => "switchyard-0"}
+CARTRIDGE_CHANGES = [{"old_name" => "phpmyadmin-3.4", "new_name" => "phpmyadmin-3", "old_version" => "3.4", "new_version" => "3"},
+                     {"old_name" => "jbosseap-6.0", "new_name" => "jbosseap-6", "old_version" => "6.0", "new_version" => "6"},
+                     {"old_name" => "jenkins-1.4", "new_name" => "jenkins-1", "old_version" => "1.4", "new_version" => "1"},
+                     {"old_name" => "jenkins-client-1.4", "new_name" => "jenkins-client-1", "old_version" => "1.4", "new_version" => "1"},
+                     {"old_name" => "switchyard-0.6", "new_name" => "switchyard-0", "old_version" => "0.6", "new_version" => "0"}] 
 
 def migrate(version, compatible=true)
   if version == VERSIONS.keys.first
@@ -17,19 +17,23 @@ def migrate(version, compatible=true)
     if compatible
       # ignore
     else
-      CARTRIDGE_CHANGES.each do |old_cart_name, new_cart_name|
-        puts "Updating cartridge #{old_cart_name} to #{new_cart_name}"
+      CARTRIDGE_CHANGES.each do |cart_change|
+        puts "Updating cartridge #{cart_change['old_name']} to #{cart_change['new_name']}"
         
         print "Updating component instances for all applications...\t"
-        update_component_instances(old_cart_name, new_cart_name)
+        update_component_instances(cart_change['old_name'], cart_change['new_name'])
         puts "Done."
         
         print "Updating group overrides for all applications...\t"
-        update_group_overrides(old_cart_name, new_cart_name)
+        update_group_overrides(cart_change['old_name'], cart_change['new_name'])
         puts "Done."
 
+        print "Updating cartridge version for all applications...\t"
+        update_cartridge_version(cart_change['new_name'], cart_change['old_version'], cart_change['new_version'])
+        puts "Done."
+        
         print "Verifying cartridge update for all applications...\t"
-        missed_update_count = verify_migration(old_cart_name)
+        missed_update_count = verify_migration(cart_change['old_name'], cart_change['new_name'], cart_change['old_version'])
         puts (missed_update_count == 0 ? "Successful." : "Failed.")
         puts ""
       end
@@ -38,13 +42,14 @@ def migrate(version, compatible=true)
 end
 
 def update_component_instances(old_cart_name, new_cart_name)
+  db = nil
   begin
     db = OpenShift::DataStore.db(:primary)
 
     ci_index = 0
     ci_search_count = 1
     while ci_search_count > 0 do
-      filter = {"component_instances.#{ci_index}.component_name" => old_cart_name}
+      filter = {"component_instances.#{ci_index}.cartridge_name" => old_cart_name}
       update_query = {"$set" => {"component_instances.#{ci_index}.cartridge_name" => new_cart_name,
                                  "component_instances.#{ci_index}.component_name" => new_cart_name}}
       db["applications"].update(filter, update_query, { :multi => true })
@@ -56,10 +61,13 @@ def update_component_instances(old_cart_name, new_cart_name)
     puts e.message
     puts e.backtrace
     exit 1
+  ensure
+    db.connection.close if db and db.connection and db.connection.connected?
   end
 end
 
 def update_group_overrides(old_cart_name, new_cart_name)
+  db = nil
   begin
     db = OpenShift::DataStore.db(:primary)
 
@@ -84,10 +92,39 @@ def update_group_overrides(old_cart_name, new_cart_name)
     puts e.message
     puts e.backtrace
     exit 1
+  ensure
+    db.connection.close if db and db.connection and db.connection.connected?
   end
 end
 
-def verify_migration(old_cart_name)
+def update_cartridge_version(new_cart_name, old_cart_version, new_cart_version)
+  db = nil
+  begin
+    db = OpenShift::DataStore.db(:primary)
+
+    ci_index = 0
+    ci_search_count = 1
+    while ci_search_count > 0 do
+      filter = {"component_instances.#{ci_index}.cartridge_name" => new_cart_name, 
+                "component_instances.#{ci_index}.cartridge_vendor" => "redhat",
+                "component_instances.#{ci_index}.version" => old_cart_version}
+      update_query = {"$set" => {"component_instances.#{ci_index}.version" => new_cart_version}}
+      db["applications"].update(filter, update_query, { :multi => true })
+
+      ci_index += 1
+      ci_search_count = db["applications"].find({"component_instances.#{ci_index}" => {"$exists" => true}}).count
+    end
+  rescue Exception => e
+    puts e.message
+    puts e.backtrace
+    exit 1
+  ensure
+    db.connection.close if db and db.connection and db.connection.connected?
+  end
+end
+
+def verify_migration(old_cart_name, new_cart_name, old_cart_version)
+  db = nil
   missed_update_count = 0
   begin
     db = OpenShift::DataStore.db(:primary)
@@ -96,10 +133,13 @@ def verify_migration(old_cart_name)
 	missed_update_count += db["applications"].find({"component_instances.component_name" => old_cart_name}).count
 	missed_update_count += db["applications"].find({"group_overrides.components.cart" => old_cart_name}).count
 	missed_update_count += db["applications"].find({"group_overrides.components.comp" => old_cart_name}).count
+	missed_update_count += db["applications"].find({"component_instances" => {"$elemMatch" => {"cartridge_name" => new_cart_name, "cartridge_vendor" => "redhat", "version" => old_cart_version}}}).count
   rescue Exception => e
     puts e.message
     puts e.backtrace
     exit 1
+  ensure
+    db.connection.close if db and db.connection and db.connection.connected?
   end
   return missed_update_count
 end
