@@ -666,22 +666,6 @@ html.js fieldset.collapsible .fieldset-wrapper {
   .cartridge-spec {
     font-weight: bold;
   }
-  .social-sharing {
-    padding: 10px 20px;
-    background: #f9f9f9;
-    border: 1px solid #ddd;
-    border-left: 0;
-    border-right: 0;
-    margin: 15px 0;
-      &:before {
-        content: 'Share this ';
-        font-family: $headerFontFamily;
-      }
-      a {
-        font-size: $leadFontSize;
-        margin-left: 15px;
-      }
-  }
 }
 
 .community {
@@ -722,6 +706,22 @@ html.js fieldset.collapsible .fieldset-wrapper {
   }
   .ribbon + .terms-page {
     margin-top: -20px;
+  }
+  .social-sharing {
+    padding: 10px 20px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-left: 0;
+    border-right: 0;
+    margin: 15px 0;
+      &:before {
+        content: 'Share this ';
+        font-family: $headerFontFamily;
+      }
+      a {
+        font-size: $leadFontSize;
+        margin-left: 15px;
+      }
   }
 }
 
