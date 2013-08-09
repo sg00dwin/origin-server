@@ -1,8 +1,30 @@
 #!/usr/bin/env oo-ruby
 require 'getoptlong'
 
-VERSIONS = { '2.0.32' => {:compatible => false,
-                          :non_compatible => true} }
+VERSIONS = { 
+  '2.0.32' => {
+    :compatible => false,
+    :non_compatible => true,
+    :prerelease => true,
+  } 
+}
+
+def migrate(type, version)
+  puts "Starting migration: #{type}"
+  case type
+  when :prerelease, :compatible
+    ensure_members_index
+    create_domain_members
+    create_application_members
+  when :non_compatible
+    ensure_members_index
+    create_domain_members
+    create_application_members
+    adjust_cartridge_versions
+  end
+  puts "\nMigration complete"
+end
+
 
 CARTRIDGE_CHANGES = [{"old_name" => "phpmyadmin-3.4", "new_name" => "phpmyadmin-3", "old_version" => "3.4", "new_version" => "3"},
                      {"old_name" => "jbosseap-6.0", "new_name" => "jbosseap-6", "old_version" => "6.0", "new_version" => "6"},
@@ -10,140 +32,206 @@ CARTRIDGE_CHANGES = [{"old_name" => "phpmyadmin-3.4", "new_name" => "phpmyadmin-
                      {"old_name" => "jenkins-client-1.4", "new_name" => "jenkins-client-1", "old_version" => "1.4", "new_version" => "1"},
                      {"old_name" => "switchyard-0.6", "new_name" => "switchyard-0", "old_version" => "0.6", "new_version" => "0"}] 
 
-def migrate(version, compatible=true)
-  if version == VERSIONS.keys.first
-    puts "Starting migration"
-    puts ""
-    if compatible
-      # ignore
-    else
-      CARTRIDGE_CHANGES.each do |cart_change|
-        puts "Updating cartridge #{cart_change['old_name']} to #{cart_change['new_name']}"
-        
-        print "Updating component instances for all applications...\t"
-        update_component_instances(cart_change['old_name'], cart_change['new_name'])
-        puts "Done."
-        
-        print "Updating group overrides for all applications...\t"
-        update_group_overrides(cart_change['old_name'], cart_change['new_name'])
-        puts "Done."
+def adjust_cartridge_versions
+  CARTRIDGE_CHANGES.each do |cart_change|
+    puts "Updating cartridge #{cart_change['old_name']} to #{cart_change['new_name']}"
+    
+    print "Updating component instances for all applications...\t"
+    update_component_instances(cart_change['old_name'], cart_change['new_name'])
+    puts "Done."
+    
+    print "Updating group overrides for all applications...\t"
+    update_group_overrides(cart_change['old_name'], cart_change['new_name'])
+    puts "Done."
 
-        print "Updating cartridge version for all applications...\t"
-        update_cartridge_version(cart_change['new_name'], cart_change['old_version'], cart_change['new_version'])
-        puts "Done."
-        
-        print "Verifying cartridge update for all applications...\t"
-        missed_update_count = verify_migration(cart_change['old_name'], cart_change['new_name'], cart_change['old_version'])
-        puts (missed_update_count == 0 ? "Successful." : "Failed.")
-        puts ""
-      end
-    end
+    print "Updating cartridge version for all applications...\t"
+    update_cartridge_version(cart_change['new_name'], cart_change['old_version'], cart_change['new_version'])
+    puts "Done."
+    
+    print "Verifying cartridge update for all applications...\t"
+    missed_update_count = verify_migration(cart_change['old_name'], cart_change['new_name'], cart_change['old_version'])
+    puts (missed_update_count == 0 ? "Successful." : "Failed.")
+    puts ""
   end
 end
 
 def update_component_instances(old_cart_name, new_cart_name)
-  db = nil
-  begin
-    db = OpenShift::DataStore.db(:primary)
+  ci_index = 0
+  ci_search_count = 1
+  while ci_search_count > 0 do
+    filter = {"component_instances.#{ci_index}.cartridge_name" => old_cart_name}
+    update_query = {"$set" => {"component_instances.#{ci_index}.cartridge_name" => new_cart_name,
+                               "component_instances.#{ci_index}.component_name" => new_cart_name}}
+    db["applications"].update(filter, update_query, { :multi => true })
 
-    ci_index = 0
-    ci_search_count = 1
-    while ci_search_count > 0 do
-      filter = {"component_instances.#{ci_index}.cartridge_name" => old_cart_name}
-      update_query = {"$set" => {"component_instances.#{ci_index}.cartridge_name" => new_cart_name,
-                                 "component_instances.#{ci_index}.component_name" => new_cart_name}}
-      db["applications"].update(filter, update_query, { :multi => true })
-
-      ci_index += 1
-      ci_search_count = db["applications"].find({"component_instances.#{ci_index}" => {"$exists" => true}}).count
-    end
-  rescue Exception => e
-    puts e.message
-    puts e.backtrace
-    exit 1
-  ensure
-    db.connection.close if db and db.connection and db.connection.connected?
+    ci_index += 1
+    ci_search_count = db["applications"].find({"component_instances.#{ci_index}" => {"$exists" => true}}).count
   end
 end
 
 def update_group_overrides(old_cart_name, new_cart_name)
-  db = nil
-  begin
-    db = OpenShift::DataStore.db(:primary)
-
-    # Update all the cartridge names in group_overrides
-    go_index = 0
-    go_search_count = 1
-    while go_search_count > 0 do
-      component_index = 0
-      component_search_count = 1
-      while component_search_count > 0
-        filter = {"group_overrides.#{go_index}.components.#{component_index}.cart" => old_cart_name}
-        update_query = {"$set" => {"group_overrides.#{go_index}.components.#{component_index}.cart" => new_cart_name,
-                                   "group_overrides.#{go_index}.components.#{component_index}.comp" => new_cart_name}}
-        db["applications"].update(filter, update_query, { :multi => true })
-        component_index += 1
-        component_search_count = db["applications"].find({"group_overrides.#{go_index}.components.#{component_index}" => {"$exists" => true}}).count
-      end
-      go_index += 1
-      go_search_count = db["applications"].find({"group_overrides.#{go_index}.components.0" => {"$exists" => true}}).count
+  # Update all the cartridge names in group_overrides
+  go_index = 0
+  go_search_count = 1
+  while go_search_count > 0 do
+    component_index = 0
+    component_search_count = 1
+    while component_search_count > 0
+      filter = {"group_overrides.#{go_index}.components.#{component_index}.cart" => old_cart_name}
+      update_query = {"$set" => {"group_overrides.#{go_index}.components.#{component_index}.cart" => new_cart_name,
+                                 "group_overrides.#{go_index}.components.#{component_index}.comp" => new_cart_name}}
+      db["applications"].update(filter, update_query, { :multi => true })
+      component_index += 1
+      component_search_count = db["applications"].find({"group_overrides.#{go_index}.components.#{component_index}" => {"$exists" => true}}).count
     end
-  rescue Exception => e
-    puts e.message
-    puts e.backtrace
-    exit 1
-  ensure
-    db.connection.close if db and db.connection and db.connection.connected?
+    go_index += 1
+    go_search_count = db["applications"].find({"group_overrides.#{go_index}.components.0" => {"$exists" => true}}).count
   end
 end
 
 def update_cartridge_version(new_cart_name, old_cart_version, new_cart_version)
-  db = nil
-  begin
-    db = OpenShift::DataStore.db(:primary)
+  ci_index = 0
+  ci_search_count = 1
+  while ci_search_count > 0 do
+    filter = {"component_instances.#{ci_index}.cartridge_name" => new_cart_name, 
+              "component_instances.#{ci_index}.cartridge_vendor" => "redhat",
+              "component_instances.#{ci_index}.version" => old_cart_version}
+    update_query = {"$set" => {"component_instances.#{ci_index}.version" => new_cart_version}}
+    db["applications"].update(filter, update_query, { :multi => true })
 
-    ci_index = 0
-    ci_search_count = 1
-    while ci_search_count > 0 do
-      filter = {"component_instances.#{ci_index}.cartridge_name" => new_cart_name, 
-                "component_instances.#{ci_index}.cartridge_vendor" => "redhat",
-                "component_instances.#{ci_index}.version" => old_cart_version}
-      update_query = {"$set" => {"component_instances.#{ci_index}.version" => new_cart_version}}
-      db["applications"].update(filter, update_query, { :multi => true })
-
-      ci_index += 1
-      ci_search_count = db["applications"].find({"component_instances.#{ci_index}" => {"$exists" => true}}).count
-    end
-  rescue Exception => e
-    puts e.message
-    puts e.backtrace
-    exit 1
-  ensure
-    db.connection.close if db and db.connection and db.connection.connected?
+    ci_index += 1
+    ci_search_count = db["applications"].find({"component_instances.#{ci_index}" => {"$exists" => true}}).count
   end
 end
 
 def verify_migration(old_cart_name, new_cart_name, old_cart_version)
-  db = nil
   missed_update_count = 0
-  begin
-    db = OpenShift::DataStore.db(:primary)
-	
 	missed_update_count += db["applications"].find({"component_instances.cartridge_name" => old_cart_name}).count
 	missed_update_count += db["applications"].find({"component_instances.component_name" => old_cart_name}).count
 	missed_update_count += db["applications"].find({"group_overrides.components.cart" => old_cart_name}).count
 	missed_update_count += db["applications"].find({"group_overrides.components.comp" => old_cart_name}).count
 	missed_update_count += db["applications"].find({"component_instances" => {"$elemMatch" => {"cartridge_name" => new_cart_name, "cartridge_vendor" => "redhat", "version" => old_cart_version}}}).count
-  rescue Exception => e
-    puts e.message
-    puts e.backtrace
-    exit 1
-  ensure
-    db.connection.close if db and db.connection and db.connection.connected?
-  end
-  return missed_update_count
+  missed_update_count
 end
 
+def ensure_members_index
+  ['applications', 'domains'].each do |name|
+    db.collection(name).create_index([['members._id', Mongo::ASCENDING]])
+  end
+end
+
+#
+# Populate the members array with the CloudUser that owns the domain.
+#
+# This is a reentrant call, intended to be used prior to release and then 
+# at release.
+#
+def create_domain_members
+  changed = 0
+  col = db.collection('domains')
+  col.find({'members._id' => {'$exists' => false}}, {:fields => ['owner_id']}).each do |d|
+    col.update(
+      {'_id' => d['_id']},
+      {'$set' => {
+        # implicit members
+        'members' => [{
+          '_id' => d['owner_id'],
+          'r' => 'admin',
+          'n' => user_names[d['owner_id']],
+          'f' => [['owner', 'admin']],
+        }]
+      }}
+    )
+    changed += 1    
+  end
+
+  puts "Domain members updated: #{changed}"
+end
+
+#
+# Populate the members array with the CloudUser that owns the domain, but
+# with the source of the member the domain.  Also set the domain_namespace
+# for the owning domain and the owner_id of the user who owns the domain.
+#
+# This is a reentrant call, intended to be used prior to release and then 
+# at release.
+#
+def create_application_members
+  domains_to_owners = {}
+  puts "  Loading domain ownership into memory"
+  db.collection('domains').find({}, {:fields => ['owner_id', 'canonical_namespace']}).each do |d|
+    domains_to_owners[d['_id']] = [d['owner_id'], d['canonical_namespace']]
+  end
+
+  changed = 0
+
+  col = db.collection('applications')
+  col.find({'members._id' => {'$exists' => false}}, {:fields => ['owner_id', 'domain_id']}).each do |d|
+    owner_id, namespace = domains_to_owners[d['domain_id']]
+    col.update(
+      {'_id' => d['_id']},
+      {'$set' => {
+        # denormalized data
+        'owner_id' => owner_id,
+        'domain_namespace' => namespace,
+        # implicit members
+        'members' => [{
+          '_id' => owner_id,
+          'r' => 'admin',
+          'n' => user_names[owner_id],
+          'f' => [['domain', 'admin']],
+        }]
+      }}
+    )
+    changed += 1
+  end
+
+  puts "Application members updated: #{changed}"
+end
+
+#
+# Helper for reverting the previously migrated values
+#
+def reset_incremental_updates
+  db.collection('domains').update({}, {"$unset" => {"members"  => 1}}, {"multi" => true})
+  db.collection('applications').update({}, {"$unset" => {"members"  => 1, 'domain_namespace' => 1, 'owner_id' => 1}}, {"multi" => true})
+end
+
+#
+# Retrieve a map of CloudUser ids => login values for use
+# as the names of the member fields.
+#
+def user_names
+  $user_names ||= begin
+    map = {}
+    puts "  Loading user names into memory"
+    db.collection('cloud_users').find({}, {:fields => ['login']}).each do |d|
+      map[d['_id']] = d['login']
+    end
+    map
+  end
+end
+
+
+#------------------------------------------------------------------
+#
+# Migration core code
+#
+def db
+  $db ||= OpenShift::DataStore.db(:primary)
+end
+
+def check_compatible(type, v)
+  if version = VERSIONS[v]
+    if version[type]
+      [true]
+    else
+      [false, "Migration #{type} for version #{v} is not supported!"]
+    end
+  else
+    [false, "Migration of version '#{v}' not supported!"]
+  end
+end
 
 def p_usage
   puts <<USAGE
@@ -152,6 +240,7 @@ Usage: #{$0}
 
   --version                            Version of the migration to run
   --compatible                         Run the backwards compatible portion of the migration (Can be run after the system is upgrade with the brokers running)
+  --prerelease                         Run the prerelease portion of the migration (Can be run at any time, and is reentrant)
   --non-compatible                     Run the non backwards compatible portion of the migration (Must be run with the brokers shutdown)
   --check                              Check whether the compatible or non compatible portion of the migration is necessary (Returns 0 if necessary)
   --help                               Show usage info
@@ -164,6 +253,7 @@ begin
     ["--version", "-v", GetoptLong::REQUIRED_ARGUMENT],
     ["--compatible", "-c", GetoptLong::NO_ARGUMENT],
     ["--non-compatible", "-n", GetoptLong::NO_ARGUMENT],
+    ["--prerelease", "-p", GetoptLong::NO_ARGUMENT],
     ["--check", GetoptLong::NO_ARGUMENT],
     ["--help", "-h", GetoptLong::NO_ARGUMENT]
   )
@@ -184,49 +274,38 @@ unless opt['version']
   p_usage
 end
 
-unless opt['compatible'] || opt['non-compatible']
-  puts "compatible or non-compatible is required!"
+unless opt['compatible'] || opt['non-compatible'] || opt['prerelease']
+  puts "compatible or non-compatible or prerelease is required!"
   p_usage
 end
 
-if opt['compatible'] && opt['non-compatible']
-  puts "compatible and non-compatible can not be run together."
+if [opt['compatible'],opt['non-compatible'],opt['prerelease']].compact.count > 2
+  puts "compatible, non-compatible, and prerelease are mutually exclusive."
   p_usage
 end
+
+version_number = opt['version']
+unless version = VERSIONS[version_number]
+  puts "Migration of version '#{version_number}' not supported!"
+  exit 1
+end
+
+type = ((opt['compatible'] and :compatible) or (opt['non-compatible'] and :non_compatible) or (opt['prerelease'] and :prerelease))
 
 if opt['check']
-  # Return 0 if the migration specified is necessary
-  if VERSIONS[opt['version']]
-    if VERSIONS[opt['version']][:compatible] && opt['compatible']
-      exit 0
-    elsif VERSIONS[opt['version']][:non_compatible] && opt['non-compatible']
-      exit 0
-    else
-      exit 1
-    end
-  else
-    exit 1
-  end
-else
-  unless VERSIONS[opt['version']]
-    puts "Migration of version '#{opt['version']}' not supported!"
-    exit 1
-  end
-  $:.unshift('/var/www/openshift/broker')
-  require 'config/environment'
-  if opt['compatible']
-    unless VERSIONS[opt['version']][:compatible]
-      puts "Compatible migration for version '#{opt['version']}' not supported!"
-      exit 1
-    end
-    migrate(opt['version'])
-  else
-    unless VERSIONS[opt['version']][:non_compatible]
-      puts "Non compatible migration for version '#{opt['version']}' not supported!"
-      exit 1
-    end
-    migrate(opt['version'], false)
-  end
+  success, _ = check_compatible(type, version_number)
+  exit success ? 0 : 1
 end
+
+success, msg = check_compatible(type, version_number)
+unless success
+  puts msg
+  exit 1
+end
+
+$:.unshift('/var/www/openshift/broker')
+require 'config/environment'
+
+migrate(type, version)
 
 puts "Done!"

@@ -222,6 +222,17 @@ class CloudUser
     end
     self.plan_history.push({'plan_id' => old_plan_id, 'end_time' => old_plan_end_time})
     self.assign_plan(plan_id, true)
+    
+    # Update domain gear sizes
+    begin
+      domains.each do |d|
+        d.allowed_gear_sizes = allowed_gear_sizes
+        Rails.logger.error "Unable to update gear sizes for domain #{d.namespace} owned by user #{login} - #{d.errors.inspect}" if !d.save
+      end
+    rescue
+      Rails.logger.error e.message
+      Rails.logger.error e.backtrace.inspect
+    end
 
     # Revoke/Assign entitlements
     begin

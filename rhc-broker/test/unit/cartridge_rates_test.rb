@@ -1,16 +1,6 @@
 require 'test_helper'
 require 'mocha/setup'
 
-module Rails
-  def self.logger
-    l = Mocha::Mock.new("logger")
-    l.stubs(:debug)
-    l.stubs(:info)
-    l.stubs(:add)
-    l
-  end
-end
-
 class CartridgeRatesTest < ActionDispatch::IntegrationTest
 
   test "cartridge rates test" do

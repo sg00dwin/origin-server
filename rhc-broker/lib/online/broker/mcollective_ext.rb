@@ -27,32 +27,23 @@ module OpenShift
     end
 
     class << self
-      alias_method :valid_gear_sizes_impl_old, :valid_gear_sizes_impl
       alias_method :blacklisted_in_impl_old?, :blacklisted_in_impl?
-    end
-
-    def self.valid_gear_sizes_impl(user)
-      capability_gear_sizes = []
-     
-      capabilities = user.capabilities 
-      capability_gear_sizes = capabilities['gear_sizes'] if capabilities.has_key?('gear_sizes')
-
-      if user.auth_method == :broker_auth
-        return ["small", "medium"] | capability_gear_sizes
-      elsif !capability_gear_sizes.nil? and !capability_gear_sizes.empty?
-        return capability_gear_sizes
-      else
-        return ["small"]
-      end
     end
 
     def self.blacklisted_in_impl?(name)
       OpenShift::Blacklist.in_blacklist?(name)
     end
 
-
     def self.get_blacklisted_in_impl
       OpenShift::Blacklist.blacklist
+    end
+
+    def self.max_user_domains_impl(user)
+      if user.plan_id.nil? || user.plan_id == 'free' 
+        1
+      else
+        super
+      end
     end
   end
 end

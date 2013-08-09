@@ -2,17 +2,6 @@ ENV["TEST_NAME"] = "unit_cloud_user_test"
 require 'test_helper'
 require 'mocha/setup'
 
-module Rails
-  def self.logger
-    l = Mocha::Mock.new("logger")
-    l.stubs(:debug)
-    l.stubs(:info)
-    l.stubs(:error)
-    l.stubs(:add)
-    l
-  end
-end
-
 class CloudUserUnitTest < ActiveSupport::TestCase
   def setup
     @login = "user" + gen_uuid[0..9]
@@ -69,7 +58,7 @@ class CloudUserUnitTest < ActiveSupport::TestCase
   test "get user valid gear sizes" do
     @user = CloudUser.new(login: @login)
     @user.save
-    OpenShift::ApplicationContainerProxy.valid_gear_sizes(@user)
+    assert (OpenShift::ApplicationContainerProxy.valid_gear_sizes & @user.allowed_gear_sizes).present?
     @user.delete
   end
 
