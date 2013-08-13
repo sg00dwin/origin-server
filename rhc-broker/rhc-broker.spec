@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.13.1
+Version: 1.13.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -155,6 +155,10 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Fri Aug 09 2013 Adam Miller <admiller@redhat.com> 1.13.2-1
+- Merge pull request #1810 from abhgupta/abhgupta-dev (dmcphers@redhat.com)
+- Fixing cartridge version for migration script (abhgupta@redhat.com)
+
 * Thu Aug 08 2013 Adam Miller <admiller@redhat.com> 1.13.1-1
 - Migration script for updating cartridge/component versions in their name
   (abhgupta@redhat.com)
