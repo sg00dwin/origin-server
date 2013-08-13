@@ -772,6 +772,11 @@ echo " " >> /etc/sysctl.conf
 echo "# BZ982832 Source validation on reverse path" >> /etc/sysctl.conf
 echo "net.ipv4.conf.all.rp_filter = 1" >> /etc/sysctl.conf
 
+# BZ982831 Sending ICMP Redirects for All Interface should Disable on Openshift Nodes
+echo " " >> /etc/sysctl.conf
+echo "# BZ982831 Sending ICMP Redirects disabled" >> /etc/sysctl.conf
+echo "net.ipv4.conf.all.send_redirects = 0" >> /etc/sysctl.conf
+
 # https://tcms.engineering.redhat.com/run/73826/#caserun_2985510 to match prod
 echo "net.ipv4.conf.all.secure_redirects = 0" >> /etc/sysctl.conf
 echo "net.ipv4.conf.all.accept_redirects = 0" >> /etc/sysctl.conf
