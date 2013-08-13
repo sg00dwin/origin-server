@@ -37,6 +37,8 @@ $tag_to_label_color = {
   'devcut' => 'purple'
 }
 
+EPIC_REFERENCED_STORIES_NAME = "Referenced Stories"
+
 trello = load_conf(TrelloHelper, CONFIG.trello, true)
 
 command :list do |c|
@@ -97,13 +99,13 @@ command :report do |c|
     if options.date
       $date = Date.parse(options.date)
     end
-    
+
     heading "Generating Status Report" do
       # Read Rally configuration file
       _progress "Logging into Trello" do
         $sprint = Sprint.new({:trello => trello})
       end
-      
+
       # Generate queries
       _progress "Generating queries" do
         $report_types = load_conf(UserStoryReport,CONFIG.queries)
@@ -114,24 +116,24 @@ command :report do |c|
         $reports = load_conf(Report,CONFIG.reports)
       end
     end
-    
+
     report = $reports[options.report_type]
     report.options = options.__hash__
-    
+
     _table(
       "Running Report With Options",
       report.options.marshal_dump,
       { :capitalize => true, :sort => 0, :separator => ':' }
     )
-    
+
     report.send_email if options.send_email
-    
+
   end
 end
 
 command :comment do |c|
   c.syntax = "#{name} comment"
-  
+
   c.option "--card-ref SCOPE_TEAM_ID", "Get a single card Ex: origin_broker_1"
 
   c.description = "Adds a comment to a trello card"
@@ -150,61 +152,107 @@ end
 
 command :update do |c|
   c.syntax = "#{name} update"
-  
+
   c.option "--add-task-checklists", "Add task checklists to stories"
   c.option "--add-bug-checklists", "Add checklists to stories"
   c.option "--update-bug-tasks", "Update closed/verified bug tasks"
+  c.option "--update-roadmap", "Update the roadmap board with progress from teams"
 
   c.description = "An assortment of Trello modification utilities"
   c.action do |args, options|
+    if options.update_roadmap
+      epic_list = trello.epic_list
+      tag_to_epic = {}
+      epic_list.cards.each do |epic_card|
+        epic_card.name.scan(/\[.*\]/).each do |tag|
+          tag_to_epic[tag] = epic_card
+        end
+
+        has_stories_checklist = false
+        stories_checklist = trello.checklist(epic_card, EPIC_REFERENCED_STORIES_NAME)
+        stories_checklist.delete if stories_checklist
+        #unless stories_checklist
+          puts "Adding #{EPIC_REFERENCED_STORIES_NAME} to #{epic_card.name}"
+          checklist = Trello::Checklist.create({:name => EPIC_REFERENCED_STORIES_NAME, :board_id => trello.roadmap_id})
+          epic_card.add_checklist(checklist)
+        #end
+      end
+      puts tag_to_epic.keys.pretty_inspect
+    end
     trello.boards.each do |board_id, board|
       puts "\nBoard Name: #{board.name}"
       lists = board.lists.target
       lists.each do |list|
-        if list.name == 'In Progress' || list.name == 'Complete'
-          cards = list.cards.target
-          if !cards.empty?
-            puts "\n  List: #{list.name}  (#cards #{cards.length})"
-            cards.each_with_index do |card, index|
-              if options.add_task_checklists || options.add_bug_checklists
-                if card.name != 'Getting Started: How we use Trello' && !(card.name =~ /^Sprint \d+/ && !card.due.nil?)
-                  checklists = []
-                  checklists << 'Tasks' if options.add_task_checklists
-                  checklists << 'Bugs' if options.add_bug_checklists && !card.labels.map{|x| x.name }.include?('no-qe')
+        if options.add_task_checklists || options.add_bug_checklists || options.update_bug_tasks
+          if list.name == 'In Progress' || list.name == 'Complete'
+            cards = list.cards.target
+            if !cards.empty?
+              puts "\n  List: #{list.name}  (#cards #{cards.length})"
+              cards.each_with_index do |card, index|
+                if options.add_task_checklists || options.add_bug_checklists
+                  if card.name != 'Getting Started: How we use Trello' && !(card.name =~ /^Sprint \d+/ && !card.due.nil?)
+                    checklists = []
+                    checklists << 'Tasks' if options.add_task_checklists
+                    checklists << 'Bugs' if options.add_bug_checklists && !card.labels.map{|x| x.name }.include?('no-qe')
 
-                  card.checklists.target.each do |checklist|
-                    checklists.delete(checklist.name)
-                    break if checklists.empty?
-                  end if !checklists.empty?
-                
-                  if !checklists.empty?
-                    puts "Adding #{checklists.pretty_inspect.chomp} to #{card.name}"
-                    checklists.each do |checklist_name|
-                      checklist = Trello::Checklist.create({:name => checklist_name, :board_id => board.id})
-                      card.add_checklist(checklist)
+                    card.checklists.target.each do |checklist|
+                      checklists.delete(checklist.name)
+                      break if checklists.empty?
+                    end if !checklists.empty?
+
+                    if !checklists.empty?
+                      puts "Adding #{checklists.pretty_inspect.chomp} to #{card.name}"
+                      checklists.each do |checklist_name|
+                        checklist = Trello::Checklist.create({:name => checklist_name, :board_id => board.id})
+                        card.add_checklist(checklist)
+                      end
+                    end
+                  end
+                end
+                if options.update_bug_tasks
+                  require 'bugzilla_helper'
+                  bugzilla = load_conf(BugzillaHelper, CONFIG.bugzilla, true)
+                  bugs_checklist = trello.checklist(card, 'Bugs')
+                  bugs_checklist.items.each do |item|
+                    status = bugzilla.bug_status_by_url(item.name)
+                    if status == 'VERIFIED' || status == 'CLOSED'
+                      if item.state == 'incomplete'
+                        bugs_checklist.delete_checklist_item(item.id)
+                        bugs_checklist.add_item(item.name, true, 'bottom')
+                      end
+                    elsif status == 'OPEN' || status == 'ASSIGNED'
+                      if item.state == 'complete'
+                        bugs_checklist.delete_checklist_item(item.id)
+                        bugs_checklist.add_item(item.name, false, 'top')
+                      end
                     end
                   end
                 end
               end
-              if options.update_bug_tasks
-                #TODO need a way to complete a task in the trello api
-                require 'bugzilla_helper'
-                bugzilla = load_conf(BugzillaHelper, CONFIG.bugzilla, true)
-                card.check_item_states.target.each do |check_item_state|
-                  puts check_item_state.state
-                  puts check_item_state.item.name
-                end
-                card.checklists.target.each do |checklist|
-                  if checklist.name == 'Bugs'
-                    checklist.items.each do |item|
-                      status = bugzilla.bug_status_by_url(item.name)
-                      if status == 'VERIFIED' || status == 'CLOSED'
-                        #item.complete unless item.complete?
-                      elsif status == 'OPEN' || status == 'ASSIGNED'
-                        #item.open if item.complete?
-                      end
-                    end
-                    break 
+            end
+          end
+        end
+        if options.update_roadmap
+          cards = list.cards.target
+          if !cards.empty?
+            puts "\n  List: #{list.name}  (#cards #{cards.length})"
+            cards.each_with_index do |card, index|
+              card_tags = card.name.scan(/\[.*\]/)
+              card_tags.each do |card_tag|
+                epic = tag_to_epic[card_tag]
+                if epic
+                  stories_checklist = trello.checklist(epic, EPIC_REFERENCED_STORIES_NAME)
+                  if stories_checklist
+                    #stories_checklist.items.each do |item|
+                      #if item.name.include?(card.url)
+                        #stories_checklist.delete_checklist_item(item.id)
+                        #break
+                      #end
+                    #end
+                    puts "Adding #{card.url} to #{epic.name}"
+                    list_name = card.list.name
+                    checked = (list_name.match('^Sprint \d+') || list_name == 'Accepted') ? true : false
+                    stories_checklist.add_item("#{card.name} (#{card.url})", checked)
                   end
                 end
               end
