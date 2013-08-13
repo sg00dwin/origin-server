@@ -1,13 +1,19 @@
 #!/usr/bin/env oo-ruby
 require 'getoptlong'
 
-VERSIONS = { 
+VERSIONS = {
   '2.0.32' => {
     :compatible => false,
     :non_compatible => true,
     :prerelease => true,
-  } 
+  }
 }
+
+CARTRIDGE_CHANGES = [{"old_name" => "phpmyadmin-3.4", "new_name" => "phpmyadmin-3", "old_version" => "3.4", "new_version" => "3"},
+                     {"old_name" => "jbosseap-6.0", "new_name" => "jbosseap-6", "old_version" => "6.0", "new_version" => "6"},
+                     {"old_name" => "jenkins-1.4", "new_name" => "jenkins-1", "old_version" => "1.4", "new_version" => "1"},
+                     {"old_name" => "jenkins-client-1.4", "new_name" => "jenkins-client-1", "old_version" => "1.4", "new_version" => "1"},
+                     {"old_name" => "switchyard-0.6", "new_name" => "switchyard-0", "old_version" => "0.6", "new_version" => "0"}]
 
 def migrate(type, version)
   puts "Starting migration: #{type}"
@@ -25,21 +31,17 @@ def migrate(type, version)
   puts "\nMigration complete"
 end
 
-
-CARTRIDGE_CHANGES = [{"old_name" => "phpmyadmin-3.4", "new_name" => "phpmyadmin-3", "old_version" => "3.4", "new_version" => "3"},
-                     {"old_name" => "jbosseap-6.0", "new_name" => "jbosseap-6", "old_version" => "6.0", "new_version" => "6"},
-                     {"old_name" => "jenkins-1.4", "new_name" => "jenkins-1", "old_version" => "1.4", "new_version" => "1"},
-                     {"old_name" => "jenkins-client-1.4", "new_name" => "jenkins-client-1", "old_version" => "1.4", "new_version" => "1"},
-                     {"old_name" => "switchyard-0.6", "new_name" => "switchyard-0", "old_version" => "0.6", "new_version" => "0"}] 
-
+#
+# Update old cartridge names to be simpler
+#
 def adjust_cartridge_versions
   CARTRIDGE_CHANGES.each do |cart_change|
     puts "Updating cartridge #{cart_change['old_name']} to #{cart_change['new_name']}"
-    
+
     print "Updating component instances for all applications...\t"
     update_component_instances(cart_change['old_name'], cart_change['new_name'])
     puts "Done."
-    
+
     print "Updating group overrides for all applications...\t"
     update_group_overrides(cart_change['old_name'], cart_change['new_name'])
     puts "Done."
@@ -47,13 +49,14 @@ def adjust_cartridge_versions
     print "Updating cartridge version for all applications...\t"
     update_cartridge_version(cart_change['new_name'], cart_change['old_version'], cart_change['new_version'])
     puts "Done."
-    
+
     print "Verifying cartridge update for all applications...\t"
     missed_update_count = verify_migration(cart_change['old_name'], cart_change['new_name'], cart_change['old_version'])
-    puts (missed_update_count == 0 ? "Successful." : "Failed.")
+    puts missed_update_count == 0 ? "Successful." : "Failed."
     puts ""
   end
 end
+
 
 def update_component_instances(old_cart_name, new_cart_name)
   ci_index = 0
@@ -93,7 +96,7 @@ def update_cartridge_version(new_cart_name, old_cart_version, new_cart_version)
   ci_index = 0
   ci_search_count = 1
   while ci_search_count > 0 do
-    filter = {"component_instances.#{ci_index}.cartridge_name" => new_cart_name, 
+    filter = {"component_instances.#{ci_index}.cartridge_name" => new_cart_name,
               "component_instances.#{ci_index}.cartridge_vendor" => "redhat",
               "component_instances.#{ci_index}.version" => old_cart_version}
     update_query = {"$set" => {"component_instances.#{ci_index}.version" => new_cart_version}}
@@ -114,6 +117,7 @@ def verify_migration(old_cart_name, new_cart_name, old_cart_version)
   missed_update_count
 end
 
+
 def ensure_members_index
   ['applications', 'domains'].each do |name|
     db.collection(name).create_index([['members._id', Mongo::ASCENDING]])
@@ -123,11 +127,12 @@ end
 #
 # Populate the members array with the CloudUser that owns the domain.
 #
-# This is a reentrant call, intended to be used prior to release and then 
+# This is a reentrant call, intended to be used prior to release and then
 # at release.
 #
 def create_domain_members
   changed = 0
+  sizes = Rails.configuration.openshift[:gear_sizes].map(&:to_s)
   col = db.collection('domains')
   col.find({'members._id' => {'$exists' => false}}, {:fields => ['owner_id']}).each do |d|
     col.update(
@@ -139,10 +144,11 @@ def create_domain_members
           'r' => 'admin',
           'n' => user_names[d['owner_id']],
           'f' => [['owner', 'admin']],
-        }]
+        }],
+        'allowed_gear_sizes' => sizes,
       }}
     )
-    changed += 1    
+    changed += 1
   end
 
   puts "Domain members updated: #{changed}"
@@ -153,7 +159,7 @@ end
 # with the source of the member the domain.  Also set the domain_namespace
 # for the owning domain and the owner_id of the user who owns the domain.
 #
-# This is a reentrant call, intended to be used prior to release and then 
+# This is a reentrant call, intended to be used prior to release and then
 # at release.
 #
 def create_application_members
