@@ -1,10 +1,11 @@
-class DomainObserver < ActiveModel::Observer
-  observe Domain
-  def domain_create_success(domain)
+class DomainObserver < Mongoid::Observer
+  observe :domain
+
+  def after_create(domain)
     send_data_to_analytics(domain)
   end
 
-  def domain_update_success(domain)
+  def after_update(domain)
     send_data_to_analytics(domain)
   end
 
@@ -13,7 +14,7 @@ class DomainObserver < ActiveModel::Observer
       Rails.logger.debug "Sending updated domain info #{domain.namespace} to nurture"
       Online::Broker::Nurture.libra_contact(domain.owner.login, domain.owner._id, domain.namespace, 'update')
     rescue Exception => e
-      Rail.logger.error "ERROR: sending analytic data #{e.message}"
+      Rails.logger.error "ERROR: sending analytic data #{e.message}"
     end
   end
 end

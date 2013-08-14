@@ -109,6 +109,9 @@ Broker::Application.configure do
     :default_scope => 'userinfo',
     :scope_expirations => OpenShift::Controller::Configuration.parse_expiration("session=1.days|2.days", 1.month),
     :download_cartridges_enabled => true,
+    :membership_enabled => true,
+    :max_members_per_resource => 100,
+    :max_domains_per_user => 1,
   }
 
   # Profiler config
