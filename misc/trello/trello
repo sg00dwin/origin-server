@@ -252,7 +252,7 @@ command :update do |c|
                     puts "Adding #{card.url} to #{epic.name}"
                     list_name = card.list.name
                     checked = (list_name.match('^Sprint \d+') || list_name == 'Accepted') ? true : false
-                    stories_checklist.add_item("#{card.name} (#{card.url})", checked)
+                    stories_checklist.add_item("#{card.name} (#{card.url})", checked, checked ? 'bottom' : 'top')
                   end
                 end
               end
