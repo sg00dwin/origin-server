@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.13.2
+Version: 1.13.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -155,6 +155,13 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Wed Aug 14 2013 Adam Miller <admiller@redhat.com> 1.13.3-1
+- Default to membership off in development mode (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into
+  origin_ui_73_membership_model (ccoleman@redhat.com)
+- Update domain allowed_gear_sizes during migration (ccoleman@redhat.com)
+- * Support changes for membership in OpenShift Online (ccoleman@redhat.com)
+
 * Fri Aug 09 2013 Adam Miller <admiller@redhat.com> 1.13.2-1
 - Merge pull request #1810 from abhgupta/abhgupta-dev (dmcphers@redhat.com)
 - Fixing cartridge version for migration script (abhgupta@redhat.com)
