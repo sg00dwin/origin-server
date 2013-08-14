@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.12.1
+Version: 1.12.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -805,6 +805,10 @@ chown root:root /usr/lib/node_modules/express/bin/express
 /etc/openshift/development
 
 %changelog
+* Wed Aug 14 2013 Adam Miller <admiller@redhat.com> 1.12.2-1
+- syncing jenkins jobs (dmcphers@redhat.com)
+- Security - BZ982831 Block ICMP on all interfaces (tkramer@redhat.com)
+
 * Thu Aug 08 2013 Adam Miller <admiller@redhat.com> 1.12.1-1
 - Card origin_runtime_175 - Report quota on 90%% usage (jhonce@redhat.com)
 - Security Changes for BZ990497 and BZ990435 (tkramer@redhat.com)
