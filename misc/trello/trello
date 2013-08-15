@@ -181,7 +181,7 @@ command :update do |c|
     end
     trello.boards.each do |board_id, board|
       puts "\nBoard Name: #{board.name}"
-      lists = board.lists.target
+      lists = board.lists(:filter => [ options.update_roadmap ? :all : :open]).target
       lists.each do |list|
         if options.add_task_checklists || options.add_bug_checklists || options.update_bug_tasks
           if list.name == 'In Progress' || list.name == 'Complete'
