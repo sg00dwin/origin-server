@@ -34,7 +34,7 @@
   %script{:src => open_issues_jsonp_url('showOpenIssues')}
 
 .column-1
-  %h1.ribbon Sign in to OpenShift Online
+  %h1.ribbon Sign in to OpenShift
   
   = semantic_form_for @user, :url => login_path, :html => {:id => 'login_form', :class => 'label-hide'} do |f|
     - if @redirectUrl.present?
