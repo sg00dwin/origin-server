@@ -217,7 +217,7 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-node-application
 %attr(0750,-,-) %{_bindir}/rhc-watchman
 %attr(0700,-,-) %{_bindir}/migration-symlink-as-user
-%attr(0644,-,-) %config(noreplace) %{_sysconfdir}/openshift/resource_limits.conf.*
+%attr(0640,-,-) %config(noreplace) %{_sysconfdir}/openshift/resource_limits.conf.*
 %attr(0750,-,-) %config(noreplace) %{_sysconfdir}/cron.daily/openshift_tmpwatch.sh
 %attr(0750,root,root) %config(noreplace) %{_sysconfdir}/httpd/conf.d/000000_default.conf
 #%attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/openshift
