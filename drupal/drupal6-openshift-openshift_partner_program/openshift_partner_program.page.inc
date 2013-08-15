@@ -166,7 +166,7 @@ function _openshift_partner_program_apply_info_submit($form, &$form_state) {
   $params['countries'] = implode(',', $bad_countries);
   $params['customer_name'] = $user->name;
   $params['admin'] = l(t('Admin'), 'partner/admin/edit/user/' . $user->uid);
-  drupal_mail('openshift_partner_program', 'openshift_partner_program_new_partner', 'openshift-partners@redhat.com', 0, $params);
+  drupal_mail('openshift_partner_program', 'openshift_partner_program_apply_info_submitted_user', $user->mail, 0, $params);
   drupal_mail('openshift_partner_program', 'openshift_partner_program_apply_info', 'openshift-partners@redhat.com', 0, $params);
 
   drupal_set_message(t('Thank you for submitting your Quickstart or Cartridge.  We will respond with your OpenShift by Red Hat Partner login or with questions within two business days.'));

@@ -83,7 +83,7 @@ function _openshift_partner_program_user_admin_submit($form, &$form_state) {
   if ($params['customer_name'] == ' ') {
     $params['customer_name'] = $account->profile_display_name;
   }
-  if ($params['customer_name'] == ' ') {
+  if (empty($params['customer_name'])) {
     $params['customer_name'] = $account->name;
   }
   $params['partner_level'] = $account->profile_partner_level;
