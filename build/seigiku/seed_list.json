@@ -10,7 +10,7 @@
   {"name": "rhc-cartridge-jbossas-7",
    "note": "Progress -- https://fedoraproject.org/wiki/JBossAS7#Current_progress"
   },
-  {"name": "rhc-cartridge-jbosseap-6.0",
+  {"name": "rhc-cartridge-jbosseap-6",
    "note": "Progress -- https://fedoraproject.org/wiki/JBossAS7#Current_progress"
   },
   {"name": "rubygem-passenger",

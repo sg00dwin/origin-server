@@ -40,7 +40,7 @@ Broker::Application.configure do
         :gigabyte => conf.get("BILLING_PROVIDER_USAGE_TYPE_STORAGE_GEAR").to_i,
       },
       :cartridge => {
-        :"jbosseap-6.0" => conf.get("BILLING_PROVIDER_USAGE_TYPE_CARTRIDGE_JBOSS_EAP").to_i,
+        :"jbosseap-6" => conf.get("BILLING_PROVIDER_USAGE_TYPE_CARTRIDGE_JBOSS_EAP").to_i,
       }
     },
     :default_plan => :free,
@@ -95,7 +95,7 @@ Broker::Application.configure do
             }
           },
           :cartridge => {
-            :'jbosseap-6.0' => {
+            :'jbosseap-6' => {
               :usd => conf.get("SILVER_PLAN_RATE_CARTRIDGE_JBOSS_EAP6_USD", "").to_f, #$/hr
               :cad => conf.get("SILVER_PLAN_RATE_CARTRIDGE_JBOSS_EAP6_CAD", "").to_f,
               :eur => conf.get("SILVER_PLAN_RATE_CARTRIDGE_JBOSS_EAP6_EUR", "").to_f,
