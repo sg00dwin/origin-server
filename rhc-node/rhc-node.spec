@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.13.2
+Version: 1.13.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -227,6 +227,15 @@ fi
 
 
 %changelog
+* Fri Aug 16 2013 Adam Miller <admiller@redhat.com> 1.13.3-1
+- Merge pull request #1821 from rmillner/BZ996296
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1818 from dobbymoodge/origin_runtime_219
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 996296 - resource_limits.conf should be mode 640. (rmillner@redhat.com)
+- <cart version> origin_runtime_219, Add gear upgrade extension script to map
+  version numbers (jolamb@redhat.com)
+
 * Thu Aug 15 2013 Adam Miller <admiller@redhat.com> 1.13.2-1
 - Removing old file (dmcphers@redhat.com)
 
