@@ -968,11 +968,11 @@ function blogs_views_default_views() {
       'relationship' => 'none',
     ),
     'field_event_start_date_value2' => array(
-      'operator' => '>',
+      'operator' => '>=',
       'value' => array(
+        'value' => NULL,
         'min' => NULL,
         'max' => NULL,
-        'value' => NULL,
         'default_date' => '12AM today',
         'default_to_date' => '12AM today',
       ),
@@ -1789,11 +1789,11 @@ return;',
       'relationship' => 'none',
     ),
     'field_event_start_date_value2' => array(
-      'operator' => '>',
+      'operator' => '>=',
       'value' => array(
+        'value' => NULL,
         'min' => NULL,
         'max' => NULL,
-        'value' => NULL,
         'default_date' => '12AM today',
         'default_to_date' => '12AM today',
       ),
