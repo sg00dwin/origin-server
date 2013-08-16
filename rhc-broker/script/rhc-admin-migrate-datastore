@@ -37,7 +37,6 @@ def migrate(type, version)
 end
 
 def verify_gears
-  db = OpenShift::DataStore.db(:primary)
   query = { "scalable" => true, "group_instances.gears.port_interfaces" => { "$exists" => false }  }
   count = db["applications"].find(query).count
   puts "ERROR: Verification of gear migration failed. Count: #{count}" if count!=0 
@@ -51,7 +50,6 @@ def update_gears
   puts "Total gears found on the nodes: #{gear_map.length}"
 
   selection = {:fields => ["group_instances.gears.uuid"], :timeout => false}
-  db = OpenShift::DataStore.db(:primary)
   OpenShift::DataStore.find(:applications, {"scalable" => true}, selection) do |app|
     gi_index = -1
     app["group_instances"].each do |gi|
@@ -78,6 +76,7 @@ def update_gears
     end
   end
 end
+
 #
 # Update old cartridge names to be simpler
 #
@@ -95,6 +94,10 @@ def adjust_cartridge_versions
 
     print "Updating cartridge version for all applications...\t"
     update_cartridge_version(cart_change['new_name'], cart_change['old_version'], cart_change['new_version'])
+    puts "Done."
+
+    print "Updating cartridge version for premium cartridges in usage...\t"
+    update_premium_cart_version(cart_change['old_name'], cart_change['new_name'])
     puts "Done."
 
     print "Verifying cartridge update for all applications...\t"
@@ -154,13 +157,24 @@ def update_cartridge_version(new_cart_name, old_cart_version, new_cart_version)
   end
 end
 
+def update_premium_cart_version(old_cart_name, new_cart_name)
+  filter = {"cart_name" => old_cart_name}
+  update_query = {"$set" => {"cart_name" => new_cart_name}}
+
+  db["usage"].update(filter, update_query, { :multi => true })
+  db["usage_records"].update(filter, update_query, { :multi => true })
+end
+
 def verify_migration(old_cart_name, new_cart_name, old_cart_version)
   missed_update_count = 0
-	missed_update_count += db["applications"].find({"component_instances.cartridge_name" => old_cart_name}).count
-	missed_update_count += db["applications"].find({"component_instances.component_name" => old_cart_name}).count
-	missed_update_count += db["applications"].find({"group_overrides.components.cart" => old_cart_name}).count
-	missed_update_count += db["applications"].find({"group_overrides.components.comp" => old_cart_name}).count
-	missed_update_count += db["applications"].find({"component_instances" => {"$elemMatch" => {"cartridge_name" => new_cart_name, "cartridge_vendor" => "redhat", "version" => old_cart_version}}}).count
+  missed_update_count += db["applications"].find({"component_instances.cartridge_name" => old_cart_name}).count
+  missed_update_count += db["applications"].find({"component_instances.component_name" => old_cart_name}).count
+  missed_update_count += db["applications"].find({"group_overrides.components.cart" => old_cart_name}).count
+  missed_update_count += db["applications"].find({"group_overrides.components.comp" => old_cart_name}).count
+  missed_update_count += db["applications"].find({"component_instances" => {"$elemMatch" => {"cartridge_name" => new_cart_name, "cartridge_vendor" => "redhat", "version" => old_cart_version}}}).count
+  missed_update_count += db["usage"].find({"cart_name" => old_cart_name}}}).count
+  missed_update_count += db["usage_records"].find({"cart_name" => old_cart_name}}}).count
+  
   missed_update_count
 end
 
