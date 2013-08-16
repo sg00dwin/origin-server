@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.13.3
+Version: 1.13.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -155,6 +155,12 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Fri Aug 16 2013 Adam Miller <admiller@redhat.com> 1.13.4-1
+- Bug 997831 - Domain scope not in config (ccoleman@redhat.com)
+- Merge pull request #1817 from rajatchopra/master
+  (dmcphers+openshiftbot@redhat.com)
+- migration for updating port interfaces on all gears (rchopra@redhat.com)
+
 * Wed Aug 14 2013 Adam Miller <admiller@redhat.com> 1.13.3-1
 - Default to membership off in development mode (ccoleman@redhat.com)
 - Merge remote-tracking branch 'origin/master' into
