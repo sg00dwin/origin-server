@@ -5,7 +5,7 @@
 %global modname partner_program
 
 Name: drupal%{drupal_release}-openshift-%{modname}
-Version: 0.3.1
+Version: 0.3.2
 Release: 1%{?dist}
 Summary: OpenShift Partner Program Drupal Content
 Group: Applications/Publishing
@@ -41,6 +41,13 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Fri Aug 16 2013 Adam Miller <admiller@redhat.com> 0.3.2-1
+- Partner portal edge case email missing user name - review comments
+  (jforrest@redhat.com)
+- Partner portal edge case email missing user name (jforrest@redhat.com)
+- Partner portal apply info email fix - phase2 bitbucket commit
+  bb93e0778153f6d3d9df02bfb4cd9a6b3c8af298 (jforrest@redhat.com)
+
 * Thu Aug 08 2013 Adam Miller <admiller@redhat.com> 0.3.1-1
 - bump_minor_versions for sprint 32 (admiller@redhat.com)
 
