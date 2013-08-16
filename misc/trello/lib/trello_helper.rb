@@ -97,6 +97,26 @@ class TrelloHelper
     return nil
   end
 
+  def clear_checklist_refs(card, checklist_name, tags)
+    cl = checklist(card, checklist_name)
+
+    if cl
+      cl.items.each do |item|
+        tags.each do |tag|
+          if item.name.include?(tag)
+            cl.delete_checklist_item(item.id)
+            break
+          end
+        end
+      end
+    end
+    unless cl
+      puts "Adding #{checklist_name} to #{card.name}"
+      cl = Trello::Checklist.create({:name => checklist_name, :board_id => roadmap_id})
+      card.add_checklist(cl)
+    end
+  end
+
   def print_card(card, num=nil)
     print "     "
     print "#{num}) " if num
