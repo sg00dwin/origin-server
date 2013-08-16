@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.13.2
+Version: 1.13.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -198,6 +198,9 @@ fi
 %{sitedir}/public
 
 %changelog
+* Fri Aug 16 2013 Adam Miller <admiller@redhat.com> 1.13.3-1
+- H1 on login wraps (ccoleman@redhat.com)
+
 * Fri Aug 09 2013 Adam Miller <admiller@redhat.com> 1.13.2-1
 - Making the social-sharing css rule to be less specific so that it applies to
   every page with social sharing icons. (sgoodwin@redhat.com)
