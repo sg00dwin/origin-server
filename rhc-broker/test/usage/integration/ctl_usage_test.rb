@@ -186,7 +186,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
   def test_cartridge_usage_sync
     # Create app with premium cart
     begin
-      app = Application.create_app(@appname, ['jbosseap-6.0'], @domain)
+      app = Application.create_app(@appname, ['jbosseap-6'], @domain)
     ensure
       Rails.configuration.msg_broker[:districts][:enabled] = @districts_enabled
     end
@@ -202,7 +202,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     assert_equal('small', usage_records[0].gear_size)
     assert_equal(UsageRecord::EVENTS[:begin], usage_records[0].event)
     assert_equal(UsageRecord::USAGE_TYPES[:premium_cart], usage_records[1].usage_type)
-    assert_equal('jbosseap-6.0', usage_records[1].cart_name)
+    assert_equal('jbosseap-6', usage_records[1].cart_name)
     assert_equal(UsageRecord::EVENTS[:begin], usage_records[1].event)
 
     # List and Sync usage
@@ -216,7 +216,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     assert_equal('small', usage_records[0].gear_size)
     assert_equal(UsageRecord::EVENTS[:continue], usage_records[0].event)
     assert_equal(UsageRecord::USAGE_TYPES[:premium_cart], usage_records[1].usage_type)
-    assert_equal('jbosseap-6.0', usage_records[1].cart_name)
+    assert_equal('jbosseap-6', usage_records[1].cart_name)
     assert_equal(UsageRecord::EVENTS[:continue], usage_records[1].event)
 
     # Delete current app
@@ -246,7 +246,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
   def test_usage_sync_no_billing_account
     # Create app with premium cart
     begin
-      app = Application.create_app(@appname, ['jbosseap-6.0'], @domain)
+      app = Application.create_app(@appname, ['jbosseap-6'], @domain)
     ensure
       Rails.configuration.msg_broker[:districts][:enabled] = @districts_enabled
     end
@@ -257,7 +257,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     assert_equal('small', usage_records[0].gear_size)
     assert_equal(UsageRecord::EVENTS[:begin], usage_records[0].event)
     assert_equal(UsageRecord::USAGE_TYPES[:premium_cart], usage_records[1].usage_type)
-    assert_equal('jbosseap-6.0', usage_records[1].cart_name)
+    assert_equal('jbosseap-6', usage_records[1].cart_name)
     assert_equal(UsageRecord::EVENTS[:begin], usage_records[1].event)
 
     # Delete current app

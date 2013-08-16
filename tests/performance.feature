@@ -14,14 +14,14 @@ Feature: Application Performance Tests
     |  perl-5.10   |
     |  jbossas-7   |
     |  nodejs-0.6  |
-    |  jenkins-1.4 |
+    |  jenkins-1   |
     |  diy-0.1     |
 
   Scenario Outline: Add and Remove Embedded Cartridegs
     Given an existing <type> application without an embedded cartridge
     When the embedded mysql-5.1 cartridge is added
-    And the embedded phpmyadmin-3.4 cartridge is added
-    When the embedded phpmyadmin-3.4 cartridge is removed
+    And the embedded phpmyadmin-3 cartridge is added
+    When the embedded phpmyadmin-3 cartridge is removed
     And the embedded mysql-5.1 cartridge is removed
     When the embedded mongodb-2.2 cartridge is added
     And the embedded rockmongo-1.1 cartridge is added
@@ -45,7 +45,7 @@ Feature: Application Performance Tests
     |  perl-5.10   |
     |  jbossas-7   |
     |  nodejs-0.6  |
-    |  jenkins-1.4 |
+    |  jenkins-1   |
     |  diy-0.1     |
 
   Scenario Outline: Namespace Change, Application Alias, Sanpshot, Start, Stop, Restart and Destroy
@@ -68,5 +68,5 @@ Feature: Application Performance Tests
     |  perl-5.10   |
     |  jbossas-7   |
     |  nodejs-0.6  |
-    |  jenkins-1.4 |
+    |  jenkins-1   |
     |  diy-0.1     |
