@@ -383,7 +383,7 @@ module Online
         scp_from(hostname, "/tmp/rhc/screenshots/*", "rhc/log/screenshots")
         scp_from(hostname, "/root/openshift-test/selenium/output/*", "rhc/log/selenium")
         scp_from(hostname, "/var/lib/openshift/*/*/jbossas-7/standalone/tmp/*.log", "rhc/log/jbossas")
-        scp_from(hostname, "/var/lib/openshift/*/*/jbosseap-6.0/standalone/tmp/*.log", "rhc/log/jbosseap")
+        scp_from(hostname, "/var/lib/openshift/*/*/jbosseap-6/standalone/tmp/*.log", "rhc/log/jbosseap")
         scp_from(hostname, "/tmp/rhc/benchmark.csv", "rhc/log")
         scp_from(hostname, "/tmp/broker-profiler/*", "rhc/log/broker-profiler")
         scp_from(hostname, "/tmp/rhc/*_coverage", "rhc/log/coverage")

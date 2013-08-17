@@ -276,7 +276,7 @@ def create_comparison_apps(old_to_new_cart_types, mig_config, apps, devenv, conf
   puts "Creating #{apps.length} post-migration apps for comparison"
 
   apps.each do |app|
-    next if app[:type] == 'jenkins-1.4'
+    next if app[:type] == 'jenkins-1'
 
     app_symlink = "#{app[:new_name]}_#{app[:domain]}"
 
@@ -312,7 +312,7 @@ def diff_report(mig_config, apps, devenv)
   puts "Creating diff reports for #{apps.length} applications"
 
   apps.each do |app|
-    next if app[:type] == 'jenkins-1.4'
+    next if app[:type] == 'jenkins-1'
 
     carts = ''
     app[:embedded].each {|cart_type|
@@ -386,7 +386,7 @@ def app_descriptions
       embedded: %w(postgresql-8.4),
       scalable: true },
     { type: 'php-5.3',
-      embedded: %w(mysql-5.1 phpmyadmin-3.4) }
+      embedded: %w(mysql-5.1 phpmyadmin-3) }
   ]
 end
 

@@ -128,12 +128,12 @@ module OpenShiftMigration
        self.health_file("jbossews-2.0")]
     end
 
-    def self.proxy_jenkins_1_4(gear_home)
+    def self.proxy_jenkins_1(gear_home)
       [self.abstract(gear_home),
-       self.health_file("jenkins-1.4")]
+       self.health_file("jenkins-1")]
     end
 
-    def self.proxy_phpmyadmin_3_4(gear_home)
+    def self.proxy_phpmyadmin_3(gear_home)
       ip = Util.get_env_var_value(gear_home, "OPENSHIFT_PHPMYADMIN_IP")
       [["/phpmyadmin", "#{ip}:8080/phpmyadmin", {}]]
     end
@@ -189,9 +189,9 @@ module OpenShiftMigration
        self.health_file("python-2.7")]
     end
 
-    def self.proxy_jbosseap_6_0(gear_home)
+    def self.proxy_jbosseap_6(gear_home)
       [self.abstract( gear_home),
-       self.health_file("jbosseap-6.0")]
+       self.health_file("jbosseap-6")]
     end
 
     def self.proxy_php_5_3(gear_home)
