@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.11.1
+Version: 1.11.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,11 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Mon Aug 19 2013 Adam Miller <admiller@redhat.com> 1.11.2-1
+- <cartridge versions> Bug 997864, fix up references to renamed carts
+  https://trello.com/c/evcTYKdn/219-3-adjust-out-of-date-cartridge-versions
+  (jolamb@redhat.com)
+
 * Thu Aug 08 2013 Adam Miller <admiller@redhat.com> 1.11.1-1
 - Bug 989642 - Strip nil entries during usage sync (rpenta@redhat.com)
 - bump_minor_versions for sprint 32 (admiller@redhat.com)
