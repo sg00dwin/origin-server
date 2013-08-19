@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.13.4
+Version: 1.13.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -155,6 +155,15 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Mon Aug 19 2013 Adam Miller <admiller@redhat.com> 1.13.5-1
+- fix bz998404 (rchopra@redhat.com)
+- Merge pull request #1825 from dobbymoodge/fix_tests_card219
+  (dmcphers+openshiftbot@redhat.com)
+- Fixing premium cartridge version from usage (abhgupta@redhat.com)
+- <cartridge versions> origin_runtime_219, Update references to changed cart
+  versions https://trello.com/c/evcTYKdn/219-3-adjust-out-of-date-cartridge-
+  versions (jolamb@redhat.com)
+
 * Fri Aug 16 2013 Adam Miller <admiller@redhat.com> 1.13.4-1
 - Bug 997831 - Domain scope not in config (ccoleman@redhat.com)
 - Merge pull request #1817 from rajatchopra/master
