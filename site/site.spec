@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.13.3
+Version: 1.13.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -198,6 +198,13 @@ fi
 %{sitedir}/public
 
 %changelog
+* Mon Aug 19 2013 Adam Miller <admiller@redhat.com> 1.13.4-1
+- Merge pull request #1825 from dobbymoodge/fix_tests_card219
+  (dmcphers+openshiftbot@redhat.com)
+- <cartridge versions> origin_runtime_219, Update references to changed cart
+  versions https://trello.com/c/evcTYKdn/219-3-adjust-out-of-date-cartridge-
+  versions (jolamb@redhat.com)
+
 * Fri Aug 16 2013 Adam Miller <admiller@redhat.com> 1.13.3-1
 - H1 on login wraps (ccoleman@redhat.com)
 
