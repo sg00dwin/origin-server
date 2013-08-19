@@ -61,7 +61,7 @@ def update_gears
         updated_port_interfaces = endpoints.map do |ep|
           cart = CartridgeCache.find_cartridge(ep["cartridge_name"])
           { 
-            "_id" => Moped::BSON::ObjectId.new,
+            "_id" => BSON::ObjectId.new,
             "cartridge_name" => cart.name,
             "external_address" => ep['external_address'],
             "external_port" => ep['external_port'],
