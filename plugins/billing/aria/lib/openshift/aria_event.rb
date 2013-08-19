@@ -20,7 +20,13 @@ module OpenShift
         case ev.to_i
         when 105, 106
           next if aria_plans[default_plan][:name] == h['plan_name']
+          if h['status_cd'] == "1"
+            get_login(h)
+            next if [CloudUser::PLAN_STATES['active'], CloudUser::PLAN_STATES['pending']].include?(h['plan_state'])
+          end
+
           mark_acct_status(h)
+
           if ev.to_i == 106
             h['effective_date'] = get_end_of_month(h)
           else
@@ -83,7 +89,10 @@ module OpenShift
       unless h['login']
         begin
           user = CloudUser.find_by(usage_account_id: h['acct_no'])
-          h['login'] = user.login if user
+          if user
+            h['login'] = user.login
+            h['plan_state'] = user.plan_state
+          end
         rescue
           #Ignore
         end
