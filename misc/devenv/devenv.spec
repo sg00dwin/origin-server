@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.12.2
+Version: 1.12.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -805,6 +805,9 @@ chown root:root /usr/lib/node_modules/express/bin/express
 /etc/openshift/development
 
 %changelog
+* Mon Aug 19 2013 Adam Miller <admiller@redhat.com> 1.12.3-1
+- Bug 998068 - Set X-Forwarded-Port header. (rmillner@redhat.com)
+
 * Wed Aug 14 2013 Adam Miller <admiller@redhat.com> 1.12.2-1
 - syncing jenkins jobs (dmcphers@redhat.com)
 - Security - BZ982831 Block ICMP on all interfaces (tkramer@redhat.com)
