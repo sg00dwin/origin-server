@@ -172,8 +172,8 @@ def verify_migration(old_cart_name, new_cart_name, old_cart_version)
   missed_update_count += db["applications"].find({"group_overrides.components.cart" => old_cart_name}).count
   missed_update_count += db["applications"].find({"group_overrides.components.comp" => old_cart_name}).count
   missed_update_count += db["applications"].find({"component_instances" => {"$elemMatch" => {"cartridge_name" => new_cart_name, "cartridge_vendor" => "redhat", "version" => old_cart_version}}}).count
-  missed_update_count += db["usage"].find({"cart_name" => old_cart_name}}}).count
-  missed_update_count += db["usage_records"].find({"cart_name" => old_cart_name}}}).count
+  missed_update_count += db["usage"].find({"cart_name" => old_cart_name}).count
+  missed_update_count += db["usage_records"].find({"cart_name" => old_cart_name}).count
   
   missed_update_count
 end
