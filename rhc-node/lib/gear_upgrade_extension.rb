@@ -13,9 +13,18 @@ module OpenShift
       '2.0.32'
     end
 
-    def initialize(uuid, gear_home)
-      @uuid = uuid
+    def initialize(uuid, gear_home, container)
+      @uuid      = uuid
       @gear_home = gear_home
+      @container = container
+    end
+
+    def pre_upgrade(progress)
+      path = File.join(@gear_home, '.env', 'user_vars')
+      FileUtils.mkpath(path)
+      FileUtils.chmod(0770, path)
+      @container.set_ro_permission(path)
+      progress.log("Created #{path}")
     end
 
     def map_ident(progress, ident)

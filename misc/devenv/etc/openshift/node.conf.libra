@@ -37,3 +37,5 @@ PLATFORM_TRACE_LOG_LEVEL=DEBUG
 CONTAINERIZATION_PLUGIN=openshift-origin-container-selinux
 QUOTA_WARNING_PERCENT=90.0
 
+GEAR_UPGRADE_EXTENSION=/usr/libexec/openshift/lib/gear_upgrade_extension
+
