@@ -251,9 +251,9 @@ module Streamline
     def check_access
       unless roles.index('cloud_access_1')
         if roles.index('cloud_access_request_1')
-          raise Streamline::UserValidationException.new(146), "Found valid credentials but you haven't been granted access yet", caller[0..5]
+          raise Streamline::UserValidationException.new(146), "We're currently dealing with a high volume of requests.  As soon as you're granted access you'll get an email indicating the next steps", caller[0..5]
         else
-          raise Streamline::UserValidationException.new(147), "Found valid credentials but you haven't requested access yet", caller[0..5]
+          raise Streamline::UserValidationException.new(147), "In order to access and use the OpenShift Online services you will need to accept the terms and conditions.  Visit the OpenShift Online console to accept the terms and conditions", caller[0..5]
         end
       end
     end
