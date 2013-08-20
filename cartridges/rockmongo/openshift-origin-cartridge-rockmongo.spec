@@ -2,7 +2,7 @@
 
 Summary:   Embedded RockMongo support
 Name:      openshift-origin-cartridge-rockmongo
-Version: 0.6.1
+Version: 0.6.2
 Release:   1%{?dist}
 Group:     Applications/Internet
 License:   ASL 2.0 and NBSD
@@ -43,6 +43,10 @@ Provides RockMongo V2 cartridge support
 %doc %{cartridgedir}/README.md
 
 %changelog
+* Tue Aug 20 2013 Adam Miller <admiller@redhat.com> 0.6.2-1
+- Bug 968280 - Ensure Stopping/Starting messages during git push
+  (jhonce@redhat.com)
+
 * Thu Aug 08 2013 Adam Miller <admiller@redhat.com> 0.6.1-1
 - Merge pull request #1793 from jwhonce/bug/985514
   (dmcphers+openshiftbot@redhat.com)
