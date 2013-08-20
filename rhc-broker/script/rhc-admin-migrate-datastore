@@ -3,9 +3,10 @@ require 'getoptlong'
 
 VERSIONS = {
   '2.0.32' => {
-    :compatible => true,
+    :compatible => false,
     :non_compatible => true,
     :prerelease => true,
+    :postrelease => true
   }
 }
 
@@ -22,11 +23,9 @@ def migrate(type, version)
     ensure_members_index
     create_domain_members
     create_application_members
-  when :compatible
-    ensure_members_index
-    create_domain_members
-    create_application_members
+  when :postrelease
     update_gears
+    verify_gears
   when :non_compatible
     ensure_members_index
     create_domain_members
@@ -309,6 +308,7 @@ Usage: #{$0}
   --compatible                         Run the backwards compatible portion of the migration (Can be run after the system is upgrade with the brokers running)
   --prerelease                         Run the prerelease portion of the migration (Can be run at any time, and is reentrant)
   --non-compatible                     Run the non backwards compatible portion of the migration (Must be run with the brokers shutdown)
+  --postrelease                        Run the post release portion of the migration (can be run with brokers online, but node migration should have completed successfully)
   --check                              Check whether the compatible or non compatible portion of the migration is necessary (Returns 0 if necessary)
   --help                               Show usage info
 USAGE
@@ -321,6 +321,7 @@ begin
     ["--compatible", "-c", GetoptLong::NO_ARGUMENT],
     ["--non-compatible", "-n", GetoptLong::NO_ARGUMENT],
     ["--prerelease", "-p", GetoptLong::NO_ARGUMENT],
+    ["--postrelease", "-o", GetoptLong::NO_ARGUMENT],
     ["--check", GetoptLong::NO_ARGUMENT],
     ["--help", "-h", GetoptLong::NO_ARGUMENT]
   )
@@ -341,13 +342,13 @@ unless opt['version']
   p_usage
 end
 
-unless opt['compatible'] || opt['non-compatible'] || opt['prerelease']
-  puts "compatible or non-compatible or prerelease is required!"
+unless opt['compatible'] || opt['non-compatible'] || opt['prerelease'] || opt['postrelease']
+  puts "compatible or non-compatible or prerelease or postrelease is required!"
   p_usage
 end
 
-if [opt['compatible'],opt['non-compatible'],opt['prerelease']].compact.count > 2
-  puts "compatible, non-compatible, and prerelease are mutually exclusive."
+if [opt['compatible'],opt['non-compatible'],opt['prerelease'],opt['postrelease']].compact.count > 2
+  puts "compatible, non-compatible, prerelease and postrelease are mutually exclusive."
   p_usage
 end
 
@@ -357,7 +358,7 @@ unless version = VERSIONS[version_number]
   exit 1
 end
 
-type = ((opt['compatible'] and :compatible) or (opt['non-compatible'] and :non_compatible) or (opt['prerelease'] and :prerelease))
+type = ((opt['compatible'] and :compatible) or (opt['non-compatible'] and :non_compatible) or (opt['prerelease'] and :prerelease) or (opt['postrelease'] and :postrelease))
 
 if opt['check']
   success, _ = check_compatible(type, version_number)
