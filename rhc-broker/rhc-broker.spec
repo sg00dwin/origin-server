@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.13.7
+Version: 1.13.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -155,6 +155,10 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Tue Aug 20 2013 Adam Miller <admiller@redhat.com> 1.13.8-1
+- Merge pull request #1839 from rajatchopra/master (dmcphers@redhat.com)
+- add postrelease mode for datastore migration (rchopra@redhat.com)
+
 * Tue Aug 20 2013 Adam Miller <admiller@redhat.com> 1.13.7-1
 - Merge pull request #1831 from abhgupta/abhgupta-dev
   (dmcphers+openshiftbot@redhat.com)
