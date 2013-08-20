@@ -25,6 +25,25 @@ module OpenShift
       FileUtils.chmod(0770, path)
       @container.set_ro_permission(path)
       progress.log("Created #{path}")
+
+      # Repair @gear_home/jbosseap/ symlinks to /etc/alternatives/ links
+      jboss_version = '6'
+      jboss_home = "/etc/alternatives/jbosseap-#{jboss_version}"
+      path = File.join(@gear_home, 'jbosseap')
+      if File.directory? path
+        progress.log ("Fixing jbosseap/jboss-modules.jar symlink for #{@uuid}")
+        FileUtils.ln_sf(File.join(jboss_home, 'jboss-modules.jar'), File.join(path, 'jboss-modules.jar'))
+        progress.log ("Fixing jbosseap/modules symlink for #{@uuid}")
+        FileUtils.ln_sf(File.join(jboss_home, 'modules'), File.join(path, 'modules'))
+      end
+
+      # Repair OPENSHIFT_JBOSSEAP_VERSION env var
+      progress.log ("Fixing OPENSHIFT_JBOSSEAP_VERSION environment variable for #{@uuid}")
+      path = File.join(@gear_home, 'jbosseap', 'env', 'OPENSHIFT_JBOSSEAP_VERSION')
+      if File.file? path
+        FileUtils.rm path
+        IO.write(path, jboss_version)
+      end
     end
 
     def map_ident(progress, ident)
