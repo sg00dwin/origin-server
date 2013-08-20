@@ -411,7 +411,12 @@ function openshift_partner_program_partner_info_upsert_node($uid, $company, $com
   }
   $node->title = check_plain($company);
   $node->body = check_plain($company_description);
-  $node->field_logo[0]['value'] = check_plain($logo);
+
+  if (!empty($logo)) {
+    $image = image_create_node_from($logo);
+    $iids = array($image->nid => $image->nid);
+    $node->iids = $iids;
+  }
 
   // Wipe out previous terms if any.
   $node->taxonomy = NULL;

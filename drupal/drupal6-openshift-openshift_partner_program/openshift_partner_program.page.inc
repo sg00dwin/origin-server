@@ -556,7 +556,7 @@ function _openshift_partner_program_portal_company_info_submit($form, &$form_sta
   $uid = $user->uid;
   $logo = '';
   if (count($_FILES)) {
-    $file = file_save_upload('logo', array(), file_directory_path() . '/partner/logos', FILE_EXISTS_RENAME);
+    $file = file_save_upload('logo', array(), FALSE, FILE_EXISTS_RENAME);
     $logo = $file->destination;
   }
   $company = $form_state['values']['company_name'];
