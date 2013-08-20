@@ -11,12 +11,14 @@ HTTPD_PID_FILE=${OPENSHIFT_METRICS_DIR}run/httpd.pid
 cartridge_type="metrics"
 
 function start() {
+    echo "Starting $cartridge_type cartridge"
     ensure_valid_httpd_process "$HTTPD_PID_FILE" "$HTTPD_CFG_FILE"
     update_httpd_passenv $HTTPD_CFG_FILE
     /usr/sbin/httpd -C "Include ${CART_CONFD_DIR}/*.conf" -f $HTTPD_CFG_FILE -k start
 }
 
 function stop() {
+    echo "Stopping $cartridge_type cartridge"
     # Don't exit on errors on stop.
     set +e
     httpd_pid=`cat "$HTTPD_PID_FILE" 2> /dev/null`
@@ -26,6 +28,7 @@ function stop() {
 }
 
 function restart() {
+    echo "Restarting $cartridge_type cartridge"
     ensure_valid_httpd_process "$HTTPD_PID_FILE" "$HTTPD_CFG_FILE"
     update_httpd_passenv $HTTPD_CFG_FILE
     /usr/sbin/httpd -C "Include ${CART_CONFD_DIR}/*.conf" -f $HTTPD_CFG_FILE -k restart
@@ -41,7 +44,7 @@ function status() {
 }
 
 function reload() {
-    echo "Reloading $cartridge_type cart"
+    echo "Reloading $cartridge_type cartridge"
     restart
 }
 

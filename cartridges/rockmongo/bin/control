@@ -5,11 +5,13 @@ HTTPD_CFG_FILE=${OPENSHIFT_ROCKMONGO_DIR}etc/conf/httpd_nolog.conf
 HTTPD_PID_FILE=${OPENSHIFT_ROCKMONGO_DIR}run/httpd.pid
 
 function start() {
+  echo "Starting RockMongo cartridge"
   update_httpd_passenv $HTTPD_CFG_FILE
   /usr/sbin/httpd -C "Include ${OPENSHIFT_ROCKMONGO_DIR}etc/conf.d/*.conf" -f $HTTPD_CFG_FILE -k start
 }
 
 function stop() {
+  echo "Stopping RockMongo cartridge"
   if [ -f "$HTTPD_PID_FILE" ]; then
       httpd_pid=`cat "$HTTPD_PID_FILE" 2> /dev/null`
   fi
@@ -19,6 +21,7 @@ function stop() {
 }
 
 function restart() {
+  echo "Restarting RockMongo cartridge"
   update_httpd_passenv $HTTPD_CFG_FILE
   /usr/sbin/httpd -C "Include ${OPENSHIFT_ROCKMONGO_DIR}etc/conf.d/*.conf" -f $HTTPD_CFG_FILE -k restart
 }
