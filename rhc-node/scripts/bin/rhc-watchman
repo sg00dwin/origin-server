@@ -125,8 +125,7 @@ class Watchman
         end
       }
 
-      @throttler.uuids = app_env.keys
-      @throttler.throttle(period: @throttler.interval, usage: @throttler.threshold)
+      @throttler.throttle(app_env.keys)
     rescue Exception => e
       @retries -= 1
       Syslog.warning("watchman caught #{e.inspect}: #{e.message}. Retries left: #{@retries}")
