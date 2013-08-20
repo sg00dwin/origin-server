@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.11.2
+Version: 1.11.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,12 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Tue Aug 20 2013 Adam Miller <admiller@redhat.com> 1.11.3-1
+- Merge pull request #1834 from pravisankar/dev/ravi/fix-sending-entitlements
+  (dmcphers+openshiftbot@redhat.com)
+- Skip sending support entitlement email notices for dunning-{1..4} to active
+  aria events. (rpenta@redhat.com)
+
 * Mon Aug 19 2013 Adam Miller <admiller@redhat.com> 1.11.2-1
 - <cartridge versions> Bug 997864, fix up references to renamed carts
   https://trello.com/c/evcTYKdn/219-3-adjust-out-of-date-cartridge-versions
