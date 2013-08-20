@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/openshift/cartridges/metrics
 
 Name: openshift-origin-cartridge-metrics
-Version: 1.13.1
+Version: 1.13.2
 Release: 1%{?dist}
 Summary: Metrics cartridge
 
@@ -46,6 +46,10 @@ Provides metrics cartridge support
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Aug 20 2013 Adam Miller <admiller@redhat.com> 1.13.2-1
+- Bug 968280 - Ensure Stopping/Starting messages during git push
+  (jhonce@redhat.com)
+
 * Thu Aug 08 2013 Adam Miller <admiller@redhat.com> 1.13.1-1
 - Merge pull request #1793 from jwhonce/bug/985514
   (dmcphers+openshiftbot@redhat.com)
