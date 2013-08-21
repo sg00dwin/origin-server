@@ -134,6 +134,20 @@ sslverify=0
 sslclientcert=/var/lib/yum/client-cert.pem
 sslclientkey=/var/lib/yum/client-key.pem
 
+[devenv-i386]
+name=Li repo for Enterprise Linux 6 - $basearch
+baseurl=https://mirror1.ops.rhcloud.com/libra/${2-libra-rhel-6}-${1-candidate}/i386/
+        https://mirror2.ops.rhcloud.com/libra/${2-libra-rhel-6}-${1-candidate}/i386/
+failovermethod=priority
+enabled=1
+gpgcheck=0
+gpgkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
+ggpkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
+includepkgs=java-1.6.0-openjdk* java-1.7.0-openjdk*
+sslverify=0
+sslclientcert=/var/lib/yum/client-cert.pem
+sslclientkey=/var/lib/yum/client-key.pem
+
 [devenv-source]
 
 name=Li repo for Enterprise Linux 6 - $basearch
