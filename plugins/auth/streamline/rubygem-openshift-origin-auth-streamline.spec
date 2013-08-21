@@ -9,7 +9,7 @@
 
 Summary:        OpenShift plugin for streamline auth service
 Name:           rubygem-%{gem_name}
-Version: 1.8.1
+Version: 1.8.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -81,6 +81,13 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-auth-streamline-dev.conf
 
 %changelog
+* Wed Aug 21 2013 Adam Miller <admiller@redhat.com> 1.8.2-1
+- Merge pull request #1835 from lnader/master
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 865183 (lnader@redhat.com)
+- Bug 998982 - improve msg exposed in rhc when user hasnt accepted terms
+  (jforrest@redhat.com)
+
 * Fri Jul 12 2013 Adam Miller <admiller@redhat.com> 1.8.1-1
 - bump_minor_versions for sprint 31 (admiller@redhat.com)
 
