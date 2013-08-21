@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.13.4
+Version: 1.13.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -227,6 +227,13 @@ fi
 
 
 %changelog
+* Wed Aug 21 2013 Adam Miller <admiller@redhat.com> 1.13.5-1
+- Merge pull request #1841 from fotioslindiakos/throttler
+  (dmcphers+openshiftbot@redhat.com)
+- Node Platform - Add .env/user_vars during upgrade (jhonce@redhat.com)
+- Call throttler.throttle with uuids and modify resource_limits
+  (fotios@redhat.com)
+
 * Mon Aug 19 2013 Adam Miller <admiller@redhat.com> 1.13.4-1
 - Merge pull request #1825 from dobbymoodge/fix_tests_card219
   (dmcphers+openshiftbot@redhat.com)
