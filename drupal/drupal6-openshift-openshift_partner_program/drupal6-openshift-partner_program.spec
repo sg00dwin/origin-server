@@ -5,7 +5,7 @@
 %global modname partner_program
 
 Name: drupal%{drupal_release}-openshift-%{modname}
-Version: 0.3.2
+Version: 0.3.3
 Release: 1%{?dist}
 Summary: OpenShift Partner Program Drupal Content
 Group: Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Aug 21 2013 Adam Miller <admiller@redhat.com> 0.3.3-1
+- Partner portal company logo upload failing (jforrest@redhat.com)
+
 * Fri Aug 16 2013 Adam Miller <admiller@redhat.com> 0.3.2-1
 - Partner portal edge case email missing user name - review comments
   (jforrest@redhat.com)
