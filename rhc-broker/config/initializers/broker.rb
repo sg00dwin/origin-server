@@ -22,7 +22,7 @@ if defined?(Rails) and (not Rails.env.production?)
       
       # if the original app and gear UUID were meant to be the same, make sure they are still the same
       # this is true for the first gear, since app UUID is used to ssh into the gear
-      if attrs[:custom_id] && attrs[:group_instance] && attrs[:custom_id] == attrs[:group_instance].application._id.to_s
+      if attrs[:custom_id] && attrs[:group_instance] && attrs[:custom_id] == attrs[:group_instance].application.uuid
         attrs[:uuid] = attrs[:group_instance].application.uuid
       else
         rand_ctr = rand(1..3)
