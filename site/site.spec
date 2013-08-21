@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.13.4
+Version: 1.13.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -198,6 +198,10 @@ fi
 %{sitedir}/public
 
 %changelog
+* Wed Aug 21 2013 Adam Miller <admiller@redhat.com> 1.13.5-1
+- Bug 998982 - improve msg exposed in rhc when user hasnt accepted terms
+  (jforrest@redhat.com)
+
 * Mon Aug 19 2013 Adam Miller <admiller@redhat.com> 1.13.4-1
 - Merge pull request #1825 from dobbymoodge/fix_tests_card219
   (dmcphers+openshiftbot@redhat.com)
