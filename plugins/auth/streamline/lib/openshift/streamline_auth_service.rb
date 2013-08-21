@@ -43,7 +43,9 @@ module OpenShift
     private
 
     def check_login(ticket, user, password)
-      raise OpenShift::UserException.new("Invalid characters found in login '#{user}'.", 107) if user and (user =~ /["\$\^<>\|%\/;:,\\\*=~]/)
+      raise OpenShift::UserException.new("Invalid characters found in login '#{user}'.", 107) if (user and (user =~ /["\$\^<>\|%\/;:,\\\*=~]/))
+      raise OpenShift::UserException.new("Login exceeds maximum length of 120 characters.", 107) if user and (user.length > 120)
+
       rhlogin = nil
       is_cached = false
       begin
