@@ -38,11 +38,24 @@ module OpenShift
       end
 
       # Repair OPENSHIFT_JBOSSEAP_VERSION env var
-      progress.log ("Fixing OPENSHIFT_JBOSSEAP_VERSION environment variable for #{@uuid}")
       path = File.join(@gear_home, 'jbosseap', 'env', 'OPENSHIFT_JBOSSEAP_VERSION')
       if File.file? path
+        progress.log ("Fixing OPENSHIFT_JBOSSEAP_VERSION environment variable for #{@uuid}")
         FileUtils.rm path
         IO.write(path, jboss_version)
+      end
+
+      # patch jenkins jobs config.xml for jbosseap-6.0 -> jbosseap-6 rename
+      path = File.join(@gear_home, 'jenkins')
+      if File.directory? path
+        progress.log ("Patching jenkins builderType for #{@uuid}")
+        file = "#{@gear_home}/app-root/data/jobs/*/config.xml"
+        sep = ','
+        old_value = 'jbosseap-6\.0'
+        new_value = 'jbosseap-6'
+        output = `sed -i "s#{sep}#{old_value}#{sep}#{new_value}#{sep}g" #{file} 2>&1`
+        exitcode = $?.exitstatus
+        progress.log ("Updated '#{file}' changed '#{old_value}' to '#{new_value}'.  output: #{output}  exitcode: #{exitcode}")
       end
     end
 
