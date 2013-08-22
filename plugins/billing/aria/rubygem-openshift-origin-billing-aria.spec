@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.11.3
+Version: 1.12.0
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
