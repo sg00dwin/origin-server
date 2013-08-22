@@ -7,7 +7,7 @@
 
 = semantic_form_for @user, :url => account_password_path, :html => {:id => 'password_reset_form', :class => 'form-inline'} do |f|
   %p If you have forgotten your password please enter your email address or Red Hat login here, and we will send you an email with a link that will create a new, random password for your account.
-  = f.semantic_errors
+  = f.semantic_errors :except => [:login]
   = f.input :login,
             :wrapper_html => { :class => "control-group-important" }, 
             :input_html => {:autofocus => true, :class => 'input-xlarge'}
