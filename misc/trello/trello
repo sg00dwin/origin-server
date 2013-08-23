@@ -133,6 +133,70 @@ command :report do |c|
   end
 end
 
+command :generate_roadmap_overview do |c|
+  c.syntax = "#{name} generate_roadmap_overview"
+
+  c.option "--out OUT_FILE", "The file to output Ex: /tmp/roadmap_overview.html"
+
+  c.description = "Generate the status of the roadmap board"
+  c.action do |args, options|
+    options.out ||= '/tmp/roadmap_overview.html'
+
+    epic_list = trello.epic_list
+
+    File.open(options.out, 'w') do |f|
+      f.puts '<html><title>OpenShift Roadmap Overview</title><body>'
+      f.puts "<h1>OpenShift Roadmap Overview</h1>"
+      epic_list.cards.each do |epic_card|
+        f.puts "<br/><h2><a href='#{epic_card.url}'>#{epic_card.name}</a></h2>"
+        f.puts "<p>#{epic_card.desc}</p>"
+        td_th_style = 'margin: 0; padding: 4px; border-width: 1px 1px 0 0; border-style: solid; border-color: black;'
+        td = "<td style='#{td_th_style}"
+        th = "<th style='#{td_th_style}"
+        f.puts "<table style='border-width: 0 0 1px 1px; border-spacing: 0; border-collapse: collapse; border-style: solid;'><tr style='text-align: center;background-color: #6690bc;color: #ffffff;'>#{th}'>Scenario</th>#{th}' width='50px'>Sizing</th>#{th}' width='100px'>List</th></tr>"
+        complete_sizing_total = 0
+        remaining_sizing_total = 0
+        stories_checklist = trello.checklist(epic_card, EPIC_REFERENCED_STORIES_NAME)
+        stories_checklist.items.each do |item|
+          name = item.name.strip
+          url = nil
+          list = "Epic Backlog"
+          sizing = ''
+          if name =~ (/(.*)\((https?:\/\/trello.com\/[^\)]+)\) \(([^\)]+)\)/)
+            name = $1.strip
+            url = $2
+            list = $3
+          end
+          if name =~ (/\((\d+|\?)\)(.*)/)
+            sizing = $1
+            name = $2
+
+            if list && sizing != '?'
+              sizing_i = sizing.to_i
+              if (list.match('^Sprint \d+') || list == 'Accepted' || list == 'Complete')
+                complete_sizing_total += sizing_i
+              else
+                remaining_sizing_total += sizing_i
+              end
+            end
+          end
+          f.puts "<tr>"
+          if url
+            f.puts "#{td}'><a href='#{url}'>#{name}</a></td>"
+          else
+            f.puts "#{td}'><a href='#{epic_card.url}'>#{name}</a></td>"
+          end
+          f.puts "#{td} text-align: center;'>#{sizing}</td>#{td} text-align: center;'>#{list}</td></tr>"
+        end
+        f.puts '</table>'
+        f.puts "<i>Complete: #{complete_sizing_total}</i></br>"
+        f.puts "<i>Remaining: #{remaining_sizing_total}</i></br>"
+      end
+      f.puts '</body><html>'
+    end
+  end
+end
+
 command :comment do |c|
   c.syntax = "#{name} comment"
 
@@ -267,5 +331,3 @@ command :update do |c|
     end
   end
 end
-
-default_command :list
