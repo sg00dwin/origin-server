@@ -59,7 +59,8 @@
 
 #bundle exec ruby trello update --update-bug-tasks --trace
 bundle exec ruby trello update --update-roadmap --trace
-bundle exec ruby trello update --add-task-checklists --add-bug-checklists --trace</command>
+bundle exec ruby trello update --add-task-checklists --add-bug-checklists --trace
+bundle exec ruby trello generate_roadmap_overview --out /var/www/html/roadmap_overview.html</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
