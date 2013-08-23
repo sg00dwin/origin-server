@@ -7,7 +7,7 @@ $do = og_comment_perms_do();
     <div class="comment-author clearfix">
       <?php print views_embed_view('user_profile_box', 'block_2', $comment->uid); ?>
       <?php if ($submitted): ?>
-        <div class="submitted right"><?php print 'Posted ' . format_date($comment->timestamp, $type='custom', $format = 'F j, Y \a\t g:i A'); ?></div>
+        <div class="submitted right"><?php print 'Posted ' . format_date($comment->timestamp, $type='custom', $format = 'F j, Y \a\t g:i A'); ?> <a title="permalink" href="<?php print url($node->path) . '#comment-' . check_plain($comment->cid); ?>"> #</a></div>
       <?php endif; ?> 
     </div>
     
