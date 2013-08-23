@@ -189,8 +189,8 @@ command :generate_roadmap_overview do |c|
           f.puts "#{td} text-align: center;'>#{sizing}</td>#{td} text-align: center;'>#{list}</td></tr>"
         end
         f.puts '</table>'
-        f.puts "<i>Complete: #{complete_sizing_total}<i></br>"
-        f.puts "<i>Remaining: #{remaining_sizing_total}<i></br>"
+        f.puts "<i>Complete: #{complete_sizing_total}</i></br>"
+        f.puts "<i>Remaining: #{remaining_sizing_total}</i></br>"
       end
       f.puts '</body><html>'
     end
