@@ -80,7 +80,7 @@ module SprintReport
       end
       format(value)
     end
-    
+
     def process_sub_attr(value)
       value = sub_attr ? value.send(sub_attr) : value
       value
@@ -90,7 +90,7 @@ module SprintReport
     def attr
       @attr || header.downcase
     end
-    
+
     def format(value)
       if value.is_a? Array
         value.map { |v| format_str(v) }.join(', ')
