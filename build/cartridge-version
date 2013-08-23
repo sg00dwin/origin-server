@@ -32,7 +32,9 @@ module OpenShift
 
         cartridges = {}
         files.each do |file|
-          cartridges[file.split('/')[1]] = {}
+          name = file.split('/')[1]
+          next if name.include?('openshift-origin-cartridge-mock')
+          cartridges[name] = {}
         end
 
         manifests = {}
