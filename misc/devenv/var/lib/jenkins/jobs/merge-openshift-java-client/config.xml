@@ -2,7 +2,7 @@
 <project>
   <actions/>
   <description></description>
-  <logRotator>
+  <logRotator class="hudson.tasks.LogRotator">
     <daysToKeep>100</daysToKeep>
     <numToKeep>100</numToKeep>
     <artifactDaysToKeep>-1</artifactDaysToKeep>
@@ -65,7 +65,7 @@ popd
 # Run the tests
 pushd openshift-java-client
 set +e
-mvn clean package -Pintegration-tests -Dlibra_server=$instance_hostname -Ddefault_rhlogin=toolsjboss@gmail.com -Drhpassword=1q2w3e -Dsun.net.client.defaultConnectTimeout=600000 -Dsun.net.client.defaultReadTimeout=600000
+mvn clean package -Pintegration-tests -Dlibra_server=$instance_hostname -Ddefault_rhlogin=toolsjboss@gmail.com -Drhpassword=1q2w3e -Dsun.net.client.defaultConnectTimeout=600000 -Dsun.net.client.defaultReadTimeout=600000 -Djsse.enableSNIExtension=false
 RESULT=$?
 set -e
 popd
@@ -93,7 +93,6 @@ then
   test_pull_requests --merge_pull_request $JAVA_CLIENT_PULL_ID --repo openshift-java-client --config ~/.test_pull_requests_java_client.json
 fi
 
-
 </command>
     </hudson.tasks.Shell>
   </builders>
@@ -101,6 +100,7 @@ fi
     <hudson.tasks.ArtifactArchiver>
       <artifacts>li/rhc/log/**,openshift-java-client/target/surefire-reports/*</artifacts>
       <latestOnly>false</latestOnly>
+      <allowEmptyArchive>false</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.junit.JUnitResultArchiver>
       <testResults>li/rhc/log/**/*.xml,openshift-java-client/target/surefire-reports/*.xml</testResults>
