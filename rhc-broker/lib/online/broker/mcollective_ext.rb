@@ -12,7 +12,7 @@ module OpenShift
       end
       run_cartridge_command_old(framework, gear, command, arg, allow_move)
     end
-    
+
     def destroy(gear, keep_uid=false, uid=nil, skip_hooks=false)
       unless skip_hooks
         app = gear.app
@@ -75,7 +75,7 @@ module OpenShift
     def self.in_blacklist?(field)
       NONO.include?(field.to_str.downcase)
     end
-    
+
   end
 end
 

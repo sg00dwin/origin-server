@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'mocha/setup'
 
-class NurtureTest < ActionDispatch::IntegrationTest
+class AnalyticsTest < ActionDispatch::IntegrationTest
 
   def setup
     OpenShift::DnsService.stubs(:instance).returns(OpenShift::DnsService.new)
@@ -32,23 +32,23 @@ class NurtureTest < ActionDispatch::IntegrationTest
     assert_equal_domains(orig_d, new_d)
   end
 
-  test "nurture post" do
+  test "analytics post" do
     credentials = Base64.encode64("nologin:nopass")
     headers = {}
     headers["HTTP_ACCEPT"] = "application/json"
     headers["HTTP_AUTHORIZATION"] = "Basic #{credentials}"
     params = { 'json_data' => '{ "action" : "create", "app_uuid" : "abcd" }' }
-    request_via_redirect(:POST, "/broker/nurture", params, headers)
+    request_via_redirect(:POST, "/broker/analytics", params, headers)
     assert_equal @response.status, 200
   end
 
-  test "nurture bulk post" do
+  test "analytics bulk post" do
     credentials = Base64.encode64("nologin:nopass")
     headers = {}
     headers["HTTP_ACCEPT"] = "application/json"
     headers["HTTP_AUTHORIZATION"] = "Basic #{credentials}"
-    params = { :nurture_action => "update_last_access", :gear_timestamps => [{:uuid => "abcd", :access_time => Time.now.strftime("%d/%b/%Y:%H:%M:%S %Z")}]}
-    request_via_redirect(:POST, "/broker/nurture", params, headers)
+    params = { :analytics_action => "update_last_access", :gear_timestamps => [{:uuid => "abcd", :access_time => Time.now.strftime("%d/%b/%Y:%H:%M:%S %Z")}]}
+    request_via_redirect(:POST, "/broker/analytics", params, headers)
     assert_equal @response.status, 200
   end
 
