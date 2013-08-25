@@ -22,11 +22,16 @@ class EngineFilter < SimpleCov::Filter
       engines = Rails.application.railties.engines.select{ |e| @names.include? e.class.to_s }
       engines.map { |e| e.config.root.to_s } << Rails.application.config.root.to_s
     end
-  end    
+  end
 end
 
+COVERAGE_DIR = 'test/coverage/'
+RESULT_SET = File.join(COVERAGE_DIR, '.resultset.json')
+
+FileUtils.mkpath COVERAGE_DIR
+
 SimpleCov.start 'rails' do
-  coverage_dir 'test/coverage/'
+  coverage_dir COVERAGE_DIR
   command_name (SimpleCov::CommandGuesser.original_run_command || 'Site tests').strip
 
   add_filter EngineFilter.new('Console::Engine')
@@ -49,3 +54,6 @@ SimpleCov.start 'rails' do
   # Note, the #:nocov: coverage exclusion  should only be used on external functions 
   #  that cannot be nondestructively tested in a developer environment.
 end
+
+FileUtils.touch(RESULT_SET)
+FileUtils.chmod_R(01777, COVERAGE_DIR)
