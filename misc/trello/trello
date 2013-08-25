@@ -309,24 +309,26 @@ command :update do |c|
                     end
                   end
                   if options.update_bug_tasks
-                    bugs_checklist = trello.checklist(card, 'Bugs')
-                    if bugs_checklist
-                      bugs_checklist.items.each do |item|
-                        item_name = item.name.strip
-                        if item_name =~ /(https?:\/\/bugzilla\.redhat\.com\/[^\?]+\?id=\d+)/
-                          bug_url = $1
-                          status = bugzilla.bug_status_by_url(bug_url)
-                          if status == 'VERIFIED' || status == 'CLOSED'
-                            if item.state == 'incomplete'
-                              puts "Marking complete: #{item_name}"
-                              bugs_checklist.add_item(item_name, true, 'bottom')
-                              bugs_checklist.delete_checklist_item(item.id)
-                            end
-                          elsif status == 'OPEN' || status == 'ASSIGNED'
-                            if item.state == 'complete'
-                              puts "Marking incomplete: #{item_name}"
-                              bugs_checklist.add_item(item_name, false, 'top')
-                              bugs_checklist.delete_checklist_item(item.id)
+                    ['Bugs', 'Tasks'].each do |cl|
+                      bugs_checklist = trello.checklist(card, cl)
+                      if bugs_checklist
+                        bugs_checklist.items.each do |item|
+                          item_name = item.name.strip
+                          if item_name =~ /(https?:\/\/bugzilla\.redhat\.com\/[^\?]+\?id=\d+)/
+                            bug_url = $1
+                            status = bugzilla.bug_status_by_url(bug_url)
+                            if status == 'VERIFIED' || status == 'CLOSED'
+                              if item.state == 'incomplete'
+                                puts "Marking complete: #{item_name}"
+                                bugs_checklist.add_item(item_name, true, 'bottom')
+                                bugs_checklist.delete_checklist_item(item.id)
+                              end
+                            elsif status == 'OPEN' || status == 'ASSIGNED'
+                              if item.state == 'complete'
+                                puts "Marking incomplete: #{item_name}"
+                                bugs_checklist.add_item(item_name, false, 'top')
+                                bugs_checklist.delete_checklist_item(item.id)
+                              end
                             end
                           end
                         end
