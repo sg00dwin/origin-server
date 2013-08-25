@@ -57,9 +57,8 @@
     <hudson.tasks.Shell>
       <command>pushd misc/trello
 
-./trello update --update-bug-tasks --trace
 ./trello update --update-roadmap --trace
-./trello update --add-task-checklists --add-bug-checklists --trace
+./trello update --add-task-checklists --add-bug-checklists --update-bug-tasks --trace
 ./trello generate_roadmap_overview --out /var/www/html/roadmap_overview.html --trace
 
 popd</command>
