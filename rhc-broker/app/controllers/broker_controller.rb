@@ -50,13 +50,17 @@ class BrokerController < ActionController::Base
         action = data['action']
         app_uuid = data['app_uuid']
         if action=='push'
-          app,gear = Application.find_by_gear_uuid(app_uuid)
-          app.analytics[action] = Time.now.strftime("%Y-%m-%d %H:%M:%S")
-          app.save
+          app, gear = Application.find_by_gear_uuid(app_uuid)
+          if app
+            app.analytics[action] = Time.now.strftime("%Y-%m-%d %H:%M:%S")
+            app.save
+          else
+            Rails.logger.error "Application not found in analytics post with gear uuid: #{app_uuid}"
+          end
         end
         Online::Broker::Nurture.application_update(action, app_uuid)
       end
-  
+
       # Just return a 200 success
       render :json => generate_result_json("Success") and return
 
