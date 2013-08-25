@@ -57,10 +57,10 @@
     <hudson.tasks.Shell>
       <command>pushd misc/trello
 
-#bundle exec ruby trello update --update-bug-tasks --trace
+./trello update --update-bug-tasks --trace
 ./trello update --update-roadmap --trace
 ./trello update --add-task-checklists --add-bug-checklists --trace
-./trello generate_roadmap_overview --out /var/www/html/roadmap_overview.html
+./trello generate_roadmap_overview --out /var/www/html/roadmap_overview.html --trace
 
 popd</command>
     </hudson.tasks.Shell>
