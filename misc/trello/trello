@@ -316,14 +316,14 @@ command :update do |c|
                           if status == 'VERIFIED' || status == 'CLOSED'
                             if item.state == 'incomplete'
                               puts "Marking complete: #{item_name}"
-                              #bugs_checklist.delete_checklist_item(item.id)
-                              #bugs_checklist.add_item(item_name, true, 'bottom')
+                              bugs_checklist.add_item(item_name, true, 'bottom')
+                              bugs_checklist.delete_checklist_item(item.id)
                             end
                           elsif status == 'OPEN' || status == 'ASSIGNED'
                             if item.state == 'complete'
                               puts "Marking incomplete: #{item_name}"
-                              #bugs_checklist.delete_checklist_item(item.id)
-                              #bugs_checklist.add_item(item_name, false, 'top')
+                              bugs_checklist.add_item(item_name, false, 'top')
+                              bugs_checklist.delete_checklist_item(item.id)
                             end
                           end
                         end
