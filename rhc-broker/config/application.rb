@@ -70,5 +70,7 @@ module Broker
     config.assets.version = '1.0'
 
     config.mongoid.observers = :domain_observer
+    Mongoid.logger.level = Logger::WARN
+    Moped.logger.level = Logger::WARN
   end
 end
