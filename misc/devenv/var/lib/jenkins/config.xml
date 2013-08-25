@@ -1,14 +1,23 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <hudson>
-  <version>1.399</version>
-  <numExecutors>2</numExecutors>
+  <disabledAdministrativeMonitors>
+    <string>hudson.diagnosis.ReverseProxySetupMonitor</string>
+  </disabledAdministrativeMonitors>
+  <version>1.459</version>
+  <numExecutors>20</numExecutors>
   <mode>NORMAL</mode>
   <useSecurity>true</useSecurity>
   <authorizationStrategy class="hudson.security.FullControlOnceLoggedInAuthorizationStrategy"/>
   <securityRealm class="hudson.security.HudsonPrivateSecurityRealm">
     <disableSignup>true</disableSignup>
+    <enableCaptcha>false</enableCaptcha>
   </securityRealm>
-  <markupFormatter class="hudson.markup.RawHtmlMarkupFormatter"/>
+  <projectNamingStrategy class="jenkins.model.ProjectNamingStrategy$DefaultProjectNamingStrategy"/>
+  <workspaceDir>${ITEM_ROOTDIR}/workspace</workspaceDir>
+  <buildsDir>${ITEM_ROOTDIR}/builds</buildsDir>
+  <markupFormatter class="hudson.markup.RawHtmlMarkupFormatter">
+    <disableSyntaxHighlighting>false</disableSyntaxHighlighting>
+  </markupFormatter>
   <jdks/>
   <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
   <myViewsTabBar class="hudson.views.DefaultMyViewsTabBar"/>
@@ -22,6 +31,7 @@
       <name>All</name>
       <filterExecutors>false</filterExecutors>
       <filterQueue>false</filterQueue>
+      <properties class="hudson.model.View$PropertyList"/>
     </hudson.model.AllView>
   </views>
   <primaryView>All</primaryView>
@@ -43,5 +53,4 @@
       </envVars>
     </hudson.slaves.EnvironmentVariablesNodeProperty>
   </globalNodeProperties>
-  <disabledAdministrativeMonitors/>
 </hudson>

@@ -1,7 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <user>
   <fullName>DevEnv Jenkins Admin</fullName>
+  <description></description>
   <properties>
+    <hudson.security.HudsonPrivateSecurityRealm_-Details>
+      <passwordHash>GrHMrW:03f7248d543da33a578aa3089475fc1753aa54a32f5f4fb1e101739f1f471cfb</passwordHash>
+    </hudson.security.HudsonPrivateSecurityRealm_-Details>
     <hudson.model.MyViewsProperty>
       <primaryViewName>All</primaryViewName>
       <views>
@@ -13,9 +17,6 @@
         </hudson.model.AllView>
       </views>
     </hudson.model.MyViewsProperty>
-    <hudson.security.HudsonPrivateSecurityRealm_-Details>
-      <passwordHash>GrHMrW:03f7248d543da33a578aa3089475fc1753aa54a32f5f4fb1e101739f1f471cfb</passwordHash>
-    </hudson.security.HudsonPrivateSecurityRealm_-Details>
     <hudson.tasks.Mailer_-UserProperty>
       <emailAddress>libra-devel@redhat.com</emailAddress>
     </hudson.tasks.Mailer_-UserProperty>

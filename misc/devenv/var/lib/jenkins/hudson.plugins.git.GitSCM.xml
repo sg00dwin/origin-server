@@ -1,4 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <hudson.plugins.git.GitSCM_-DescriptorImpl>
-  <generation>28</generation>
+  <helpRedirect/>
+  <generation>265</generation>
 </hudson.plugins.git.GitSCM_-DescriptorImpl>
