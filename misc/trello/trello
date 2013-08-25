@@ -273,6 +273,11 @@ command :update do |c|
         end
       end
     else
+      bugzilla = nil
+      if options.update_bug_tasks
+        require 'bugzilla_helper'
+        bugzilla = load_conf(BugzillaHelper, CONFIG.bugzilla, true)
+      end
       trello.boards.each do |board_id, board|
         puts "\nBoard Name: #{board.name}"
         lists = board.lists(:filter => [:open]).target
@@ -304,8 +309,6 @@ command :update do |c|
                     end
                   end
                   if options.update_bug_tasks
-                    require 'bugzilla_helper'
-                    bugzilla = load_conf(BugzillaHelper, CONFIG.bugzilla, true)
                     bugs_checklist = trello.checklist(card, 'Bugs')
                     if bugs_checklist
                       bugs_checklist.items.each do |item|
