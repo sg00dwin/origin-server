@@ -762,6 +762,9 @@ echo "fs.suid_dumpable = 0" >> /etc/sysctl.conf
 sed -i '/^    umask 002/c\    umask 077' -i /etc/csh.cshrc
 sed -i '/^       umask 002/c\       umask 077' -i /etc/bashrc
 
+# BZ990441 Hardend umask for /etc/profile
+sed -i '/^    umask 002/c\    umask 077' -i /etc/profile
+
 # BZ982827 Remove Sending ICMP Redirects - This is off already in stg/prod/int
 echo " " >> /etc/sysctl.conf
 echo "# BZ982827 Remove Sending ICMP Redirects" >> /etc/sysctl.conf
