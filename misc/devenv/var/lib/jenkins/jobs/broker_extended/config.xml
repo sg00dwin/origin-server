@@ -2,7 +2,7 @@
 <project>
   <actions/>
   <description></description>
-  <logRotator>
+  <logRotator class="hudson.tasks.LogRotator">
     <daysToKeep>10</daysToKeep>
     <numToKeep>10</numToKeep>
     <artifactDaysToKeep>10</artifactDaysToKeep>
@@ -52,7 +52,7 @@ set -x
 # Run java client tests
 pushd openshift-java-client
 set +e
-mvn clean package -Pintegration-tests -Dlibra_server=$instance_hostname -Ddefault_rhlogin=toolsjboss@gmail.com -Drhpassword=1q2w3e -Dsun.net.client.defaultConnectTimeout=600000 -Dsun.net.client.defaultReadTimeout=600000
+mvn clean package -Pintegration-tests -Dlibra_server=$instance_hostname -Ddefault_rhlogin=toolsjboss@gmail.com -Drhpassword=1q2w3e -Dsun.net.client.defaultConnectTimeout=600000 -Dsun.net.client.defaultReadTimeout=600000 -Djsse.enableSNIExtension=false
 JAVA_CLIENT_RESULT=$?
 set -e
 popd
@@ -89,13 +89,14 @@ set -x</command>
     <hudson.tasks.ArtifactArchiver>
       <artifacts>li/rhc/log/**,openshift-java-client/target/surefire-reports/*</artifacts>
       <latestOnly>false</latestOnly>
+      <allowEmptyArchive>false</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.junit.JUnitResultArchiver>
       <testResults>li/rhc/log/**/*.xml,openshift-java-client/target/surefire-reports/*.xml</testResults>
       <keepLongStdio>false</keepLongStdio>
       <testDataPublishers/>
     </hudson.tasks.junit.JUnitResultArchiver>
-    <hudson.tasks.Mailer>
+    <hudson.tasks.Mailer plugin="mailer@1.4">
       <recipients>libra-devel@redhat.com</recipients>
       <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>

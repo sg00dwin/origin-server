@@ -24,7 +24,7 @@
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@1.1.6">
     <configVersion>1</configVersion>
     <remoteRepositories>
       <org.spearce.jgit.transport.RemoteConfig>
@@ -71,18 +71,20 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd misc/trello
+      <command>pushd misc/trello
 
 report_string=&quot;--report-type ${REPORT}&quot;                                                                                                                                                                   
 if [ &quot;${EMAIL}&quot; == true ]; then                                                                                                                                                                
   report_string=&quot;${report_string} --send-email&quot;                                                                                                                                           
 fi
 
-bundle exec ruby trello report ${report_string} --trace</command>
+./trello report ${report_string} --trace
+
+popd</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
-    <hudson.tasks.Mailer>
+    <hudson.tasks.Mailer plugin="mailer@1.4">
       <recipients>dmcphers+status_report@redhat.com</recipients>
       <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>

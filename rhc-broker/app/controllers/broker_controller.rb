@@ -5,14 +5,14 @@ class BrokerController < ActionController::Base
 
   layout nil
 
-  def nurture_post
+  def analytics_post
     begin
       # Parse the incoming data
       #
       if params['json_data'].nil?
-        raise Exception.new("Required param 'nurture_action' not found") unless params['nurture_action']
-        action = params['nurture_action']
-        if action=="update_last_access"
+        action = params['analytics_action']
+        raise Exception.new("Required param 'analytics_action' not found") unless action
+        if action == "update_last_access"
           gear_timestamps = params['gear_timestamps']
           raise Exception.new("Required param 'gear_timestamps' not found for action 'update_last_access") if gear_timestamps.nil?
           bulk_update_array = []
@@ -50,18 +50,22 @@ class BrokerController < ActionController::Base
         action = data['action']
         app_uuid = data['app_uuid']
         if action=='push'
-          app,gear = Application.find_by_gear_uuid(app_uuid)
-          app.analytics[action] = Time.now.strftime("%Y-%m-%d %H:%M:%S")
-          app.save
+          app, gear = Application.find_by_gear_uuid(app_uuid)
+          if app
+            app.analytics[action] = Time.now.strftime("%Y-%m-%d %H:%M:%S")
+            app.save
+          else
+            Rails.logger.error "Application not found in analytics post with gear uuid: #{app_uuid}"
+          end
         end
         Online::Broker::Nurture.application_update(action, app_uuid)
       end
-  
+
       # Just return a 200 success
       render :json => generate_result_json("Success") and return
 
     rescue Exception => e
-      Rails.logger.debug "Exception in nurture post: #{e.message}"
+      Rails.logger.debug "Exception in analytics post: #{e.message}"
       Rails.logger.debug e.backtrace.inspect
       render :json => generate_result_json(e.message, nil, e.respond_to?('exit_code') ? e.exit_code : 1), :status => :internal_server_error
     end

@@ -5,75 +5,22 @@ VERSIONS = {
   '2.0.32' => {
     :compatible => false,
     :non_compatible => true,
-    :prerelease => true,
-    :postrelease => true
+    :prerelease => false,
+    :postrelease => false
   }
 }
 
-CARTRIDGE_CHANGES = [{"old_name" => "phpmyadmin-3.4", "new_name" => "phpmyadmin-3", "old_version" => "3.4", "new_version" => "3"},
-                     {"old_name" => "jbosseap-6.0", "new_name" => "jbosseap-6", "old_version" => "6.0", "new_version" => "6"},
-                     {"old_name" => "jenkins-1.4", "new_name" => "jenkins-1", "old_version" => "1.4", "new_version" => "1"},
-                     {"old_name" => "jenkins-client-1.4", "new_name" => "jenkins-client-1", "old_version" => "1.4", "new_version" => "1"},
-                     {"old_name" => "switchyard-0.6", "new_name" => "switchyard-0", "old_version" => "0.6", "new_version" => "0"}]
+CARTRIDGE_CHANGES = [{"old_name" => "phpmyadmin-3", "new_name" => "phpmyadmin-4", "old_version" => "3", "new_version" => "4"}]
 
 def migrate(type, version)
   puts "Starting migration: #{type}"
   case type
   when :prerelease
-    ensure_members_index
-    create_domain_members
-    create_application_members
   when :postrelease
-    update_gears
-    verify_gears
   when :non_compatible
-    ensure_members_index
-    create_domain_members
-    create_application_members
     adjust_cartridge_versions
   end
   puts "\nMigration complete"
-end
-
-def verify_gears
-  query = { "scalable" => true, "group_instances.gears.port_interfaces" => { "$exists" => false }  }
-  count = db["applications"].find(query).count
-  puts "ERROR: Verification of gear migration failed. Count: #{count}" if count!=0 
-end
-
-def update_gears
-  start_time = (Time.now.to_f * 1000).to_i
-  gear_map = OpenShift::ApplicationContainerProxy.get_all_gears_endpoints
-  total_time = (Time.now.to_f * 1000).to_i - start_time
-  puts "Time to get all gears from nodes: #{total_time.to_f/1000}s"
-  puts "Total gears found on the nodes: #{gear_map.length}"
-
-  selection = {:fields => ["group_instances.gears.uuid"], :timeout => false}
-  OpenShift::DataStore.find(:applications, {"scalable" => true}, selection) do |app|
-    gi_index = -1
-    app["group_instances"].each do |gi|
-      gi_index += 1
-      gear_index = -1
-      gi['gears'].each do |g|
-        gear_index += 1
-        endpoints = gear_map[g["uuid"]]
-        updated_port_interfaces = endpoints.map do |ep|
-          cart = CartridgeCache.find_cartridge(ep["cartridge_name"])
-          { 
-            "_id" => BSON::ObjectId.new,
-            "cartridge_name" => cart.name,
-            "external_address" => ep['external_address'],
-            "external_port" => ep['external_port'],
-            "internal_address" => ep['internal_address'],
-            "internal_port" => ep['internal_port']
-          }
-        end 
-        filter = {"group_instances.#{gi_index}.gears.#{gear_index}.uuid" => g["uuid"]}
-        update_query = {"$set" => {"group_instances.#{gi_index}.gears.#{gear_index}.port_interfaces" => updated_port_interfaces}}
-        db["applications"].update(filter, update_query)
-      end 
-    end
-  end
 end
 
 #
@@ -173,111 +120,9 @@ def verify_migration(old_cart_name, new_cart_name, old_cart_version)
   missed_update_count += db["applications"].find({"component_instances" => {"$elemMatch" => {"cartridge_name" => new_cart_name, "cartridge_vendor" => "redhat", "version" => old_cart_version}}}).count
   missed_update_count += db["usage"].find({"cart_name" => old_cart_name}).count
   missed_update_count += db["usage_records"].find({"cart_name" => old_cart_name}).count
-  
+
   missed_update_count
 end
-
-
-def ensure_members_index
-  ['applications', 'domains'].each do |name|
-    db.collection(name).create_index([['members._id', Mongo::ASCENDING]])
-  end
-end
-
-#
-# Populate the members array with the CloudUser that owns the domain.
-#
-# This is a reentrant call, intended to be used prior to release and then
-# at release.
-#
-def create_domain_members
-  changed = 0
-  sizes = Rails.configuration.openshift[:gear_sizes].map(&:to_s)
-  col = db.collection('domains')
-  col.find({'members._id' => {'$exists' => false}}, {:fields => ['owner_id']}).each do |d|
-    col.update(
-      {'_id' => d['_id']},
-      {'$set' => {
-        # implicit members
-        'members' => [{
-          '_id' => d['owner_id'],
-          'r' => 'admin',
-          'n' => user_names[d['owner_id']],
-          'f' => [['owner', 'admin']],
-        }],
-        'allowed_gear_sizes' => sizes,
-      }}
-    )
-    changed += 1
-  end
-
-  puts "Domain members updated: #{changed}"
-end
-
-#
-# Populate the members array with the CloudUser that owns the domain, but
-# with the source of the member the domain.  Also set the domain_namespace
-# for the owning domain and the owner_id of the user who owns the domain.
-#
-# This is a reentrant call, intended to be used prior to release and then
-# at release.
-#
-def create_application_members
-  domains_to_owners = {}
-  puts "  Loading domain ownership into memory"
-  db.collection('domains').find({}, {:fields => ['owner_id', 'canonical_namespace']}).each do |d|
-    domains_to_owners[d['_id']] = [d['owner_id'], d['canonical_namespace']]
-  end
-
-  changed = 0
-
-  col = db.collection('applications')
-  col.find({'members._id' => {'$exists' => false}}, {:fields => ['owner_id', 'domain_id']}).each do |d|
-    owner_id, namespace = domains_to_owners[d['domain_id']]
-    col.update(
-      {'_id' => d['_id']},
-      {'$set' => {
-        # denormalized data
-        'owner_id' => owner_id,
-        'domain_namespace' => namespace,
-        # implicit members
-        'members' => [{
-          '_id' => owner_id,
-          'r' => 'admin',
-          'n' => user_names[owner_id],
-          'f' => [['domain', 'admin']],
-        }]
-      }}
-    )
-    changed += 1
-  end
-
-  puts "Application members updated: #{changed}"
-end
-
-#
-# Helper for reverting the previously migrated values
-#
-def reset_incremental_updates
-  db.collection('domains').update({}, {"$unset" => {"members"  => 1}}, {"multi" => true})
-  db.collection('applications').update({}, {"$unset" => {"members"  => 1, 'domain_namespace' => 1, 'owner_id' => 1}}, {"multi" => true})
-end
-
-#
-# Retrieve a map of CloudUser ids => login values for use
-# as the names of the member fields.
-#
-def user_names
-  $user_names ||= begin
-    map = {}
-    puts "  Loading user names into memory"
-    db.collection('cloud_users').find({}, {:fields => ['login']}).each do |d|
-      map[d['_id']] = d['login']
-    end
-    map
-  end
-end
-
 
 #------------------------------------------------------------------
 #
@@ -306,7 +151,7 @@ Usage: #{$0}
 
   --version                            Version of the migration to run
   --compatible                         Run the backwards compatible portion of the migration (Can be run after the system is upgrade with the brokers running)
-  --prerelease                         Run the prerelease portion of the migration (Can be run at any time, and is reentrant)
+  --prerelease                         Run the pre release portion of the migration (Can be run at any time, and is reentrant)
   --non-compatible                     Run the non backwards compatible portion of the migration (Must be run with the brokers shutdown)
   --postrelease                        Run the post release portion of the migration (can be run with brokers online, but node migration should have completed successfully)
   --check                              Check whether the compatible or non compatible portion of the migration is necessary (Returns 0 if necessary)

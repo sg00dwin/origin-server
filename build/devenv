@@ -517,8 +517,6 @@ service openshift-port-proxy restart
             timeout = @@SSH_TIMEOUT
             timeout = @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber] if not @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber].nil?
             test_queues[0] << build_cucumber_command(options.include_cucumber, ["@#{options.include_cucumber}"], nil, nil, "openshift-test/tests")
-          elsif options.include_web?
-            #removed sauce labs integration
           else
 
             unless options.exclude_broker?

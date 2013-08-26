@@ -1,5 +1,5 @@
 Broker::Application.routes.draw do
-  match '/broker/nurture' => 'broker#nurture_post', :via => [:post]
+  match '/broker/analytics' => 'broker#analytics_post', :via => [:post]
 
   scope "/broker/rest" do
     resource :user, :only => [:show, :update, :destroy], :controller => :user_ext

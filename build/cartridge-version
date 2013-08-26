@@ -1,0 +1,178 @@
+#!/bin/ruby
+require 'rubygems'
+require 'rubygems/version'
+require 'set'
+require 'safe_yaml'
+require 'pp'
+
+SafeYAML::OPTIONS[:default_mode] = :safe
+
+require 'commander/import'
+name="#{__FILE__}"
+
+program :version, '1.0.0'
+program :description, 'Audit and Update Cartridge Manifests'
+
+module OpenShift
+  module Runtime
+    module Application
+      def load_data
+        branch = %x[git symbolic-ref --short HEAD].chomp
+        if "HEAD" == branch
+          $stderr.puts 'Cannot run command from detached HEAD'
+          exit 1
+        end
+        $stdout.puts "Using #{branch} for the manifest report comparison"
+
+        files = %x[for d in cartridges/*; do git diff --name-only upstream/stage..#{branch} -- $d; done |grep -v '\.spec$'].split("\n")
+        if files.empty?
+          $stderr.puts 'No changes found'
+          exit 1
+        end
+
+        cartridges = {}
+        files.each do |file|
+          name = file.split('/')[1]
+          next if name.include?('openshift-origin-cartridge-mock')
+          cartridges[name] = {}
+        end
+
+        manifests = {}
+        cartridges.keys.each do |cartridge|
+          entries = Dir.glob("**/#{cartridge}/metadata/manifest.*[^~]")
+          if entries.empty?
+            $stderr.puts("Found no manifest for #{cartridge}")
+            next
+          end
+
+          cartridges[cartridge] = {:manifest_files => entries}
+          entries.each do |file|
+            manifests[file] = YAML.safe_load_file(file)
+          end
+        end
+
+        return branch, files, cartridges, manifests
+      end
+    end
+  end
+end
+
+
+class OpenShift::Runtime::Application::Reporter
+  include OpenShift::Runtime::Application
+
+  def initialize(csv, diffs)
+    @csv   = csv
+    @diffs = diffs
+  end
+
+  def apply()
+    branch, files, cartridges, manifests = load_data()
+
+    manifests.each_pair do |path, m|
+      segments          = Gem::Version.new(m['Cartridge-Version']).segments
+      segments[-1]      = (segments.last.to_i + 1).to_s
+      candidate_version = segments.join('.')
+      msg               = "compatible,#{path},#{m['Cartridge-Version']},#{candidate_version}"
+      @csv.puts msg
+      puts msg
+    end
+
+    files.sort.each do |path|
+      @diffs.puts %x[git diff upstream/stage..#{branch} -- #{path}]
+    end
+  end
+
+
+end
+
+class OpenShift::Runtime::Application::Updater
+  include OpenShift::Runtime::Application
+
+  def initialize(csv)
+    @csv = csv
+  end
+
+  def apply()
+    branch, files, cartridges, manifests = load_data()
+    lines                                = @csv.readlines
+
+    if manifests.size != lines.size
+      $stderr.puts "The change table input does not match current changes on #{branch}(#{lines.size}/#{manifests.size}). Please rerun report."
+      exit 2
+    end
+
+    version_updates = lines.inject({}) do |memo, line|
+      tokens          = line.chomp.split(',')
+      memo[tokens[1]] = {'Cartridge-Version' => tokens[3], :compatible? => ('compatible' == tokens[0])}
+      memo
+    end
+
+    errors = false
+    version_updates.keys.each do |path|
+      if version_updates[path]['Cartridge-Version'] == manifests[path]['Cartridge-Version']
+        $stderr.puts "#{path}['Cartridge-Version'] #{manifests[path]['Cartridge-Version']} unchanged."
+      end
+    end
+
+    version_updates.keys.each do |path|
+      if version_updates[path][:compatible?]
+        if manifests[path]['Compatible-Versions']
+          manifests[path]['Compatible-Versions'] << manifests[path]['Cartridge-Version'].to_s
+        else
+          manifests[path]['Compatible-Versions'] = [manifests[path]['Cartridge-Version'].to_s]
+        end
+      else
+        manifests[path]['Compatible-Versions']   = []
+      end
+
+      manifests[path]['Cartridge-Version'] = version_updates[path]['Cartridge-Version'].to_s
+      manifests[path]['Version']           = manifests[path]['Version'].to_s
+      manifests[path]['Versions']          = manifests[path]['Versions'].collect { |e| e.to_s } if manifests[path].key?('Versions')
+
+      FileUtils.move(path, "#{path}~")
+      File.open(path, mode='w') do |file|
+        YAML.dump(manifests[path], file)
+      end
+
+      if YAML.safe_load_file(path)
+        $stdout.puts("Updated #{path}")
+      else
+        $stderr.puts("Update of #{path} could not be reloaded! Processing aborted!")
+        exit 3
+      end
+    end
+  end
+end
+
+global_option('-c', '--csv FILE', String, 'filename to write csv of cartridge versions')
+
+command :report do |c|
+  c.syntax      = "#{name} report --csv <file> --diffs <file>"
+  c.description = 'Audit the cartridges using the current branch vs. the stage branch'
+  c.option '--diffs filename', String, 'filename to write diffs of cartridges'
+
+  c.action do |args, options|
+    $stderr.puts "--csv FILE is required" unless options.csv
+    $stderr.puts "--diffs FILE is required" unless options.diffs
+
+    File.open(options.csv, mode='w') do |csv|
+      File.open(options.diffs, mode='w') do |diffs|
+        OpenShift::Runtime::Application::Reporter.new(csv, diffs).apply
+      end
+    end
+  end
+end
+
+command :update do |c|
+  c.syntax      = "#{name} update --csv <csv file>"
+  c.description = %q(Update the cartridges' manifest files)
+
+  c.action do |args, options|
+    $stderr.puts "--csv FILE is required" unless options.csv
+
+    File.open(options.csv, mode='r') do |csv|
+      OpenShift::Runtime::Application::Updater.new(csv).apply
+    end
+  end
+end

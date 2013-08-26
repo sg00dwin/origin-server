@@ -16,8 +16,8 @@ end
 Then /^the file (.*) is active for district (.*)$/ do |file, uuid|
   config = ParseConfig.new  "/var/lib/openshift/.settings/district.info"
 
-  config.get_value('uuid').should == uuid
-  config.get_value('active').should == "true"
+  config['uuid'].should == uuid
+  config['active'].should == "true"
 end
 
 Then /^the file (.*) does( not)? exist$/ do |file, negate|

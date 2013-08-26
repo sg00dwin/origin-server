@@ -61,7 +61,7 @@ module OpenShift
     def self.in_blacklist?(field)
       NONO.include?(field.to_str.downcase)
     end
-    
+
   end
 end
 

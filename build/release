@@ -18,7 +18,7 @@ class Release < Thor
   def initialize(*args)
     super(*args)
   end
-  
+
   no_tasks do
     def git_pull
       SIBLING_REPOS.each do |repo_name, repo_dirs|
@@ -32,7 +32,7 @@ class Release < Thor
         end
       end
     end
-    
+
 
     def fail_if_uncommitted_changes
       SIBLING_REPOS.each do |repo_name, repo_dirs| 
@@ -61,7 +61,7 @@ class Release < Thor
       reset_orig_branches(orig_branches)
     end
   end
-  
+
   desc "release_jenkins_plugin COMMIT_MESSAGE COMMITTER_NAME COMMITTER_EMAIL", "Brew build the jenkins plugin"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def release_jenkins_plugin(commit_message, committer_name="Dan McPherson", committer_email="dmcphers@redhat.com")
@@ -112,15 +112,15 @@ class Release < Thor
     orig_branches = checkout_branch(branch, options.verbose?)
     begin
       fail_if_uncommitted_changes
-      
+
       build_dirs = []
 
       # Update the repo
       git_pull
-    
+
       unless options.release_package.empty?
         found_single_release = false
-        
+
         packages = get_packages
         packages.each do | pkg_name, build_info |
           if pkg_name == options.release_package
@@ -137,7 +137,7 @@ class Release < Thor
       else
         build_dirs = get_build_dirs
       end
-  
+
       tag_failures = []
       requires_rebuild = []
 
@@ -178,12 +178,12 @@ class Release < Thor
       end
 
       run("echo -e 'y\nn' > #{options.temp_dir}/answerfile", :verbose => options.verbose?)
-          
+
 
       build_failures = ''
       chain_build_failures = ''
       chain_sets_need_build = []
-      
+
       # I hate to traverse this more times but this information is needed in
       # advance of the tito commands so we can bump specs of all members of a 
       # chain set
@@ -214,7 +214,7 @@ class Release < Thor
 
           # Chain builds are special, will handle their tito release elsewhere
           unless chain_sets_need_build.flatten.uniq.include?(build_info[0])
-            
+
             # Need to handle the case where packages that are normally in a
             # chain build (but are not because the chain_build_iniator was not
             # found to need building) land in the -dirty brew build target so 
@@ -249,15 +249,15 @@ class Release < Thor
         # Hate traversing this *again* but unsure if there's a more clean 
         # solution ... comments/patches welcome.
         full_pkg_set = get_packages()
-        
+
         chain_set_failures = []
 
         # --no-build option requires tito v0.4.9-2 or higher, needed for chainbuilds
         tito_cmd = "tito release brew --no-build < #{options.temp_dir}/answerfile"
-       
+
         chain_sets_need_build.uniq.each do | chain_set | 
           puts "Brew chainbuilding for: #{chain_set.join(" : ")}"
-            
+
           chain_set.each do | pkg |
             working_dir = File.expand_path("../#{full_pkg_set[pkg][0]}", File.dirname(__FILE__))
             inside(working_dir) do
@@ -277,7 +277,7 @@ class Release < Thor
               head_commit_id = `git ls-remote \
                                 git://pkgs.devel.redhat.com/rpms/#{pkg} \
                                 refs/heads/libra-rhel-6`.split()[0]
-              
+
               if $?.exitstatus != 0
                 chain_build_failures += "Chainset failed: #{chain_set.join(" : ")} ::\n"
                 chain_build_failures += "## git ls-remote failed for #{pkg} ::\n"
@@ -292,7 +292,7 @@ class Release < Thor
           end
 
           chain_set_failures.each do | failed_set |
-            
+
             chain_build_failures += "#### Chainset failed: #{failed_set.join(" : ")}::\n"
             chain_build_failures += "#### To fix, run the following commands in order, verifying each:\n"
             chain_build_failures += "#### one passes before moving to the next\n"
@@ -347,7 +347,7 @@ class Release < Thor
     ensure
       reset_orig_branches(orig_branches, options.verbose?)
     end
-    
+
     if File.exists?("../jenkins-cloud-plugin")
       inside("../jenkins-cloud-plugin") do
         git_pull_output = `git pull`.chomp
@@ -380,7 +380,7 @@ class Release < Thor
       reset_orig_branches(orig_branches)
     end
   end
-  
+
   desc "tag_pkgs [AFTER_DATE]", "Tag packages into the candidate or stage repo, specify AFTER_DATE(YYYY-MM-DD) optionally" 
   method_option :include_internal, :type => :boolean, :desc => "Boolean indicating whether to include internal packages"
   method_option :check, :type => :boolean, :desc => "Don't do anything yet, just show what would be done"
@@ -427,7 +427,7 @@ class Release < Thor
     orig_branches = checkout_branch("master")
 
     begin
-      
+
       git_pull
       if options.from.nil? and options.to.nil?
         if after_date.nil? 
@@ -453,7 +453,7 @@ class Release < Thor
         tag_failures += brew_move_pkg(src_brew_tag, target_brew_tag, options.pkgs.gsub(","," "))
         puts "######### END: Brew Tag Output #########"
       end
-      
+
       unless tag_failures.empty?
         puts "************BEGIN TAG FAILURES****************"
         puts tag_failures
@@ -521,10 +521,10 @@ class Release < Thor
 
       puts "Sanity checking #{BASE_RELEASE_BRANCH} - #{prod_pkgs.size} pkgs"
       p_hash.each do |pkg_name, pkg_ver_rel|
-        
+
         us_pkg = "#{pkg_name}-#{s_hash[pkg_name]}"
         ds_pkg = "#{pkg_name}-#{pkg_ver_rel}"
-        
+
         if us_pkg.empty? or us_pkg.nil?
           tag_sanity_failures += "### TAG SANITY FAILURE stage vs. prod\n"
           tag_sanity_failures += "#{ds_pkg} exists in #{BASE_RELEASE_BRANCH} not in #{BASE_RELEASE_BRANCH}-stage"
@@ -541,7 +541,7 @@ class Release < Thor
         end
       end
     end
-    
+
     if options.stage or options.all
       s_hash = {}
       c_hash = {}
@@ -561,10 +561,10 @@ class Release < Thor
 
       puts "Sanity checking #{BASE_RELEASE_BRANCH}-stage - #{stage_pkgs.size} pkgs"
       s_hash.each do |pkg_name, pkg_ver_rel|
-        
+
         us_pkg = "#{pkg_name}-#{c_hash[pkg_name]}"
         ds_pkg = "#{pkg_name}-#{pkg_ver_rel}"
-        
+
         if us_pkg.empty? or us_pkg.nil?
           tag_sanity_failures += "### TAG SANITY FAILURE candidate vs. stage\n"
           tag_sanity_failures += "#{ds_pkg} exists in #{BASE_RELEASE_BRANCH}-stage not in #{BASE_RELEASE_BRANCH}-candidate"
@@ -602,10 +602,10 @@ class Release < Thor
 
       puts "Sanity checking #{BASE_RELEASE_BRANCH}-candidate - #{candidate_pkgs.size} pkgs"
       c_hash.each do |p_name, p_ver_rel|
-        
+
         us_pkg = "#{p_name}-#{t_hash[p_name]}"
         ds_pkg = "#{p_name}-#{p_ver_rel}"
-        
+
         if us_pkg.empty? or us_pkg.nil?
           tag_sanity_failures += "### TAG SANITY FAILURE test vs.candidate\n"
           tag_sanity_failures += "#{ds_pkg} exists in #{BASE_RELEASE_BRANCH}-candidate not in #{BASE_RELEASE_BRANCH}-test"
@@ -642,12 +642,12 @@ class Release < Thor
         puts "***********END CHECK CLEAN OUTPUT************"
       end
     end
-    
+
     if options.clean
       puts "******************BEGIN CLEAN******************"
       puts "Cleaning non-sane brew tags"
       puts "***********************************************"
-      
+
       cleanable_tags.each do | tag_name, pkg_name |
         pkg_base_name = "#{pkg_name.split('-')[0...-2].join('-')}"
         brew_clean_cmd = "brew untag-pkg --all #{tag_name} #{pkg_base_name}"
@@ -750,7 +750,7 @@ class Release < Thor
       end
       orig_branches
     end
-    
+
     def reset_orig_branches(orig_branches, verbose=false)
       orig_branches.each do |repo_dir, branch|
         inside(repo_dir) do
@@ -758,8 +758,7 @@ class Release < Thor
         end
       end
     end
-    
-    
+
     def mash_and_rsync(tag_base, skip_gem, options)
       # Mash / RSync parameters
       if options.test?
@@ -777,27 +776,27 @@ class Release < Thor
 
       # variable to keep track of if we've built a new rhc-devenv
       rhc_devenv_found = false
-  
+
       # derive pkg_suffix from tag_base
       if tag_base =~ /^.*rhel-(\d)\.(\d)$/
         pkg_suffix = "el#{$1}_#{$2}"
       else
         pkg_suffix = "el6oso"
       end
-  
+
       # Check the Brew installation
       `brew --help`
       unless $? == 0
         puts "ERROR - Brew not installed.  Read misc/docs/BREW for setup steps"
         exit 2
       end
-  
+
       # Check the mash installation
       unless File.exists?("/etc/mash/#{mash_config}.mash")
         puts "ERROR - Mash configuration missing.  Read misc/docs/BREW for setup steps"
         exit 2
       end
-  
+
       # Make sure we have write access to /var/cache/mash
       begin
         File.new("/var/cache/mash/.rhcignore", "w")
@@ -806,7 +805,7 @@ class Release < Thor
         puts "ERROR - user doesn't have write access to /var/cache/mash - mash needs write access to this directory"
         exit 2
       end
-  
+
       # Run mash twice since it usually fails the first time
       puts "Running mash sync"
       mash_cmd = "/usr/bin/mash -o #{options.temp_dir}/#{mash_config} -c /etc/mash/li-mash.conf #{mash_config}"
@@ -854,15 +853,15 @@ class Release < Thor
         puts "ERROR - RPM sync failed"
         exit 1
       end
-      
+
       rhc_devenv_found = rsync_output.include?('rhc-devenv')
-      
+
       ### FIXME - Comment this out until new patch is verified, then remove
       #unless run("#{rsync} #{options.temp_dir}/#{mash_config}/#{mash_config}/* #{repo}/#{mash_config}/", :verbose => options.verbose?)
       #  puts "ERROR - RPM sync failed."
       #  exit 1
       #end
-      
+
       unless skip_gem
         # sync rhc gem
         puts "Syncing client gem to repo..."
@@ -876,7 +875,7 @@ class Release < Thor
           puts "Couldn't find ../rhc.  Skipping rsync client gem step."
         end
       end
-  
+
       unless skip_gem
         puts "Updating gem indexes..."
         unless run("ssh #{repo_host} 'gem generate_index -d #{repo_dir}/#{mash_config}/client'", :verbose => options.verbose?)
@@ -887,19 +886,19 @@ class Release < Thor
       end
       rhc_devenv_found
     end
-  
+
     def create_ami(options)
       # Jenkins parameters
       proxy = "squid.corp.redhat.com:8080"
       jenkins = "https://ci.dev.openshift.redhat.com/jenkins"
-  
+
       puts "Kicking off AMI build..."
       if options.test?
         unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_test/buildWithParameters?token=#{JENKINS_BUILD_TOKEN}", :verbose => options.verbose?)
           puts "ERROR - Jenkins remote job invocation failed."
           exit 1
         end
-         
+
       elsif options.stage?
         unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/create_ami/buildWithParameters?token=#{JENKINS_BUILD_TOKEN}", :verbose => options.verbose?)
           puts "ERROR - Jenkins remote job invocation failed."

@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.12.4
+Version: 1.13.0
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -761,6 +761,9 @@ echo "fs.suid_dumpable = 0" >> /etc/sysctl.conf
 # BZ982824 Hardend umask for csh and bash
 sed -i '/^    umask 002/c\    umask 077' -i /etc/csh.cshrc
 sed -i '/^       umask 002/c\       umask 077' -i /etc/bashrc
+
+# BZ990441 Hardend umask for /etc/profile
+sed -i '/^    umask 002/c\    umask 077' -i /etc/profile
 
 # BZ982827 Remove Sending ICMP Redirects - This is off already in stg/prod/int
 echo " " >> /etc/sysctl.conf

@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.13.5
+Version: 1.14.0
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -227,6 +227,16 @@ fi
 
 
 %changelog
+* Wed Aug 21 2013 Adam Miller <admiller@redhat.com> 1.13.6-1
+- Merge pull request #1846 from dobbymoodge/BZ998455_BZ998468
+  (dmcphers+openshiftbot@redhat.com)
+-  <gear_upgrade_extension> Bug 998468, Fix builderType for re-versioned
+  jbosseap cart jobs https://bugzilla.redhat.com/show_bug.cgi?id=998468
+  (jolamb@redhat.com)
+- <gear_upgrade_extension> Bug 998455, fix broken symlinks and env vars for
+  jbosseap cart https://bugzilla.redhat.com/show_bug.cgi?id=998455
+  (jolamb@redhat.com)
+
 * Wed Aug 21 2013 Adam Miller <admiller@redhat.com> 1.13.5-1
 - Merge pull request #1841 from fotioslindiakos/throttler
   (dmcphers+openshiftbot@redhat.com)

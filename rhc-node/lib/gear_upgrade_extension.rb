@@ -2,15 +2,11 @@ module OpenShift
   class GearUpgradeExtension
 
     VERSION_MAP = {
-      'phpmyadmin-3.4'      => '3',
-      'jbosseap-6.0'        => '6',
-      'jenkins-1.4'         => '1',
-      'jenkins-client-1.4'  => '1',
-      'switchyard-0.6'      => '0',
+      'phpmyadmin-3' => '4'
     }
 
     def self.version
-      '2.0.32'
+      '2.0.33'
     end
 
     def initialize(upgrader)
@@ -21,12 +17,6 @@ module OpenShift
     end
 
     def pre_upgrade(progress)
-      path = File.join(@gear_home, '.env', 'user_vars')
-      FileUtils.mkpath(path)
-      FileUtils.chmod(0770, path)
-      @upgrader.container.set_ro_permission(path)
-      progress.log("Created #{path}")
-
       progress.log "Set gear OPENSHIFT_APP_UUID to #{@upgrader.application_uuid}"
       @upgrader.container.add_env_var("APP_UUID", @upgrader.application_uuid, true)
     end
