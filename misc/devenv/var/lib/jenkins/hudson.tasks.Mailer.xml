@@ -2,7 +2,7 @@
 <hudson.tasks.Mailer_-DescriptorImpl>
   <helpRedirect/>
   <hudsonUrl>http://ci.dev.openshift.redhat.com/jenkins/</hudsonUrl>
-  <adminAddress>mhicks@redhat.com</adminAddress>
+  <adminAddress>noreply+openshiftjenkins@redhat.com</adminAddress>
   <smtpHost>localhost</smtpHost>
   <useSsl>false</useSsl>
   <charset>UTF-8</charset>
