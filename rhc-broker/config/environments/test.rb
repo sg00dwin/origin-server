@@ -123,25 +123,6 @@ Broker::Application.configure do
 #    :squash_runtime => true
 #  }
 
-  # mcollective configuration
-  config.msg_broker = {
-    :rpc_options => {
-        :disctimeout => 2,
-        :timeout => 180,
-        :verbose => false,
-        :progress_bar => false,
-        :filter => {"identity" => [], "fact" => [], "agent" => [], "cf_class" => [], "compound" => []},
-        :config => "/etc/mcollective/client.cfg"
-    },
-    :districts => {
-        :enabled => true,
-        :require_for_app_create => false,
-        :max_capacity => 6000, # Only used with district create.  Modify capacity through oo-admin-ctl-district.
-        :first_uid => 1000 # Can not modify after district is created.  Only affects new districts.
-    },
-    :node_profile_enabled => false
-  }
-
   config.downloaded_cartridges = {
     :max_downloaded_carts_per_app => 5,
     :max_download_redirects => 2,
