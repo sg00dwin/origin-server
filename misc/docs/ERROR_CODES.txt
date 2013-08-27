@@ -108,5 +108,6 @@ Uncommon server errors:
 143: Node execution failure.  If the problem persists please contact Red Hat support.
 144: Error communicating with user validation system.  If the problem persists please contact Red Hat support.
 145: Error communicating with DNS system.  If the problem persists please contact Red Hat support.
+146: Gear Creation Exception.
 
 0 is success
