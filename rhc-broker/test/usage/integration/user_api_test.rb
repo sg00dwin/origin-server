@@ -14,6 +14,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     @headers["HTTP_AUTHORIZATION"] = "Basic " + Base64.encode64("#{@login}:password")
     @headers["HTTP_ACCEPT"] = "application/json"
     https!
+    stubber
   end
 
   def teardown
