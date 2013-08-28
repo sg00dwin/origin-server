@@ -23,6 +23,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     @districts_enabled = Rails.configuration.msg_broker[:districts][:enabled] 
     Rails.configuration.msg_broker[:districts][:enabled] = false
     @billing_api = OpenShift::BillingService.instance
+    stubber
   end
   
   def teardown
