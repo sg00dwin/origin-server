@@ -37,6 +37,7 @@
       "allow_multiple": true,
       "branches": { "*": {"jenkins_job_name": "test_pull_requests_generic",
                           "build_token": "libra1",
+                          "extended_tests_param": "EXTENDED_TESTS",
                           "addtl_jenkins_params": {"hosted": {"DEV_TOOLS_EXT_REPO": "li",
                                                               "DEV_TOOLS_REPO": "origin-dev-tools",
                                                               "RHC_REPO": "rhc",
@@ -50,7 +51,8 @@
                              },
                     "master": {"jenkins_job_name": "test_pull_requests",
                                "downstream_job_name": "libra_ami",
-                               "build_token": "libra1"} },
+                               "build_token": "libra1",
+                               "extended_tests_param": "EXTENDED_TESTS"} },
       "repo_to_teams": {
         "li": ["168397", "175254", "202863"],
         "origin-server": ["168397", "175254"],
