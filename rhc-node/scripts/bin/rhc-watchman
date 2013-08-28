@@ -80,15 +80,15 @@ class Watchman
       app_env = {}
       total_count = 0
       Dir[@var_lib + '/*'].each {|app_path|
-        app_uuid = File.basename(app_path)
-        if app_uuid =~ /^[a-f0-9]{24,32}$/
+        gear_uuid = File.basename(app_path)
+        if gear_uuid =~ /^[a-f0-9]{24,32}$/
           begin
             # reduce load on node by skipping non-running apps
-            app_env[app_uuid] = read_env(app_path) if is_running? app_uuid
+            app_env[gear_uuid] = read_env(app_path) if is_running? gear_uuid
           rescue Errno::ENOENT
             # If state file is missing process application...
             # we don't have sufficient information to look for stop_lock
-            app_env[app_uuid] = read_env(app_path)
+            app_env[gear_uuid] = read_env(app_path)
           end
           total_count += 1
         end
@@ -96,7 +96,7 @@ class Watchman
       next if app_env.empty?
       period = @period_seconds * 3 if (total_count / app_env.length) > 2
       Syslog.info("Running rhc-watchman => delay: #{period}s, exception threshold: #{retries}")
-	
+
       # Read current message_file and troll for killed applications
       # todo dump incidents if message_file has rolled?
       File.open(@message_file).grep(/ killed as a result of limit of /).each {|msg|
@@ -107,9 +107,9 @@ class Watchman
         uuid = msg.scan(/[a-f0-9]{24,32}/).first
 
         # Skip any messages that occurred before we were started.
-        # Assume those have been dealt with manually or on a previous run. 
+        # Assume those have been dealt with manually or on a previous run.
         # We don't want to restart any application that may already be running.
-        next if epoch > timestamp 
+        next if epoch > timestamp
 
         cache_incident(uuid, timestamp, app_env)
       }

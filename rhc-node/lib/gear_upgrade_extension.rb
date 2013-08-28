@@ -9,13 +9,16 @@ module OpenShift
       '2.0.33'
     end
 
-    def initialize(uuid, gear_home, container)
-      @uuid      = uuid
-      @gear_home = gear_home
-      @container = container
+    def initialize(upgrader)
+      @upgrader = upgrader
+      @uuid = upgrader.uuid
+      @gear_home = upgrader.gear_home
+      @container = upgrader.container
     end
 
     def pre_upgrade(progress)
+      progress.log "Set gear OPENSHIFT_APP_UUID to #{@upgrader.application_uuid}"
+      @upgrader.container.add_env_var("APP_UUID", @upgrader.application_uuid, true)
     end
 
     def map_ident(progress, ident)

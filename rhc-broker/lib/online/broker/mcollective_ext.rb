@@ -3,27 +3,13 @@ require File.expand_path('./nurture', File.dirname(__FILE__))
 module OpenShift
   class MCollectiveApplicationContainerProxy < OpenShift::ApplicationContainerProxy
     alias :run_cartridge_command_old :run_cartridge_command
-    alias :destroy_old :destroy
 
     def run_cartridge_command(framework, gear, command, arg=nil, allow_move=true)
       if allow_move
         app = gear.app
-        Online::Broker::Nurture.application(app.domain.owner.login, app.domain.owner._id, app.name, app.domain.namespace, framework, command, app.uuid, app.user_agent, app.init_git_url)
+        Online::Broker::Nurture.application(app.domain.owner.login, app.domain.owner._id, app.name, app.domain.namespace, framework, command, app._id.to_s, app.user_agent, app.init_git_url)
       end
       run_cartridge_command_old(framework, gear, command, arg, allow_move)
-    end
-
-    def destroy(gear, keep_uid=false, uid=nil, skip_hooks=false)
-      unless skip_hooks
-        app = gear.app
-        web_framework_carts = CartridgeCache.cartridge_names("web_framework")
-        framework = app.component_instances.select{ |cinst| web_framework_carts.include?(cinst.cartridge_name)}.first
-        framework = framework.cartridge_name if framework
-        if app.uuid==gear.uuid
-          Online::Broker::Nurture.application(app.domain.owner.login, app.domain.owner._id, app.name, app.domain.namespace, framework, "deconfigure", app.uuid, app.user_agent, app.init_git_url)
-        end
-      end
-      destroy_old(gear, keep_uid, uid, skip_hooks)
     end
 
     class << self
