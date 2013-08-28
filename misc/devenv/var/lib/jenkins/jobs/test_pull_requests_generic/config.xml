@@ -2,7 +2,7 @@
 <project>
   <actions/>
   <description>Test a pull request for a given branch</description>
-  <logRotator>
+  <logRotator class="hudson.tasks.LogRotator">
     <daysToKeep>10</daysToKeep>
     <numToKeep>50</numToKeep>
     <artifactDaysToKeep>-1</artifactDaysToKeep>
@@ -67,6 +67,11 @@
           <description></description>
           <defaultValue>true</defaultValue>
         </hudson.model.BooleanParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>EXTENDED_TESTS</name>
+          <description></description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -137,14 +142,41 @@ echo &quot;
 set -x
 
 pushd $DEV_TOOLS_EXT_REPO
-  build/devenv build test_pull_requests_generic ${BUILD_NUMBER} --terminate --install_from_local_source --yum_repo=$YUM_REPO --branch=$BRANCH
-popd</command>
+  opts=&quot;&quot;
+  if [ -z &quot;$EXTENDED_TESTS&quot; ]
+  then
+    opts=$opts&quot; --terminate&quot;
+  fi
+
+  set +e
+    build/devenv build test_pull_requests_generic ${BUILD_NUMBER} --install_from_local_source --yum_repo=$YUM_REPO --branch=$BRANCH $opts
+    RESULT=$?
+  set -e
+
+  if [ -n &quot;$EXTENDED_TESTS&quot; ]
+  then
+    if [ $RESULT -eq 0 ]
+    then
+      build/devenv test test_pull_requests_generic_${BUILD_NUMBER} --include_extended=&quot;$EXTENDED_TESTS&quot; --terminate
+    else
+      build/devenv terminate test_pull_requests_generic_${BUILD_NUMBER} --download_artifacts
+      exit $RESULT
+    fi
+  else
+    exit $RESULT
+  fi
+popd
+
+
+
+</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
       <artifacts>*/rhc/log/**</artifacts>
       <latestOnly>false</latestOnly>
+      <allowEmptyArchive>false</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.junit.JUnitResultArchiver>
       <testResults>*/rhc/log/**/*.xml</testResults>

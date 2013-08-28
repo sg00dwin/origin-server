@@ -2,7 +2,7 @@
 <project>
   <actions/>
   <description></description>
-  <logRotator>
+  <logRotator class="hudson.tasks.LogRotator">
     <daysToKeep>10</daysToKeep>
     <numToKeep>100</numToKeep>
     <artifactDaysToKeep>-1</artifactDaysToKeep>
@@ -96,11 +96,16 @@ pushd li
     RESULT=$?
   set -e
 
-  if [ $RESULT -eq 0 ] &amp;&amp; [ -n &quot;$EXTENDED_TESTS&quot; ]
+  if [ -n &quot;$EXTENDED_TESTS&quot; ]
   then
-    build/devenv test devenv-test_${BUILD_NUMBER} --include_extended=&quot;$EXTENDED_TESTS&quot; --terminate
+    if [ $RESULT -eq 0 ]
+    then
+      build/devenv test devenv-test_${BUILD_NUMBER} --include_extended=&quot;$EXTENDED_TESTS&quot; --terminate
+    else
+      build/devenv terminate devenv-test_${BUILD_NUMBER} --download_artifacts
+      exit $RESULT
+    fi
   else
-    build/devenv terminate devenv-test_${BUILD_NUMBER} --download_artifacts
     exit $RESULT
   fi
 
@@ -111,13 +116,14 @@ popd</command>
     <hudson.tasks.ArtifactArchiver>
       <artifacts>li/rhc/log/**</artifacts>
       <latestOnly>false</latestOnly>
+      <allowEmptyArchive>false</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.junit.JUnitResultArchiver>
       <testResults>li/rhc/log/**/*.xml</testResults>
       <keepLongStdio>false</keepLongStdio>
       <testDataPublishers/>
     </hudson.tasks.junit.JUnitResultArchiver>
-    <hudson.tasks.Mailer>
+    <hudson.tasks.Mailer plugin="mailer@1.4">
       <recipients>libra-devel@redhat.com</recipients>
       <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
