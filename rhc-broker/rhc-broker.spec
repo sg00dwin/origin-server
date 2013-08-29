@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.14.0
+Version: 1.14.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -155,6 +155,30 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Thu Aug 29 2013 Adam Miller <admiller@redhat.com> 1.14.1-1
+- Added mcollective stub to speed up test cases (rpenta@redhat.com)
+- Merge remote-tracking branch 'origin/master' into propagate_app_id_to_gears
+  (ccoleman@redhat.com)
+- Merge pull request #1861 from danmcp/master
+  (dmcphers+openshiftbot@redhat.com)
+- Merge remote-tracking branch 'origin/master' into propagate_app_id_to_gears
+  (ccoleman@redhat.com)
+- nurture -> analytics (dmcphers@redhat.com)
+- Node fact calls should timeout much faster than the overall mco timeout
+  (jforrest@redhat.com)
+- nurture -> analytics (dmcphers@redhat.com)
+- Set mongoid logging to warn (dmcphers@redhat.com)
+- Handle invalid gear id on analytics post (dmcphers@redhat.com)
+- Syncing jenkins jobs (dmcphers@redhat.com)
+- phpmyadmin-3 -> phpmyadmin-4 migration (dmcphers@redhat.com)
+- Change node to use app._id (ccoleman@redhat.com)
+- Merge pull request #1797 from pravisankar/dev/ravi/optimize-del-subaccounts-
+  script (dmcphers+openshiftbot@redhat.com)
+- bump_minor_versions for sprint 33 (admiller@redhat.com)
+- Script to delete all subaccounts that has no activity for at least a week and
+  has no applications for a given parent login or for all parent logins.
+  (rpenta@redhat.com)
+
 * Tue Aug 20 2013 Adam Miller <admiller@redhat.com> 1.13.8-1
 - Merge pull request #1839 from rajatchopra/master (dmcphers@redhat.com)
 - add postrelease mode for datastore migration (rchopra@redhat.com)
