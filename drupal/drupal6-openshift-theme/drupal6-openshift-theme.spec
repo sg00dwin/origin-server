@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.21.1
+Version: 3.21.2
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Aug 29 2013 Adam Miller <admiller@redhat.com> 3.21.2-1
+- Bug 1000498: Force youtube videos to embed https (jliggitt@redhat.com)
+- Include permalink on individual comments (sgoodwin@redhat.com)
+
 * Thu Aug 08 2013 Adam Miller <admiller@redhat.com> 3.21.1-1
 - Bug 990431 - community XSS vulnerability in page header (jforrest@redhat.com)
 - bump_minor_versions for sprint 32 (admiller@redhat.com)
