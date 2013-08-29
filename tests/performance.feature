@@ -20,8 +20,8 @@ Feature: Application Performance Tests
   Scenario Outline: Add and Remove Embedded Cartridegs
     Given an existing <type> application without an embedded cartridge
     When the embedded mysql-5.1 cartridge is added
-    And the embedded phpmyadmin-3 cartridge is added
-    When the embedded phpmyadmin-3 cartridge is removed
+    And the embedded phpmyadmin-4 cartridge is added
+    When the embedded phpmyadmin-4 cartridge is removed
     And the embedded mysql-5.1 cartridge is removed
     When the embedded mongodb-2.2 cartridge is added
     And the embedded rockmongo-1.1 cartridge is added

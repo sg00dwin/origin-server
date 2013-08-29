@@ -46,7 +46,7 @@ Feature: Create applications for migration testing
     And an accepted node
     When 1 <type> applications are created
     And the embedded mysql-5.1 cartridge is added
-    And the embedded phpmyadmin-3 cartridge is added
+    And the embedded phpmyadmin-4 cartridge is added
     And the embedded cron-1.4 cartridge is added
     And the embedded metrics-0.1 cartridge is added
 
@@ -121,7 +121,7 @@ Feature: Create applications for migration testing
     And an accepted node
     When a scaled <type> applications are created
     And the embedded mysql-5.1 cartridge is added
-    And the embedded phpmyadmin-3 cartridge is added
+    And the embedded phpmyadmin-4 cartridge is added
     And the embedded cron-1.4 cartridge is added
     And the embedded metrics-0.1 cartridge is added
 
