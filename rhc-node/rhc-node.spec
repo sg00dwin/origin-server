@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.14.0
+Version: 1.14.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -227,6 +227,14 @@ fi
 
 
 %changelog
+* Thu Aug 29 2013 Adam Miller <admiller@redhat.com> 1.14.1-1
+- Update from phpmyadmin-3.x to phpmyadmin-4 (mfojtik@redhat.com)
+- Merge remote-tracking branch 'origin/master' into propagate_app_id_to_gears
+  (ccoleman@redhat.com)
+- phpmyadmin-3 -> phpmyadmin-4 migration (dmcphers@redhat.com)
+- Change node to use app._id (ccoleman@redhat.com)
+- bump_minor_versions for sprint 33 (admiller@redhat.com)
+
 * Wed Aug 21 2013 Adam Miller <admiller@redhat.com> 1.13.6-1
 - Merge pull request #1846 from dobbymoodge/BZ998455_BZ998468
   (dmcphers+openshiftbot@redhat.com)
