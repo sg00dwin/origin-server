@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.13.0
+Version: 1.13.1
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -808,6 +808,20 @@ chown root:root /usr/lib/node_modules/express/bin/express
 /etc/openshift/development
 
 %changelog
+* Thu Aug 29 2013 Adam Miller <admiller@redhat.com> 1.13.1-1
+- syncing jenkins jobs (dmcphers@redhat.com)
+- add extended tests to bot (dmcphers@redhat.com)
+- syncing jenkins config (dmcphers@redhat.com)
+- Security Changed umask for libra user to 077 from 002 for BZ990441
+  (tkramer@redhat.com)
+- Fix broker extended (dmcphers@redhat.com)
+- syncing jenkins config (dmcphers@redhat.com)
+- Syncing jenkins jobs (dmcphers@redhat.com)
+- Syncing jenkins jobs (dmcphers@redhat.com)
+- Syncing jenkins jobs (dmcphers@redhat.com)
+- syncing jenkins jobs (dmcphers@redhat.com)
+- bump_minor_versions for sprint 33 (admiller@redhat.com)
+
 * Wed Aug 21 2013 Adam Miller <admiller@redhat.com> 1.12.4-1
 - Merge pull request #1840 from jwhonce/wip/user_vars
   (dmcphers+openshiftbot@redhat.com)
