@@ -386,7 +386,7 @@ def app_descriptions
       embedded: %w(postgresql-8.4),
       scalable: true },
     { type: 'php-5.3',
-      embedded: %w(mysql-5.1 phpmyadmin-3) }
+      embedded: %w(mysql-5.1 phpmyadmin-4) }
   ]
 end
 

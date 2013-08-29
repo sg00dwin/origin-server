@@ -133,7 +133,7 @@ module OpenShiftMigration
        self.health_file("jenkins-1")]
     end
 
-    def self.proxy_phpmyadmin_3(gear_home)
+    def self.proxy_phpmyadmin_4(gear_home)
       ip = Util.get_env_var_value(gear_home, "OPENSHIFT_PHPMYADMIN_IP")
       [["/phpmyadmin", "#{ip}:8080/phpmyadmin", {}]]
     end
