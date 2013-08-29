@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.14.0
+Version: 1.14.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -198,6 +198,16 @@ fi
 %{sitedir}/public
 
 %changelog
+* Thu Aug 29 2013 Adam Miller <admiller@redhat.com> 1.14.1-1
+- Update from phpmyadmin-3.x to phpmyadmin-4 (mfojtik@redhat.com)
+- Syncing jenkins jobs (dmcphers@redhat.com)
+- Merge pull request #1848 from
+  smarterclayton/bug_985258_duplicate_error_message
+  (dmcphers+openshiftbot@redhat.com)
+- bump_minor_versions for sprint 33 (admiller@redhat.com)
+- Bug 985258 - Duplicate error message in reset password form
+  (ccoleman@redhat.com)
+
 * Wed Aug 21 2013 Adam Miller <admiller@redhat.com> 1.13.5-1
 - Bug 998982 - improve msg exposed in rhc when user hasnt accepted terms
   (jforrest@redhat.com)
