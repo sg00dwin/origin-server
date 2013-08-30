@@ -1098,7 +1098,7 @@ Features:
     assert_equal Date.today, bill.usage_bill_from
     assert_equal Date.today, bill.usage_bill_thru
     assert_equal Date.today + 1.day, bill.recurring_bill_from
-    assert_equal Date.today + 1.month, bill.recurring_bill_thru
+    assert (bill.recurring_bill_thru - (Date.today + 1.month)).abs <= 1.day
   end
 
   def test_user_should_have_bill_with_nil_day_when_outside_billing_period

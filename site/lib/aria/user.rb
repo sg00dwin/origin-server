@@ -169,8 +169,13 @@ module Aria
             usage_bill_from = current_start
             usage_bill_thru = current_end
 
-            recurring_bill_from = (current_end + 1.day) if current_end
-            recurring_bill_thru = (recurring_bill_from + 1.month - 1.day) if recurring_bill_from
+            recurring_bill_from, recurring_bill_thru =
+              if current_end
+                starts = (current_end + 1.day)
+                ends = (starts + 1.month)
+                ends -= 1.day if starts.day <= ends.day
+                [starts, ends]
+              end
 
             today = Aria::DateTime.today
             day = ((today - usage_bill_from).to_i + 1) if today <= usage_bill_thru
