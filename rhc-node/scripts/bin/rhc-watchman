@@ -151,9 +151,12 @@ class Watchman
 
     File.open(server_log).grep(/ java.lang.OutOfMemoryError/) {|msg|
       # timezones are just a PITA. server.log message doesn't include timezone or date so inject both from today
-      ts = DateTime.strptime(msg, '%Y/%m/%d %T')
+      #
+      # Set the timestamp for messages with invalid timestamps to the 'epoch',
+      # which will prevent to retry the parsing and exceptions in the log (BZ#999183)
+      ts = DateTime.strptime(msg, '%Y/%m/%d %T') rescue epoch
       timestamp = DateTime.civil(ts.year, ts.month, ts.day, ts.hour, ts.min, ts.sec, epoch.zone)
-      next if epoch > timestamp 
+      next if epoch > timestamp
 
       cache_incident(uuid, timestamp, app_env)
     }
