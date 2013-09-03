@@ -311,6 +311,24 @@ sed -i 's|^CustomLog.*$|CustomLog /var/log/openshift/site/httpd/access_log combi
 /bin/cp -rf %{devenvdir}/httpd.conf %{brokerdir}/httpd/
 sed -i 's|^ErrorLog.*$|ErrorLog /var/log/openshift/broker/httpd/error_log|' %{brokerdir}/httpd/httpd.conf
 sed -i 's|^CustomLog.*$|CustomLog /var/log/openshift/broker/httpd/access_log combined|' %{brokerdir}/httpd/httpd.conf
+
+# There's no decent way to force the new 100% SCL ruby193-mcollective* packages
+# to hit the yum repos at the same time as the changes to li, origin-server and
+# origin-dev-tools.  This is a temporary workaroud to to allow the new
+# ruby193-mcollective-common to work with the current mco client on devenvs.
+#
+# This is needed because the second the new package
+# (ruby193-mcollective-common-2.2.1-7.el6.noarch.rpm) is available in the
+# devenv yum repositories it will be installed instead of the current version
+# (2.2.1-1).  Without this workaround commands like 'mco ping' would fail
+# because the new ruby193-mcollective-common would cause it to start looking
+# for client.cfg under the SCL root.  I will remove this once the new packages
+# are available and the subsequent PRs have been merged.
+mkdir -p /opt/rh/ruby193/root/etc/sysconfig/etc/mcollective
+/bin/cp -f %{devenvdir}/client.cfg %{devenvdir}/server.cfg /opt/rh/ruby193/root/etc/sysconfig/etc/mcollective
+semanage fcontext -a -e / /opt/rh/ruby193/root
+restorecon -R /opt/rh/ruby193/root >/dev/null 2>&1
+
 /bin/cp -f %{devenvdir}/client.cfg %{devenvdir}/server.cfg /etc/mcollective
 /bin/cp -f %{devenvdir}/activemq.xml /etc/activemq
 ln -s %{sitedir}/public/* %{htmldir}
