@@ -324,8 +324,8 @@ sed -i 's|^CustomLog.*$|CustomLog /var/log/openshift/broker/httpd/access_log com
 # because the new ruby193-mcollective-common would cause it to start looking
 # for client.cfg under the SCL root.  I will remove this once the new packages
 # are available and the subsequent PRs have been merged.
-mkdir -p /opt/rh/ruby193/root/etc/sysconfig/etc/mcollective
-/bin/cp -f %{devenvdir}/client.cfg %{devenvdir}/server.cfg /opt/rh/ruby193/root/etc/sysconfig/etc/mcollective
+mkdir -p /opt/rh/ruby193/root/etc/mcollective
+/bin/cp -f %{devenvdir}/client.cfg %{devenvdir}/server.cfg /opt/rh/ruby193/root/etc/mcollective
 semanage fcontext -a -e / /opt/rh/ruby193/root
 restorecon -R /opt/rh/ruby193/root >/dev/null 2>&1
 
