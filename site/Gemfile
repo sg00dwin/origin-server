@@ -20,6 +20,8 @@ gem 'valvat'
 
 gem 'pry' if ENV['PRY']
 
+gem 'newrelic_rpm', :require => false if File.exists? '/etc/openshift/newrelic.yml'
+
 # Do not include these gems while testing or compiling assets
 if ENV['BETTER_ERRORS']
   group :development do
