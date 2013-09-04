@@ -26,15 +26,6 @@ Broker::Application.configure do
   # with SQLite, MySQL, and PostgreSQL)
   #config.active_record.auto_explain_threshold_in_seconds = 0.5
 
-  # Disable assets
-  #config.assets.enabled = false
-
-  # Disable Rails's static asset server (Apache or nginx will already do this)
-  #config.serve_static_assets = false
-
-  # Do not compress assets
-  #config.assets.compress = false
-
   # Set the log level
   config.log_level = :debug
 
