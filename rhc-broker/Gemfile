@@ -34,3 +34,5 @@ gem 'openshift-origin-auth-streamline'
 
 gem 'openshift-origin-msg-broker-mcollective', :require => "openshift-origin-msg-broker-mcollective"
 gem 'openshift-origin-admin-console' if File.exists? '/etc/openshift/plugins.d/openshift-origin-admin-console.conf'
+
+gem 'newrelic_rpm', :require => false if File.exists? '/etc/openshift/newrelic.yml'
