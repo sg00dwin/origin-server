@@ -8,4 +8,5 @@ debuginfo = True
 tag = rhscl-1.0-rhel-6-candidate
 inherit = True
 strict_keys = false
+keys = B906BA72, F21541EB
 arches = x86_64
