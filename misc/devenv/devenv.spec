@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.13.1
+Version: 1.13.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -826,6 +826,14 @@ chown root:root /usr/lib/node_modules/express/bin/express
 /etc/openshift/development
 
 %changelog
+* Thu Sep 05 2013 Adam Miller <admiller@redhat.com> 1.13.2-1
+- Fixing copy/paste error in rhc-devenv (bleanhar@redhat.com)
+- Preflighting part of the ruby193-mcollective work (bleanhar@redhat.com)
+- Merge pull request #1857 from detiber/bz1000174
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 1000174 - Update node.conf.libra for GEAR_MIN_UID and GEAR_MAX_UID
+  (jdetiber@redhat.com)
+
 * Thu Aug 29 2013 Adam Miller <admiller@redhat.com> 1.13.1-1
 - syncing jenkins jobs (dmcphers@redhat.com)
 - add extended tests to bot (dmcphers@redhat.com)
