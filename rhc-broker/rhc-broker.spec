@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.14.1
+Version: 1.14.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -155,6 +155,10 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Thu Sep 05 2013 Adam Miller <admiller@redhat.com> 1.14.2-1
+- Add moped new relic instrumentation (jforrest@redhat.com)
+- Conditionally monitor site and broker with New Relic (jforrest@redhat.com)
+
 * Thu Aug 29 2013 Adam Miller <admiller@redhat.com> 1.14.1-1
 - Added mcollective stub to speed up test cases (rpenta@redhat.com)
 - Merge remote-tracking branch 'origin/master' into propagate_app_id_to_gears
