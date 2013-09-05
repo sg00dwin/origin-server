@@ -2,6 +2,7 @@ begin
   if File.exists?('/etc/openshift/newrelic.yml') && ENV["ENABLE_NR_MONITORING"]
     ENV["NRCONFIG"] = "/etc/openshift/newrelic.yml"
     require 'newrelic_rpm'
+    require 'newrelic_moped'
     new_relic_conf = YAML.load_file(ENV["NRCONFIG"])
     args = {}
     args[:app_name] = 'broker-' + new_relic_conf["common"]["app_name"]
