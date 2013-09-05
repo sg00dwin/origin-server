@@ -435,7 +435,9 @@ module Aria
       end
 
       def self.tax_exemption_level(taxpayer_id)
-        if (taxpayer_id || "").strip.present?
+        if taxpayer_id == '~'
+          Rails.configuration.tax_level_non_exempt
+        elsif (taxpayer_id || "").strip.present?
           Rails.configuration.tax_level_fully_exempt
         else
           Rails.configuration.tax_level_non_exempt

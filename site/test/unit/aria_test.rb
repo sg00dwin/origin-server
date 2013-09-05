@@ -320,7 +320,7 @@ class AriaUnitTest < ActiveSupport::TestCase
     },
     :update => {
       nil           => {},
-      ""            => {'taxpayer_id' => ' ',          'tax_exemption_level' => Rails.configuration.tax_level_non_exempt},
+      ""            => {'taxpayer_id' => '~',          'tax_exemption_level' => Rails.configuration.tax_level_non_exempt},
       " "           => {'taxpayer_id' => ' ',          'tax_exemption_level' => Rails.configuration.tax_level_non_exempt},
       "IE6388047V"  => {'taxpayer_id' => 'IE6388047V', 'tax_exemption_level' => Rails.configuration.tax_level_fully_exempt}
     }
