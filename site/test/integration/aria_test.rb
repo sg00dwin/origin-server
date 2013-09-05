@@ -95,7 +95,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     info.zip = 54321.to_s
     info.region = 'Loraine'
     info.middle_initial = info.address2 = "" # Unset some fields using an empty string
-    expected_attributes = Hash[info.attributes.map {|(k,v)| [k, v == "" ? nil : v] }].merge({'taxpayer_id' => nil})
+    expected_attributes = Hash[info.attributes.map {|(k,v)| [k, v.presence] }].merge({'taxpayer_id' => nil})
     info.address3 = nil # Set some fields to nil, meaning "preserve existing value"
     assert user.update_account(:billing_info => info), user.errors.inspect
     # Ensure all unset fields go to nil in Aria
@@ -124,7 +124,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
 
     # update to non-exempt
     info.taxpayer_id = ""
-    expected_attributes = info.attributes
+    expected_attributes = info.attributes.merge({'taxpayer_id' => nil})
     assert user_eur.update_account(:billing_info => info), user_eur.errors.inspect
     assert_equal expected_attributes, user_eur.billing_info.attributes
     assert_equal false, user_eur.tax_exempt?

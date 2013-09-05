@@ -36,7 +36,7 @@ module Aria
     # Rails 3.0 requires all define_attribute_method calls to be together
 
     # Aria makes us explicitly unset values on update
-    @@nullable = [:bill_middle_initial, :bill_address2, :bill_address3]
+    @@nullable = [:bill_middle_initial, :bill_address2, :bill_address3, :taxpayer_id]
 
     @@region_save_map = Hash.new(['bill_locality','bill_state_prov']).merge({
       'US' => ['bill_state_prov','bill_locality'],
@@ -113,10 +113,6 @@ module Aria
 
         # Explicitly nil empty string fields within Aria
         @@nullable.each {|n| hash[n.to_s] = "~" if hash[n.to_s] == "" }
-
-        # Special case for blanking taxpayer_id
-        # Add to @@nullable once Aria ticket 15013-40073 is fixed
-        hash['taxpayer_id'] = " " if hash['taxpayer_id'] == ""
       end
 
       def rename_to_load(hash)
