@@ -30,6 +30,7 @@ $conf['redhat_sso_skip_password'] = true;
  */
 $streamline_host = 'https://streamline-proxy1.ops.rhcloud.com';
 
+$conf['redhat_tracking'] = false;
 $conf['redhat_sso_login_url'] = $streamline_host . '/wapps/streamline/login.html';
 $conf['redhat_user_info_url'] = $streamline_host . '/wapps/streamline/userInfo.html';
 $conf['redhat_user_info_secret_key'] = 'sw33tl1Qu0r';
