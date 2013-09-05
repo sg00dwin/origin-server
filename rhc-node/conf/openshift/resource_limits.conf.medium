@@ -80,6 +80,7 @@ memory_limit_in_bytes=1073741824        # 1G
 memory_memsw_limit_in_bytes=1178599424  # 1G + 100M (100M swap)
 # memory_soft_limit_in_bytes=-1
 # memory_swappiness=60
+memory_move_charge_at_immigrate=1
 
 #
 # Cgroup templates

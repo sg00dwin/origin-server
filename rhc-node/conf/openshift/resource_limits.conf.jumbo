@@ -80,6 +80,7 @@ memory_limit_in_bytes=8589934592        # 8GB
 memory_memsw_limit_in_bytes=8694792192  # 8G + 100M (100M swap)
 # memory_soft_limit_in_bytes=-1
 # memory_swappiness=60
+memory_move_charge_at_immigrate=1
 
 #
 # Cgroup templates
