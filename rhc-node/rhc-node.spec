@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.14.1
+Version: 1.14.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -227,6 +227,12 @@ fi
 
 
 %changelog
+* Thu Sep 05 2013 Adam Miller <admiller@redhat.com> 1.14.2-1
+- Merge pull request #1843 from mfojtik/invalid_date
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 999183 - Make rhc-watchman ignore messages with invalid timestamp
+  (mfojtik@redhat.com)
+
 * Thu Aug 29 2013 Adam Miller <admiller@redhat.com> 1.14.1-1
 - Update from phpmyadmin-3.x to phpmyadmin-4 (mfojtik@redhat.com)
 - Merge remote-tracking branch 'origin/master' into propagate_app_id_to_gears
