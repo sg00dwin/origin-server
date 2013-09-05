@@ -407,12 +407,10 @@ module OpenShift
           Rails.logger.error "update_master_plan() failed for acct:#{acct_no}, plan:#{plan_name}: #{result.data.inspect}"
           raise OpenShift::AriaException.new "ERROR: Plan change failed: #{msg} (Error ##{code})"
         end
-        if is_upgrade
-          cancel_queued_service_plan(acct_no)
-        end
       rescue OpenShift::AriaErrorCodeException => e
         raise if e.error_code.to_s != "1034"
       end
+      cancel_queued_service_plan(acct_no) if is_upgrade
       return true
     end
  
