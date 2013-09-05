@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.14.1
+Version: 1.14.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -198,6 +198,12 @@ fi
 %{sitedir}/public
 
 %changelog
+* Thu Sep 05 2013 Adam Miller <admiller@redhat.com> 1.14.2-1
+- Conditionally monitor site and broker with New Relic (jforrest@redhat.com)
+- Merge branch 'date_alignment_for_months_failing_test' (ccoleman@redhat.com)
+- AriaUnitTest fails due to transition from 31->30 day months
+  (ccoleman@redhat.com)
+
 * Thu Aug 29 2013 Adam Miller <admiller@redhat.com> 1.14.1-1
 - Update from phpmyadmin-3.x to phpmyadmin-4 (mfojtik@redhat.com)
 - Syncing jenkins jobs (dmcphers@redhat.com)
