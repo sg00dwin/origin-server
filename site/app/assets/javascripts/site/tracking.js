@@ -253,3 +253,16 @@ try {
 		})();
 	}
 } catch(err){}
+
+// Pingdom - Real User Monitoring
+try {
+	var _prum = [['id', window.location.hostname.match('openshift.com') ? '520508caabe53dc245000000' : '520a8643abe53d247c000000'],
+	             ['mark', 'firstbyte', (new Date()).getTime()]];
+	(function() {
+	    var s = document.getElementsByTagName('script')[0]
+	      , p = document.createElement('script');
+	    p.async = 'async';
+	    p.src = '//rum-static.pingdom.net/prum.min.js';
+	    s.parentNode.insertBefore(p, s);
+	})();
+} catch(err){}
