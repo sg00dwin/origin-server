@@ -378,6 +378,8 @@ fi
 # The JBoss websocket port should be available
 semanage port -a -t http_cache_port_t -p tcp 8676 &>/dev/null || :
 
+# Add PKI_CA port
+semanage port -a -t pki_ca_port_t -p tcp 829
 
 # Add policy for developement environment
 cd %{policydir} ; make -f ../devel/Makefile
