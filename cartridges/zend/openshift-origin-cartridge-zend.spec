@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/zend
 
 Name:    openshift-origin-cartridge-zend
-Version: 0.6.1
+Version: 0.6.2
 Release: 1%{?dist}
 Summary: Zend Server cartridge
 Group:   Development/Languages
@@ -63,6 +63,9 @@ sh %{cartridgedir}/versions/5.6/rpm/zend_configure_filesystem.sh
 
 
 %changelog
+* Fri Sep 06 2013 Adam Miller <admiller@redhat.com> 0.6.2-1
+- Fix bug 1004899: remove legacy subscribes from manifests (pmorie@gmail.com)
+
 * Thu Aug 08 2013 Adam Miller <admiller@redhat.com> 0.6.1-1
 - Merge pull request #1793 from jwhonce/bug/985514
   (dmcphers+openshiftbot@redhat.com)
