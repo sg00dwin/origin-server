@@ -167,14 +167,14 @@ function openshift_social_sharing($url, $title = NULL) {
 }
 
 function openshift_wrap_region($s) {
-  $is_row = strpos($s, "<!--row-fluid-->"); 
-  if ($is_row) { 
-    print "<div class=\"row-fluid\">"; 
-  } 
-  print $s; 
-  if ($is_row) { 
-    print "</div>"; 
-  } 
+  $is_row = strpos($s, "<!--row-fluid-->");
+  if ($is_row) {
+    print "<div class=\"row-fluid\">";
+  }
+  print $s;
+  if ($is_row) {
+    print "</div>";
+  }
 }
 
 function openshift_pager($tags = array(), $limit = 10, $element = 0, $parameters = array(), $quantity = 9) {
@@ -228,7 +228,7 @@ function openshift_pager($tags = array(), $limit = 10, $element = 0, $parameters
     if ($i != $pager_max) {
       if ($i > 1) {
         $items[] = array(
-          'class' => 'disabled', 
+          'class' => 'disabled',
           'data' => '<a>...</a>',
         );
       }
@@ -241,7 +241,7 @@ function openshift_pager($tags = array(), $limit = 10, $element = 0, $parameters
         }
         if ($i == $pager_current) {
           $items[] = array(
-            'class' => 'active', 
+            'class' => 'active',
             'data' => theme('pager_link', $i, $limit, $element, $i, $parameters),
           );
         }
@@ -253,7 +253,7 @@ function openshift_pager($tags = array(), $limit = 10, $element = 0, $parameters
       }
       if ($i < $pager_max) {
         $items[] = array(
-          'class' => 'disabled', 
+          'class' => 'disabled',
           'data' => '<a>...</a>',
         );
       }
@@ -461,7 +461,7 @@ function openshift_form_element($element, $value) {
   if (!empty($element['#additional'])) {
     $output .= $element['#additional'];
   }
-  
+
   $output .= "</div>";
 
   $output .= "</div>\n";
@@ -479,7 +479,7 @@ function openshift_assets_url() {
     $asset_version = variable_get('openshift_assets_version', '');
     if (empty($asset_version)) {
       $url = openshift_server_url() . '/app/assets';
-    } 
+    }
     else {
       $url = openshift_server_url() . '/app/assets-' . $asset_version;
     }
@@ -677,14 +677,14 @@ function openshift_filter_tips($tips, $long = FALSE, $extra = '') {
 // }
 
 function openshift_links($links, $attributes = array('class' => 'links')) {
-  
+
   // Begin Override
   // Remove the statistics counter on every node.
   if ($links['statistics_counter']) {
   	unset($links['statistics_counter']);
   }
   // End Override
-	
+
   global $language;
   $output = '';
 
@@ -778,10 +778,10 @@ function openshift_preprocess_views_view(&$vars) {
   #if ($vars['view']->name === 'knowledge_base') {
   #  drupal_add_js(drupal_get_path('theme', 'redhat') .'/js/redhat.js', 'theme');
   #}
-  
+
   // We are displaying a thread list from a group.
   if ($vars['view']->name === 'og_ghp_thread_list') {
-    
+
  	// Pass forum information to the view.
     $path = arg(0) .'/'. arg(1);
     switch ($path) {
@@ -879,7 +879,7 @@ function openshift_primary_link_megamenu($link, $visibleChildren) {
   else if(!empty($visibleChildren)){
     $content = '<div class="dropdown-menu dropdown-menu-mega"><ul class="nav nav-list">';
     foreach( $visibleChildren as $key=>$child) {
-      $sublink = $child["link"];                                 
+      $sublink = $child["link"];
       $sublink['options']['html'] = TRUE;
       unset($sublink['options']['attributes']['title']);
       $content .= '<li>' . l($sublink['title'], $sublink['href'], $sublink['options']) . '</li>';
@@ -963,7 +963,7 @@ function openshift_menu_tree_build($config) {
         return NULL;
       }
     }
-    // END ADDED  
+    // END ADDED
   }
   else {
     // Get the tree pruned for just the active trail.
@@ -1091,7 +1091,7 @@ function openshift_menu_block_tree_output(&$tree, $config = array(), $nested = 0
       $extra_class[] = 'has-children';
     }
 
-    if ($active || $in_active_trail && $config['highlight_active_trail']) { 
+    if ($active || $in_active_trail && $config['highlight_active_trail']) {
       $extra_class[] = 'active';
     }
 
@@ -1105,8 +1105,8 @@ function openshift_menu_block_tree_output(&$tree, $config = array(), $nested = 0
     $i++;
   }
 
-  if (!$output) {  
-    return ''; 
+  if (!$output) {
+    return '';
   }
 
   $render_classes = ($nested > 0 ? $config['sub_menu_class'] : $config['menu_class']);
@@ -1127,4 +1127,12 @@ function openshift_menu_block_tree_output(&$tree, $config = array(), $nested = 0
   $hooks[] = 'menu_tree__menu_block';
   $hooks[] = 'menu_tree';
   return theme($hooks, $output);
+}
+
+/**
+ * Returns the themed submitted-by string for the node.
+ * Fixes Bug 965137.
+ */
+function phptemplate_node_submitted($node) {
+  return '<span>by <strong>' . theme('username', $node) . '</strong> on </span>' . format_date($node->$created, $type='custom', $format = 'F j, Y \a\t H:i A');
 }
