@@ -2,14 +2,13 @@ class Sprint
   def check_labels(x, target)
     x.labels.map{|x| x.name }.include?(target)
   end
-  
+
   def check_comments(x, target)
     #TODO Trello doesn't have an api for comments yet
     #x.comments.map{|x| x.body }.include?(target)
     true
   end
-  
-  
+
   def queries
     {
       :needs_qe => {

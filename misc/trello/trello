@@ -221,6 +221,7 @@ command :update do |c|
 
   c.option "--add-task-checklists", "Add task checklists to stories"
   c.option "--add-bug-checklists", "Add checklists to stories"
+  c.option "--add-doc-tasks", "Add documentation tasks to documentation labeled stories"
   c.option "--update-bug-tasks", "Update closed/verified bug tasks"
   c.option "--update-roadmap", "Update the roadmap board with progress from teams"
 
@@ -282,7 +283,7 @@ command :update do |c|
         puts "\nBoard Name: #{board.name}"
         lists = board.lists(:filter => [:open]).target
         lists.each do |list|
-          if options.add_task_checklists || options.add_bug_checklists || options.update_bug_tasks
+          if options.add_task_checklists || options.add_bug_checklists || options.update_bug_tasks || options.add_doc_tasks
             if list.name == 'In Progress' || list.name == 'Complete'
               cards = list.cards.target
               if !cards.empty?
@@ -331,6 +332,25 @@ command :update do |c|
                               end
                             end
                           end
+                        end
+                      end
+                    end
+                  end
+                  if options.add_doc_tasks
+                    if card.labels.map{|label| label.name }.include?("documentation")
+                      tasks_checklist = trello.checklist(card, 'Tasks')
+                      if tasks_checklist
+                        doc_reminder = "Update this card (in the description or in a comment) with details about what needs to be documentated.  For subjects that have corresponding engineering owned documentation, a pointer to that documentation should suffice."
+                        found = false
+                        tasks_checklist.items.each do |item|
+                          if item.name.include? doc_reminder
+                            found = true
+                            break
+                          end
+                        end
+                        unless found
+                          puts "Adding documentation reminder: #{card.name}"
+                          tasks_checklist.add_item(doc_reminder, false, 'bottom')
                         end
                       end
                     end
