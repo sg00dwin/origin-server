@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.14.2
+Version: 1.14.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -198,6 +198,15 @@ fi
 %{sitedir}/public
 
 %changelog
+* Fri Sep 06 2013 Adam Miller <admiller@redhat.com> 1.14.3-1
+- Merge pull request #1878 from jwforres/user_monitoring
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1874 from liggitt/taxpayer_id_nullable
+  (dmcphers+openshiftbot@redhat.com)
+- Enable pingdom real user monitoring for mgmt console and community site
+  (jforrest@redhat.com)
+- Update clearing of taxpayer_id for new Aria behavior (jliggitt@redhat.com)
+
 * Thu Sep 05 2013 Adam Miller <admiller@redhat.com> 1.14.2-1
 - Conditionally monitor site and broker with New Relic (jforrest@redhat.com)
 - Merge branch 'date_alignment_for_months_failing_test' (ccoleman@redhat.com)
