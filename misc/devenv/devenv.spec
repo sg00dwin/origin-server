@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.13.2
+Version: 1.13.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -826,6 +826,12 @@ chown root:root /usr/lib/node_modules/express/bin/express
 /etc/openshift/development
 
 %changelog
+* Fri Sep 06 2013 Adam Miller <admiller@redhat.com> 1.13.3-1
+- Merge pull request #1878 from jwforres/user_monitoring
+  (dmcphers+openshiftbot@redhat.com)
+- Enable pingdom real user monitoring for mgmt console and community site
+  (jforrest@redhat.com)
+
 * Thu Sep 05 2013 Adam Miller <admiller@redhat.com> 1.13.2-1
 - Fixing copy/paste error in rhc-devenv (bleanhar@redhat.com)
 - Preflighting part of the ruby193-mcollective work (bleanhar@redhat.com)
