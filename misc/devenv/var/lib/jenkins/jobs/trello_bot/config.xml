@@ -58,7 +58,7 @@
       <command>pushd misc/trello
 
 ./trello update --update-roadmap --trace
-./trello update --add-task-checklists --add-bug-checklists --update-bug-tasks --trace
+./trello update --add-task-checklists --add-bug-checklists --update-bug-tasks --add-doc-tasks --trace
 ./trello generate_roadmap_overview --out /var/www/html/roadmap_overview.html --trace
 
 popd</command>
