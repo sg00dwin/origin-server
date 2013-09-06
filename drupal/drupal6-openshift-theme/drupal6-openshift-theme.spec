@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.21.2
+Version: 3.21.3
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,14 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Sep 06 2013 Adam Miller <admiller@redhat.com> 3.21.3-1
+- Merge pull request #1879 from fabianofranz/master
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 965137 - fixes phptemplate_node_submitted callback errors
+  (contact@fabianofranz.com)
+- Enable pingdom real user monitoring for mgmt console and community site
+  (jforrest@redhat.com)
+
 * Thu Aug 29 2013 Adam Miller <admiller@redhat.com> 3.21.2-1
 - Bug 1000498: Force youtube videos to embed https (jliggitt@redhat.com)
 - Include permalink on individual comments (sgoodwin@redhat.com)
