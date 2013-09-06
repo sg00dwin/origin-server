@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Aria Billing service
 
 Name:           rubygem-%{gem_name}
-Version: 1.12.1
+Version: 1.12.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -79,6 +79,9 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-billing-aria-dev.conf
 
 %changelog
+* Fri Sep 06 2013 Adam Miller <admiller@redhat.com> 1.12.2-1
+- Fix broker extended tests (billing test) (rpenta@redhat.com)
+
 * Thu Aug 29 2013 Adam Miller <admiller@redhat.com> 1.12.1-1
 - nurture -> analytics (dmcphers@redhat.com)
 - bump_minor_versions for sprint 33 (admiller@redhat.com)
