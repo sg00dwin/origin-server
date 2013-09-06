@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.14.2
+Version: 1.14.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -227,6 +227,9 @@ fi
 
 
 %changelog
+* Fri Sep 06 2013 Adam Miller <admiller@redhat.com> 1.14.3-1
+- Bug 1004886 - set memory.move_charge_at_immigrate (rmillner@redhat.com)
+
 * Thu Sep 05 2013 Adam Miller <admiller@redhat.com> 1.14.2-1
 - Merge pull request #1843 from mfojtik/invalid_date
   (dmcphers+openshiftbot@redhat.com)
