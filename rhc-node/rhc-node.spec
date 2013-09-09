@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.14.3
+Version: 1.14.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -227,6 +227,15 @@ fi
 
 
 %changelog
+* Mon Sep 09 2013 Adam Miller <admiller@redhat.com> 1.14.4-1
+- Merge pull request #1882 from mfojtik/bugzilla/1005510
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 1005510 - Added '-y' option to rhc-fix-missing-frontend
+  (mfojtik@redhat.com)
+- Merge pull request #1880 from jwforres/new_relic_node_instrumentation
+  (dmcphers+openshiftbot@redhat.com)
+- Add new relic instrumentation to node (jforrest@redhat.com)
+
 * Fri Sep 06 2013 Adam Miller <admiller@redhat.com> 1.14.3-1
 - Bug 1004886 - set memory.move_charge_at_immigrate (rmillner@redhat.com)
 
