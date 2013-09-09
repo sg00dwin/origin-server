@@ -1134,5 +1134,5 @@ function openshift_menu_block_tree_output(&$tree, $config = array(), $nested = 0
  * Fixes Bug 965137.
  */
 function phptemplate_node_submitted($node) {
-  return '<span>by <strong>' . theme('username', $node) . '</strong> on </span>' . format_date($node->$created, $type='custom', $format = 'F j, Y \a\t H:i A');
+  return '<span>by <strong>' . theme('username', $node) . '</strong> on </span>' . format_date($node->created, $type='custom', $format = 'F j, Y \a\t H:i A');
 }
