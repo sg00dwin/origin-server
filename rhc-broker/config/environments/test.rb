@@ -112,6 +112,8 @@ Broker::Application.configure do
     :membership_enabled => true,
     :max_members_per_resource => 100,
     :max_domains_per_user => 1,
+    :allow_ha_applications => "false",
+    :router_hostname => "www.example.com",
   }
 
   # Profiler config
