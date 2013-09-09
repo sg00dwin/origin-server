@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 1.4.1
+Version: 1.4.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -66,6 +66,10 @@ fi
 
 
 %changelog
+* Mon Sep 09 2013 Adam Miller <admiller@redhat.com> 1.4.2-1
+- Bug 1003294 - Allow gears to contact the PKIX-3 CA/RA port
+  (rmillner@redhat.com)
+
 * Tue Jun 25 2013 Adam Miller <admiller@redhat.com> 1.4.1-1
 - bump_minor_versions for sprint 30 (admiller@redhat.com)
 
