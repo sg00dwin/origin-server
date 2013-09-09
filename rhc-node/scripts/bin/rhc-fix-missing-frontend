@@ -18,7 +18,7 @@ def with_track_errors
 end
 
 errors = []
-uuids = ARGV.map { |n| n }
+uuids = ARGV.map { |n| n.strip }
 
 if uuids.empty?
   $stdout.puts "Usage: #{$0} uuid uuid uuid ..."
@@ -28,13 +28,15 @@ end
 $stdout.puts("Rebuilding the frontend for:")
 $stdout.puts("\t#{uuids.join("\n\t")}")
 
-$stdout.puts("Hit 'y' to continue, anything else to abort.")
-resp = $stdin.gets
-if not resp.nil?
-  resp.strip!
-  if resp != 'y'
-    $stdout.puts("Aborting")
-    exit(0)
+unless uuids.delete('-y')
+  $stdout.puts("Hit 'y' to continue, anything else to abort.")
+  resp = $stdin.gets
+  if not resp.nil?
+    resp.strip!
+    if resp != 'y'
+      $stdout.puts("Aborting")
+      exit(0)
+    end
   end
 end
 
