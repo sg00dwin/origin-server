@@ -280,7 +280,7 @@ function openshift_pager($tags = array(), $limit = 10, $element = 0, $parameters
 function _openshift_heading(&$vars) {
   global $user;
   $page_title = $vars['title'];
-  $title = check_plain($page_title);
+  $title = $page_title;
   $item = end(menu_get_active_trail());
   #print_r($item);
   if ($vars['forum']['new-topic']) {
