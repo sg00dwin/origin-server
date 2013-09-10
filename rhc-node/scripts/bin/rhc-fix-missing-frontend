@@ -21,14 +21,16 @@ errors = []
 uuids = ARGV.map { |n| n.strip }
 
 if uuids.empty?
-  $stdout.puts "Usage: #{$0} uuid uuid uuid ..."
+  $stdout.puts "Usage: #{$0} [-b] uuid uuid uuid ..."
   exit(0)
 end
+
+no_interactive = uuids.delete('-b')
 
 $stdout.puts("Rebuilding the frontend for:")
 $stdout.puts("\t#{uuids.join("\n\t")}")
 
-unless uuids.delete('-y')
+if no_interactive
   $stdout.puts("Hit 'y' to continue, anything else to abort.")
   resp = $stdin.gets
   if not resp.nil?
