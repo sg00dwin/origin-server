@@ -503,6 +503,7 @@ function _openshift_partner_program_portal_company_info() {
   $info = openshift_partner_program_partner_info();
   $company = ($info) ? $info['company'] : '';
   $company_description = ($info) ? $info['company_description'] : '';
+  $company_website = ($info) ? $info['company_website'] : '';
 
   drupal_set_title(t('OpenShift Partner Program'));
   $form['#attributes'] = array('enctype' => "multipart/form-data");
@@ -524,6 +525,12 @@ function _openshift_partner_program_portal_company_info() {
     '#default_value' => $company_description,
     '#required' => TRUE,
   );
+  $form['company_website'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Company Website'),
+    '#default_value' => $company_website,
+    '#required' => TRUE,
+  );  
   $form['logo'] = array(
     '#type' => 'file',
     '#title' => t('Upload logo *'),
@@ -561,11 +568,12 @@ function _openshift_partner_program_portal_company_info_submit($form, &$form_sta
   }
   $company = $form_state['values']['company_name'];
   $company_description = $form_state['values']['company_description'];
+  $company_website = $form_state['values']['company_website'];
 
   $expertise_tags = $form_state['values']['expertise_tags'];
   $expertise_tags = implode(',', $expertise_tags);
 
-  $result = openshift_partner_program_partner_info_upsert_node($uid, $company, $company_description, $logo, $expertise_tags);
+  $result = openshift_partner_program_partner_info_upsert_node($uid, $company, $company_description, $company_website, $logo, $expertise_tags);
 
   if ($result && $logo) {
     drupal_set_message(t('Company info has been saved.'));
