@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.21.3
+Version: 3.21.4
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,14 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Sep 10 2013 Adam Miller <admiller@redhat.com> 3.21.4-1
+- Merge pull request #1886 from
+  jwforres/bug_994367_shouldnt_checkplain_all_titles
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 994367 - should allow html for default drupal page titles
+  (jforrest@redhat.com)
+- Bug 1005648 (contact@fabianofranz.com)
+
 * Fri Sep 06 2013 Adam Miller <admiller@redhat.com> 3.21.3-1
 - Merge pull request #1879 from fabianofranz/master
   (dmcphers+openshiftbot@redhat.com)
