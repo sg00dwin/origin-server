@@ -70,8 +70,8 @@ module Secured
                   })
                  rescue => e
                    logger.error "Unable to create an authorization: #{e.message} (#{e.class})\n  #{e.backtrace.join("\n  ")}"
-                   Authorization.new.tap{ |a| 
-                     a.errors[:base] = e.message 
+                   Authorization.new.tap{ |a|
+                     a.errors[:base] = e.message
                      a.attributes[:server_unavailable] = e.is_a?(RestApi::ServerUnavailable)
                    }
                  end
@@ -150,7 +150,7 @@ module Secured
       if user_signed_in?
         redirect_to logout_path(
           :cause => :change_account,
-          :then => url_for({:only_path => true}.merge(params))
+          :then => recognize_path_as_get?(request.path) ? url_for({:only_path => true}.merge(params)) : default_after_login_redirect
         )
       end
     end
@@ -158,7 +158,7 @@ module Secured
     def api_rejected_authentication
       redirect_to logout_path(
         :cause => :expired,
-        :then => url_for({:only_path => true}.merge(params))
+        :then => recognize_path_as_get?(request.path) ? url_for({:only_path => true}.merge(params)) : default_after_login_redirect
       )
     end
 
@@ -265,4 +265,5 @@ module Secured
         'browser'
       end
     end
+
 end
