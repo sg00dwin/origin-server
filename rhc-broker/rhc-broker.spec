@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.14.2
+Version: 1.14.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -155,6 +155,9 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Tue Sep 10 2013 Adam Miller <admiller@redhat.com> 1.14.3-1
+- <rhc-broker conf> compile assets in all envs (lmeyer@redhat.com)
+
 * Thu Sep 05 2013 Adam Miller <admiller@redhat.com> 1.14.2-1
 - Add moped new relic instrumentation (jforrest@redhat.com)
 - Conditionally monitor site and broker with New Relic (jforrest@redhat.com)
