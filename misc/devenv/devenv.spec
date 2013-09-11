@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.13.4
+Version: 1.13.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -828,6 +828,9 @@ chown root:root /usr/lib/node_modules/express/bin/express
 /etc/openshift/development
 
 %changelog
+* Wed Sep 11 2013 Adam Miller <admiller@redhat.com> 1.13.5-1
+- Bug 990473 - Inhibit password reuse. (rmillner@redhat.com)
+
 * Mon Sep 09 2013 Adam Miller <admiller@redhat.com> 1.13.4-1
 - Merge pull request #1881 from rmillner/BZ1003294
   (dmcphers+openshiftbot@redhat.com)
