@@ -1,90 +1,99 @@
+---
 Name: zend
 Cartridge-Short-Name: ZEND
 Display-Name: Zend Server 5.6
-Description: "A PHP server by Zend for applications that require performance, reliability and security. Zend Server combined with Zend Studio offers code optimization, debugging, and code assist."
+Description: A PHP server by Zend for applications that require performance, reliability
+  and security. Zend Server combined with Zend Studio offers code optimization, debugging,
+  and code assist.
 Version: '5.6'
-License: "Commercial"
+License: Commercial
 License-Url: http://static.zend.com/topics/Zend-License-EULA-2010-09-2.pdf
 Vendor: Zend
-Cartridge-Version: 0.0.3
-Compatible-Versions: [0.0.2]
+Cartridge-Version: 0.0.4
+Compatible-Versions:
+- 0.0.2
+- 0.0.3
 Cartridge-Vendor: redhat
 Categories:
-  - service
-  - php
-  - web_framework
+- service
+- php
+- web_framework
 Website: http://www.zend.com
 Help-Topics:
-  "Developer Center": https://openshift.redhat.com/community/developers
+  Developer Center: https://openshift.redhat.com/community/developers
 Cart-Data:
-  - Key: OPENSHIFT_ZEND_LOG_DIR
-    Type: environment
-    Description: "Directory to store application log files."
-  - Key: OPENSHIFT_TMP_DIR
-    Type: environment
-    Description: "Directory to store application temporary files."
-  - Key: OPENSHIFT_REPO_DIR
-    Type: environment
-    Description: "Application root directory where application files reside. This directory is reset every time you do a git-push"
-  - Key: OPENSHIFT_ZEND_PORT
-    Type: environment
-    Description: "Internal port to which the web-framework binds to."
-  - Key: OPENSHIFT_ZEND_IP
-    Type: environment
-    Description: "Internal IP to which the web-framework binds to."
-  - Key: OPENSHIFT_APP_DNS
-    Type: environment
-    Description: "Fully qualified domain name for the application."
-  - Key: OPENSHIFT_APP_NAME
-    Type: environment
-    Description: "Application name"
-  - Key: OPENSHIFT_DATA_DIR
-    Type: environment
-    Description: "Directory to store application data files. Preserved across git-pushes. Not shared across gears."
-  - Key: OPENSHIFT_APP_UUID
-    Type: environment
-    Description: "Unique ID which identified the application. Does not change between gears."
-  - Key: OPENSHIFT_GEAR_UUID
-    Type: environment
-    Description: "Unique ID which identified the gear. This value changes between gears."
+- Key: OPENSHIFT_ZEND_LOG_DIR
+  Type: environment
+  Description: Directory to store application log files.
+- Key: OPENSHIFT_TMP_DIR
+  Type: environment
+  Description: Directory to store application temporary files.
+- Key: OPENSHIFT_REPO_DIR
+  Type: environment
+  Description: Application root directory where application files reside. This directory
+    is reset every time you do a git-push
+- Key: OPENSHIFT_ZEND_PORT
+  Type: environment
+  Description: Internal port to which the web-framework binds to.
+- Key: OPENSHIFT_ZEND_IP
+  Type: environment
+  Description: Internal IP to which the web-framework binds to.
+- Key: OPENSHIFT_APP_DNS
+  Type: environment
+  Description: Fully qualified domain name for the application.
+- Key: OPENSHIFT_APP_NAME
+  Type: environment
+  Description: Application name
+- Key: OPENSHIFT_DATA_DIR
+  Type: environment
+  Description: Directory to store application data files. Preserved across git-pushes.
+    Not shared across gears.
+- Key: OPENSHIFT_APP_UUID
+  Type: environment
+  Description: Unique ID which identified the application. Does not change between
+    gears.
+- Key: OPENSHIFT_GEAR_UUID
+  Type: environment
+  Description: Unique ID which identified the gear. This value changes between gears.
 Provides:
-  - zend-5.6
-  - "zend"
+- zend-5.6
+- zend
 Publishes:
   get-php-ini:
-    Type: "FILESYSTEM:php-ini"
+    Type: FILESYSTEM:php-ini
   publish-http-url:
-    Type: "NET_TCP:httpd-proxy-info"
+    Type: NET_TCP:httpd-proxy-info
   publish-gear-endpoint:
-    Type: "NET_TCP:gear-endpoint-info"
+    Type: NET_TCP:gear-endpoint-info
 Subscribes:
   set-env:
     Type: ENV:*
     Required: false
   set-doc-url:
-    Type: "STRING:urlpath"
-    Required : false
+    Type: STRING:urlpath
+    Required: false
 Scaling:
   Min: 1
   Max: 1
 Endpoints:
-  - Private-IP-Name:   IP
-    Private-Port-Name: PORT
-    Private-Port:      8080
-    Public-Port-Name:  PROXY_PORT
-    Mappings:
-      - Frontend:      ""
-        Backend:       ""
-      - Frontend:      "/health"
-        Backend:       ""
-        Options:       { health: true }
-  - Private-IP-Name:   IP
-    Private-Port-Name: CONSOLE_PORT
-    Private-Port:      16081
-    Public-Port-Name:  PROXY_CONSOLE_PORT
-    Mappings:
-      - Frontend:      "/ZendServer"
-        Backend:       "/ZendServer"
-  - Private-IP-Name:   IP
-    Private-Port-Name: ZENDSERVER_PORT
-    Private-Port:      16083
+- Private-IP-Name: IP
+  Private-Port-Name: PORT
+  Private-Port: 8080
+  Public-Port-Name: PROXY_PORT
+  Mappings:
+  - Frontend: ''
+    Backend: ''
+  - Frontend: /health
+    Backend: ''
+    Options:
+      health: true
+- Private-IP-Name: IP
+  Private-Port-Name: CONSOLE_PORT
+  Private-Port: 16081
+  Public-Port-Name: PROXY_CONSOLE_PORT
+  Mappings:
+  - Frontend: /ZendServer
+    Backend: /ZendServer
+- Private-IP-Name: IP
+  Private-Port-Name: ZENDSERVER_PORT
+  Private-Port: 16083
