@@ -348,6 +348,7 @@ function openshift_partner_program_partner_info($uid = 0) {
     $result['uid'] = $uid;
     $result['company'] = $node->title;
     $result['company_description'] = $node->body;
+    $result['company_website'] = $node->field_website[0]['url'];
     $result['logo'] = $node->picture;
   }
   return $result;
@@ -399,7 +400,7 @@ function openshift_partner_program_partner_info_upsert($uid, $company, $company_
  * @return bool
  *   TRUE iff insert or update was successful.
  */
-function openshift_partner_program_partner_info_upsert_node($uid, $company, $company_description, $logo, $expertise_tags) {
+function openshift_partner_program_partner_info_upsert_node($uid, $company, $company_description, $company_website, $logo, $expertise_tags) {
   $node = node_load(array('uid' => $uid, 'type' => 'partner'));
   $vocab = reset(taxonomy_get_vocabularies('Partner'));
   if (!$node) {
@@ -411,6 +412,7 @@ function openshift_partner_program_partner_info_upsert_node($uid, $company, $com
   }
   $node->title = check_plain($company);
   $node->body = check_plain($company_description);
+  $node->field_website = array(array('url' => check_plain($company_website)));
 
   if (!empty($logo)) {
     $image = image_create_node_from($logo);
