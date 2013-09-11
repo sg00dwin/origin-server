@@ -293,10 +293,10 @@ module OpenShift
             end
           end
 
-          if ((user_info['plan_state'] == CloudUser::PLAN_STATES['active']) and (acct_info['status_cd'].to_i != 1)) or
+          if ((user_info['plan_state'] == CloudUser::PLAN_STATES['active']) and (acct_info['status_cd'].to_i < 0)) or
              ((user_info['plan_state'] != CloudUser::PLAN_STATES['active']) and (acct_info['status_cd'].to_i == 1))
             OpenShift::DataStore.find(:cloud_users, {'_id' => BSON::ObjectId(user_id)}, selection) { |cloud_user| user = cloud_user } unless user
-            if ((user['plan_state'] == CloudUser::PLAN_STATES['active']) and (acct_info['status_cd'].to_i != 1)) or
+            if ((user['plan_state'] == CloudUser::PLAN_STATES['active']) and (acct_info['status_cd'].to_i < 0)) or
                ((user['plan_state'] != CloudUser::PLAN_STATES['active']) and (acct_info['status_cd'].to_i == 1))
               mismatch_plan_state = true
               summary << "User '#{user_id}' has plan_state '#{user['plan_state']}' in mongo that does not correspond to status_cd '#{acct_info['status_cd']}' in Aria billing provider."
