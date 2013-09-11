@@ -10,10 +10,12 @@ begin
     NewRelic::Agent.manual_start(args)
 
     OpenShift::ApplicationContainerProxy.class_eval do
-      include NewRelic::Agent::MethodTracer
+      class << self
+        include NewRelic::Agent::MethodTracer
 
-      self.singleton_methods(false).each do |m|
-        add_method_tracer m if m.to_s.match(/^provider=$|^instance$|.*_impl\??$/).nil?
+        self.public_instance_methods(false).each do |m|
+          add_method_tracer m, "Custom/OpenShift::ApplicationContainerProxy/#{m}" if m.to_s.match(/^provider=$|^instance$|.*_impl\??$/).nil?
+        end
       end
 
       @proxy_provider.class_eval do
