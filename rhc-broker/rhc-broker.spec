@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.14.3
+Version: 1.14.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -155,6 +155,12 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Wed Sep 11 2013 Adam Miller <admiller@redhat.com> 1.14.4-1
+- Fix for bug 1006703 (abhgupta@redhat.com)
+- Merge pull request #1885 from rajatchopra/master
+  (dmcphers+openshiftbot@redhat.com)
+- config defaults for enabling HA (rchopra@redhat.com)
+
 * Tue Sep 10 2013 Adam Miller <admiller@redhat.com> 1.14.3-1
 - <rhc-broker conf> compile assets in all envs (lmeyer@redhat.com)
 
