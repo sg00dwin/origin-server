@@ -95,14 +95,4 @@ class ApplicationController < ActionController::Base
     def active_tab
       nil
     end
-
-    def recognize_path_as_get?(path)
-      path = URI.parse(path).path.gsub(/^\/app/, '')
-      begin
-        Rails.application.routes.recognize_path(path, :method => :get)
-        path
-      rescue
-        nil
-      end
-    end
 end

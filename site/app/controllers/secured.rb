@@ -150,7 +150,7 @@ module Secured
       if user_signed_in?
         redirect_to logout_path(
           :cause => :change_account,
-          :then => recognize_path_as_get?(request.path) ? url_for({:only_path => true}.merge(params)) : default_after_login_redirect
+          :then => request.get? ? url_for({:only_path => true}.merge(params)) : default_after_login_redirect
         )
       end
     end
@@ -158,7 +158,7 @@ module Secured
     def api_rejected_authentication
       redirect_to logout_path(
         :cause => :expired,
-        :then => recognize_path_as_get?(request.path) ? url_for({:only_path => true}.merge(params)) : default_after_login_redirect
+        :then => request.get? ? url_for({:only_path => true}.merge(params)) : default_after_login_redirect
       )
     end
 
