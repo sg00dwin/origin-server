@@ -60,14 +60,21 @@ class Watchman
     # Maybe use application status to get around this issue
     @epoch = epoch
 
+
+    Syslog.open(File.basename($0), Syslog::LOG_PID, Syslog::LOG_DAEMON) unless Syslog.opened?
+    Syslog.info("Starting rhc-watchman => delay: #{period}s, exception threshold: #{retries}")
+
     daemon() if daemon
 
     @incidents = {}
 
-    @throttler = ::OpenShift::Runtime::Utils::Cgroups::Throttler.new
-
-    Syslog.open(File.basename($0), Syslog::LOG_PID, Syslog::LOG_DAEMON) unless Syslog.opened?
-    Syslog.info("Starting rhc-watchman => delay: #{period}s, exception threshold: #{retries}")
+    @throttler = begin
+      ::OpenShift::Runtime::Utils::Cgroups::Throttler.new
+    rescue Exception => e
+      Syslog.warning('Warning node is running un-throttled!')
+      Syslog.warning("Failed to create Throttler: #{e.message}")
+      nil
+    end
   end
 
   def run()
@@ -125,7 +132,11 @@ class Watchman
         end
       }
 
-      @throttler.throttle(app_env.keys)
+      begin
+        @throttler.throttle(app_env.keys) if @throttler
+      rescue Exception => e
+        Syslog.info("Throttler run failed: #{e.message}, will retry.")
+      end
     rescue Exception => e
       @retries -= 1
       Syslog.warning("watchman caught #{e.inspect}: #{e.message}. Retries left: #{@retries}")
