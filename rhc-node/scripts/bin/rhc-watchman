@@ -102,7 +102,7 @@ class Watchman
       }
       next if app_env.empty?
       period = @period_seconds * 3 if (total_count / app_env.length) > 2
-      Syslog.info("Running rhc-watchman => delay: #{period}s, exception threshold: #{retries}")
+      Syslog.info("Running rhc-watchman => delay: #{period}s, exception threshold: #{retries}, throttler: #{@throttler ? 'running' : 'not running'}")
 
       # Read current message_file and troll for killed applications
       # todo dump incidents if message_file has rolled?
