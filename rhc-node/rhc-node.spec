@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.14.4
+Version: 1.14.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -227,6 +227,10 @@ fi
 
 
 %changelog
+* Wed Sep 11 2013 Adam Miller <admiller@redhat.com> 1.14.5-1
+- Bug 1005510 - Changed non-interactive param name for rhc-fix-missing-frontend
+  to -b (mfojtik@redhat.com)
+
 * Mon Sep 09 2013 Adam Miller <admiller@redhat.com> 1.14.4-1
 - Merge pull request #1882 from mfojtik/bugzilla/1005510
   (dmcphers+openshiftbot@redhat.com)
