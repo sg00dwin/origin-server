@@ -2,7 +2,7 @@
 require 'getoptlong'
 
 VERSIONS = {
-  '2.0.32' => {
+  '2.0.33' => {
     :compatible => false,
     :non_compatible => true,
     :prerelease => false,
