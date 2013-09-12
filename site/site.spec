@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.14.3
+Version: 1.14.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -198,6 +198,10 @@ fi
 %{sitedir}/public
 
 %changelog
+* Thu Sep 12 2013 Adam Miller <admiller@redhat.com> 1.14.4-1
+- Bug 995908 - simpler strategy (contact@fabianofranz.com)
+- Bug 995908 (contact@fabianofranz.com)
+
 * Fri Sep 06 2013 Adam Miller <admiller@redhat.com> 1.14.3-1
 - Merge pull request #1878 from jwforres/user_monitoring
   (dmcphers+openshiftbot@redhat.com)
