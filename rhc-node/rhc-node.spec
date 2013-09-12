@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.14.5
+Version: 1.14.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -227,6 +227,12 @@ fi
 
 
 %changelog
+* Thu Sep 12 2013 Adam Miller <admiller@redhat.com> 1.14.6-1
+- Merge pull request #1899 from jwhonce/bug/1002293
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 1002293 - Protect Watchman from Throttler (jhonce@redhat.com)
+- Bug 1002293 - Protect Watchman from Throttler (jhonce@redhat.com)
+
 * Wed Sep 11 2013 Adam Miller <admiller@redhat.com> 1.14.5-1
 - Bug 1005510 - Changed non-interactive param name for rhc-fix-missing-frontend
   to -b (mfojtik@redhat.com)
