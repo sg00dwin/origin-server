@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.14.4
+Version: 1.14.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -155,6 +155,19 @@ if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
 fi
 
 %changelog
+* Thu Sep 12 2013 Adam Miller <admiller@redhat.com> 1.14.5-1
+- Merge pull request #1901 from dobbymoodge/update-mongoid-conf
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #1900 from jwforres/new_relic_broker_node_interaction
+  (dmcphers@redhat.com)
+- <broker><oo-accept-broker> Bug 958674 - Fix Mongo SSL support
+  (jdetiber@redhat.com)
+- Instrument class methods of application container proxy (jforrest@redhat.com)
+- Merge pull request #1895 from jwforres/new_relic_broker_node_interaction
+  (dmcphers+openshiftbot@redhat.com)
+- Instrument broker mco proxy methods to determine time spent on node
+  (jforrest@redhat.com)
+
 * Wed Sep 11 2013 Adam Miller <admiller@redhat.com> 1.14.4-1
 - Fix for bug 1006703 (abhgupta@redhat.com)
 - Merge pull request #1885 from rajatchopra/master
