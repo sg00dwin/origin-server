@@ -1,7 +1,7 @@
 - content_for :javascripts do
   -#= javascript_include_tag status_jsonp_url('outage')
   :javascript
-    window.loader_image = '#{image_path('loader-dark.gif')}';
+    window.loader_image = '#{image_path('loader.gif')}';
 
 !!! 5
 -# http://paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither
@@ -16,7 +16,7 @@
     %header
       = render 'layouts/admin_console/header'
 
-    .section-console#content{:class => content_for?(:dark_layout) ? '' : 'section-console-light', :role => 'main'}
+    .section-console#content{:class => content_for(:section_console_presentation), :role => 'main'}
       .container
         .row-console
           .row

@@ -1,3 +1,10 @@
+#wrap {
+    height: auto !important;
+    margin: 0 auto -70px;
+    min-height: 100%;
+    padding-bottom: 70px;
+    @include box-sizing(border-box);
+}
 .alert {
   word-wrap: break-word;
   text-shadow: none;
@@ -16,10 +23,6 @@ h3 .label { font-size: inherit; margin: 0 0 0 10px; }
 
 .error-reference { color: #606060 }
 
-pre.cli {
-	color: $cliColor;
-}
-
 @media (max-width: 767px) {
   .form-horizontal .control-label {
     float: none;
@@ -28,14 +31,7 @@ pre.cli {
   .form-horizontal .controls {
     margin-left: 0;
     }
-  .form-horizontal .form-actions {
-    padding-left: 10px;
-    }
 }
-
-.section-console label {
-  color: #cfcfcf;
-  }
 
 .console-inner-block {
     background: #222222;
@@ -51,10 +47,16 @@ pre.cli {
 }
 
 .text-warning {
-    color: #e70;
+    color: $orange;
 }
 .block {
   display: block;
+}
+
+.action-more:before {
+  content: '\2192 ';
+  position: relative;
+  top: -3px;
 }
 
 // Disabled and read-only inputs
@@ -75,17 +77,13 @@ input[type="radio"], input[type="checkbox"],input[type="image"] {
 }
 */
 
-.well {
-  background-color: #242424 /*.*/;
-}
 .platform {
-  background-color: $grayMedium; /* for use with disabled input[type=file] so button text can be visible */
-  min-height: 20px;
+  background: #f4f4f4;
+  border-left: 1px solid #f0f0f0;
+  border-top: 1px solid #f0f0f0;
+  @include box-shadow(1px 1px 2px rgba(0,0,0,.1));  min-height: 20px;
   padding: 19px;
   margin: 20px 0;
-  border: 1px solid $openshiftAlmostBlack;
-  border: 1px solid rgba(0,0,0,.5);
-  @include border-radius(4px);
   blockquote {
     border-color: #ddd;
     border-color: rgba(0,0,0,.15);
@@ -94,78 +92,107 @@ input[type="radio"], input[type="checkbox"],input[type="image"] {
 
 
 ol.wizard {
-  margin: 0 0 15px 5px;
+  border-bottom: 1px solid #eaeaea;
+  color: #aaa;
   display: block;
+  margin: 0 0 25px 0;
+  padding: 0;
+  position: relative;
+  .section-console-blank & {
+    border-bottom: 1px solid rgba(0,0,0,.01);
+    border-top: 1px solid rgba(0,0,0,.01);
+    color: #888;
+    margin-top: -26px;
+    padding-top: 25px;
+    &:after, &:before {
+      @include background-image(radial-gradient(50% 0,ellipse farthest-side,rgba(0,0,0,0.065) 0%,rgba(0,0,0,0) 100%));
+      content: '';
+      display: block;
+      height: 5px;
+      position: absolute;
+      bottom: -5px;
+      width: 100%;
+      z-index: -1;
+    }
+    &:before {
+      @include background-image(radial-gradient(50% 5px,ellipse farthest-side,rgba(0,0,0,0.065) 0%,rgba(0,0,0,0) 100%));
+      bottom: auto;
+      top: -5px;
+    }
   }
-ol.wizard li {
-   background-position: 0 -84px;
-  background-repeat: no-repeat;
-  display: inline-block;
-  font-size: $largeFontSize;
-  line-height: 25px;
-  list-style-position: inside;
-  list-style-type: none;
-  margin: 0 50px 10px 0;
-  padding: 10px 0 10px 45px;
-
-  &:last-child {
-    margin-right:0;
+  li {
+    display: inline-block;
+    font-size: $baseFontSize;
+    line-height: 25px;
+    list-style-position: inside;
+    list-style-type: none;
+    margin: 0 35px 30px 0;
+    padding: 6px 0 0 45px;
+    &:last-child {
+      margin-right: 0;
+    }
+    &.active {
+      span {
+        color: #000 !important;
+        i {
+          border-color: #aaa !important;
+        }
+      }
+    }
+    span {
+      height: 40px;
+      position: relative;
+      vertical-align: baseline;
+      a {
+        color: inherit;
+      }
+      i {
+        border: 4px solid #e0e0e0;
+        border-radius: 30px;
+        font-style: normal;
+        font-weight: bold;
+        height: 25px;
+        left: -44px;
+        line-height: 25px;
+        position: absolute;
+        text-align: center;
+        top: -9px;
+        width: 25px;
+        .section-console-blank & {
+          border-color: #ccc;
+        }
+      }
+    }
   }
 }
-ol.wizard li span {
-  height: 40px;
-    position: relative;
-    vertical-align: baseline;
-  }
-  ol.wizard li span i {
-    border: 4px solid $openshiftBorderGray;
-    border-radius: 30px;
-    font-style: normal;
-    height: 33px;
-    left: -51px;
-    line-height: 33px;
-    position: absolute;
-    text-align: center;
-    top: -13px;
-    width: 33px;
-    font-weight: bold;
+
+@media (max-width: 979px) {
+  ol.wizard {
+    li {
+      margin-right: 25px;
     }
-ol.wizard li.active span i, ol.wizard li.active span {
-  color: #EB0011;
+    .section-console-blank & {
+      margin-top: -21px;
+    }
   }
-ol.wizard li a {
-  color: inherit;
-  }
+}
 
 @media (max-width: 767px) {
   ol.wizard {
-    display:block;
-    margin: 0 0 15px;
-
+    border-bottom-color: #ccc !important;
+    border-top: 0;
+    padding-bottom: 10px;
+    &:after, &:before {
+      display: none;
+    }
     li {
-      background-position: 0 -84;
-      background-repeat: no-repeat;
-      display: inline-block;
-      font-size: inherit;
-      line-height: 25px;
-      list-style-position: inside;
-      list-style-type: none;
-      margin: 0;
-      padding:0 30px 10px 25px;
-
+      margin-bottom: 10px;
+      padding-left: 0;
+      padding-top: 0;
       span i {
-        background:none;
-        border:none;
-        font-style:normal;
-        font-weight:bold;
-        height:35px;
-        left:-20px;
-        line-height:32px;
-        position:absolute;
-        text-align:center;
-        top:center;
-        width: 8px;
-        top: -8px;
+        border: none;
+        margin-right: 8px;
+        position: static;
       }
     }
   }
@@ -173,30 +200,15 @@ ol.wizard li a {
 
 @media (max-width: 480px) {
   ol.wizard li {
-    display:block;
+    display: block;
   }
 }
 
 
 .section-console {
-  padding-top: 25px;
-  padding-bottom: 60px;
+  padding-top: 50px;
+  padding-bottom: 50px;
 }
-
-.section-console {
-  @include console_background;
-}
-
-/* no longer needed
-.ie9 .section-console {
-  @include console_background_ie9;
-}
-@media (max-width: 767px) {
-  .ie9 .section-console {
-    background-image: none;
-  }
-}
-*/
 
 figure {
   background: black;
@@ -207,41 +219,28 @@ figure {
   background-repeat: no-repeat;
   }
 
-.section-header {
-  background: #262626;
-  border-bottom: 3px solid #2f2f2f;
-  margin: 5px 0 3px 5px;
-  padding: 15px 0 3px;
-  position: relative;
-
-  > nav {
-    position: relative;
-    left: -5px;
-    margin-right: -10px;
-    }
-}
-
 #footer-nav {
-  background: #070707;
+  background: #fff;
 }
 
 .row-console > .row {
-  background: #000;
-  color: $consoleTextColorDefault;
+  background: #fcfcfc;
+  @include box-shadow(0 0 3px rgba(0,0,0,0.09));
+  min-height: 400px;
+  .section-console-blank & {
+    background: none;
+    @include box-shadow(none);
+  }
 }
 
-.section-console-light .row-console > .row {
-  background: transparent;
-   min-height: 400px;
 
-	.divide, legend {
-		margin-bottom: 0;
-		font-family: $headerFontFamily;
-	}
-	
-	.divide {
-  	margin-bottom: $baseLineHeight / 3;
-	}
+.divide, legend {
+  margin-bottom: 0;
+  font-family: $headerFontFamily;
+}
+  
+.divide {
+  margin-bottom: $baseLineHeight / 3;
 }
 
 .row > .column-content {
@@ -254,35 +253,29 @@ figure {
 
 
 .header-bar {
-  display: table;
-  width: 100%;
   @include box-sizing(border-box);
   height: 34px;
   position: relative;
-  background: $grayDark;
   h3,h4,h5 {
     display:table-cell;
     vertical-align:middle;
     margin: 0;
   }
   .header-btn {
-    display:table-cell;
     vertical-align:middle;
     text-align:right;
     position: absolute;
     right: 0;
+    top: 0;
     width: 50%;
     height: 100%;
     .header-btn-title {
-      display: table-cell;
-      vertical-align: middle;
       text-align: right;
       padding-right: 20px;
       font-family: $headerFontFamily;
       border-right: 1px solid rgba(255, 255, 255, 0.075);
     }
     a {
-      color: #9A9B9C;
       vertical-align:middle;
       display: table;
       height: 100%;
@@ -290,23 +283,9 @@ figure {
       font-size: $tinyFontSize;
       text-transform: uppercase;
       &:hover {
-        text-decoration: none;
-        color: $linkTextDarkBackground;
         .font-icon {
-          background: $buttonBlueHover;
-          color: $grayDarker;
           @include icon-text-shadow(rgba(255, 255, 255, 0.75));
         }
-      }
-      .font-icon {
-        display: table-cell;
-        vertical-align: middle;
-        text-align: center;
-        font-size: $tinyFontSize;
-        height: 100%;
-        width: 34px;
-        border-left: 1px solid rgba(0, 0, 0, 0.3);
-        background: $grayDarker;
       }
     }
   }
@@ -332,20 +311,30 @@ aside .header-bar {
   }
 }
 
-
 .sidebar {
-  border-bottom: 1px dotted $grayMedium;
+  border-bottom: 1px dotted #ccc;
   margin-bottom: $baseLineHeight; 	
+}
+
+@media (max-width: 979px) {
+  .section-console {
+    padding-bottom: 40px;
+    padding-top: 40px;
+  }
 }
 
 @media (max-width: 767px) {
   .section-console {
-    background: #010101;
+    background: #fcfcfc;
     padding-bottom: 0;
     padding-top: 0;
+    &.section-console-blank {
+      @include console_background;
+    }
+    .row-console > .row {
+      @include box-shadow(none);
+    }
   }
-  .section-console-light { background: #fff; }
-
   .section-header {
     margin-left: 0;
   }
@@ -353,13 +342,6 @@ aside .header-bar {
     margin-top: 3px;
     @include expand_for_phone();
   }
-}
-
-.digest-bg {
-  background-color: #212121;
-  border-bottom: 3px solid #2a2a2a;
-  margin: 0 -35px;
-  padding: 20px 25px;
 }
 
 #app-list, #account-digest {
@@ -390,12 +372,6 @@ aside .header-bar {
     background-color:transparent;
   }
 
-}
-
-#app-list {
-  .btn-toolbar {
-    margin-right: 10px;
-  }
 }
 
 .line-item-title {
@@ -517,8 +493,6 @@ a.cap-link {
   border: 1px solid transparent;
   opacity: .75;
   &:hover, &.highlight {
-    //border-color: rgba(0,0,0,0.1);
-    background: rgba(0,0,0,0.2);
     opacity: 1;
   }
   &:active {
@@ -529,7 +503,7 @@ a.cap-link {
 .unstyled-flat.bits {
   margin: 0 0 10px 0;
   li {
-    border-left: 1px dotted #444;
+    border-left: 1px dotted #ccc;
     padding: 0 8px;
     min-height: 37px;
     font-weight: normal;
@@ -548,8 +522,6 @@ $cartridgeBorderWidth: 10px;
 
 #app-cartridges {
   header {
-    padding-left: $gridGutterWidth;
-
     h3 {
       margin: 4px 0;
     }
@@ -591,22 +563,8 @@ $cartridgeBorderWidth: 10px;
   .gear-group {
     margin-top: 5px;
     margin-bottom: 15px;
-    border-bottom: 3px solid #2a2a2a;
   }
   .cartridge-block {
-    border-top: 3px solid #2a2a2a;
-
-    .cartridge-border {
-      background: image-url('cartridge-edge.gif') repeat-y;
-      padding-left: 10px;
-    }
-
-    .cartridge-inset {
-      background-color: #1d1d1d;
-      border: 1px solid #101010;
-      border-width: 2px 0;
-      padding: 15px ($gridGutterWidth - $cartridgeBorderWidth);
-    }
 
     h2 { 
       text-overflow: ellipsis; 
@@ -620,9 +578,7 @@ $cartridgeBorderWidth: 10px;
     }
 
     .embedded {
-      background: #131313;
       margin-top: 15px;
-      padding: 10px 20px;
       overflow: hidden;
       position: relative;
       
@@ -654,15 +610,12 @@ $cartridgeBorderWidth: 10px;
       }
 
       .embedded-cart {
-        border: 1px solid #6b6b6b;
-        background: #242424;
+        border: 1px solid #ccc;
         float: left;
         margin-right: 15px;
         line-height: 35px;
         //FIXME: embedded-cart should be more flexible
         padding: 0 10px;
-        //width: 35px;
-        //height: 35px;
       }
     }
 
@@ -682,9 +635,6 @@ $cartridgeBorderWidth: 10px;
 }
 
 #secondary {
-  a {
-  color: inherit;
-  }
   h5 {
     margin: 0 0 3px 0;
   }
@@ -696,24 +646,23 @@ $cartridgeBorderWidth: 10px;
 }
 
 .section-console h6 {
-  color: #9a9b9c;
+  color: #777;
   font-weight: normal;
   }
 .section-console .bits .data {
-  color: #eaebec;
   text-transform: uppercase;
   font-size: $h6FontSize
   }
 
 .cartridge_type.installed,
 .cartridge_type.inactive,
-.section-console-light .cartridge_type.installed > h3,
-.section-console-light .cartridge_type.inactive > h3 {
+.cartridge_type.installed > h3,
+.cartridge_type.inactive > h3 {
   color: #888;
   }
 .cartridge_type.inactive,
 .cartridge_type.installed {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: $consolePanelColorDisabled;
   cursor: default;
   }
 
@@ -736,9 +685,6 @@ $cartridgeBorderWidth: 10px;
 
   #app-cartridges {
     @include expand_for_phone(false);
-    header {
-      padding-left: $gridGutterWidthPhone;
-    }
     .cartridge-block .cartridge-inset {
       padding-left: $gridGutterWidthPhone - $cartridgeBorderWidth;
       padding-right: $gridGutterWidthPhone - $cartridgeBorderWidth;
@@ -746,32 +692,11 @@ $cartridgeBorderWidth: 10px;
   }
 }
 
-/* Arbitrarily chosen 
-@media (max-width: 600px) {
-  #app-cartridges .cartridge-block .bits {
-    margin-left: 0;
-    li {
-      display: block;
-      float: none;
-      border: 0;
-      text-align: right;
-      min-height: 0;
-      h6 {
-        display: inline;
-      }
-    }
-  }
-}
-*/
-
 @media (max-width: 767px) {
   .section-console .base {
     float: none;
     display: block;
     margin-left: 0;
-    }
-  .section-console-light {
-    //padding:0 20px;
     }
   .row > strong {
     display: block;
@@ -785,12 +710,6 @@ $cartridgeBorderWidth: 10px;
     float: left;
     margin-left: 28px;
   }
-  .digest-bg {
-    margin: 0;
-    }
-  #secondary {
-    margin: 0 30px;
-    }
   #my-apps li h2 {
     float: right;
     }
@@ -807,27 +726,11 @@ $cartridgeBorderWidth: 10px;
     display:block;
     }
 
-  #account-digest {
-    @include expand_for_phone(false);
-    .digest-bg {
-      padding-left: 0;
-      padding-right: 0;
-      background: transparent;
-
-      #secondary {
-        margin: 0 $gridGutterWidthPhone;
-      }
-    }
-  }
-
   #app-unique-info {
     margin: 0;
   }
 
   #app-cartridges {
-    header {
-      padding-left: $gridGutterWidthTablet;
-    }
     .cartridge-block .cartridge-inset {
       padding-left: $gridGutterWidthTablet - $cartridgeBorderWidth;
       padding-right: $gridGutterWidthTablet - $cartridgeBorderWidth;
@@ -840,26 +743,19 @@ $cartridgeBorderWidth: 10px;
   .total-cost {
     font-size: 23px; // responsive
   }
-  .digest-bg {
-    margin-right: -15px;
-    margin-left: -15px;
-   }
   #my-apps li h2 {
     float: none;
   }
   #my-apps .status {
     position: static;
   }
+  .row > .column-content > :first-child {
+    margin-top: 20px;
+  }
 }
 
 @media (min-width: 980px) and (max-width: 1199px) {
-  .digest-bg {
-    margin: 0 -23px;
-  }
   #app-cartridges {
-    header {
-      padding-left: $gridGutterWidth;
-    }
     .cartridge-block .cartridge-inset {
       padding-left: $gridGutterWidth - $cartridgeBorderWidth;
       padding-right: $gridGutterWidth - $cartridgeBorderWidth;
@@ -870,8 +766,6 @@ $cartridgeBorderWidth: 10px;
 
 @media (min-width: 1200px) {
 }
-@media (max-width: 979px) {
-}
 @media (min-width: 980px) {
 }
 
@@ -881,7 +775,6 @@ $cartridgeBorderWidth: 10px;
   	padding-left:8px;
   	padding-right:0;
     border-radius: 3px;
-    &:focus + .search {background-color: $grayLighter;}
   }
   > .search {
     position: absolute;
